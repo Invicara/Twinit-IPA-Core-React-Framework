@@ -1,0 +1,15 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "bootstrap": "lerna bootstrap --no-ci",
+    "build": "lerna run build",
+    "build-dev": "lerna run build-dev",
+    "release": "lerna version --exact",
+    "changed": "lerna changed",
+    "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes"
+  },
+  "devDependencies": {
+    "lerna": "^3.19.0"
+  }
+}
