@@ -14,7 +14,7 @@
   },
   "main": "dist/ipa-core.js",
   "files": [
-    "./dist/*"
+    "dist"
   ],
   "dependencies": {
     "@invicara/expressions": "~0.12.0",
