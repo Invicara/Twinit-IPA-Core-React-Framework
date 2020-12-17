@@ -1,0 +1,101 @@
+/**
+ * ****************************************************************************
+ *
+ * INVICARA INC CONFIDENTIAL __________________
+ *
+ * Copyright (C) [2012] - [2018] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
+ * PVT LTD All Rights Reserved.
+ *
+ * NOTICE: All information contained herein is, and remains the property of
+ * Invicara Inc and its suppliers, if any. The intellectual and technical
+ * concepts contained herein are proprietary to Invicara Inc and its suppliers
+ * and may be covered by U.S. and Foreign Patents, patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Invicara Inc.
+ */
+
+ $purple: #C52083;
+ $light-grey: #6d6e70;
+ $invicara-text: $light-grey;
+
+ .asf-modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+
+@media (min-width: 680px) {
+  .asf-modal {
+    height: 60%;
+  }
+}
+
+div.css-1g6gooi {
+  opacity: 0;
+  height: 40px;
+}
+
+div.css-1hwfws3 {
+  overflow: unset !important;
+}
+
+.ipa-modal {
+  background: white;
+  border: none;
+  border-radius: 40px;
+
+  .content {
+    &::-webkit-scrollbar{
+    display: none;
+    }
+    border-radius: 40px;
+  }
+
+  .bar.bar-dark {
+    width: 90%;
+    left: 5%;
+    background: white;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding-top: 50px;
+    padding: 3% 0;
+
+    .title {
+      display: inline;
+      color: $purple;
+      font-size: 1.5rem;
+      padding-top: 20px;
+      padding: 0% 3%;
+      height: 100%;
+    }
+  }
+
+  .bar.bar-dark .title,
+  .ion-ios-close-empty {
+    color: $invicara-text;
+    padding: 1% 2%;
+  }
+}
+
+.ipa-modal-small {
+  width: 30%;
+  left: 35%;
+
+  .content {
+    padding: 30px;
+
+    .padding {
+      padding: 0px;
+    }
+  }
+}
+
+.ipa-modal-no-x-close {
+
+  .bar-dark {
+    
+    .button-icon {
+        display: none;
+    }
+  }
+}

@@ -1,0 +1,10 @@
+.fetching-legend{
+  display: flex;
+  align-items: center;
+  > *:first-child {
+    margin: 10px;
+  }
+  .MuiCircularProgress-colorPrimary{
+    color: #C71784;
+  }
+}

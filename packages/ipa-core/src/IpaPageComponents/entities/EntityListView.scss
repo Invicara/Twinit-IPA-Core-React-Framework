@@ -1,0 +1,80 @@
+.entity-list-view-root {
+  // min-width: 50vw;
+
+  .actions-panel{
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .entity-list-view-count{
+    margin: 10px 0;
+  }
+
+  .header-row {
+    background-color: #F2F2F2;
+    height: 50px;
+    display: flex;
+    border-bottom: 3px solid #eaeaea;
+    user-select: text;
+
+    .header-column {
+      height: 100%;
+      padding: 10px;
+      align-items: center;
+      display: flex;
+      flex: 1;
+      color: #666666;
+      font-weight: 500;
+      letter-spacing: 1;
+      border-left: 1px solid #eaeaea;
+      border-right: 1px solid #eaeaea;
+      cursor:pointer;
+      
+      i {
+        margin-left: 20px;
+      }
+    }
+
+    :first-child{
+      border-left: none;
+    }
+
+    :last-child{
+      border-right: none;
+    }
+
+  }
+
+  .content-row{
+    border-bottom: 3px solid #eaeaea;
+    display: flex;
+    user-select: text;
+
+    .content-column{
+      height: 100%;
+      padding: 10px;
+      align-items: center;
+      display: flex;
+      flex: 1;
+      color: #666666;
+      letter-spacing: 1;
+      word-break: break-word;
+    }
+
+    .first{
+      color: #C71784;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+
+  }
+
+  .checkbox {
+    padding: 0;
+    max-width: 40px;
+    display: flex;
+    justify-content: center;
+  }
+
+}

@@ -1,0 +1,35 @@
+.big-button-bar.horizontal {
+    height: 100%;
+    maxHeight: 100%;
+    padding-top: 50px;
+    display: grid;
+  }
+  
+  
+  .big-button-bar {
+    .big-button-bar-button {
+      display: grid;
+      grid-template-rows: 50% 50%;
+      grid-template-columns: 33% 66%;
+    }
+  
+    .big-button-bar-button.horizontal {
+      display: grid;
+      grid-template-rows: 25% 75%;
+      grid-template-columns: fit-content(50%) auto;
+    }
+  
+    img {
+      max-height: 150px;
+      cursor: pointer;
+    }
+  
+    h1 {
+      padding-top: 20px;
+      cursor: pointer;
+    }
+  
+    span {
+      cursor: pointer;
+    }
+  }

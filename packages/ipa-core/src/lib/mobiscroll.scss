@@ -1,0 +1,58 @@
+/**
+ * ****************************************************************************
+ *
+ * INVICARA INC CONFIDENTIAL __________________
+ *
+ * Copyright (C) [2012] - [2018] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
+ * PVT LTD All Rights Reserved.
+ *
+ * NOTICE: All information contained herein is, and remains the property of
+ * Invicara Inc and its suppliers, if any. The intellectual and technical
+ * concepts contained herein are proprietary to Invicara Inc and its suppliers
+ * and may be covered by U.S. and Foreign Patents, patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Invicara Inc.
+ */
+
+.mbsc-form {
+    padding: 0 10% !important;
+}
+
+.mbsc-form,
+.mbsc-form-group-title,
+.mbsc-divider {
+    background: white !important;
+    border-bottom: none !important;
+}
+
+.mbsc-form-group-title {
+    font-size: 1.5rem !important;
+    padding: 1% 0 !important;
+}
+
+.mbsc-input {
+	display: block !important;
+}
+
+.mbsc-input input,
+.mbsc-textarea textarea {
+    border-radius: 0.5rem !important;
+    padding: .875rem .75rem !important;
+    background-color: #eee !important;
+    border: 0 solid #ced4da !important;
+}
+
+.mbsc-ios.mbsc-ltr .mbsc-input .mbsc-label {
+	 padding-left: 0 !important;
+}
+
+.mbsc-control-w:before, 
+.mbsc-control-w:after {
+    border-top: none !important;
+    content: "" !important;
+}
+
+.mbsc-ios .mbsc-collapsible .mbsc-form-group-title .mbsc-collapsible-icon {
+    margin-top: -.5em; 
+}

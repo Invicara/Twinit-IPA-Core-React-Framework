@@ -1,0 +1,91 @@
+$top-nav-height: 80px;
+$grey: #666666;
+$light-grey: #999999;
+
+.always-flex {
+    display: flex !important;
+}
+
+#active-session-text{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+}
+
+.titlebar-header {
+    z-index:1;
+    box-shadow: none;
+}
+
+.session-dropdown {
+    float: right;    
+    height: 100%;
+    display: flex;    
+    align-items: center;
+
+    .session-options {
+        position: absolute;
+        top: $top-nav-height;
+        right: 0;
+        visibility: hidden;
+        height: 1px;
+        width: 400px;
+        background-color: $grey;
+        transition: all 0.5s;
+        display: flex;
+        flex-direction: column;
+        box-shadow: -12px 15px 10px 0 #00000033;        
+
+        @for $i from 1 through 4 {
+            .session-item:nth-child(#{$i}) {
+                visibility: hidden;
+                transition: visibility (0.3s - 0.05s * $i);
+            }
+        }        
+
+        .session-item {
+            height: 60px;
+            width: 100%;
+            flex: 1;
+            display: flex;    
+            padding: 15px;
+            font-size: 18px;            
+
+            a {
+                display: flex;
+                align-items: center;
+                color: white;
+                width: 100%;
+
+                &:hover {
+                    text-decoration: none;
+                }                
+            }
+
+            &:hover{
+                background-color: $light-grey;
+                transition: all 0.5s;
+            }
+        }
+
+    }
+    .icofont-rounded-down{
+        transition: all 0.5s;
+    }
+}
+
+.session-dropdown:hover{
+    .icofont-rounded-down{
+        transform: rotate(180deg);
+    }
+
+    .session-options{
+        visibility: visible;
+        height: 300px;
+
+        .session-item{
+            visibility: visible;
+        }
+    }
+}

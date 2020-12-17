@@ -1,0 +1,57 @@
+
+$purple: #C52083;
+$light-grey: #6d6e70; 
+
+.project-picker-modal {
+
+    button {
+      text-transform: uppercase;
+      border-radius: 15px;
+      padding: 5px;
+      width: 40%;
+      margin: 20px;
+      border: solid black 2px;
+  
+    }
+    button.load {
+      color: white;
+      background-color: $purple;
+      border-color: $purple;
+    }
+    button.cancel {
+      color: $light-grey;
+      background-color: white;
+      border-color: $light-grey;
+    }
+  
+    h4 {
+      font-size: 14px;
+    }
+  
+    .invite-table {
+      td, th { padding: 5px; }
+      td:nth-of-type(2) {min-width: 250px; }
+      .invite-action {
+        display: block;
+        margin-left: 20px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        color: #c71784;
+  
+        i {
+          padding-right: 0px;
+          width: 20px;
+        }
+      }
+    }
+  
+    .custom-control.custom-switch {
+      z-index: unset;
+    }
+    .custom-control-input:checked~.custom-control-label::before {
+      color: #fff;
+      border-color: $purple;
+      background-color: $purple;
+    }
+  
+  }

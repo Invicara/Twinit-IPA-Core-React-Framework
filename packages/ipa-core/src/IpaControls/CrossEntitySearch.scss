@@ -1,0 +1,35 @@
+.cross-entity-search{
+
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+
+  .entity-types{
+    display: flex;
+    flex-wrap: wrap;
+    width: 90%;
+    justify-content: space-between;
+  }
+
+  .search-term{
+    flex: 1;
+    .no-results{
+      color: #666666;
+      font-style: italic;
+      margin-left: 5px;
+    }
+  }
+
+  .search-results {
+    overflow: scroll;
+    height: 100%;
+    flex: 3;
+    max-width: 700px;
+    transition: flex, max-width 3s;
+    margin-left: 10px;
+    &.collapsed{
+      flex: 0;
+      max-width: 0;
+    }
+  }
+}

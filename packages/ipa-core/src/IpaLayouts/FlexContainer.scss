@@ -1,0 +1,14 @@
+
+#SidePanelContent {
+    nav {
+      height: 100%;
+      .main-nav {
+          height: 100%;
+          overflow-x: hidden;
+          overflow-y: scroll;
+      }
+      .main-nav::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
