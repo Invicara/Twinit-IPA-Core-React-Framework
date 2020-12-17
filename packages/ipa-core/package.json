@@ -5,7 +5,7 @@
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Invicara/InvicaraAppFramework.git"
+    "url": "https://github.com/Invicara/InvicaraPlatformApplication.git"
   },
   "keywords": [],
   "license": "UNLICENSED",
