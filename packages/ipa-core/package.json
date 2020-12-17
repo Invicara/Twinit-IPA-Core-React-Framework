@@ -13,9 +13,6 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "main": "dist/ipa-core.js",
-  "files": [
-    "./dist/**/*"
-  ],
   "dependencies": {
     "@invicara/expressions": "~0.12.0",
     "@invicara/platform-api": "~0.12.0",
