@@ -90,14 +90,6 @@ pipeline {
             subject: "FIXED: ${env.REPO_NAME}/${env.BRANCH_NAME} build id ${env.BUILD_NUMBER} back to normal"
           )
         }
-
-        // build platform api service
-        build(job: "Build-PlatformAPIService/${env.BRANCH_NAME}",
-          parameters: [
-            booleanParam(name: "CHECK_OUTDATED", value: true)
-          ],
-          wait: false
-        )
       }
     }
 
