@@ -1,2 +1,5 @@
 packages/ipa-core/node_modules/
 packages/ipa-core/dist/
+node_modules/.bin/atob
+node_modules/
+lerna-debug.log

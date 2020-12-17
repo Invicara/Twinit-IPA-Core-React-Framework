@@ -92,9 +92,7 @@
     "rollup-plugin-postcss": "^2.0.3"
   },
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
-    "build-dev": "webpack",
-    "rollup": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.js"
   },
   "babel": {
     "presets": [
