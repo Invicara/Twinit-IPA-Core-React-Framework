@@ -37,11 +37,11 @@ import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
 
-import {EntityViewFactory} from './IpaPageComponents/entities/EntityView'
+// import {EntityViewFactory} from './IpaPageComponents/entities/EntityView'
 
-const PageFactories = {
-  'entities/EntityView': EntityViewFactory
-}
+// const PageFactories = {
+//   'entities/EntityView': EntityViewFactory
+// }
 
 // import EntityView from './IpaPageComponents/entities/EntityView'
 
@@ -528,27 +528,27 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
       component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
-      // try {
-      //   //component = require('./IpaPageComponents/' + pageComponent + '.jsx').default;
-      //   component = require('./IpaPageComponents/'+pageComponent + 'jsx').default;
-      //   console.log(pageComponent + ' loaded from framework')
-      // } catch(e) {
-      //   console.error(e)
-      //    console.error("can't find page component", pageComponent)
-      //   console.log("Skipping", pageComponent)
-      //   component = null
-      // }
+      try {
+        //component = require('./IpaPageComponents/' + pageComponent + '.jsx').default;
+        component = require('./IpaPageComponents/'+pageComponent + 'jsx').default;
+        console.log(pageComponent + ' loaded from framework')
+      } catch(e) {
+        console.error(e)
+         console.error("can't find page component", pageComponent)
+        console.log("Skipping", pageComponent)
+        component = null
+      }
 
-        component = PageFactories[pageComponent] ? PageFactories[pageComponent]() : null
+        // component = PageFactories[pageComponent] ? PageFactories[pageComponent]() : null
 
-        if (component)
-          console.log(pageComponent + ' loaded from framework')
-        else {
-          console.error(e)
-          console.error("can't find page component", pageComponent)
-          console.log("Skipping", pageComponent)
-          component = null
-        }
+        // if (component)
+        //   console.log(pageComponent + ' loaded from framework')
+        // else {
+        //   console.error(e)
+        //   console.error("can't find page component", pageComponent)
+        //   console.log("Skipping", pageComponent)
+        //   component = null
+        // }
     }
     
     return component
