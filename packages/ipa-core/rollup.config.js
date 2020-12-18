@@ -73,5 +73,6 @@ export default {
   'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
   'react-inspector', 'react-select', 'react-table',
   '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
-  '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui']
+  '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
+  'app-root-path']
 };

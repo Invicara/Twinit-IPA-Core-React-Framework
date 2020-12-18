@@ -39,7 +39,9 @@ export const getHydratedObject = (entityName) => {
     }) 
 }
 
-export default SchemaHelper = {
+const SchemaHelper = {
     requiresReplacing,
     getHydratedObject
 }
+
+export default SchemaHelper

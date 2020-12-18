@@ -1,6 +1,6 @@
 import React from 'react';
 import CSSModules from 'react-css-modules';
-import styles from './BottomPanel.css'
+import './BottomPanel.css'
 
 // There is only one BottomPanel, which we make work like the Right/Left drawers
 // We provide an id so apps can find it to load app-specific content in it.
@@ -35,4 +35,4 @@ class BottomPanel extends React.Component {
   }
 }
 
-export default CSSModules(BottomPanel, styles);
+export default BottomPanel;

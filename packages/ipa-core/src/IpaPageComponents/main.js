@@ -2,8 +2,10 @@ import withEntitySearch from './entities/WithEntitySearch'
 import EntitySelectionPanel from './entities/EntitySelectionPanel'
 import EntityDataStack from './entities/EntityDataStack'
 
-export default IpaPageComponents = {
+const IpaPageComponents = {
     withEntitySearch,
     EntitySelectionPanel,
     EntityDataStack
 }
+
+export default IpaPageComponents

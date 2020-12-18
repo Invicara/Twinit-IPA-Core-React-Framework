@@ -36,9 +36,11 @@ export const propsEqual = (propNames) => (prevProps, nextProps) => propNames.eve
 export const setIncludesBy = (includer = [], included = [], idGetter = _.identity) =>
     included.every(includedElement => includer.some(includerElement => idGetter(includerElement) === idGetter(includedElement)));
 
-export default compare = {
+const compare = {
     listEquals,
     listIncludes,
     propsEqual,
     setIncludesBy
 }
+
+export default compare

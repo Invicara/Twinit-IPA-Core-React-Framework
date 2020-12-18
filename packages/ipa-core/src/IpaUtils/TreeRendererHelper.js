@@ -31,7 +31,9 @@ export const branchNodeRenderer = (groupName, values) => {
     )
 };
 
-export default TreeRendererHelper = {
+const TreeRendererHelper = {
     leafNodeRenderer,
     branchNodeRenderer
 }
+
+export default TreeRendererHelper

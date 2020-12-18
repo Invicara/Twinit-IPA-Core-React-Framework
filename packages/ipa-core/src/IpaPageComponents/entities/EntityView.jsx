@@ -219,3 +219,11 @@ export default compose(
     withEntitySearch,
     connect(mapStateToProps),
 )(EntityView)
+
+export const EntityViewFactory = () => {
+    return compose(
+        asIpaPage,
+        withEntitySearch,
+        connect(mapStateToProps),
+    )(new EntityView())
+}

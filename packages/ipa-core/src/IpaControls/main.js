@@ -4,7 +4,7 @@ import EnhancedFetchControl from './EnhancedFetchControl'
 import {StackableDrawer} from './StackableDrawer'
 import FancyTreeControl from './FancyTreeControl'
 
-export default IpaControls = {
+const IpaControls = {
     SimpleTable,
     IpaButton: GenericMatButton,
     GenericMatButton,
@@ -12,3 +12,5 @@ export default IpaControls = {
     StackableDrawer,
     FancyTreeControl
 }
+
+export default IpaControls

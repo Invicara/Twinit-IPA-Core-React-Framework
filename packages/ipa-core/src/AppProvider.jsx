@@ -37,6 +37,18 @@ import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
 
+import {EntityViewFactory} from './IpaPageComponents/entities/EntityView'
+
+const PageFactories = {
+  'entities/EntityView': EntityViewFactory
+}
+
+// import EntityView from './IpaPageComponents/entities/EntityView'
+
+// const InternalPages = {
+//   "entities/EntityView": EntityView
+// }
+
 export const AppContext = React.createContext();
 
 // props -- component props passed by parent
@@ -300,7 +312,7 @@ class AppProvider extends React.Component {
       if (this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
         this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
           try {
-            let slice = require('../ipaCore/redux/' + sliceFile.file).default
+            let slice = require('../../../../app/ipaCore/redux/' + sliceFile.file).default
             let newReducer = addReducerSlice({name: sliceFile.name, slice: slice})
             store.replaceReducer(newReducer)
           } catch(e) {
@@ -327,7 +339,7 @@ class AppProvider extends React.Component {
         let dashComponents = []
         this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
           try {
-            let dashComp = require('../ipaCore/components/' + dashCompFile.file).default
+            let dashComp = require('../../../../app/ipaCore/components/' + dashCompFile.file).default
             dashComponents.push({name: dashCompFile.name, component: dashComp})
           } catch(e) {
             console.error(e)
@@ -354,7 +366,7 @@ class AppProvider extends React.Component {
         let entityActionComponents = []
         this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
           try {
-            let actComp = require('../ipaCore/components/' + actionCompFile.file)[actionCompFile.name+'Factory']
+            let actComp = require('../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
             entityActionComponents.push({name: actionCompFile.name, component: actComp})
           } catch(e) {
             console.error(e)
@@ -368,7 +380,7 @@ class AppProvider extends React.Component {
         let entityDataComponents = []
         this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
           try {
-            let dataComp = require('../ipaCore/components/' + dataCompFile.file)
+            let dataComp = require('../../../../app/ipaCore/components/'+ dataCompFile.file)
             let dataCompFactory = dataComp[dataCompFile.name+'Factory']
             entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
           } catch(e) {
@@ -504,7 +516,7 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
    * If the pageComponent is not found an error is sent to the console and 
    * the page is skipped.
    * 
-   * pageComponents must be in the ./app/pageComponents folder
+   * pageComponents must be in the ./app/ipaCore/pageComponents folder
    */
   function getPageComponent(pageComponent) {
     
@@ -513,18 +525,30 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
       //FRAMEWORK-TODO: This will probably need to be updated once we go to a true library
       //Webpack requires that the start of the path to the component be constant so we will
       //need to define a root folder that the framework consumer must use
-      component = require('../ipaCore/pageComponents/' + pageComponent + '.jsx').default;
+      component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
-      try {
-        component = require('./IpaPageComponents/' + pageComponent + '.jsx').default;
-        console.log(pageComponent + ' loaded from framework')
-      } catch(e) {
-        console.error(e)
-        console.error("can't find page component", pageComponent)
-        console.log("Skipping", pageComponent)
-        component = null
-      }
+      // try {
+      //   //component = require('./IpaPageComponents/' + pageComponent + '.jsx').default;
+      //   component = require('./IpaPageComponents/'+pageComponent + 'jsx').default;
+      //   console.log(pageComponent + ' loaded from framework')
+      // } catch(e) {
+      //   console.error(e)
+      //    console.error("can't find page component", pageComponent)
+      //   console.log("Skipping", pageComponent)
+      //   component = null
+      // }
+
+        component = PageFactories[pageComponent] ? PageFactories[pageComponent]() : null
+
+        if (component)
+          console.log(pageComponent + ' loaded from framework')
+        else {
+          console.error(e)
+          console.error("can't find page component", pageComponent)
+          console.log("Skipping", pageComponent)
+          component = null
+        }
     }
     
     return component

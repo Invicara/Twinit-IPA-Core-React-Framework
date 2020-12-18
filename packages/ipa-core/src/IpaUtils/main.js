@@ -5,10 +5,12 @@ import FileHelpers from './FileHelpers'
 import ScriptHelper from './ScriptHelper'
 import TreeRenderHelper from './TreeRendererHelper'
 
-export default IpaUtils = {
+const IpaUtils = {
     compare,
     ScriptHelper,
     FileHelpers,
     SchemaHelper,
     TreeRenderHelper
 }
+
+export default IpaUtils

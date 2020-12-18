@@ -17,4 +17,4 @@ const IpaDialogs = {
     GenericModal: GenericModal
 }
 
-export default IpaDIalogs
+export default IpaDialogs
