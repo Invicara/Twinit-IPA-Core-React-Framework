@@ -16,17 +16,17 @@
  */
 
 import IpaMainLayout from './IpaLayouts/IpaMainLayout'
-import asIpaPage from './IpaPageComponents/IpaPage'
 import IpaControls from './IpaControls/main'
 import IpaDialogs from './IpaDialogs/main'
 import IpaUtils from './IpaUtils/main'
 import IpaPageComponents from './IpaPageComponents/main'
+import IpaRedux from './redux/main'
 
 module.exports = {
     IpaMainLayout,
-    asIpaPage,
     IpaControls,
     IpaDialogs,
     IpaUtils,
-    IpaPageComponents
+    IpaPageComponents,
+    IpaRedux
 };

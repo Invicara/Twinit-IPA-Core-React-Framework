@@ -37,8 +37,6 @@ import {compose} from "@reduxjs/toolkit";
 import withEntitySearch from "./WithEntitySearch";
 import {branchNodeRenderer, leafNodeRenderer} from "../../IpaUtils/TreeRendererHelper"
 
-import asIpaPage from '../IpaPage'
-
 import './EntityView.scss'
 
 
@@ -215,15 +213,6 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-    asIpaPage,
     withEntitySearch,
     connect(mapStateToProps),
 )(EntityView)
-
-export const EntityViewFactory = () => {
-    return compose(
-        asIpaPage,
-        withEntitySearch,
-        connect(mapStateToProps),
-    )(new EntityView())
-}

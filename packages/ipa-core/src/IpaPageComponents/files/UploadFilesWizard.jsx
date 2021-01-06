@@ -36,7 +36,6 @@ import {WizardButtons} from "./misc";
 import _ from 'lodash'
 
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
-import asIpaPage from '../IpaPage'
 import './UploadFilesWizard.scss'
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
@@ -141,6 +140,5 @@ const mapDispatchToProps = {
 }
 
 export default compose(
-    asIpaPage,
     connect(mapStateToProps, mapDispatchToProps),
 )(UploadFilesWizard)

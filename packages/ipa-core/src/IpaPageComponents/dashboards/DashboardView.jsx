@@ -27,8 +27,6 @@ import {getDashboardComponent} from '../../redux/slices/dashboardUI'
 import {compose} from "redux";
 import {connect} from "react-redux";
 
-import asIpaPage from '../IpaPage'
-
 import './DashboardView.scss'
 
 class DashboardView extends React.Component {
@@ -250,6 +248,5 @@ const mapDispatchToProps = {
 }
 
 export default compose(
-    asIpaPage,
     connect(mapStateToProps, mapDispatchToProps),
 )(DashboardView)

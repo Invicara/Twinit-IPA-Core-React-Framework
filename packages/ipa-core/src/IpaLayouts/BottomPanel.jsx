@@ -27,7 +27,7 @@ class BottomPanel extends React.Component {
   render() {
     let display = this.props.hideOnLoad?'none':'block';
     return (
-      <div className='asf-panel snap-drawer-bottom' styleName='asf-panel-bottom' id="BottomPanel"
+      <div className='asf-panel snap-drawer-bottom asf-panel-bottom' id="BottomPanel"
           style={{'height': this.props.height,'display':display}}>
         {this.props.children}
       </div>

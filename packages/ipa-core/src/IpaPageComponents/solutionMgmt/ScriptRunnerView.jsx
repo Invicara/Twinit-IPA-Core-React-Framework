@@ -34,7 +34,6 @@ import _ from 'lodash'
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
-import asIpaPage from "../IpaPage";
 import {StackableDrawer} from '../../IpaControls/StackableDrawer'
 
 import '../../lib/mobiscroll.scss'
@@ -613,4 +612,4 @@ class ScriptRunnerView extends React.Component {
     }
 }
 
-export default asIpaPage(ScriptRunnerView);
+export default ScriptRunnerView;

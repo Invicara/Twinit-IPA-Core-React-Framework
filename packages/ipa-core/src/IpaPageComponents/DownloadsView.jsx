@@ -17,15 +17,12 @@
 
 import React from "react";
 
-import {withAppContext} from "..//AppProvider";
 import PropTypes from "prop-types";
 
 import {IafProj} from '@invicara/platform-api';
 
 import _ from 'lodash';
 import moment from 'moment';
-
-import withGenericPage from "./GenericPage";
 
 class DownloadsView extends React.Component {
     constructor(props) {
@@ -183,4 +180,4 @@ class DownloadsView extends React.Component {
     }
 }
 
-export default withAppContext(withGenericPage(DownloadsView));
+export default DownloadsView;

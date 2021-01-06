@@ -37,17 +37,8 @@ import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
 
-// import {EntityViewFactory} from './IpaPageComponents/entities/EntityView'
-
-// const PageFactories = {
-//   'entities/EntityView': EntityViewFactory
-// }
-
-// import EntityView from './IpaPageComponents/entities/EntityView'
-
-// const InternalPages = {
-//   "entities/EntityView": EntityView
-// }
+import withGenericPage from './IpaPageComponents/GenericPage'
+import InternalPages from './IpaPageComponents/InternalPages'
 
 export const AppContext = React.createContext();
 
@@ -518,6 +509,10 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
    * 
    * pageComponents must be in the ./app/ipaCore/pageComponents folder
    */
+  function asIpaPage(rawPageComponent) {
+    return withAppContext(withGenericPage(rawPageComponent))
+  } 
+
   function getPageComponent(pageComponent) {
     
     let component
@@ -526,29 +521,22 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
       //Webpack requires that the start of the path to the component be constant so we will
       //need to define a root folder that the framework consumer must use
       component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
+      component = asIpaPage(component)
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
-      try {
-        //component = require('./IpaPageComponents/' + pageComponent + '.jsx').default;
-        component = require('./IpaPageComponents/'+pageComponent + 'jsx').default;
+   
+      component = InternalPages[pageComponent] ? InternalPages[pageComponent] : null
+      
+      if (component) {
+        component = asIpaPage(component)
         console.log(pageComponent + ' loaded from framework')
-      } catch(e) {
+      }
+      else {
         console.error(e)
-         console.error("can't find page component", pageComponent)
+        console.error("can't find page component: ", pageComponent)
         console.log("Skipping", pageComponent)
         component = null
       }
-
-        // component = PageFactories[pageComponent] ? PageFactories[pageComponent]() : null
-
-        // if (component)
-        //   console.log(pageComponent + ' loaded from framework')
-        // else {
-        //   console.error(e)
-        //   console.error("can't find page component", pageComponent)
-        //   console.log("Skipping", pageComponent)
-        //   component = null
-        // }
     }
     
     return component

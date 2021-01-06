@@ -23,13 +23,10 @@ import PropTypes from "prop-types";
 import {PopoverMenuView} from "../IpaLayouts/PopoverMenuView";
 
 import ScriptHelper from "../IpaUtils/ScriptHelper";
-import { IfefTouchPanel } from '@invicara/react-ifef';
 import produce from "immer";
 import {connect} from "react-redux";
 
 import './GenericPage.scss'
-
-const { IfefDraggablePanel } = IfefTouchPanel;
 
 const URL_LENGTH_WARNING = 80000
 
@@ -56,7 +53,7 @@ const withGenericPage = (PageComponent) => {
     }
 
     componentDidMount() {
-      this.setState({project: this.props.selectedItems.selectProject, userConfig: this.props.selectedItems.userConfig});
+      this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
       this._loadPageData();
       this.onNavigated();
     }
