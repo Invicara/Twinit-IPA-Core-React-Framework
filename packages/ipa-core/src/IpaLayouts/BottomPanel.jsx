@@ -1,5 +1,4 @@
 import React from 'react';
-import CSSModules from 'react-css-modules';
 import './BottomPanel.css'
 
 // There is only one BottomPanel, which we make work like the Right/Left drawers

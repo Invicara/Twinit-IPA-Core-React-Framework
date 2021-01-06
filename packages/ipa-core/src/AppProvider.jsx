@@ -284,11 +284,7 @@ class AppProvider extends React.Component {
       window.location = this.authUrl;
     } else {
       
-      /* load redux extended slices provided by the app
-       * FRAMEWORK-TODO: This will probably need to be updated once we go to a true library
-       * Webpack requires that the start of the path to the component be constant so we will
-       * need to define a root folder that the framework consumer must use
-       */
+      /* load redux extended slices provided by the app */
       
       /*
        * Here we load the redux reducers (slices) provided by the local application
@@ -298,7 +294,7 @@ class AppProvider extends React.Component {
        * 
        * We may want to protect against that?
        * 
-       * Reducer (slice) files must be located in ./app/redux
+       * Reducer (slice) files must be located in ./app/ipaCore/redux
        */
       if (this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
         this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
@@ -313,18 +309,14 @@ class AppProvider extends React.Component {
         })
       }
       
-      /* load redux extended dashboard components
-       * FRAMEWORK-TODO: This will probably need to be updated once we go to a true library
-       * Webpack requires that the start of the path to the component be constant so we will
-       * need to define a root folder that the framework consumer must use
-       */
+      /* load redux extended dashboard components */
       
       /*
        * Here we load the dashboard components provided by the local application into redux
        * These components if named the same as a framework component can override the 
        * framework dashborad component.
        * 
-       * Dashboard compnent files must be located in ./app/components
+       * Dashboard compnent files must be located in ./app/ipaCore/components
        */
       if (this.props.ipaConfig.components.dashboard && this.props.ipaConfig.components.dashboard.length) {
         let dashComponents = []
@@ -340,18 +332,14 @@ class AppProvider extends React.Component {
         if (dashComponents.length) store.dispatch(addDashboardComponents(dashComponents))
       }
       
-      /* load redux extended dashboard components
-       * FRAMEWORK-TODO: This will probably need to be updated once we go to a true library
-       * Webpack requires that the start of the path to the component be constant so we will
-       * need to define a root folder that the framework consumer must use
-       */
+      /* load redux extended dashboard components */
       
       /*
        * Here we load the entity components provided by the local application into redux
        * These components if named the same as a framework component can override the 
        * framework component.
        * 
-       * entity compnent files must be located in ./app/redux
+       * entity compnent files must be located in ./app/ipaCore/components
        */
       if (this.props.ipaConfig.components.entityAction && this.props.ipaConfig.components.entityAction.length) {
         let entityActionComponents = []
@@ -517,9 +505,6 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
     
     let component
     try {
-      //FRAMEWORK-TODO: This will probably need to be updated once we go to a true library
-      //Webpack requires that the start of the path to the component be constant so we will
-      //need to define a root folder that the framework consumer must use
       component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
       component = asIpaPage(component)
       console.log(pageComponent + ' loaded from application')

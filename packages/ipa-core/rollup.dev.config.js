@@ -56,7 +56,6 @@ export default {
       ]
     }),
     commonjs(),
-    uglify(),
     copy({
       targets: [
         {src: 'src/img/**/*', dest: 'dist/img'},

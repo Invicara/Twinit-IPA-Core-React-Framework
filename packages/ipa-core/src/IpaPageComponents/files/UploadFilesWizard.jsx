@@ -28,7 +28,6 @@ import {
     uploadFiles
 } from "../../redux/slices/files";
 import {UploadFilesWizardSteps} from "./UploadWizardSteps";
-import {FileConfigReader} from "./configReader";
 import {SeedAttributes} from "./SeedAttributes";
 import {FileTable, getValue} from "./FilesTable";
 import {FileUploadTable} from "./FilesUploadTable";
