@@ -23,7 +23,6 @@ import babel from 'rollup-plugin-babel';
 import postcss from 'rollup-plugin-postcss';
 import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
-import { uglify } from "rollup-plugin-uglify";
 
 export default {
   input: 'src/main.js',
