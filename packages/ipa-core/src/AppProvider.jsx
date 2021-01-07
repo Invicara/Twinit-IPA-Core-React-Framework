@@ -42,6 +42,7 @@ import InternalPages from './IpaPageComponents/InternalPages'
 
 export const AppContext = React.createContext();
 
+
 // props -- component props passed by parent
 // contextProps -- Provider props
 export const withAppContext = (Component) => (props) => (<AppContext.Consumer>
@@ -52,7 +53,7 @@ class AppProvider extends React.Component {
   constructor(props) {
     super(props);
     IafSession.setConfig(endPointConfig ? endPointConfig : this.props.ipaConfig.endPointConfig);
-    this.authUrl = IafSession.getAuthUrl(endPointConfig ? endPointConfig : this.props.ipaConfig.endPointConfig.baseRoot);
+    this.authUrl = IafSession.getAuthUrl(endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot);
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
     this.state = {
