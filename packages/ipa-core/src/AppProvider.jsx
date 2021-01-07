@@ -153,8 +153,10 @@ class AppProvider extends React.Component {
     this.context.ifefSnapper.toggle('bottom');
 
     // the following should probably be in ifefSnaper.toggle?
-    if (wasOpen)
+    if (wasOpen) {
       body.classList.remove('snapjs-bottom');
+      this.setState({viewerResizeCanvas: false})
+    }
 
     // end
 
