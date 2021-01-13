@@ -299,7 +299,7 @@ class AppProvider extends React.Component {
        * 
        * Reducer (slice) files must be located in ./app/ipaCore/redux
        */
-      if (this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
+      if (this.props.ipaConfig && this.props.ipaConfig.redux && this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
         this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
           try {
             let slice = require('../../../../app/ipaCore/redux/' + sliceFile.file).default
@@ -310,6 +310,8 @@ class AppProvider extends React.Component {
             console.error('Slice not able to be loaded: ' + sliceFile.name)
           }
         })
+      } else {
+        console.warn("No ipa-core redux configuration found")
       }
       
       /* load redux extended dashboard components */
@@ -321,56 +323,61 @@ class AppProvider extends React.Component {
        * 
        * Dashboard compnent files must be located in ./app/ipaCore/components
        */
-      if (this.props.ipaConfig.components.dashboard && this.props.ipaConfig.components.dashboard.length) {
-        let dashComponents = []
-        this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
-          try {
-            let dashComp = require('../../../../app/ipaCore/components/' + dashCompFile.file).default
-            dashComponents.push({name: dashCompFile.name, component: dashComp})
-          } catch(e) {
-            console.error(e)
-            console.error('Dashboard component not able to be loaded: ' + dashCompFile.name)
-          }
-        })
-        if (dashComponents.length) store.dispatch(addDashboardComponents(dashComponents))
-      }
+
+      if (this.props.ipaConfig && this.props.ipaConfig.components) { 
+        if (this.props.ipaConfig.components.dashboard && this.props.ipaConfig.components.dashboard.length) {
+          let dashComponents = []
+          this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
+            try {
+              let dashComp = require('../../../../app/ipaCore/components/' + dashCompFile.file).default
+              dashComponents.push({name: dashCompFile.name, component: dashComp})
+            } catch(e) {
+              console.error(e)
+              console.error('Dashboard component not able to be loaded: ' + dashCompFile.name)
+            }
+          })
+          if (dashComponents.length) store.dispatch(addDashboardComponents(dashComponents))
+        }
       
-      /* load redux extended dashboard components */
-      
-      /*
-       * Here we load the entity components provided by the local application into redux
-       * These components if named the same as a framework component can override the 
-       * framework component.
-       * 
-       * entity compnent files must be located in ./app/ipaCore/components
-       */
-      if (this.props.ipaConfig.components.entityAction && this.props.ipaConfig.components.entityAction.length) {
-        let entityActionComponents = []
-        this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
-          try {
-            let actComp = require('../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
-            entityActionComponents.push({name: actionCompFile.name, component: actComp})
-          } catch(e) {
-            console.error(e)
-            console.error('Entity Action component not able to be loaded: ' + actionCompFile.name)
-          }
-        })
-        if (entityActionComponents.length) store.dispatch(addEntityComponents('action',entityActionComponents))
-      }
-      
-      if (this.props.ipaConfig.components.entityData && this.props.ipaConfig.components.entityData.length) {
-        let entityDataComponents = []
-        this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
-          try {
-            let dataComp = require('../../../../app/ipaCore/components/'+ dataCompFile.file)
-            let dataCompFactory = dataComp[dataCompFile.name+'Factory']
-            entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
-          } catch(e) {
-            console.error(e)
-            console.error('Entity Action component not able to be loaded: ' + dataCompFile.name)
-          }
-        })
-        if (entityDataComponents.length) store.dispatch(addEntityComponents('data',entityDataComponents))
+        /* load redux extended dashboard components */
+        
+        /*
+        * Here we load the entity components provided by the local application into redux
+        * These components if named the same as a framework component can override the 
+        * framework component.
+        * 
+        * entity compnent files must be located in ./app/ipaCore/components
+        */
+        if (this.props.ipaConfig.components.entityAction && this.props.ipaConfig.components.entityAction.length) {
+          let entityActionComponents = []
+          this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
+            try {
+              let actComp = require('../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
+              entityActionComponents.push({name: actionCompFile.name, component: actComp})
+            } catch(e) {
+              console.error(e)
+              console.error('Entity Action component not able to be loaded: ' + actionCompFile.name)
+            }
+          })
+          if (entityActionComponents.length) store.dispatch(addEntityComponents('action',entityActionComponents))
+        }
+        
+        if (this.props.ipaConfig.components.entityData && this.props.ipaConfig.components.entityData.length) {
+          let entityDataComponents = []
+          this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
+            try {
+              let dataComp = require('../../../../app/ipaCore/components/'+ dataCompFile.file)
+              let dataCompFactory = dataComp[dataCompFile.name+'Factory']
+              entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
+            } catch(e) {
+              console.error(e)
+              console.error('Entity Action component not able to be loaded: ' + dataCompFile.name)
+            }
+          })
+          if (entityDataComponents.length) store.dispatch(addEntityComponents('data',entityDataComponents))
+        }
+      } else {
+        console.warn("No ipa-core component configuration found")
       }
             
       //config loader
