@@ -30,29 +30,6 @@ export default class ProjectPickerModal extends React.Component {
     this.getUserGroupOptions = this.getUserGroupOptions.bind(this)
   }
 
-  // checkUserConfigs = async (selectedProject) => {
-  //   let ctx = {_namespaces: selectedProject._namespaces};
-  //   let userGroups = await IafProj.getUserGroupsForCurrentUser(selectedProject, ctx);
-  //   let selectedUserGroupId = null;
-  //   let userGroupsWithConfig = [];
-  //   //Check if there are more than one user groups with user configs of this _userType
-  //   if (userGroups) {
-  //     await IafHelper.asyncForEach(userGroups, async ug => {
-  //       let configs = await IafUserGroup.getUserConfigs(ug, {_userType: this.props.configUserType}, ctx)
-  //           .catch(e => console.log("ignoring this usergroup", ug._description, "reason", e));
-  //       if (configs && configs.length > 0) {
-  //         ug.userConfig = configs[0];
-  //         userGroupsWithConfig.push(ug);
-  //       }
-  //     });
-
-  //     if(userGroupsWithConfig.length === 1){
-  //       selectedUserGroupId = userGroupsWithConfig[0]._id;
-  //     }
-  //   }
-  //   return {userGroupsWithConfig: userGroupsWithConfig, selectedUserGroupId: selectedUserGroupId};
-  // }
-
   componentDidMount = async () => {
 
     this.loadModal();
@@ -83,13 +60,13 @@ export default class ProjectPickerModal extends React.Component {
       for (let i = 0; i < projects.length; i++) {
 
         let userGroups = await IafProj.getUserGroupsForCurrentUser(projects[i])
-        console.log('1', userGroups)
+ 
         //for each userGroup get each the user configs with the application's configUserType
         for (let ii = 0; ii < userGroups.length; ii++) {
    
           let userConfigs = await IafUserGroup.getUserConfigs(userGroups[ii], {_userType: this.props.configUserType} ,{_namespaces: projects[i]._namespaces})
             .catch(e => console.log("ignoring this usergroup", userGroups[ii]._description, "reason", e));
-            console.log('2', userConfigs)
+    
           if (userConfigs.length > 0) {
             if (userConfigs.length > 1) {
               console.warn("User Group " + userGroups[ii]._name + " has more than one userConfig for configUserType " + this.props.configUserType)
@@ -99,10 +76,10 @@ export default class ProjectPickerModal extends React.Component {
             userGroups[ii].userConfig = userConfigs.filter(cfg => cfg._userType === this.props.configUserType)[0]
           }
         }
-        console.log('3', userGroups)
+
         //if a userGroup has no userConfig rmeove the userGroup
         let userGroupsWithConfigs = userGroups.filter(ug => ug.userConfig)
-        console.log('4', userGroupsWithConfigs)
+
         //if a project has no userGroups remove the project
         if (userGroupsWithConfigs && userGroupsWithConfigs.length) {
           myProjects.push(projects[i])
