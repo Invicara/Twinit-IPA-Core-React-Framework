@@ -4,6 +4,7 @@ import {IafProj, IafUserGroup, IafHelper, IafSession, IafPassSvc} from '@invicar
 import _ from 'lodash';
 import GenericModal from "./GenericModal";
 import SimpleTable from "../IpaControls/SimpleTable"
+import SimpleTextThrobber from '../IpaControls/SimpleTextThrobber'
 
 import './ProjectPickerModal.scss'
 import '../IpaControls/SpinningLoadingIcon.scss'
@@ -14,37 +15,43 @@ export default class ProjectPickerModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loadingModal: true,
+      projects: [],
+      appUserGroups: [],
       selectedProjectId: null,
+      userGroupOptions: [],
       selectedUserGroupId: null,
       remember: true,
       projectUserGroups: [],
       showLoadButton: false,
       inviteStatus: {}
     };
+
+    this.getUserGroupOptions = this.getUserGroupOptions.bind(this)
   }
 
-  checkUserConfigs = async (selectedProject) => {
-    let ctx = {_namespaces: selectedProject._namespaces};
-    let userGroups = await IafProj.getUserGroupsForCurrentUser(selectedProject, ctx);
-    let selectedUserGroupId = null;
-    let userGroupsWithConfig = [];
-    //Check if there are more than one user groups with user configs of this _userType
-    if (userGroups) {
-      await IafHelper.asyncForEach(userGroups, async ug => {
-        let configs = await IafUserGroup.getUserConfigs(ug, {_userType: this.props.configUserType}, ctx)
-            .catch(e => console.log("ignoring this usergroup", ug._description, "reason", e));
-        if (configs && configs.length > 0) {
-          ug.userConfig = configs[0];
-          userGroupsWithConfig.push(ug);
-        }
-      });
+  // checkUserConfigs = async (selectedProject) => {
+  //   let ctx = {_namespaces: selectedProject._namespaces};
+  //   let userGroups = await IafProj.getUserGroupsForCurrentUser(selectedProject, ctx);
+  //   let selectedUserGroupId = null;
+  //   let userGroupsWithConfig = [];
+  //   //Check if there are more than one user groups with user configs of this _userType
+  //   if (userGroups) {
+  //     await IafHelper.asyncForEach(userGroups, async ug => {
+  //       let configs = await IafUserGroup.getUserConfigs(ug, {_userType: this.props.configUserType}, ctx)
+  //           .catch(e => console.log("ignoring this usergroup", ug._description, "reason", e));
+  //       if (configs && configs.length > 0) {
+  //         ug.userConfig = configs[0];
+  //         userGroupsWithConfig.push(ug);
+  //       }
+  //     });
 
-      if(userGroupsWithConfig.length === 1){
-        selectedUserGroupId = userGroupsWithConfig[0]._id;
-      }
-    }
-    return {userGroupsWithConfig: userGroupsWithConfig, selectedUserGroupId: selectedUserGroupId};
-  }
+  //     if(userGroupsWithConfig.length === 1){
+  //       selectedUserGroupId = userGroupsWithConfig[0]._id;
+  //     }
+  //   }
+  //   return {userGroupsWithConfig: userGroupsWithConfig, selectedUserGroupId: selectedUserGroupId};
+  // }
 
   componentDidMount = async () => {
 
@@ -59,21 +66,65 @@ export default class ProjectPickerModal extends React.Component {
 
   }
 
+  getUserGroupOptions = (projectid) => {
+    return this.state.appUserGroups[projectid] ? this.state.appUserGroups[projectid].map((ug) => {return {'value': ug._id, 'label': ug._name}}) : [];
+  }
+
   loadModal = async () => {
 
     const {projects} = this.props;
     this.getInvites()
     if(projects && projects.length > 0) {
 
-      let res, projectid, usergroupid;
-      if (!this.props.appContextProps.selectedItems.selectedProject){
+      let myProjects = []
+      let myUserGroups = {}
+
+      //for each project get the user's userGroups
+      for (let i = 0; i < projects.length; i++) {
+
+        let userGroups = await IafProj.getUserGroupsForCurrentUser(projects[i])
+        console.log('1', userGroups)
+        //for each userGroup get each the user configs with the application's configUserType
+        for (let ii = 0; ii < userGroups.length; ii++) {
+   
+          let userConfigs = await IafUserGroup.getUserConfigs(userGroups[ii], {_userType: this.props.configUserType} ,{_namespaces: projects[i]._namespaces})
+            .catch(e => console.log("ignoring this usergroup", userGroups[ii]._description, "reason", e));
+            console.log('2', userConfigs)
+          if (userConfigs.length > 0) {
+            if (userConfigs.length > 1) {
+              console.warn("User Group " + userGroups[ii]._name + " has more than one userConfig for configUserType " + this.props.configUserType)
+            }
+
+            //for some reason the query above doesnt correctly filter to the correct type of user config so we do it here
+            userGroups[ii].userConfig = userConfigs.filter(cfg => cfg._userType === this.props.configUserType)[0]
+          }
+        }
+        console.log('3', userGroups)
+        //if a userGroup has no userConfig rmeove the userGroup
+        let userGroupsWithConfigs = userGroups.filter(ug => ug.userConfig)
+        console.log('4', userGroupsWithConfigs)
+        //if a project has no userGroups remove the project
+        if (userGroupsWithConfigs && userGroupsWithConfigs.length) {
+          myProjects.push(projects[i])
+          myUserGroups[projects[i]._id] = userGroupsWithConfigs
+        }
+
+      }
+      
+      //serve projects and usergroups from state
+      this.setState({projects: myProjects, appUserGroups: myUserGroups})
+
+      //check selectedItems and see if project and usergroup apply and if so set them to current
+      let res, projectid, usergroupid, projectUserGroups;
+      if (!this.props.appContextProps.selectedItems.selectedProject || !myUserGroups[this.props.appContextProps.selectedItems.selectedProject._id]){
           IafSession.setSessionStorage('project', {_namespaces: _.get(projects, '0._namespaces')});
-          res = await this.checkUserConfigs(projects[0]);
-          projectid = projects[0]._id;
-          usergroupid = res.selectedUserGroupId;
+          //res = await this.checkUserConfigs(projects[0]);
+          projectid = myProjects[0] ? myProjects[0]._id : null;
+          //usergroupid = res.selectedUserGroupId;
+          usergroupid = projectid ? myUserGroups[myProjects[0]._id][0]._id : null
       }
       else {
-          res = await this.checkUserConfigs(this.props.appContextProps.selectedItems.selectedProject);
+          //res = await this.checkUserConfigs(this.props.appContextProps.selectedItems.selectedProject);
 
           projectid = this.props.appContextProps.selectedItems.selectedProject._id;
 
@@ -82,12 +133,18 @@ export default class ProjectPickerModal extends React.Component {
           }else if (this.props.appContextProps.selectedItems.selectedUserGroupId)
             usergroupid = this.props.appContextProps.selectedItems.selectedUserGroupId;
           else
-            usergroupid = res.selectedUserGroupId;
+            //usergroupid = res.selectedUserGroupId;
+            usergroupid = myUserGroups[myProjects[0]._id][0]._id
       }
 
+      const selectUserGroupOptions = this.getUserGroupOptions(projectid)
+
       this.setState({selectedProjectId: projectid, showLoadButton: true,
-        projectUserGroups: res.userGroupsWithConfig ? res.userGroupsWithConfig : [],
-        selectedUserGroupId: usergroupid});
+        projectUserGroups: myUserGroups[projectid],
+        userGroupOptions: selectUserGroupOptions,
+        userGroupValue: _.find(selectUserGroupOptions, {value: usergroupid}),
+        selectedUserGroupId: usergroupid,
+        loadingModal: false});
     }
   }
 
@@ -139,7 +196,7 @@ export default class ProjectPickerModal extends React.Component {
         selectedUserGroup = projectUserGroups[0];
     }
     if(!selectedUserGroup) {
-      userConfigs = await IafProj.getUserConfigs(project, {_userType: ConfigUserType});
+      userConfigs = await IafProj.getUserConfigs(project, {_userType: this.props.configUserType});
     }else {
       userConfigs.push(selectedUserGroup.userConfig);
     }
@@ -160,19 +217,24 @@ export default class ProjectPickerModal extends React.Component {
 
   onProjectPicked = async (selectedOption) => {
     const projectId = selectedOption.value;
-    this.setState({showLoadButton: false, projectUserGroups:[]});
-    const {projects} = this.props;
-    const selectedProject = _.filter(projects, p => p._id === projectId)[0];
+    this.setState({showLoadButton: false, projectUserGroups:[], userGroupOptions: []});
+    const {projects} = this.state;
 
-    let res = await this.checkUserConfigs(selectedProject);
+    let projectUserGroups = this.state.appUserGroups[projectId]
+    let selectedUserGroupId = this.state.appUserGroups[projectId][0]._id
+
+    const selectUserGroupOptions = this.getUserGroupOptions(projectId)
+
     this.setState({selectedProjectId: projectId, showLoadButton: true,
-      projectUserGroups: res.userGroupsWithConfig ? res.userGroupsWithConfig : [],
-      selectedUserGroupId: res.selectedUserGroupId});
+      projectUserGroups: projectUserGroups,
+      userGroupOptions: selectUserGroupOptions,
+      userGroupValue: selectUserGroupOptions[0],
+      selectedUserGroupId: selectedUserGroupId});
   }
 
   onUserGroupPicked = (selectedOption) => {
     const selectedUserGroupId = selectedOption.value;
-    this.setState({selectedUserGroupId: selectedUserGroupId});
+    this.setState({selectedUserGroupId: selectedUserGroupId, userGroupValue: selectedOption});
   }
 
   submitProjSelection = async () => {
@@ -229,8 +291,8 @@ export default class ProjectPickerModal extends React.Component {
   }
 
   render() {
-    const {projects, appContextProps, onCancel} = this.props;
-    const {remember, projectUserGroups, showLoadButton, invites} = this.state;
+    const {appContextProps, onCancel} = this.props;
+    const {projects, remember, projectUserGroups, showLoadButton, invites} = this.state;
     const loadBtn = showLoadButton ? <div>
           <div className='custom-control custom-switch' style={{marginTop: '15px', zIndex: '0'}}>
                 <input type="checkbox" className="custom-control-input" id="remswitch" value={remember} checked={remember} onChange={this.onRememberChange.bind(this)}/>
@@ -243,23 +305,13 @@ export default class ProjectPickerModal extends React.Component {
     //TODO handle user modal manual close -> load default config
     const selectProjectOptions = (!projects || projects.length == 0) ? [{value: 'none', label: ''}] :
         projects.map((project) => {return {'value': project._id, 'label': project._name}});
-    const selectUserGroupOptions = projectUserGroups ? projectUserGroups.map((ug) => {return {'value': ug._id, 'label': ug._name}}) : [];
 
     //We don't want to always set the selects to the first option.
     //We want to be able to display the last choices the user made in the dialog.
     //So we default to the first option, but if we find selectedItems in the appContext we use them
     //to open the dialog with settings they last chose
     let defaultProjectOption = selectProjectOptions[0];
-    if (appContextProps.selectedItems.selectedProject) {
-        defaultProjectOption = {'value': appContextProps.selectedItems.selectedProject._id, 'label': appContextProps.selectedItems.selectedProject._name};
-    }
-
-    let defaultUserGroupOption = selectUserGroupOptions[0];
-    if (appContextProps.selectedItems.selectedUserGroupId) {
-        let foundUserGroup = _.filter(selectUserGroupOptions, ug => ug.value === appContextProps.selectedItems.selectedUserGroupId)[0];
-        if (foundUserGroup)
-            defaultUserGroupOption = foundUserGroup;
-    }
+    if (this.state.selectedProjectId) defaultProjectOption = _.find(selectProjectOptions, {value: this.state.selectedProjectId})
 
     let currentInvites = invites && invites.filter(inv => inv._status == "PENDING")
     let expiredInvites = invites && invites.filter(inv => inv._status == "EXPIRED")
@@ -286,13 +338,15 @@ export default class ProjectPickerModal extends React.Component {
         modalBody={
           <div className="project-picker-modal">
             {
-              (!projects || projects.length === 0) &&
+              (!this.state.loadingModal && (!projects || projects.length === 0)) &&
               <div>
                 You are not yet a member of any projects, please
                 {(!invites || invites.length === 0) && <span> contact your project admin for an invite</span>}
                 {(invites && invites.length > 0) && <span> accept an invite</span>}
               </div>
             }
+
+            {this.state.loadingModal && <SimpleTextThrobber throbberText="Loading your project information" />}
 
             <div>
               {currentInvites && currentInvites.length > 0 &&
@@ -309,7 +363,7 @@ export default class ProjectPickerModal extends React.Component {
             </div>
 
             {
-              projects && projects.length > 0 &&
+              !this.state.loadingModal && projects && projects.length > 0 &&
               <div>
                 <h4>Project</h4>
                 <Select
@@ -331,8 +385,8 @@ export default class ProjectPickerModal extends React.Component {
                     <h4>User Group</h4>
                     <Select
                         name="userGroupSelect"
-                        options={selectUserGroupOptions}
-                        defaultValue={defaultUserGroupOption}
+                        options={this.state.userGroupOptions}
+                        value={this.state.userGroupValue}
                         className="basic-single"
                         classNamePrefix="select"
                         placeholder={'Select User Group...'}
