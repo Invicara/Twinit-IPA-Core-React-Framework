@@ -489,7 +489,7 @@ class ScriptRunnerView extends React.Component {
                   </div>))}
                 </div>
           </StackableDrawer>}
-          {this.props.handler.config && this.props.handler.config.allowScriptInput && this.state.helpLinks.length &&
+          {this.props.handler.config && this.props.handler.config.allowScriptInput && this.state.helpLinks.length > 0 &&
               <StackableDrawer level={3} iconKey='fas fa-question' defaultOpen={false}>
                 <div style={{fontWeight: 'bold', marginTop: '20px', marginLeft: '60px'}}>Help Topics</div>
                 <div style={{marginTop: '40px', marginLeft: '60px'}}>
