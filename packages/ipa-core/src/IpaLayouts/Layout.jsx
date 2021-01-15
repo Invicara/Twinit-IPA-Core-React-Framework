@@ -166,7 +166,7 @@ class Layout extends React.Component {
                             {this.props.children}
                                 <BottomPanel height={this.state.bottomPanelHeight} hideOnLoad={true}>
                                     {bottomPanelToolbar}
-                                    {<this.props.bottomPanelContent contextProps={contextProps} />}
+                                    {this.props.bottomPanelContent ? <this.props.bottomPanelContent contextProps={contextProps} /> : ""}
                                 </BottomPanel>
                         </FlexContent>
                     </FlexContainer>
