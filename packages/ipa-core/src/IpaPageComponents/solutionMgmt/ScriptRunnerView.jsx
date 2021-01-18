@@ -507,9 +507,9 @@ class ScriptRunnerView extends React.Component {
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Select
                             key={'scripts'}
-                            value={{label: this.state.selectedScript.name, value: this.state.selectedScript, key: this.state.selectedScript.name}}
+                            value={{label: this.state.selectedScript ? this.state.selectedScript.name : "", value: this.state.selectedScript ? this.state.selectedScript : "", key: this.state.selectedScript ? this.state.selectedScript.name : ""}}
                             onChange={this.handleScriptSelect}
-                            disabled={this.state.isRunning}
+                            disabled={this.state.isRunning || !this.state.selectedScript}
                             options={this.state.scripts.map((scr) => {
                                         return {key: scr.name, value: scr, label: scr.name}
                                     })}
