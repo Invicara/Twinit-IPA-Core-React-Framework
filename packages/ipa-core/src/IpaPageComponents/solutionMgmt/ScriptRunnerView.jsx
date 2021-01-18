@@ -106,6 +106,7 @@ class ScriptRunnerView extends React.Component {
         this.setState({handler});
 
         let scripts = ScriptHelper.getScriptVar('runnableScripts');
+        if (!scripts) scripts = []
         
         if (handler.config && handler.config.allowScriptInput && scripts && scripts.length > 0) {
           IafScripts.getScripts({query: {_userType: handler.scriptTypes[0]}}).then((scr) => {
