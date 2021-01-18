@@ -140,7 +140,7 @@ class ScriptRunnerView extends React.Component {
             this.setState({helpLinks: helpLinks})
         }
         else
-          this.setState({scripts: scripts, selectedScript: scripts[0]})
+          this.setState({scripts: scripts, selectedScript: scripts && scripts.length > 0 ? scripts[0] : null})
     }
     
     //FIND LATEST SCRIPT VERSION
