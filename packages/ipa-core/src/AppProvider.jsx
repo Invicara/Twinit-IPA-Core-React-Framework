@@ -52,7 +52,9 @@ export const withAppContext = (Component) => (props) => (<AppContext.Consumer>
 class AppProvider extends React.Component {
   constructor(props) {
     super(props);
-    IafSession.setConfig(endPointConfig ? endPointConfig : this.props.ipaConfig.endPointConfig);
+
+    IafSession.setConfig(endPointConfig);
+    
     this.authUrl = IafSession.getAuthUrl(endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot);
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
