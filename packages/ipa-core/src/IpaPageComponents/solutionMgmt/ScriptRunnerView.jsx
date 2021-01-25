@@ -109,27 +109,34 @@ class ScriptRunnerView extends React.Component {
         if (!scripts) scripts = []
         
         if (handler.config && handler.config.allowScriptInput && scripts && scripts.length > 0) {
-          IafScripts.getScripts({query: {_userType: handler.scriptTypes[0]}}).then((scr) => {
+          
+          let allParsedScripts = []
+          for (let i = 0; i < handler.scriptTypes.length; i++) {
+
+            let scr = await IafScripts.getScripts({query: {_userType: handler.scriptTypes[i]}})
             let scriptVer = _.find(scr[0]._versions, {_version: scr[0]._tipVersion})
             let script = scriptVer._userData
             let parsed = JSON.parse(script)
+            allParsedScripts.push(...parsed)
+
+          }
+
+          if (localStorage.ipaScriptRunnerLocalScripts && localStorage.ipaScriptRunnerLocalScripts.length){//
+            let scriptNames = localStorage.ipaScriptRunnerLocalScripts.split(",")
+            let scriptsToAdd = scriptNames.map((scrname) => {
+              return {
+                name: scrname + ' (local)',
+                script: scrname,
+                local: true
+              }
+            })
             
-            if (localStorage.ipaScriptRunnerLocalScripts && localStorage.ipaScriptRunnerLocalScripts.length){
-              let scriptNames = localStorage.ipaScriptRunnerLocalScripts.split(",")
-              let scriptsToAdd = scriptNames.map((scrname) => {
-                return {
-                  name: scrname + ' (local)',
-                  script: scrname,
-                  local: true
-                }
-              })
-              
-              scriptsToAdd.push(...scripts)
-              scripts = scriptsToAdd
-            }
-            
-            this.setState({parsedScript: parsed, scripts: scripts, selectedScript: scripts[0]}, this.getScriptText)
-          })
+            scriptsToAdd.push(...scripts)
+            scripts = scriptsToAdd
+          }
+
+          this.setState({parsedScript: allParsedScripts, scripts: scripts, selectedScript: scripts[0]}, this.getScriptText)
+          
           if (localStorage.ipaScriptRunnerConvertSetq)
             this.setState({convertSetq: true})
           this.readVars()
