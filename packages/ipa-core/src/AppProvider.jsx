@@ -87,7 +87,8 @@ class AppProvider extends React.Component {
         showBottomPanel: this.showBottomPanel.bind(this),
         toggleBottomPanel: this.toggleBottomPanel.bind(this),
         openBottomPanelMax: this.openBottomPanelMax.bind(this),
-        getCurrentHandler: this.getCurrentHandler.bind(this)
+        getCurrentHandler: this.getCurrentHandler.bind(this),
+        showModal: this.showIpaModal.bind(this)
       }
     };
 
@@ -404,6 +405,11 @@ class AppProvider extends React.Component {
 
   testConfig(config) {
     return calculateRoutes(config, this.state, this.props.ipaConfig);
+  }
+
+  showIpaModal(modalContent) {
+    const self = this
+    self.ifefShowModal(modalContent)
   }
 
   async onConfigLoad(config, routes, token, user) {
