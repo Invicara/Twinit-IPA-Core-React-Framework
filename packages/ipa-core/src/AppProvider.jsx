@@ -409,7 +409,7 @@ class AppProvider extends React.Component {
 
   showIpaModal(modalContent) {
     const self = this
-    self.ifefShowModal(modalContent)
+    self.context.ifefShowModal(modalContent)
   }
 
   async onConfigLoad(config, routes, token, user) {
