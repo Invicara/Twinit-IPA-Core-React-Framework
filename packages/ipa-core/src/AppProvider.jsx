@@ -300,7 +300,7 @@ class AppProvider extends React.Component {
       */
       let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
       if (scriptPlugins) {
-        scriptPlugins.forEach(filename) => {
+        scriptPlugins.forEach((filename) => {
           try {
             let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
             for (let fnName in funcs) {
@@ -310,7 +310,7 @@ class AppProvider extends React.Component {
             console.error(e)
             console.error('Script plugin not able to be loaded: ' + filename)
           }
-        }
+        })
       }
 
       /* load redux extended slices provided by the app */
