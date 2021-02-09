@@ -21,6 +21,7 @@ import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
 import {IafSession, IafProj} from '@invicara/platform-api';
+import { expression } from '@invicara/expressions'
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 
@@ -54,7 +55,7 @@ class AppProvider extends React.Component {
     super(props);
 
     IafSession.setConfig(endPointConfig);
-    
+
     this.authUrl = IafSession.getAuthUrl(endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot);
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
@@ -186,7 +187,7 @@ class AppProvider extends React.Component {
     let pageNames = config.pages ? Object.keys(config.pages) : Object.keys(config.groupedPages);
     let pagesConfig = config.pages || config.groupedPages;
     let pagesHavePositions = pagesConfig[pageNames[0]].position;
-    
+
     if (page.endsWith('#') && config.homepage && config.homepage.handler) {
       return config.handlers[config.homepage.handler];
     }
@@ -218,7 +219,7 @@ class AppProvider extends React.Component {
     // if (config.pages && config.pages[page] || pageGroup){
     //   handler = config.pages ? config.handlers[config.pages[page].handler] : config.handlers[pageGroup.pages[page].handler] ;
     // }
-      
+
 
     //if the handler is not found in the page list
     //look for it in the list of handlers
@@ -289,17 +290,39 @@ class AppProvider extends React.Component {
       //go to login page
       window.location = this.authUrl;
     } else {
-      
+
+      /* load script plugins */
+
+      /*
+        We load all the exported functions from each file listed in ipaConfig.scriptPlugins.
+
+        Each script plugin file must be located in ./app/ipaCore/scriptPlugins
+      */
+      let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
+      if (scriptPlugins) {
+        scriptPlugins.forEach((filename) => {
+          try {
+            let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
+            for (let fnName in funcs) {
+              addScriptFunction(funcs[fnName])
+            }
+          } catch(e) {
+            console.error(e)
+            console.error('Script plugin not able to be loaded: ' + filename)
+          }
+        })
+      }
+
       /* load redux extended slices provided by the app */
-      
+
       /*
        * Here we load the redux reducers (slices) provided by the local application
        * This is an additive, but replace, function. Meaning if the local application
        * adds a reducer with the same name as a framework reducer it will override the
        * framework reducer.
-       * 
+       *
        * We may want to protect against that?
-       * 
+       *
        * Reducer (slice) files must be located in ./app/ipaCore/redux
        */
       if (this.props.ipaConfig && this.props.ipaConfig.redux && this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
@@ -316,18 +339,18 @@ class AppProvider extends React.Component {
       } else {
         console.warn("No ipa-core redux configuration found")
       }
-      
+
       /* load redux extended dashboard components */
-      
+
       /*
        * Here we load the dashboard components provided by the local application into redux
-       * These components if named the same as a framework component can override the 
+       * These components if named the same as a framework component can override the
        * framework dashborad component.
-       * 
+       *
        * Dashboard compnent files must be located in ./app/ipaCore/components
        */
 
-      if (this.props.ipaConfig && this.props.ipaConfig.components) { 
+      if (this.props.ipaConfig && this.props.ipaConfig.components) {
         if (this.props.ipaConfig.components.dashboard && this.props.ipaConfig.components.dashboard.length) {
           let dashComponents = []
           this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
@@ -341,14 +364,14 @@ class AppProvider extends React.Component {
           })
           if (dashComponents.length) store.dispatch(addDashboardComponents(dashComponents))
         }
-      
+
         /* load redux extended dashboard components */
-        
+
         /*
         * Here we load the entity components provided by the local application into redux
-        * These components if named the same as a framework component can override the 
+        * These components if named the same as a framework component can override the
         * framework component.
-        * 
+        *
         * entity compnent files must be located in ./app/ipaCore/components
         */
         if (this.props.ipaConfig.components.entityAction && this.props.ipaConfig.components.entityAction.length) {
@@ -364,7 +387,7 @@ class AppProvider extends React.Component {
           })
           if (entityActionComponents.length) store.dispatch(addEntityComponents('action',entityActionComponents))
         }
-        
+
         if (this.props.ipaConfig.components.entityData && this.props.ipaConfig.components.entityData.length) {
           let entityDataComponents = []
           this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
@@ -382,7 +405,7 @@ class AppProvider extends React.Component {
       } else {
         console.warn("No ipa-core component configuration found")
       }
-            
+
       //config loader
       if (loadConfigFromCache && sessionStorage.ipadt_configData) {
         const jsonData = JSON.parse(sessionStorage.ipadt_configData);
@@ -414,7 +437,7 @@ class AppProvider extends React.Component {
 
   async onConfigLoad(config, routes, token, user) {
     console.log(config, routes)
-    
+
     //clear routes immediately so that the UI rmeoves the last project's routes
     this.setState({
       token,
@@ -426,14 +449,14 @@ class AppProvider extends React.Component {
       },
       userConfig: config
     });
-    
+
     //Clear all script state in cache and in script engine
     ScriptCache.clearCache();
     ScriptHelper.releaseExpressionExecCtx()
     ScriptHelper.initExpressionExecCtx()
-    
+
     this.context.ifefShowModal(false);
-    
+
     let selectedProj = IafProj.getCurrent();
     if (selectedProj) {
 
@@ -482,10 +505,10 @@ class AppProvider extends React.Component {
         isLoading: false
       });
   }
-  
+
   store.dispatch(addUserConfig(config))
   store.dispatch(addUser(user))
-  
+
   if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 }
 
@@ -499,37 +522,51 @@ class AppProvider extends React.Component {
   }
 }
 
+const addScriptFunction = (fn) => {
+  let fnName = "$" + fn.name
+  let fnWrapper = {}
+  fnWrapper[fnName] = {
+    operate: async (a,b,c) => {
+      let args = expression.operate(a,b,c)
+      let result = await fn(args)
+      return result
+    }
+  }
+  console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
+  expression.use(fnWrapper)
+}
+
 function calculateRoutes(config, appContextProps, ipaConfig) {
   const pList = [];
   const pRoutes = [];
   const pGroups = [];
 
-  /* 
+  /*
    * Loads a pageComponent for the app. It will first try to load the pageComponent
    * from the local application. If the pageComponent is not found there it will
    * try to load the pageComponent from the framework. This allows the local
    * application to override a framework page component if it so chooses.
-   * 
-   * If the pageComponent is not found an error is sent to the console and 
+   *
+   * If the pageComponent is not found an error is sent to the console and
    * the page is skipped.
-   * 
+   *
    * pageComponents must be in the ./app/ipaCore/pageComponents folder
    */
   function asIpaPage(rawPageComponent) {
     return withAppContext(withGenericPage(rawPageComponent))
-  } 
+  }
 
   function getPageComponent(pageComponent) {
-    
+
     let component
     try {
       component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
       component = asIpaPage(component)
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
-   
+
       component = InternalPages[pageComponent] ? InternalPages[pageComponent] : null
-      
+
       if (component) {
         component = asIpaPage(component)
         console.log(pageComponent + ' loaded from framework')
@@ -541,9 +578,9 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
         component = null
       }
     }
-    
+
     return component
-    
+
   }
 
   function addRoute(handlerName, handler, addPage, pathPrefix, pageGroup) {
@@ -552,18 +589,18 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
       console.log("Skipping", handler)
       return
     }
-  
+
     let component = getPageComponent(handler.pageComponent);
     if (!component) return
-  
+
     let item = {
       path: pathPrefix ? pathPrefix + handler.path : (handler.path || '/' + handlerName),
       title: handler.title || 'no title',
       icon: (handler.icon || ''),
       name: handlerName,
-      exact: handler.pageComponent === 'knack/KnackView' ? false : true,      
+      exact: handler.pageComponent === 'knack/KnackView' ? false : true,
     };
-  
+
     pRoutes.push(<Route path={item.path} key={item.path} component={component} exact={item.exact}/>);
     if (addPage) {
       pList.push(item);
@@ -597,15 +634,15 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
   }
   else {
     pages.sort();
-  } 
+  }
 
   // Add the component for each page (dynamically requires the JSX)
   pages.forEach(key => {
     if(usingGroupedConfig){
       addGroup(key, pagesConfig[key].icon);
-      pagesConfig[key].pages.forEach(page => {        
+      pagesConfig[key].pages.forEach(page => {
         if (page.handler) {
-          let handler = config.handlers[page.handler];    
+          let handler = config.handlers[page.handler];
           addRoute(page.handler, handler, true, undefined, key);
         }
       })
@@ -613,10 +650,10 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
       let page = config.pages[key];
       if (page.handler) {
         let handler = config.handlers[page.handler];
-  
+
         addRoute(page.handler, handler, true);
       }
-    }    
+    }
   });
 
   appContextProps.userConfig = config;
@@ -635,7 +672,7 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
   else {
     pRoutes.unshift(<Route path='/' key='/' exact={true} component={HomePage} />);
     pRoutes.push(<Redirect to={'/'} key={'redirect_to_root'}/>);
-  } 
+  }
 
   return {pageList: pList, pageRoutes: pRoutes, pageGroups: pGroups};
 }
