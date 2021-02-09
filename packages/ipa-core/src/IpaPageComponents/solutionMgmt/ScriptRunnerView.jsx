@@ -19,7 +19,7 @@
  * ENHANCEMENTS
  * 
  * 1. Replace text areas with JSON Editor
- * 2. Get editors to work with JSON and javascript objects
+ * 2. Get editors to work with JSON and javascript objects - DONE
  * 3. Add "Add Operator" sidedrawer that will insert script operators into the script
  * 4. Able to remove individual variables
  * 5. Better variable display
@@ -35,6 +35,8 @@ import _ from 'lodash'
 import GenericMatButton from '../../IpaControls/GenericMatButton';
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import {StackableDrawer} from '../../IpaControls/StackableDrawer'
+
+const json5 = require('json5')
 
 import '../../lib/mobiscroll.scss'
 
@@ -259,9 +261,10 @@ class ScriptRunnerView extends React.Component {
         if (this.props.handler.config && this.props.handler.config.allowScriptInput) {
           
           let scriptInput = this.state.scriptInput.trim()
-          let scriptInputObj = scriptInput && scriptInput.length > 0 ? JSON.parse(scriptInput) : {};
+          let scriptInputObj = scriptInput && scriptInput.length > 0 ? json5.parse(scriptInput) : {};
  
-          let restringedDef = "[{$defscript: {'testScript':" + this.state.scriptJSON + "}}]"
+          let purifiedJSON = JSON.stringify(json5.parse(this.state.scriptJSON))
+          let restringedDef = "[{$defscript: {'testScript':" + purifiedJSON + "}}]"
           
           if (this.state.convertSetq)
             restringedDef = restringedDef.replaceAll("$let", "$setq")
@@ -364,8 +367,9 @@ class ScriptRunnerView extends React.Component {
       let inputError = false;
       if (this.props.handler.config && this.props.handler.config.allowScriptInput) {
         try {
-          if (e.target.value.length)
-            JSON.parse(e.target.value)
+          if (e.target.value.length) {
+            json5.parse(e.target.value)
+          }
         } catch (e) {
           inputError = true;
         }
