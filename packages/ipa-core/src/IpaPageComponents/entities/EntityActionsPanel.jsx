@@ -2,28 +2,26 @@ import React from "react"
 import {compose} from "redux";
 import {connect} from "react-redux";
 import _ from 'lodash'
+import ScriptHelper from "../../IpaUtils/ScriptHelper";
 
 import { getEntityActionComponent } from '../../redux/slices/entityUI'
-
-import { requiresReplacing, getHydratedObject } from "../../IpaUtils/SchemaHelper"
 
 import '../../IpaStyles/DbmTooltip.scss'
 
 const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent}) => {
   let icons = []
 
-  const replaceIfRequired = (payload) => {
-    return new Promise(async (resolve, reject) => {
-      const {actionName, action, entity, type} = payload
-   
-      const doesRequireReplacing = await requiresReplacing(actionName)
-      if(doesRequireReplacing) {
-        const hydratedEntity = await getHydratedObject(action.entitySchema ? action.entitySchema : type.singular); 
-        hydratedEntity == null ? resolve(entity) : resolve(hydratedEntity);
-      } else {
-        resolve(entity);
-      }
-    })
+  const runPreEntityActionScript = async (payload) => {
+
+    const {action, entity, type} = payload
+
+    if(!action.preActionScript){
+      return entity;
+    }
+
+    let result = await ScriptHelper.executeScript(action.preActionScript, {entity: entity, entityType: action.entitySchema ? action.entitySchema : type.singular.toLowerCase()});
+
+    return result ?? entity;
   }
 
   const doAction = async (actionName) => {
@@ -43,14 +41,19 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
         console.error("No factory for " + action.component.name)
         return null
       }
+
+      let newEntity = Array.isArray(entity) ? [...entity] : Object.assign({}, entity)
+
+      newEntity = await runPreEntityActionScript({action, entity: newEntity, type})
       // the factory create method can use the app context to display the component
       // e.g. context.ifefShowModal(modal);
-      entity = await replaceIfRequired({actionName, action, entity, type})
-      factory.create({action, entity, type, context})
+      factory.create({action, entity: newEntity, type, context})
     }
     else {
       // if there's no component execute the action directly
       let newEntity = action.showOnTable && Array.isArray(entity) ? [...entity] : Object.assign({}, entity)
+
+      newEntity = await runPreEntityActionScript({action, entity: newEntity, type});
 
       let origEntity = action.showOnTable && !Array.isArray(entity) ? [{...entity}] : entity;
 

@@ -106,7 +106,9 @@ export default class EntityModal extends React.Component {
 
     getNewUpdatedEntity(originalEntity, att, propInfo, value) {
         return produce(originalEntity, newEntity => {
-            if (Array.isArray(value)) value = value[0];
+          if (Array.isArray(value) && propInfo.type !== 'tags' ) value = value[0];
+
+        if (propInfo && propInfo.type === 'tags' && value === undefined ) value = [];
 
             if (att === 'name') {
                 newEntity["Entity Name"] = value;
@@ -150,6 +152,11 @@ export default class EntityModal extends React.Component {
       return pass;
     }
 
+    mergeEntityWithActionResult = (actionName, entity, createResult) => {
+      if(actionName !== "Create") return entity;
+      return {...entity, ...createResult};
+    }
+
     onSave = async () => {
       this.setState({working: true, error: null});
 
@@ -169,6 +176,7 @@ export default class EntityModal extends React.Component {
 
           if (result.success) {
             this.context.ifefShowModal(false);
+            newEntity = this.mergeEntityWithActionResult(this.props.action.name, newEntity, result.result);
             if (!!this.props.action.onSuccess) this.props.action.onSuccess(this.props.action.type, result.entity ? result.entity : newEntity, result);
           } else {
             let error = (<div className="entity-modal-error">
@@ -212,6 +220,7 @@ export default class EntityModal extends React.Component {
         switch(propInfo.type) {
 
           case 'number':
+          case 'tags':
           case 'text': {
 
             if (this.props.action.component.propertyUiTypes && this.props.action.component.propertyUiTypes[prop]){
@@ -222,7 +231,7 @@ export default class EntityModal extends React.Component {
               else {
                   
                 let currentValue = {};
-                currentValue[prop] = [this.state.newEntity.properties[prop].val];
+                currentValue[prop] = Array.isArray(this.state.newEntity.properties[prop].val) ? this.state.newEntity.properties[prop].val : [this.state.newEntity.properties[prop].val];
 
                 return (<div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
                   <div className="entity-property-control-row">
@@ -296,6 +305,19 @@ export default class EntityModal extends React.Component {
                       </div>
                     </div>
 
+          }
+
+          case 'boolean': {
+            let value = this.state.newEntity.properties[prop].val ? this.state.newEntity.properties[prop].val : false;
+            return <div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
+                      <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
+                      <div className="entity-property-control-row">
+                        <div className='custom-control custom-switch' style={{marginLeft: '10px', zIndex: '0'}}>
+                          <input type="checkbox" className="custom-control-input" value={value} id={propInfo.dName} checked={value} onChange={(e) => this.onChange(prop, propInfo, e.target.checked)}/>
+                          <label className="custom-control-label" htmlFor={propInfo.dName}>{value.toString()}</label>
+                        </div>
+                      </div>
+                    </div>
           }
         }
       }

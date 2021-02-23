@@ -78,6 +78,12 @@
       border-bottom: 1px solid #B2B2B2;
     }
   }
+
+  .custom-control-input:checked ~ .custom-control-label::before {
+    color: #fff;
+    border-color: #c71784;
+    background-color: #c71784;
+  }
   
 }
 
