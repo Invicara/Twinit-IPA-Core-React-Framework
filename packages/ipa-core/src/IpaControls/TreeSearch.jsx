@@ -24,6 +24,11 @@ export const SelectedStatus = {
     CLEAR: 'clear'
 }
 
+export const parseName = name => {
+    const [level, position, ...displayNameParts] = name.split("-");
+    return {level, position, displayName: displayNameParts.join("-")}
+}
+
 export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, touched, onFetch, display, additionalOptions, isFetching, treeLevels }) => {
     const [tree, setTree] = useState({})
     const [nodeIndex, setNodeIndex] = useState({})
