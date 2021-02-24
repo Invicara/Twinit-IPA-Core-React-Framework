@@ -98,15 +98,22 @@ export const useChecked = (inputItems) => {
 
 }
 
-export const sortEntities = () =>{
+export const sortEntities = (entitySingular) =>{
     const ASCENDING_ORDER = 'asc';
     const DESCENDING_ORDER = 'desc';
-    const [currentSort, setSort] = useState({property: 'Entity Name', valueAccessor: 'Entity Name', order: ASCENDING_ORDER});
+    const ENTITY_LIST_SORT_PREFERENCE = 'entityListSortPreference';
+
+    const sessionPreference = sessionStorage.getItem(ENTITY_LIST_SORT_PREFERENCE + entitySingular);
+    const sortPreference = sessionPreference ? JSON.parse(sessionPreference) : {property: 'Entity Name', valueAccessor: 'Entity Name', order: ASCENDING_ORDER};      
+
+    const [currentSort, setSort] = useState(sortPreference);
     
     const sortEntitiesBy = (colAccessor) => {
         let order = currentSort.property == colAccessor ? currentSort.order == ASCENDING_ORDER ? DESCENDING_ORDER : ASCENDING_ORDER : ASCENDING_ORDER;
         //TODO: we might need a better condition than to check if the column accessor has a . in it. This condition will hold for all properties however.
-        setSort({valueAccessor: !colAccessor.includes('.') ? colAccessor : colAccessor + '.val', property: colAccessor, order: order});
+        const sortValue = {valueAccessor: !colAccessor.includes('.') || colAccessor.includes('.val') ? colAccessor : colAccessor + '.val', property: colAccessor, order: order};
+        setSort(sortValue);
+        sessionStorage.setItem(ENTITY_LIST_SORT_PREFERENCE + entitySingular, JSON.stringify(sortValue));
     }
 
     return {sortEntitiesBy, currentSort}
@@ -115,7 +122,7 @@ export const sortEntities = () =>{
 export const EntityListView = ({config, entities, onDetail, actions, context, entityPlural = 'Entities', entitySingular = 'Entity'}) => {
 
     const {allChecked, handleCheck, handleAllCheck, items: entityInstances} = useChecked(entities);
-    const {sortEntitiesBy, currentSort: currentSort} = sortEntities();
+    const {sortEntitiesBy, currentSort: currentSort} = sortEntities(entitySingular);
     
     const buildCell = instance => (col, i) => {
         const value = _.get(instance, col.accessor);

@@ -6,14 +6,14 @@ import _ from "lodash";
 
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 
-const treeControlLeafNodeRenderer = (group) => <div>{group.name}</div>;
+const treeControlLeafNodeRenderer = (group) => <div>{parseName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
 
 const treeControlBranchNodeRenderer = (groupName, nodeValue) => {
-    const childCount = _.isArray(nodeValue) ? nodeValue[0].count : _.keys(nodeValue).length;
+    const childCount = _.isArray(nodeValue) ? nodeValue.reduce((a, b) => a + (b['count'] || 0), 0) : undefined;
     return (
         <span>
             {groupName}
-            <span className="count" style={{fontSize: "0.8em"}}>{childCount}</span>
+            {!!childCount && <span className="count" style={{fontSize: "0.8em"}}>{childCount}</span>}
           </span>
     )
 };
@@ -49,7 +49,13 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
         }
     }, [nodeIndex]);
 
-    useEffect(() => {if(!_.isEmpty(getSelectedNodeNames()))onFetch()}, [filteringNodeIndex]);
+    useEffect(() => {
+        if(filteringNodeIndex === null){
+            clearNodeSelection();
+        }else{
+            onFetch()
+        }
+    }, [filteringNodeIndex]);    
 
     const getInitialValue = () => _.fromPairs(treeLevels.map(tl => [tl.property, []]))
 
@@ -72,13 +78,22 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
         }))
     }
 
+    const clearNodeSelection = () => {
+        const newNodeIndex = produce(nodeIndex, nodeIndex => {
+            Object.keys(nodeIndex).forEach((key) => {
+                nodeIndex[key].selectedStatus = SelectedStatus.CLEAR
+            })
+        });
+        setNodeIndex(newNodeIndex);
+    }
+
     async function getTreeLeafGroup(level, parents = []) {
         const levelNodes = (await ScriptHelper.executeScript(treeLevels[level].script,
                 parents ? {input: getPreviousValues(parents) } : undefined)
         ).map((node) => (node.name ? node : {name :node, childCount: 0}));
         loadIntoNodeIndex(levelNodes, level, parents);
         return isLast(level) ?
-            levelNodes.map((node) => ({name: node.name, isLeaf: true, level, parents})) :
+            levelNodes.map((node) => ({name: node.name, isLeaf: true, level, parents, count: node.childCount})) :
             levelNodes.reduce((accum, node) =>
                 ({
                     ...accum,

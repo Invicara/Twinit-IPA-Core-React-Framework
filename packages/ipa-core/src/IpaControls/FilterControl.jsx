@@ -151,6 +151,12 @@ class FilterControl extends React.Component {
     this.props.onChange(completeFilters)
   }
 
+  componentDidUpdate(prevProps){
+    if(!_.isEmpty(prevProps.filters) && _.isEmpty(this.props.filters)){
+      this.onFilterChange(this.props.filters)
+    }
+  }
+
   handleClickOutside = () => {
     document.querySelector(".filter-drop-down-panel."+this.state.key).classList.add("hidden")
   }
@@ -648,7 +654,7 @@ export const applyFilters = (array, filters, getProperty) => {
       result = result.filter(a => {
         let prop = getProperty(a, filterProp)
         let propVal
-        if (_.isString(prop)) {
+        if (_.isString(prop) || prop === undefined) {
           propVal = prop
         }
         else {

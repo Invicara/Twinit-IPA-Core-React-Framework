@@ -42,6 +42,7 @@ export const TreeSelectMode = {
 };
 
 const LAST_SELECTED_GROUP_KEY = "lastSelectedGroup"
+const PROJECT_ID_KEY = 'ipaSelectedProjectId';
 
 class EntitySelectionPanel extends React.Component {
   constructor(props) {
@@ -54,8 +55,8 @@ class EntitySelectionPanel extends React.Component {
       //FIXME Remove this props-to-state copy
       filters: this.props.selectedFilters || {},
       groups: this.props.selectedGroups ?? 
-              sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular) !== null  ?
-              [sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular)] :
+              sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY)) !== null  ?
+              [sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY))] :
                this.props.defaultGroups ?? []
     }    
   }
@@ -93,10 +94,11 @@ class EntitySelectionPanel extends React.Component {
   groupsChanged = (groups) => {
     this.setState({groups})
 
+    const projectId = sessionStorage.getItem(PROJECT_ID_KEY);
     if(groups.length){
-      sessionStorage.setItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular, groups.slice(-1).pop());
+      sessionStorage.setItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId, groups.slice(-1).pop());
     }else{
-      sessionStorage.removeItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular);
+      sessionStorage.removeItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId);
     }
     
     this.props.onGroupOrFilterChange({groups})
