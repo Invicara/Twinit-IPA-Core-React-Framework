@@ -6,6 +6,7 @@ import clsx from "clsx";
 import _ from "lodash";
 import {loadPlainInitialValueWithScriptedSelectFormat} from "../IpaUtils/ScriptedSelectsHelpers";
 import ScriptCache from "../IpaUtils/script-cache";
+import { useWithLinkedSelectChange } from "./useWithLinkedSelectChange";
 
 const flattenIfNotMulti = (selectValues, selects) => {//This is necessary bc script helper does not handle single-option select values as a list
     return _.mapValues(selectValues, (selectedOptions, selectId) =>
@@ -29,6 +30,10 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
     useEffect(() => {
         updateFetchOptions();
     }, [currentValue]);
+
+    const getSelectedValue = option => {
+        return option.value
+    }
     
     const updateFetchOptions = () => {
       fetchOptions();
@@ -64,28 +69,7 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
         loadPlainInitialValueWithScriptedSelectFormat(onChange, currentValue, selects);
     };
 
-    const getSubsequentSelects = select => {
-        return _.values(selects).slice(select.index + 1).reduce((acc, select) => ({
-            ...acc,
-            [select.display]: select
-        }), {});
-    };
-
-    const clearSelectsOptions = selectsToBeCleared => {
-        const clearedSelects = _.mapValues(selectsToBeCleared, select  => ({...select, options: []}));
-        setSelects(selects => ({...selects, ...clearedSelects}));
-    };
-
-    const handleChange = (selectId, selectedOption, select) => {
-        const selectedValues = selectedOption ? (select.multi ? selectedOption : [selectedOption]).map(opt => opt.value) : [];
-        const newValue = {...value, [selectId]: selectedValues};
-        const subsequentSelects = getSubsequentSelects(select);
-        onChange({...newValue, ..._.mapValues(subsequentSelects, () => [])})
-        clearSelectsOptions(subsequentSelects)
-        if(selectedOption){
-            fetchOptions(select, newValue)
-        }
-    };
+    const [onLinkedSelectChange] = useWithLinkedSelectChange(selects, setSelects, value, getSelectedValue, onChange, fetchOptions);
 
     const fetchDisabled = !value || _.isEmpty(_.values(value).flatMap(_.identity));
 
@@ -96,7 +80,7 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
                     styles={selectOverrideStyles || {control: selectStyles}}
                     isMulti={select.multi}
                     value={value[selectId] ? asSelectOptions(value[selectId]) : []}
-                    onChange={selected => handleChange(selectId, selected, select)}
+                    onChange={selected => onLinkedSelectChange(selectId, selected, select)}
                     options={asSelectOptions(select.options)}
                     className="select-element"
                     closeMenuOnSelect={!select.multi}
