@@ -1,0 +1,7 @@
+.cm-scripter > .CodeMirror {
+    height: 60%;
+}
+
+.cm-inputer > .CodeMirror {
+    height: 300;
+}

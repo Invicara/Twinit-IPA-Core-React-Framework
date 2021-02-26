@@ -36,6 +36,19 @@ import GenericMatButton from '../../IpaControls/GenericMatButton';
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import {StackableDrawer} from '../../IpaControls/StackableDrawer'
 
+import {Controlled as CodeMirror} from 'react-codemirror2'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/fold/foldgutter.css'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/addon/edit/matchbrackets.js'
+import 'codemirror/addon/edit/closebrackets.js'
+import 'codemirror/addon/fold/foldcode.js'
+import 'codemirror/addon/fold/foldgutter.js'
+import 'codemirror/addon/fold/brace-fold.js'
+import 'codemirror/addon/fold/comment-fold.js'
+import './monokai-sublime.css'
+import './codemirror-ext.css'
+
 const json5 = require('json5')
 
 import '../../lib/mobiscroll.scss'
@@ -56,10 +69,10 @@ class ScriptRunnerView extends React.Component {
            isRunning: false,
            results: [],
            dots: '',
-           showInput: true,
+           showInput: false,
            scriptInput: "",
            inputError: false,
-           showScript: false,
+           showScript: true,
            scriptJSON: "",
            scriptError: false,
            parsedScript: {},
@@ -361,14 +374,15 @@ class ScriptRunnerView extends React.Component {
           }
       }
     }
-    
-    onInputChange(e, which) {
+
+    onInputChange(editor, data, value, which) {
+      console.log(editor, data, value, which)
       
       let inputError = false;
       if (this.props.handler.config && this.props.handler.config.allowScriptInput) {
         try {
-          if (e.target.value.length) {
-            json5.parse(e.target.value)
+          if (value.length) {
+            json5.parse(value)
           }
         } catch (e) {
           inputError = true;
@@ -376,11 +390,11 @@ class ScriptRunnerView extends React.Component {
       }
       
       if (which === 'input') 
-        this.setState({scriptInput: e.target.value, inputError: inputError});
+        this.setState({scriptInput: value, inputError: inputError});
       else {
-        this.setState({scriptJSON: e.target.value, scriptError: inputError});
+        this.setState({scriptJSON:value, scriptError: inputError});
         if (this.state.selectedScript.local) {
-          localStorage.setItem(getLocalScriptKey(this.state.selectedScript.script), e.target.value)
+          localStorage.setItem(getLocalScriptKey(this.state.selectedScript.script), value)
         }
       }
       
@@ -524,7 +538,7 @@ class ScriptRunnerView extends React.Component {
                             options={this.state.scripts.map((scr) => {
                                         return {key: scr.name, value: scr, label: scr.name}
                                     })}
-                            styles={{container: (provided) => ({...provided, width: '40%', display: 'inline-block', marginLeft: '10%', marginRight: '15px', fontSize: '16px'})}}
+                            styles={{container: (provided) => ({...provided, zIndex: 1000, width: '40%', display: 'inline-block', marginLeft: '10%', marginRight: '15px', fontSize: '16px'})}}
                         />
                         {!this.state.isRunning && <GenericMatButton onClick={this.runScript} disabled={this.state.isRunning} customClasses="attention">Run</GenericMatButton>}
                         {this.state.isRunning && <span style={{fontSize: '16px'}}>Running {this.state.dots}</span>}
@@ -540,39 +554,47 @@ class ScriptRunnerView extends React.Component {
                     </div>
                     
                     {this.props.handler.config && this.props.handler.config.allowScriptInput && <div style={{display: 'grid', gridTemplateColumns: "auto 30%", gridColumnGap: '20px', marginTop: '20px'}}>
-                      <div>
+                      <div style={{height: 'fit-content'}}>
                         {this.state.showInput && <div>
                         <div className='script-input' style={{marginTop: '20px', width: '100%'}}>
-                              <textarea id="scriptinput" 
-                                style={{width: '100%'}}
-                                name="scriptinput" 
-                                rows="10"
-                                placeholder="JSON Script Input"
-                                value={this.state.scriptInput} 
-                                onChange={(e) => this.onInputChange(e, 'input')}
-                                onKeyDown={(e) => this.handleKeyDown(e, this.scriptInput, 'input')}
-                                ref={this.scriptInput}>
-                              </textarea>
+                          <CodeMirror
+                            value={this.state.scriptInput}
+                            options={{
+                              mode: 'javascript',
+                              theme: 'monokai-sublime',
+                              lineNumbers: true,
+                              matchBrackets: true,
+                              autoCloseBrackets: true,
+                              foldGutter: true,
+                              gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+                            }}
+                            className='cm-inputer'
+                            onBeforeChange={(editor, data, value) => this.onInputChange(editor, data, value, 'input')}
+                          />
                         </div>
                         {this.state.inputError && <div style={{color: 'red'}}>Input is not in JSON format</div>}
                         </div>}
                         {this.state.showScript && <div>
-                        <div className='script-input' style={{marginTop: '20px', width: '100%'}}>
-                              <textarea id="scriptjson" 
-                                style={{width: '100%'}}
-                                name="scriptjson" 
-                                rows="20"
-                                placeholder="JSON Script" 
-                                value={this.state.scriptJSON} 
-                                onChange={(e) => this.onInputChange(e, 'script')}
-                                onKeyDown={(e) => this.handleKeyDown(e, this.scriptJSON, 'script')}
-                                ref={this.scriptJSON}>
-                              </textarea>
+                        <div className='script-script' style={{marginTop: '20px', width: '100%'}}>
+                          <CodeMirror
+                            value={this.state.scriptJSON}
+                            options={{
+                              mode: 'javascript',
+                              theme: 'monokai-sublime',
+                              lineNumbers: true,
+                              matchBrackets: true,
+                              autoCloseBrackets: true,
+                              foldGutter: true,
+                              gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+                            }}
+                            className='cm-scripter'
+                            onBeforeChange={(editor, data, value) => this.onInputChange(editor, data, value, 'script')}
+                          />
                         </div>
                         {this.state.scriptError && <div style={{color: 'red'}}>Script is not in JSON format</div>}
                         </div>}
                       </div>
-                      <div>
+                      <div style={{height: 'fit-content'}}>
                         <div style={{display: 'inline-flex', alignItems: 'center'}}>
                           <input type="text" id="newscripttoadd" value={this.state.newScriptName} onChange={this.handleNewScriptName}/>
                           <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}} onClick={this.addNewScript}>
