@@ -211,7 +211,12 @@ class ScriptRunnerView extends React.Component {
       
       if (this.state.addVariable.trim().length) {
         let variables = _.cloneDeep(this.state.variables)
-        variables[this.state.addVariable] = {}
+
+        let varName = this.state.addVariable
+        if (varName.charAt(0) === "$")
+          varName = varName.slice(1)
+
+        variables[varName] = {}
         this.setState({addVariable: "", variables: variables}, this.getScriptVars)
       }
     }
@@ -245,8 +250,15 @@ class ScriptRunnerView extends React.Component {
       }
     }
     
-    clearVars() {
-      this.setState({variables: {}}, this.writeVars)
+    clearVars(v) {
+      console.log('remove: ', v)
+      if (v !== 'all') {
+        let variables = _.cloneDeep(this.state.variables)
+        delete variables[v]
+        this.setState({variables}, this.writeVars)
+      } else
+        this.setState({variables: {}}, this.writeVars)
+
     }
 
     handleScriptSelect(option) {
@@ -608,14 +620,23 @@ class ScriptRunnerView extends React.Component {
                           <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}} onClick={this.addScriptVar}>
                             Track
                           </GenericMatButton>
-                          <div style={{color: 'red', fontSize: '18px', cursor: 'pointer'}} onClick={this.clearVars}><i title='Delete' className='icon ion-android-cancel'></i></div>
+                          <div style={{color: 'red', fontSize: '18px', cursor: 'pointer'}} onClick={() => this.clearVars('all')}><i title='Delete' className='icon ion-android-cancel'></i></div>
                         </div>
                         <div style={{marginTop: '10px'}}>
                           <input type="checkbox" id="setq" value={this.state.convertSetq} checked={this.state.convertSetq} onChange={this.toggleConvertSetq}/>
                           <label style={{marginLeft: '5px'}}>Convert all $let to $setq when executing</label>
                         </div>
                         <hr/>
-                        <ObjectInspector data={this.state.variables} initialExpandedPaths={['root', 'root.*']} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/>
+                        {Object.keys(this.state.variables).map((v) => {
+                          return <div key={v} style={{marginBottom: '10px'}}>
+                            <div style={{display: 'inline-flex'}}>
+                              <div style={{color: 'red', fontSize: '18px', cursor: 'pointer', marginRight: '10px'}} onClick={() => this.clearVars(v)}><i title='Delete' className='icon ion-android-cancel'></i></div>
+                              <span style={{fontWeight: 'bold'}}>{v}</span>
+                            </div>
+                            <ObjectInspector data={this.state.variables[v]} initialExpandedPaths={['root', 'root.*']} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/>
+                          </div>
+                        })}
+                        
                       </div>
                     </div>}
 
