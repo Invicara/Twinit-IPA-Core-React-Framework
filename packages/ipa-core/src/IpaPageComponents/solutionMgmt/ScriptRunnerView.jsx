@@ -565,7 +565,7 @@ class ScriptRunnerView extends React.Component {
                         </div>
                     </div>
                     
-                    {this.props.handler.config && this.props.handler.config.allowScriptInput && <div style={{display: 'grid', gridTemplateColumns: "auto 30%", gridColumnGap: '20px', marginTop: '20px'}}>
+                    {this.props.handler.config && this.props.handler.config.allowScriptInput && <div style={{display: 'grid', gridTemplateColumns: "70% 30%", gridColumnGap: '20px', marginTop: '20px'}}>
                       <div style={{height: 'fit-content'}}>
                         {this.state.showInput && <div>
                         <div className='script-input' style={{marginTop: '20px', width: '100%'}}>
@@ -587,6 +587,7 @@ class ScriptRunnerView extends React.Component {
                         {this.state.inputError && <div style={{color: 'red'}}>Input is not in JSON format</div>}
                         </div>}
                         {this.state.showScript && <div>
+                        {this.state.scriptError && <div style={{color: 'red'}}>Script is not in correct format</div>}
                         <div className='script-script' style={{marginTop: '20px', width: '100%'}}>
                           <CodeMirror
                             value={this.state.scriptJSON}
@@ -603,10 +604,10 @@ class ScriptRunnerView extends React.Component {
                             onBeforeChange={(editor, data, value) => this.onInputChange(editor, data, value, 'script')}
                           />
                         </div>
-                        {this.state.scriptError && <div style={{color: 'red'}}>Script is not in JSON format</div>}
+                        {this.state.scriptError && <div style={{color: 'red'}}>Script is not in correct format</div>}
                         </div>}
                       </div>
-                      <div style={{height: 'fit-content'}}>
+                      <div style={{height: '1000px', overflow: 'auto'}}>
                         <div style={{display: 'inline-flex', alignItems: 'center'}}>
                           <input type="text" id="newscripttoadd" value={this.state.newScriptName} onChange={this.handleNewScriptName}/>
                           <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}} onClick={this.addNewScript}>

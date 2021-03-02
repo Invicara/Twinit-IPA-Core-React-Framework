@@ -1,7 +1,11 @@
+.cm-scripter {
+    height: 1000px;
+}
+
 .cm-scripter > .CodeMirror {
-    height: 60%;
+    height: 1000px;
 }
 
 .cm-inputer > .CodeMirror {
-    height: 300;
+    height: 300px;
 }
