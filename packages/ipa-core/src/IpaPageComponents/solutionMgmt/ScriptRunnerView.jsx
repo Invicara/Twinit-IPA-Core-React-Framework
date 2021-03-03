@@ -73,6 +73,7 @@ class ScriptRunnerView extends React.Component {
            scriptInput: "",
            inputError: false,
            showScript: true,
+           showOutput: true,
            scriptJSON: "",
            scriptError: false,
            parsedScript: {},
@@ -100,6 +101,7 @@ class ScriptRunnerView extends React.Component {
        this.writeVars = this.writeVars.bind(this);
        this.readVars = this.readVars.bind(this);
        this.clearVars = this.clearVars.bind(this);
+       this.clearVarValue = this.clearVarValue.bind(this);
        this.toggleConvertSetq = this.toggleConvertSetq.bind(this);
        this.saveSnippet = this.saveSnippet.bind(this);
        this.handleNewScriptName = this.handleNewScriptName.bind(this);
@@ -251,7 +253,7 @@ class ScriptRunnerView extends React.Component {
     }
     
     clearVars(v) {
-      console.log('remove: ', v)
+
       if (v !== 'all') {
         let variables = _.cloneDeep(this.state.variables)
         delete variables[v]
@@ -259,6 +261,11 @@ class ScriptRunnerView extends React.Component {
       } else
         this.setState({variables: {}}, this.writeVars)
 
+    }
+
+    clearVarValue(v) {
+      ScriptHelper.setScriptVar(v, undefined)
+      this.getScriptVars()
     }
 
     handleScriptSelect(option) {
@@ -314,7 +321,7 @@ class ScriptRunnerView extends React.Component {
         }
         
         let sName = this.state.selectedScript.name;
-        results.unshift({name: sName, data: data, disp: true, collapsed: false});
+        results.unshift({name: sName, data: data, stamp: new Date().toLocaleString(), disp: true, collapsed: false});
 
         clearInterval(dotInt);
         this.setState({dots: '', results: results, isRunning: false});
@@ -388,7 +395,6 @@ class ScriptRunnerView extends React.Component {
     }
 
     onInputChange(editor, data, value, which) {
-      console.log(editor, data, value, which)
       
       let inputError = false;
       if (this.props.handler.config && this.props.handler.config.allowScriptInput) {
@@ -416,8 +422,10 @@ class ScriptRunnerView extends React.Component {
       
       if (input === 'input')
         this.setState({showInput: !this.state.showInput})
-      else
+      else if (input === 'script')
         this.setState({showScript: !this.state.showScript})
+      else
+        this.setState({showOutput: !this.state.showOutput})
       
     }
     
@@ -519,16 +527,55 @@ class ScriptRunnerView extends React.Component {
                 </div>
             </StackableDrawer>}
           {this.props.handler.config && this.props.handler.config.allowScriptInput &&
-              <StackableDrawer level={2} iconKey='fas fa-database' defaultOpen={false}>
+              <StackableDrawer level={2} iconKey='far fa-file-code' defaultOpen={false}>
+                <div style={{marginTop: '10px', marginLeft: '60px'}}>
+                  <input type="text" id="newscripttoadd" value={this.state.newScriptName} onChange={this.handleNewScriptName} style={{width: "80%"}}/>
+                  <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '110px', marginRight: '10px', marginTop: '5px'}} onClick={this.addNewScript}>
+                    Add Script
+                  </GenericMatButton>
+                </div>
+                <hr/>
                 <div style={{fontWeight: 'bold', marginTop: '20px', marginLeft: '60px'}}>Local Scripts</div>
                 <div style={{marginTop: '40px', marginLeft: '60px'}}>
                   {this.state.scripts.filter((scriptoption) => scriptoption.local).map((scriptoption, index) => (<div style={{marginBottom: '10px'}} key={index}>
-                    {scriptoption.script} <a href="#" style={{color: 'red', fontSize: '24px', display: 'inlineBlock', marginRight: '10px'}} onClick={(e) => this.removeLocalScript(e, scriptoption.script)}><i title='Delete Local Script' className='icon ion-android-cancel'></i></a>
+                  <a href="#" style={{color: 'red', fontSize: '24px', display: 'inlineBlock', marginRight: '10px', marginTop: "5px"}} onClick={(e) => this.removeLocalScript(e, scriptoption.script)}><i title='Delete Local Script' className='icon ion-android-cancel'></i></a> {scriptoption.script}
                   </div>))}
                 </div>
           </StackableDrawer>}
+          {this.props.handler.config && this.props.handler.config.allowScriptInput &&
+              <StackableDrawer level={3} iconKey='fas fa-code' defaultOpen={false}>
+                <div style={{marginTop: '10px', marginLeft: '60px'}}>
+                <div style={{display: 'inline-flex', alignItems: 'center'}}>
+                  <input type="text" id="varnametoadd" value={this.state.addVariable} onChange={this.handleVariableName}/>
+                  <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}} onClick={this.addScriptVar}>
+                    <i className="fas fa-eye"></i> Watch
+                  </GenericMatButton>
+                </div>
+                  <div style={{marginTop: '10px'}}>
+                    <input type="checkbox" id="setq" value={this.state.convertSetq} checked={this.state.convertSetq} onChange={this.toggleConvertSetq}/>
+                    <label style={{marginLeft: '5px'}}>Convert all $let to $setq when executing</label>
+                  </div>
+                <hr/>
+                <div style={{fontWeight: 'bold', marginTop: '20px', marginLeft: '60px', marginBottom: '10px'}}>Watched Variables</div>
+                <div style={{cursor: 'pointer'}} onClick={() => this.clearVars('all')}>
+                  <span style={{fontSize: '18px'}}><i title='Unwatch All' className='fas fa-eye-slash'></i></span>
+                  <span>Unwatch All</span>
+                </div>
+                <hr/>
+                {Object.keys(this.state.variables).map((v) => {
+                  return <div key={v} style={{marginBottom: '10px'}}>
+                    <div style={{display: 'inline-flex'}}>
+                      <div style={{fontSize: '18px', cursor: 'pointer', marginRight: '10px'}} onClick={() => this.clearVars(v)}><i title='Unwatch' className='fas fa-eye-slash'></i></div>
+                      <div style={{fontSize: '18px', cursor: 'pointer', marginRight: '10px'}} onClick={() => this.clearVarValue(v)}><i title='Clear Value' className='fas fa-times-circle'></i></div>
+                      <span style={{fontWeight: 'bold'}}>{v}</span>
+                    </div>
+                    <ObjectInspector data={this.state.variables[v]} initialExpandedPaths={['root', 'root.*']} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/>
+                  </div>
+                })}
+              </div>
+          </StackableDrawer>}
           {this.props.handler.config && this.props.handler.config.allowScriptInput && this.state.helpLinks.length > 0 &&
-              <StackableDrawer level={3} iconKey='fas fa-question' defaultOpen={false}>
+              <StackableDrawer level={4} iconKey='fas fa-question' defaultOpen={false}>
                 <div style={{fontWeight: 'bold', marginTop: '20px', marginLeft: '60px'}}>Help Topics</div>
                 <div style={{marginTop: '40px', marginLeft: '60px'}}>
                   {this.state.helpLinks.map((link, index) => (<div style={{marginBottom: '10px'}} key={index}>
@@ -554,18 +601,18 @@ class ScriptRunnerView extends React.Component {
                         />
                         {!this.state.isRunning && <GenericMatButton onClick={this.runScript} disabled={this.state.isRunning} customClasses="attention">Run</GenericMatButton>}
                         {this.state.isRunning && <span style={{fontSize: '16px'}}>Running {this.state.dots}</span>}
-                        {this.props.handler.config && this.props.handler.config.allowScriptInput && <GenericMatButton onClick={() => this.toggleInputs('input')} disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}}>
+                        {this.props.handler.config && this.props.handler.config.allowScriptInput && <GenericMatButton onClick={() => this.toggleInputs('input')} disabled={this.state.isRunning} styles={{marginLeft: '20px', marginRight: '10px'}}>
                           {this.state.showInput ? 'Hide Input' : 'Show Input'}
                         </GenericMatButton>}
-                        {this.props.handler.config && this.props.handler.config.allowScriptInput && <GenericMatButton onClick={() => this.toggleInputs('script')} disabled={this.state.isRunning}>
+                        {this.props.handler.config && this.props.handler.config.allowScriptInput && <GenericMatButton onClick={() => this.toggleInputs('script')} disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}}>
                           {this.state.showScript ? 'Hide Script' : 'Show Script'}
                         </GenericMatButton>}
-                        <div style={{marginLeft: 'auto'}}>
-                            {this.state.results.length > 0 && <a href="#" style={{color: 'red', fontSize: '24px', display: 'inlineBlock', marginRight: '10px'}} onClick={(e) => this.deleteResult(e)}><i title='Delete All' className='icon ion-android-cancel'></i></a>}
-                        </div>
+                        {this.props.handler.config && this.props.handler.config.allowScriptInput && <GenericMatButton onClick={() => this.toggleInputs('output')} disabled={this.state.isRunning} styles={{marginLeft: '10px'}}>
+                          {this.state.showOutput ? 'Hide Output' : 'Show Output'}
+                        </GenericMatButton>}
                     </div>
                     
-                    {this.props.handler.config && this.props.handler.config.allowScriptInput && <div style={{display: 'grid', gridTemplateColumns: "70% 30%", gridColumnGap: '20px', marginTop: '20px'}}>
+                    {this.props.handler.config && this.props.handler.config.allowScriptInput && <div style={{marginTop: '20px'}}>
                       <div style={{height: 'fit-content'}}>
                         {this.state.showInput && <div>
                         <div className='script-input' style={{marginTop: '20px', width: '100%'}}>
@@ -607,44 +654,19 @@ class ScriptRunnerView extends React.Component {
                         {this.state.scriptError && <div style={{color: 'red'}}>Script is not in correct format</div>}
                         </div>}
                       </div>
-                      <div style={{height: '1000px', overflow: 'auto'}}>
-                        <div style={{display: 'inline-flex', alignItems: 'center'}}>
-                          <input type="text" id="newscripttoadd" value={this.state.newScriptName} onChange={this.handleNewScriptName}/>
-                          <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}} onClick={this.addNewScript}>
-                            Add Script
-                          </GenericMatButton>
-                        </div>
-                        <hr/>
-                        <div style={{fontWeight: 'bold'}}>Variables</div>
-                        <div style={{display: 'inline-flex', alignItems: 'center'}}>
-                          <input type="text" id="varnametoadd" value={this.state.addVariable} onChange={this.handleVariableName}/>
-                          <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}} onClick={this.addScriptVar}>
-                            Track
-                          </GenericMatButton>
-                          <div style={{color: 'red', fontSize: '18px', cursor: 'pointer'}} onClick={() => this.clearVars('all')}><i title='Delete' className='icon ion-android-cancel'></i></div>
-                        </div>
-                        <div style={{marginTop: '10px'}}>
-                          <input type="checkbox" id="setq" value={this.state.convertSetq} checked={this.state.convertSetq} onChange={this.toggleConvertSetq}/>
-                          <label style={{marginLeft: '5px'}}>Convert all $let to $setq when executing</label>
-                        </div>
-                        <hr/>
-                        {Object.keys(this.state.variables).map((v) => {
-                          return <div key={v} style={{marginBottom: '10px'}}>
-                            <div style={{display: 'inline-flex'}}>
-                              <div style={{color: 'red', fontSize: '18px', cursor: 'pointer', marginRight: '10px'}} onClick={() => this.clearVars(v)}><i title='Delete' className='icon ion-android-cancel'></i></div>
-                              <span style={{fontWeight: 'bold'}}>{v}</span>
-                            </div>
-                            <ObjectInspector data={this.state.variables[v]} initialExpandedPaths={['root', 'root.*']} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/>
-                          </div>
-                        })}
-                        
-                      </div>
                     </div>}
 
-                    {this.state.results.map((res, index) =>
+                    {this.state.showOutput && this.state.results.map((res, index) =>
                         <div key={index}><hr/>
+                        <div className="mbsc-row mbsc-align-items-center" style={{marginBottom: '15px'}}>
+                            <div className="mbsc-col-md-6 mbsc-col-12">
+                              {this.state.results.length > 0 && <div style={{textAlign: 'right', color: 'red'}}>
+                                Delete All Results
+                                <a href="#" style={{color: 'red', fontSize: '24px', display: 'inlineBlock', marginLeft: '10px'}} onClick={(e) => this.deleteResult(e)}><i title='Delete All' className='icon ion-android-cancel'></i></a>
+                              </div>}
+                            </div>
+                        </div>
                         <div className="mbsc-row mbsc-align-items-center">
-
                             <div className="mbsc-col-md-6 mbsc-col-6" style={{textAlign: 'left'}}>
                                 <h4 style={{display: 'inline'}}>{res.name}</h4>
                                 {!res.collapsed && <a href="#" style={{display: 'inline', marginLeft: '10px'}} onClick={(e) => this.toggleDisplay(e, index)}>{res.disp ? 'Raw' : 'Pretty'}</a>}
@@ -653,9 +675,12 @@ class ScriptRunnerView extends React.Component {
                                 <a href="#" style={{textAlign: 'right', display: 'inlineBlock', marginRight: '10px'}} onClick={(e) => this.toggleCollapsed(e, index)}>{res.collapsed ? 'Show' : 'Hide'}</a>
                                 <a href="#" style={{color: 'red', fontSize: '18px', textAlign: 'right', display: 'inlineBlock', marginRight: '10px'}} onClick={(e) => this.deleteResult(e, index)}><i title='Delete' className='icon ion-android-cancel'></i></a>
                             </div>
+                            <div className="mbsc-col-md-6 mbsc-col-12" style={{textAlign: 'left', fontStyle: "italic", marginBottom: '10px'}}>
+                                <span style={{paddingLeft: '15px'}}>{res.stamp}</span>
+                            </div>
                         </div>
 
-                            {!res.collapsed && <div style={{marginTop: '10px'}}>
+                            {!res.collapsed && <div style={{marginTop: '10px', userSelect: 'text'}}>
                                 {res.disp && <ObjectInspector data={res.data} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/>}
                                 {!res.disp && <pre contentEditable="true" suppressContentEditableWarning={true}>{JSON.stringify(res.data, null, 3)}</pre>}
                             </div>}

@@ -62,6 +62,10 @@ function getScriptVar(scriptVar, ctx) {
   return expression.getHeapVar(scriptVar, ctx || _expressionExecCtx);
 }
 
+function setScriptVar(scriptVar, value, ctx) {
+  return expression.setHeapVar(scriptVar, value, ctx || _expressionExecCtx);
+}
+
 // Replacements for the above; decouple from IAF_EXT_ specifics.  jl 01/26/19
 // This returns a function that can be used on an array.filter call
 function getFilterFunction (filters, filterOpts) {
@@ -90,6 +94,7 @@ let ScriptHelper = {
   executeScript: executeScript,
   executeScriptCallback: executeScriptCallback,
   getScriptVar: getScriptVar,
+  setScriptVar: setScriptVar,
   getFilterFunction: getFilterFunction,
   getFilterQuery: getFilterQuery,
   initExpressionExecCtx: initExpressionExecCtx,
