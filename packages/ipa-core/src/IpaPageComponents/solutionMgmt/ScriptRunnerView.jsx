@@ -289,6 +289,7 @@ class ScriptRunnerView extends React.Component {
         }, 750);
         
         let data= [];
+        let start = 0, end = 0;
         //if configured to display the script input and script always run the script from the ui
         if (this.props.handler.config && this.props.handler.config.allowScriptInput) {
           
@@ -305,7 +306,9 @@ class ScriptRunnerView extends React.Component {
           
           if (validated) {
             let evaldata = await ScriptHelper.evalExpressions(validated);
+            start = new Date()
             data = await ScriptHelper.executeScript('testScript', scriptInputObj);
+            end = new Date()
             this.getScriptVars()
             if (scriptInput && scriptInput.length > 0)
               data = {
@@ -317,11 +320,14 @@ class ScriptRunnerView extends React.Component {
             data = {error: "Script is not in the correct format!"}
           }
         } else {
+          start = new Date()
           data = await ScriptHelper.executeScript(this.state.selectedScript.script);
+          end = new Date()
         }
         
         let sName = this.state.selectedScript.name;
-        results.unshift({name: sName, data: data, stamp: new Date().toLocaleString(), disp: true, collapsed: false});
+        let elapsed = (end.getTime() - start.getTime()) + " ms"
+        results.unshift({name: sName, data: data, stamp: end.toLocaleString(), elapsed: elapsed, disp: true, collapsed: false});
 
         clearInterval(dotInt);
         this.setState({dots: '', results: results, isRunning: false});
@@ -675,8 +681,9 @@ class ScriptRunnerView extends React.Component {
                                 <a href="#" style={{textAlign: 'right', display: 'inlineBlock', marginRight: '10px'}} onClick={(e) => this.toggleCollapsed(e, index)}>{res.collapsed ? 'Show' : 'Hide'}</a>
                                 <a href="#" style={{color: 'red', fontSize: '18px', textAlign: 'right', display: 'inlineBlock', marginRight: '10px'}} onClick={(e) => this.deleteResult(e, index)}><i title='Delete' className='icon ion-android-cancel'></i></a>
                             </div>
-                            <div className="mbsc-col-md-6 mbsc-col-12" style={{textAlign: 'left', fontStyle: "italic", marginBottom: '10px'}}>
-                                <span style={{paddingLeft: '15px'}}>{res.stamp}</span>
+                            <div className="mbsc-col-md-12 mbsc-col-12" style={{textAlign: 'left', marginBottom: '10px'}}>
+                                <span style={{paddingLeft: '15px', fontStyle: "italic"}}>{res.stamp}</span>
+                                <span style={{paddingLeft: '15px', fontWeight: "bold"}}>({res.elapsed})</span>
                             </div>
                         </div>
 
