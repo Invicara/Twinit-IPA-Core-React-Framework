@@ -9,3 +9,7 @@
 .cm-inputer > .CodeMirror {
     height: 300px;
 }
+
+.CodeMirror-breakpoint {
+    width: .8em;
+}

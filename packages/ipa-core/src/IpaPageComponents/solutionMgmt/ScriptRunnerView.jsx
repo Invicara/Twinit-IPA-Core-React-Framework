@@ -46,6 +46,7 @@ import 'codemirror/addon/fold/foldcode.js'
 import 'codemirror/addon/fold/foldgutter.js'
 import 'codemirror/addon/fold/brace-fold.js'
 import 'codemirror/addon/fold/comment-fold.js'
+import 'codemirror/addon/comment/comment.js'
 import './monokai-sublime.css'
 import './codemirror-ext.css'
 
@@ -82,7 +83,9 @@ class ScriptRunnerView extends React.Component {
            convertSetq: false,
            snippet: "",
            helpLinks: [],
-           newScriptName: ""
+           newScriptName: "",
+           editor: null,
+           hasBreakLine: false
        }
 
        this._loadAsyncData = this._loadAsyncData.bind(this);
@@ -107,6 +110,12 @@ class ScriptRunnerView extends React.Component {
        this.handleNewScriptName = this.handleNewScriptName.bind(this);
        this.addNewScript = this.addNewScript.bind(this);
        this.removeLocalScript = this.removeLocalScript.bind(this);
+       this.handleScriptGutterClick = this.handleScriptGutterClick.bind(this)
+       this.setEditor = this.setEditor.bind(this)
+       this.makeValidBreakMark = this.makeValidBreakMark.bind(this)
+       this.makeInvalidBreakMark = this.makeInvalidBreakMark.bind(this)
+       this.isValidBreakPoint = this.isValidBreakPoint.bind(this)
+       this.findBreakLine = this.findBreakLine.bind(this)
        
        this.scriptInput = React.createRef();
        this.scriptJSON = React.createRef();
@@ -296,27 +305,44 @@ class ScriptRunnerView extends React.Component {
           let scriptInput = this.state.scriptInput.trim()
           let scriptInputObj = scriptInput && scriptInput.length > 0 ? json5.parse(scriptInput) : {};
  
-          let purifiedJSON = JSON.stringify(json5.parse(this.state.scriptJSON))
-          let restringedDef = "[{$defscript: {'testScript':" + purifiedJSON + "}}]"
+          let sourceJson
+          if (this.state.hasBreakLine) {
+            let lineInfo = this.findBreakLine(this.state.editor)
+            if (!this.isValidBreakPoint(this.state.editor, lineInfo))
+              sourceJson = this.state.scriptJSON
+            else {
+              let range = this.state.editor.getRange({line: 0, ch: 0}, {line: lineInfo.line, ch: lineInfo.text.length})
+              sourceJson = range + "]"
+            }
+           
+          } else
+            sourceJson = this.state.scriptJSON
+
+          try {
+            let purifiedJSON = JSON.stringify(json5.parse(sourceJson))
+            let restringedDef = "[{$defscript: {'testScript':" + purifiedJSON + "}}]"
           
-          if (this.state.convertSetq)
-            restringedDef = restringedDef.replaceAll("$let", "$setq")
+            if (this.state.convertSetq)
+              restringedDef = restringedDef.replaceAll("$let", "$setq")
          
-          let validated = IafScripts.isValid(restringedDef)
+            let validated = IafScripts.isValid(restringedDef)
           
-          if (validated) {
-            let evaldata = await ScriptHelper.evalExpressions(validated);
-            start = new Date()
-            data = await ScriptHelper.executeScript('testScript', scriptInputObj);
-            end = new Date()
-            this.getScriptVars()
-            if (scriptInput && scriptInput.length > 0)
-              data = {
-                result: data,
-                input: scriptInputObj
-              }
-          }
-          else {
+            if (validated) {
+              let evaldata = await ScriptHelper.evalExpressions(validated);
+              start = new Date()
+              data = await ScriptHelper.executeScript('testScript', scriptInputObj);
+              end = new Date()
+              this.getScriptVars()
+              if (scriptInput && scriptInput.length > 0)
+                data = {
+                  result: data,
+                  input: scriptInputObj
+                }
+            }
+            else {
+              data = {error: "Script is not in the correct format!"}
+            }
+          } catch(e) {
             data = {error: "Script is not in the correct format!"}
           }
         } else {
@@ -401,7 +427,7 @@ class ScriptRunnerView extends React.Component {
     }
 
     onInputChange(editor, data, value, which) {
-      
+
       let inputError = false;
       if (this.props.handler.config && this.props.handler.config.allowScriptInput) {
         try {
@@ -416,10 +442,18 @@ class ScriptRunnerView extends React.Component {
       if (which === 'input') 
         this.setState({scriptInput: value, inputError: inputError});
       else {
-        this.setState({scriptJSON:value, scriptError: inputError});
+        this.setState({scriptJSON:value, scriptError: inputError, editor: editor});
         if (this.state.selectedScript.local) {
           localStorage.setItem(getLocalScriptKey(this.state.selectedScript.script), value)
         }
+      }
+
+      if (this.state.hasBreakLine) {
+        let lineInfo = this.findBreakLine(editor)
+        if (!this.isValidBreakPoint(editor, lineInfo))
+          editor.setGutterMarker(lineInfo.line, "CodeMirror-breakpoint", this.makeInvalidBreakMark());
+        else
+          editor.setGutterMarker(lineInfo.line, "CodeMirror-breakpoint", this.makeValidBreakMark());
       }
       
     }
@@ -500,6 +534,69 @@ class ScriptRunnerView extends React.Component {
         this.setState({scripts: scripts})
     }
 
+    makeValidBreakMark() {
+      var marker = document.createElement("div");
+      marker.style.color = "#cc3333";
+      marker.innerHTML = "●";
+      return marker;
+    }
+
+    makeInvalidBreakMark() {
+      var marker = document.createElement("div");
+      marker.style.color = "#3399ff";
+      marker.innerHTML = "●";
+      return marker;
+    }
+
+    isValidBreakPoint(e, lineInfo) {
+      try {
+        let range = e.getRange({line: 0, ch: 0}, {line: lineInfo.line, ch: lineInfo.text.length})
+        range = range + "]"
+        json5.parse(range)
+        return true
+      } catch(e) {
+        return false
+      }
+    }
+
+    findBreakLine(editor) {
+
+      let line = null
+      for (let i = 0; i < editor.doc.children[0].lines.length; i++) {
+        line = editor.doc.children[0].lines[i]
+        if (line.gutterMarkers && line.gutterMarkers.hasOwnProperty('CodeMirror-breakpoint'))
+         break
+      }
+
+      return editor.lineInfo(editor.getLineNumber(line))
+
+    }
+
+    handleScriptGutterClick(editor, lineNum, gutter, event) {
+
+      if (gutter === 'CodeMirror-breakpoint') {
+        let lineInfo = editor.lineInfo(lineNum)
+
+        //check if turning off breakpoint
+        //clicked a line already set as breakLine
+        if (lineInfo.gutterMarkers && lineInfo.gutterMarkers.hasOwnProperty('CodeMirror-breakpoint')) {
+          editor.clearGutter("CodeMirror-breakpoint");
+          this.setState({hasBreakLine: false})
+        } else {
+          //else remove existing break if it exists and create new one
+          if (this.isValidBreakPoint(editor, lineInfo)) {
+            if (this.state.hasBreakLine) editor.clearGutter("CodeMirror-breakpoint");
+            editor.setGutterMarker(lineInfo.line, "CodeMirror-breakpoint", this.makeValidBreakMark());
+            this.setState({hasBreakLine: true})
+          }
+        }
+      }
+    }
+
+    setEditor(editor) {
+      this.setState({editor})
+    }
+
     async componentDidMount() {
         //When the page mounts load the asyn data (script and other)
         //and then create the column info for the upload table
@@ -549,7 +646,7 @@ class ScriptRunnerView extends React.Component {
                 </div>
           </StackableDrawer>}
           {this.props.handler.config && this.props.handler.config.allowScriptInput &&
-              <StackableDrawer level={3} iconKey='fas fa-code' defaultOpen={false}>
+              <StackableDrawer level={3} iconKey='fas fa-eye' defaultOpen={false}>
                 <div style={{marginTop: '10px', marginLeft: '60px'}}>
                 <div style={{display: 'inline-flex', alignItems: 'center'}}>
                   <input type="text" id="varnametoadd" value={this.state.addVariable} onChange={this.handleVariableName}/>
@@ -605,7 +702,7 @@ class ScriptRunnerView extends React.Component {
                                     })}
                             styles={{container: (provided) => ({...provided, zIndex: 1000, width: '40%', display: 'inline-block', marginLeft: '10%', marginRight: '15px', fontSize: '16px'})}}
                         />
-                        {!this.state.isRunning && <GenericMatButton onClick={this.runScript} disabled={this.state.isRunning} customClasses="attention">Run</GenericMatButton>}
+                        {!this.state.isRunning && <GenericMatButton onClick={this.runScript} disabled={this.state.scriptError} customClasses="attention">Run</GenericMatButton>}
                         {this.state.isRunning && <span style={{fontSize: '16px'}}>Running {this.state.dots}</span>}
                         {this.props.handler.config && this.props.handler.config.allowScriptInput && <GenericMatButton onClick={() => this.toggleInputs('input')} disabled={this.state.isRunning} styles={{marginLeft: '20px', marginRight: '10px'}}>
                           {this.state.showInput ? 'Hide Input' : 'Show Input'}
@@ -651,10 +748,13 @@ class ScriptRunnerView extends React.Component {
                               matchBrackets: true,
                               autoCloseBrackets: true,
                               foldGutter: true,
-                              gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+                              extraKeys: {'Ctrl-/': function(editor) {editor.execCommand('toggleComment')}},
+                              gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-breakpoint']
                             }}
                             className='cm-scripter'
                             onBeforeChange={(editor, data, value) => this.onInputChange(editor, data, value, 'script')}
+                            onGutterClick={this.handleScriptGutterClick}
+                            editorDidMount={this.setEditor}
                           />
                         </div>
                         {this.state.scriptError && <div style={{color: 'red'}}>Script is not in correct format</div>}
