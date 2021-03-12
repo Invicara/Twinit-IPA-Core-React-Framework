@@ -1,18 +1,25 @@
 import React, {useEffect, useState} from "react";
 import FancyTreeControl from "./FancyTreeControl";
 import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel";
+import ScriptHelper from "../IpaUtils/ScriptHelper";
 import {produce} from "immer";
 import _ from "lodash";
 
-import ScriptHelper from "../IpaUtils/ScriptHelper";
+export const parseNode = node => ({
+    ...node,
+    expanded: JSON.parse(node.expanded),
+    isLeaf: JSON.parse(node.isLeaf),
+    level: JSON.parse(node.level)
+})
 
 const treeControlLeafNodeRenderer = (group) => <div>{parseName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
 
 const treeControlBranchNodeRenderer = (groupName, nodeValue) => {
     const childCount = _.isArray(nodeValue) ? nodeValue.reduce((a, b) => a + (b['count'] || 0), 0) : undefined;
+
     return (
-        <span>
-            {groupName}
+        <span>            
+            {parseName(groupName).displayName}
             {!!childCount && <span className="count" style={{fontSize: "0.8em"}}>{childCount}</span>}
           </span>
     )
@@ -24,6 +31,7 @@ export const SelectedStatus = {
     CLEAR: 'clear'
 }
 
+export const stringifyName = (displayName, level, position) => `${level}-${position}-${displayName}`
 export const parseName = name => {
     const [level, position, ...displayNameParts] = name.split("-");
     return {level, position, displayName: displayNameParts.join("-")}
@@ -32,7 +40,7 @@ export const parseName = name => {
 export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, touched, onFetch, display, additionalOptions, isFetching, treeLevels }) => {
     const [tree, setTree] = useState({})
     const [nodeIndex, setNodeIndex] = useState({})
-    const [initialFilteringNodeIndex] = useState(filteringNodeIndex)
+    const [initialFilteringNodeIndex] = useState(_.mapValues(filteringNodeIndex,parseNode))
 
     useEffect(() => {
         const getTree = async () => {
@@ -60,11 +68,11 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
         }else{
             onFetch()
         }
-    }, [filteringNodeIndex]);    
+    }, [filteringNodeIndex]);
 
     const getInitialValue = () => _.fromPairs(treeLevels.map(tl => [tl.property, []]))
 
-    const getPreviousValues = (parents) =>_.zipObject(treeLevels.map(tl => tl.property), parents)
+    const getPreviousValues = (parents) =>_.zipObject(treeLevels.map(tl => tl.property), parents.map(name => parseName(name).displayName))
 
     const isLast = (level) => level + 1 === treeLevels.length;
 
@@ -77,7 +85,9 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
                 children: [],
                 isLeaf: isLast(level),
                 expanded: !!getFilteringNodes(initialFilteringNodeIndex)[node.name] && !isLast(level),
-                selectedStatus: _.get(getFilteringNodes(initialFilteringNodeIndex), `${node.name}.selectedStatus`, SelectedStatus.CLEAR)
+                selectedStatus: _.get(getFilteringNodes(initialFilteringNodeIndex), `${node.name}.selectedStatus`,
+                    _.get(nodeIndex, `${_.last(parents)}.selectedStatus`) === SelectedStatus.SELECTED ?
+                        SelectedStatus.SELECTED : SelectedStatus.CLEAR)
             })
             if (!_.isEmpty(parents)) nodeIndex[_.last(parents)].children = levelNodes.map(n => n.name)
         }))
@@ -95,14 +105,16 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
     async function getTreeLeafGroup(level, parents = []) {
         const levelNodes = (await ScriptHelper.executeScript(treeLevels[level].script,
                 parents ? {input: getPreviousValues(parents) } : undefined)
-        ).map((node) => (node.name ? node : {name :node, childCount: 0}));
+        ).map((node, i) => (node.name ?
+                {...node, name: stringifyName(node.name, level, i) } : { name: stringifyName(node, level, i), childCount: 0}
+        ));
         loadIntoNodeIndex(levelNodes, level, parents);
         return isLast(level) ?
             levelNodes.map((node) => ({name: node.name, isLeaf: true, level, parents, count: node.childCount})) :
             levelNodes.reduce((accum, node) =>
                 ({
                     ...accum,
-                    [node.name]: [{name: "Loading...", count: node.childCount}]
+                    [node.name]: [{name: stringifyName("Loading...", "X", "X"), count: node.childCount}]
                 }), {}
         );
     }
