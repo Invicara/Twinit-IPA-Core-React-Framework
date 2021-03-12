@@ -1,0 +1,260 @@
+$base-text-color: #666666;
+$step-color: $base-text-color;
+$highlight-pink: #C71784;
+$disabled-color: #E6E6E6;
+$selected-step: $highlight-pink;
+$step-width: 170px;
+$medium-grey: #B2B2B2;
+$light-grey: rgb(239,239,239);
+$cancel-grey: $medium-grey;
+$white: white;
+$black: black;
+
+.systems-builder-view {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  .fetch-container{
+    padding: 20px 40px;
+    height: 100%;
+  }
+
+  .viewer-container{
+    padding: 30px 40px;
+  }
+
+  .scripted-options-select{
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+  }
+
+  .content{
+    display: flex;
+    overflow: scroll;
+    max-height: 100%;
+    width: 100%;
+    > * {
+      padding: 10px 20px;
+      flex: 1;
+    }
+
+    .middle-content{
+      display: flex;
+      flex-direction: column;
+      max-width: 50%;
+
+      .systems-viewer{
+        min-height: 60%;
+      }
+    }
+
+    .right-content{
+      display: flex;
+      flex-direction: column;
+
+      .system-info-table {
+        display: flex;
+        justify-content: space-between;
+        max-width: 90%;
+        margin-bottom: 20px;
+
+        .dbm-tooltip{
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+
+          .dbm-tooltiptext{
+            bottom: 45px;
+          }
+        }
+
+        i {
+          width: 40px;
+          height: 40px;
+          padding: 10px;
+          text-align: center;
+          background-color: #C71784;
+          color: white;
+          border-radius: 10px;
+          font-size: 20px;
+          margin: 3px;
+          cursor: pointer;
+        }
+      }
+
+      table.system-information-grid{
+        width: 75%;
+      }
+
+      .system-information-grid {
+
+        user-select: text;
+
+        table {
+          width: 100%;
+        }
+
+        td {
+          border: none;
+          border-bottom: solid #eeeeee 1px;
+          padding: 10px 5px;
+        }
+
+        td:nth-child(1) {
+          font-style: normal;
+          background-color: #f2f2f2;
+          font-weight: 500;
+          width: 30%;
+        }
+
+        td:nth-child(2) {
+          font-weight: 300;
+        }
+
+        tr:last-child {
+          td {
+            border: none;
+          }
+        }
+
+      }
+
+      .editable-system-information-controls {
+        max-height: 1000px;
+        transition: max-height 0.25s ease-in;
+
+        &.collapsed {
+          max-height: 0;
+          transition: max-height 0.35s ease-out;
+          overflow: hidden;
+        }
+      }
+    }
+
+    &::-webkit-scrollbar{
+      display: none;
+    }
+
+    .system-name {
+      display: flex;
+      flex-direction: column;
+
+      .system-name-label {
+        margin: 0 0 10px 10px;
+        text-align: left;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 0;
+        color: #333333;
+      }
+
+      .system-name-input{
+        width: 90%;
+        margin-bottom: 25px;
+        background-color: hsl(0,0%,100%);
+        border: 2px solid #E6E6E6;
+        border-radius: 5px;
+        display: flex;
+        height: 40px;
+        padding: 2px 8px;
+      }
+    }
+
+    .scripted-selects-control{
+      margin-bottom: 0;
+    }
+  }
+}
+
+.entity-table{
+  margin: 20px;
+  width: 100%;
+
+  .short{
+    width: 65px;
+  }
+
+  thead{
+
+    .entity-table-header{
+      background: $highlight-pink;
+      color: $white;
+      > th {
+        padding-right: 20px;
+      }
+    }
+  }
+  tbody{
+    max-height: 400px;
+
+    .entity-table-body{
+      color: $base-text-color;
+      &.even{
+        background: $white;
+      }
+      &.odd{
+        background: $light-grey;
+      }
+    }
+  }
+}
+
+.orderable-tree-root {
+
+  margin: 20px 0 20px 20px;
+
+  .tree-title {
+    padding: 5px 15px;
+    background: $highlight-pink;
+    color: $white;
+  }
+
+  .tree-row {
+    color: $base-text-color;
+    padding: 5px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: $light-grey;
+
+    .system-element-actions > i {
+      font-size: 10px;
+      cursor: pointer;
+
+      &.flipped {
+        transform: rotateY(180deg);
+        margin-right: 10px;
+      }
+    }
+
+    &.hidden {
+      display: none;
+    }
+
+    &.dragging-over {
+      background: #ccc;
+    }
+
+    &.being-dragged {
+      background-color: #f7f7f7;
+    }
+
+    &.selected {
+      background-color: rgb(240, 197,224);
+    }
+    .bullet {
+      font-size: 7px;
+      vertical-align: middle;
+    }
+    .expander {
+      cursor: pointer;
+    }
+  }
+
+}
