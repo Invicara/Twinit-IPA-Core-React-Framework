@@ -1,7 +1,7 @@
 import React from "react";
-
 import '../IpaStyles/DbmTooltip.scss'
 
+//TODO Remove once fancy tree is everywhere replaced by ReactiveTree
 export const leafNodeRenderer = (entity) => 
 (<div>{entity["Entity Name"]} 
     { entity["EntityWarningMessage"] && 
@@ -37,3 +37,4 @@ const TreeRendererHelper = {
 }
 
 export default TreeRendererHelper
+
