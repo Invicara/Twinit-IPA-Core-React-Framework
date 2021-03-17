@@ -1,10 +1,9 @@
 import {createSelector, createSlice} from '@reduxjs/toolkit'
-import {setIncludesBy} from "../../IpaUtils/compare";
+import ScriptHelper from "../../components/utils/ScriptHelper";
+import {setIncludesBy} from "../../components/utils/compare";
+import {applyFilters, queryFromFilter} from "../../components/controls/FilterControl";
 import _ from "lodash";
-
-import ScriptHelper from "../../IpaUtils/ScriptHelper";
-
-import {applyFilters, queryFromFilter} from "../../IpaControls/FilterControl";
+import {parseName, parseNode, SelectedStatus} from "../../components/controls/TreeSearch";
 
 
 let initialState = {//TODO if operations on these entities get too slow, use direct access instead of an array
@@ -146,17 +145,20 @@ export const entitiesSliceFactory = (identifier = '') => {
     }
 
     const fetchEntities = (script, selector, value) => async (dispatch, getState) => {
-        const query = {
+        const queryBuilder = {
             "<<TEXT_SEARCH>>": () => ({$text: {$search: value}}),
             "<<ADVANCED_SEARCH>>": () => queryFromFilter(value),
             "<<SCRIPTED_LINKED_SELECTS>>": () => getScriptedSelectQuery(selector, value),
             "<<TREE_SEARCH>>": () => getTreeSelectQuery(selector, value),
             "<<SCRIPTED_SELECTS>>": () => getScriptedSelectQuery(selector, value),
             "<<ID_SEARCH>>": () => ({_id: {$in: value}})
-        }[selector.query]();
-        if (!query) console.error("unknown selector query type:", selector.query);
+        }[selector.query];
+        if (!queryBuilder) console.error("unknown selector query type:", selector.query);
+        const query = queryBuilder()
         dispatch(setFetching(true))
-        let entities = await ScriptHelper.executeScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query})
+        let entities = query ?
+            await ScriptHelper.executeScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query})
+            : []
         entities.sort((a, b) => a["Entity Name"].localeCompare(b["Entity Name"]));
         dispatch(setEntities({entities}));
         dispatch(setSelectedEntities([]));
@@ -181,15 +183,27 @@ export const getFilteredEntitiesBy = (entities, filters) => applyFilters(entitie
     return p == "Entity Name" ? a["Entity Name"] : a.properties[p]
 });
 
+const asOptional = (object, path) => _.isEmpty(_.get(object, path)) ? [] : [object];
+
 const getTreeSelectQuery = (selector, filteringNodes) => {
-    const filterObject = _.mapKeys(
-        _.mapValues(
-            _.groupBy(_.values(filteringNodes), node => node.level),
-            (nodeList) => nodeList.map(n => n.name)
-        ),
-        (nodeNameList, level) => selector.treeLevels[level].property
-    )
-    return getScriptedSelectQuery(selector, filterObject)
+    const getQueryNodesFor = (nodeNames) => {
+        return {
+        "$or": _.values(_.pick(filteringNodes, nodeNames))
+                .map(node => !node.isLeaf?
+                    ({
+                        "$and": [
+                            { [`properties.${selector.treeLevels[node.level].property}.val`]: parseName(node.name).displayName },
+                            ...asOptional(getQueryNodesFor(node.children), "$or")
+                        ]
+                    }) :
+                    ({
+                        [`properties.${selector.treeLevels[node.level].property}.val`]: parseName(node.name).displayName
+                    })
+                )
+        }
+    }
+
+   return !_.isEmpty(filteringNodes) && getQueryNodesFor(_.keys(_.pickBy(_.mapValues(filteringNodes,parseNode), node => node.level === 0)));
 }
 
 
