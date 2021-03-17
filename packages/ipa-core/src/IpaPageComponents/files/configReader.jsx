@@ -47,6 +47,7 @@ const buildConfig = displayNames  => produce(async column => {
     }
     const columnNameArray = typeof column.name === 'string' ? [column.name] : column.name;
     column.displayAs = displayNames.filter(({prop}) => _.includes(columnNameArray, prop)).map(({dName}) => dName).join(' & ')
+    column.isCompositeAttribute = Array.isArray(column.name)
 });
 
 //This component encapsulates the complexity of turning column config into actual controls
