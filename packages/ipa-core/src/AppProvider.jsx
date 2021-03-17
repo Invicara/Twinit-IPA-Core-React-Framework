@@ -510,7 +510,13 @@ class AppProvider extends React.Component {
   store.dispatch(addUser(user))
 
   if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
-}
+
+  this.navigateToHomepage();
+  }
+
+  navigateToHomepage() {
+    window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
+  }
 
   componentDidMount() {
     IafSession.setErrorCallback(this.handleRequestError);
