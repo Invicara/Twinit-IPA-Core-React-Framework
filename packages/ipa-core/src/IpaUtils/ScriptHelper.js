@@ -87,6 +87,10 @@ function releaseExpressionExecCtx() {
   expression.releaseExpressionExecCtx(_expressionExecCtx);
 }
 
+function getScriptOperators() {
+  return expression.getOperators()
+}
+
 
 let ScriptHelper = {
   loadScript: loadScript,
@@ -98,7 +102,8 @@ let ScriptHelper = {
   getFilterFunction: getFilterFunction,
   getFilterQuery: getFilterQuery,
   initExpressionExecCtx: initExpressionExecCtx,
-  releaseExpressionExecCtx: releaseExpressionExecCtx
+  releaseExpressionExecCtx: releaseExpressionExecCtx,
+  getScriptOperators: getScriptOperators
 };
 
 export default ScriptHelper;

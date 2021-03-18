@@ -30,7 +30,7 @@ import React from "react";
 import {ObjectInspector, chromeLight } from 'react-inspector';
 import Select from 'react-select';
 import {IafScripts} from '@invicara/platform-api'
-import _ from 'lodash'
+import _, { times } from 'lodash'
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
@@ -47,6 +47,8 @@ import 'codemirror/addon/fold/foldgutter.js'
 import 'codemirror/addon/fold/brace-fold.js'
 import 'codemirror/addon/fold/comment-fold.js'
 import 'codemirror/addon/comment/comment.js'
+import 'codemirror/addon/hint/show-hint.js'
+import 'codemirror/addon/hint/show-hint.css'
 import './monokai-sublime.css'
 import './codemirror-ext.css'
 
@@ -85,7 +87,10 @@ class ScriptRunnerView extends React.Component {
            helpLinks: [],
            newScriptName: "",
            editor: null,
-           hasBreakLine: false
+           hasBreakLine: false,
+           operators: [],
+           operatorSearchTerm: "",
+           searchedOperators: null
        }
 
        this._loadAsyncData = this._loadAsyncData.bind(this);
@@ -116,6 +121,10 @@ class ScriptRunnerView extends React.Component {
        this.makeInvalidBreakMark = this.makeInvalidBreakMark.bind(this)
        this.isValidBreakPoint = this.isValidBreakPoint.bind(this)
        this.findBreakLine = this.findBreakLine.bind(this)
+       this.getOperatorHints = this.getOperatorHints.bind(this)
+       this.searchOperators = this.searchOperators.bind(this)
+       this.handleOpSearchTerm = this.handleOpSearchTerm.bind(this)
+       this.clearOpSearchTerm = this.clearOpSearchTerm.bind(this)
        
        this.scriptInput = React.createRef();
        this.scriptJSON = React.createRef();
@@ -147,7 +156,7 @@ class ScriptRunnerView extends React.Component {
 
           }
 
-          if (localStorage.ipaScriptRunnerLocalScripts && localStorage.ipaScriptRunnerLocalScripts.length){//
+          if (localStorage.ipaScriptRunnerLocalScripts && localStorage.ipaScriptRunnerLocalScripts.length){
             let scriptNames = localStorage.ipaScriptRunnerLocalScripts.split(",")
             let scriptsToAdd = scriptNames.map((scrname) => {
               return {
@@ -159,9 +168,13 @@ class ScriptRunnerView extends React.Component {
             
             scriptsToAdd.push(...scripts)
             scripts = scriptsToAdd
+
           }
 
-          this.setState({parsedScript: allParsedScripts, scripts: scripts, selectedScript: scripts[0]}, this.getScriptText)
+          let operators = ScriptHelper.getScriptOperators()
+          operators.sort()
+
+          this.setState({parsedScript: allParsedScripts, scripts: scripts, selectedScript: scripts[0], operators}, this.getScriptText)
           
           if (localStorage.ipaScriptRunnerConvertSetq)
             this.setState({convertSetq: true})
@@ -597,6 +610,41 @@ class ScriptRunnerView extends React.Component {
       this.setState({editor})
     }
 
+    getOperatorHints(editor, option) {
+      return new Promise((resolve) => {
+        var cursor = editor.getCursor(), line = editor.getLine(cursor.line)
+        var start = cursor.ch, end = cursor.ch
+        while (start && /\w|\$/.test(line.charAt(start - 1))) --start
+        while (end < line.length && /\w/.test(line.charAt(end))) ++end
+        var word = line.slice(start, end).toLowerCase()
+
+        let completions = this.state.operators.filter(o => o.startsWith(word))
+
+        let completion = {
+          list: completions,
+          from: {line: cursor.line, ch:start},
+          to: {line: cursor.line, ch: end}
+        }
+
+        console.log(word, completions, completion)
+
+        resolve(completion)
+      })
+    }
+
+    handleOpSearchTerm(e) {
+     this.setState({operatorSearchTerm: e.target.value})
+    }
+
+    searchOperators() {
+      let searchedOperators = this.state.operators.filter(o => o.toLowerCase().includes(this.state.operatorSearchTerm.toLowerCase()))
+      this.setState({searchedOperators})
+    }
+
+    clearOpSearchTerm() {
+      this.setState({searchedOperators: null, operatorSearchTerm: ""})
+    }
+
     async componentDidMount() {
         //When the page mounts load the asyn data (script and other)
         //and then create the column info for the upload table
@@ -678,7 +726,28 @@ class ScriptRunnerView extends React.Component {
               </div>
           </StackableDrawer>}
           {this.props.handler.config && this.props.handler.config.allowScriptInput && this.state.helpLinks.length > 0 &&
-              <StackableDrawer level={4} iconKey='fas fa-question' defaultOpen={false}>
+              <StackableDrawer level={4} iconKey='fas fa-dollar-sign' defaultOpen={false}>
+                <div style={{marginTop: '10px', marginLeft: '60px'}}>
+                  <div style={{display: 'inline-flex', alignItems: 'center'}}>
+                    <input type="text" id="opsearchterm" value={this.state.operatorSearchTerm} onChange={this.handleOpSearchTerm}/>
+                    <div style={{fontSize: '18px', cursor: 'pointer', marginLeft: '5px'}} onClick={this.clearOpSearchTerm}><i title='Clear Search' className='fas fa-times-circle'></i></div>
+                    <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '10px', marginRight: '10px'}} onClick={this.searchOperators}>
+                      Search  
+                    </GenericMatButton>
+                  </div>
+                </div>
+                <hr/>
+                <div style={{fontWeight: 'bold', marginTop: '20px', marginLeft: '60px'}}>Operators</div>
+                <div style={{marginTop: '20px', marginLeft: '60px'}}>
+                  {!this.state.searchedOperators ? this.state.operators.map((op, index) => (<div style={{marginBottom: '10px'}} key={index}>
+                    {op}
+                  </div>)) : this.state.searchedOperators.map((op, index) => (<div style={{marginBottom: '10px'}} key={index}>
+                    {op}
+                  </div>))}
+                </div>
+          </StackableDrawer>}
+          {this.props.handler.config && this.props.handler.config.allowScriptInput && this.state.helpLinks.length > 0 &&
+              <StackableDrawer level={5} iconKey='fas fa-question' defaultOpen={false}>
                 <div style={{fontWeight: 'bold', marginTop: '20px', marginLeft: '60px'}}>Help Topics</div>
                 <div style={{marginTop: '40px', marginLeft: '60px'}}>
                   {this.state.helpLinks.map((link, index) => (<div style={{marginBottom: '10px'}} key={index}>
@@ -748,7 +817,8 @@ class ScriptRunnerView extends React.Component {
                               matchBrackets: true,
                               autoCloseBrackets: true,
                               foldGutter: true,
-                              extraKeys: {'Ctrl-/': function(editor) {editor.execCommand('toggleComment')}},
+                              extraKeys: {'Ctrl-/': function(editor) {editor.execCommand('toggleComment')}, "Ctrl-Space": "autocomplete"},
+                              hintOptions: {hint: this.getOperatorHints},
                               gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-breakpoint']
                             }}
                             className='cm-scripter'
