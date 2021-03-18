@@ -618,7 +618,7 @@ class ScriptRunnerView extends React.Component {
         while (end < line.length && /\w/.test(line.charAt(end))) ++end
         var word = line.slice(start, end).toLowerCase()
 
-        let completions = this.state.operators.filter(o => o.startsWith(word))
+        let completions = this.state.operators.filter(o => o.toLowerCase().startsWith(word.toLowerCase()))
 
         let completion = {
           list: completions,
