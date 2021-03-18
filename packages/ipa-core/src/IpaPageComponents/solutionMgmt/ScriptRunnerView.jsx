@@ -626,8 +626,6 @@ class ScriptRunnerView extends React.Component {
           to: {line: cursor.line, ch: end}
         }
 
-        console.log(word, completions, completion)
-
         resolve(completion)
       })
     }
