@@ -1,8 +1,8 @@
 import React from "react";
-import FilterControl from "../controls/FilterControl"
-import GroupControl from "../controls/GroupControl"
+import FilterControl from "./FilterControl"
+import GroupControl from "./GroupControl"
 import _ from "lodash";
-import {distinct} from "../utils/list";
+import {distinct} from "../IpaUtils/list";
 
 const GROUP_SELECT_STYLES = {
     control: styles => ({...styles, width: '90%', margin: '10px 0'}),

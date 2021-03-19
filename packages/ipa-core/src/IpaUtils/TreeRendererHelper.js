@@ -31,6 +31,10 @@ export const branchNodeRenderer = (groupName, values) => {
     )
 };
 
+/**
+ * @Deprecated, use only with already deprecated {@link ../IpaControls/FancyTreeControl}.
+ * Otherwise, use {@link ./TreeHelpers} instead
+ */
 const TreeRendererHelper = {
     leafNodeRenderer,
     branchNodeRenderer

@@ -4,6 +4,7 @@ import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import {produce} from "immer";
 import _ from "lodash";
+import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
 
 export const parseNode = node => ({
     ...node,
@@ -24,12 +25,6 @@ const treeControlBranchNodeRenderer = (groupName, nodeValue) => {
           </span>
     )
 };
-
-export const SelectedStatus = {
-    SELECTED: 'selected',
-    PARTIAL: 'partial',
-    CLEAR: 'clear'
-}
 
 export const stringifyName = (displayName, level, position) => `${level}-${position}-${displayName}`
 export const parseName = name => {
@@ -86,8 +81,8 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
                 isLeaf: isLast(level),
                 expanded: !!getFilteringNodes(initialFilteringNodeIndex)[node.name] && !isLast(level),
                 selectedStatus: _.get(getFilteringNodes(initialFilteringNodeIndex), `${node.name}.selectedStatus`,
-                    _.get(nodeIndex, `${_.last(parents)}.selectedStatus`) === SelectedStatus.SELECTED ?
-                        SelectedStatus.SELECTED : SelectedStatus.CLEAR)
+                    _.get(nodeIndex, `${_.last(parents)}.selectedStatus`) === TreeNodeStatus.ON ?
+                        TreeNodeStatus.ON : TreeNodeStatus.OFF)
             })
             if (!_.isEmpty(parents)) nodeIndex[_.last(parents)].children = levelNodes.map(n => n.name)
         }))
@@ -96,7 +91,7 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
     const clearNodeSelection = () => {
         const newNodeIndex = produce(nodeIndex, nodeIndex => {
             Object.keys(nodeIndex).forEach((key) => {
-                nodeIndex[key].selectedStatus = SelectedStatus.CLEAR
+                nodeIndex[key].selectedStatus = TreeNodeStatus.OFF
             })
         });
         setNodeIndex(newNodeIndex);
@@ -137,7 +132,7 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
 
     const propagateSelectStatusDown = (nodeIndex, nodeName, selected) => {
         const selectedNode = nodeIndex[nodeName];
-        selectedNode.selectedStatus = selected ? SelectedStatus.SELECTED : SelectedStatus.CLEAR;
+        selectedNode.selectedStatus = selected ? TreeNodeStatus.ON : TreeNodeStatus.OFF;
         selectedNode.children.forEach(childName => propagateSelectStatusDown(nodeIndex, childName, selected))
     }
 
@@ -149,12 +144,12 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
     const recalculateSelectedStatus = (nodeIndex, nodeName) => {
         const currentNode = nodeIndex[nodeName];
         const children = currentNode.children.map(childName => nodeIndex[childName]);
-        if(children.every(childNode => childNode.selectedStatus === SelectedStatus.SELECTED)){
-            currentNode.selectedStatus = SelectedStatus.SELECTED
-        } else if (children.every(childNode => childNode.selectedStatus === SelectedStatus.CLEAR)){
-            currentNode.selectedStatus = SelectedStatus.CLEAR
+        if(children.every(childNode => childNode.selectedStatus === TreeNodeStatus.ON)){
+            currentNode.selectedStatus = TreeNodeStatus.ON
+        } else if (children.every(childNode => childNode.selectedStatus === TreeNodeStatus.OFF)){
+            currentNode.selectedStatus = TreeNodeStatus.OFF
         } else {
-            currentNode.selectedStatus = SelectedStatus.PARTIAL
+            currentNode.selectedStatus = TreeNodeStatus.PARTIAL
         }
     };
 
@@ -169,11 +164,11 @@ export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, to
     };
 
     const getFilteringNodes = (aNodeIndex) =>
-        _.pickBy(aNodeIndex, node => [SelectedStatus.SELECTED, SelectedStatus.PARTIAL].includes(node.selectedStatus))
+        _.pickBy(aNodeIndex, node => [TreeNodeStatus.ON, TreeNodeStatus.PARTIAL].includes(node.selectedStatus))
 
-    const getSelectedNodeNames = () =>  _.keys(_.pickBy(nodeIndex, node => node.selectedStatus === SelectedStatus.SELECTED))
+    const getSelectedNodeNames = () =>  _.keys(_.pickBy(nodeIndex, node => node.selectedStatus === TreeNodeStatus.ON))
 
-    const getPartialNodeNames = () =>  _.keys(_.pickBy(nodeIndex, node => node.selectedStatus === SelectedStatus.PARTIAL))
+    const getPartialNodeNames = () =>  _.keys(_.pickBy(nodeIndex, node => node.selectedStatus === TreeNodeStatus.PARTIAL))
 
     const getExpandedNodeNames = () =>  _.keys(_.pickBy(nodeIndex, node => node.expanded))
 
