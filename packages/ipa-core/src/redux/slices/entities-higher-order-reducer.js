@@ -1,9 +1,9 @@
 import {createSelector, createSlice} from '@reduxjs/toolkit'
-import ScriptHelper from "../../components/utils/ScriptHelper";
-import {setIncludesBy} from "../../components/utils/compare";
-import {applyFilters, queryFromFilter} from "../../components/controls/FilterControl";
+import ScriptHelper from "../../IpaUtils/ScriptHelper";
+import {setIncludesBy} from "../../IpaUtils/compare";
+import {applyFilters, queryFromFilter} from "../../IpaControls/FilterControl";
 import _ from "lodash";
-import {parseName, parseNode, SelectedStatus} from "../../components/controls/TreeSearch";
+import {parseName, parseNode, SelectedStatus} from "../../IpaControls/TreeSearch";
 
 
 let initialState = {//TODO if operations on these entities get too slow, use direct access instead of an array
