@@ -173,7 +173,7 @@ export const entitiesSliceFactory = (identifier = '') => {
 }
 
 //Other
-const getEntityFromModel = async (script, modelEntity) => {//TODO fix script so that it returns model id if possible
+export const getEntityFromModel = async (script, modelEntity) => {//TODO fix script so that it returns model id if possible
     const entity = await ScriptHelper.executeScript(script, {modelInfo: modelEntity})
     if (entity) return {...entity, modelViewerIds: [modelEntity.id]}
     else return undefined

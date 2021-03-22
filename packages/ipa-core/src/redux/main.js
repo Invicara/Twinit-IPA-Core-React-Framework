@@ -13,7 +13,7 @@ import {
     setViewerSyncOn
 } from "./slices/entities";
 
-import entitiesHigherOrderReducer from './slices/entities-higher-order-reducer'
+import {getFilteredEntitiesBy, getEntityFromModel} from './slices/entities-higher-order-reducer'
 
 import {getUser} from './slices/user'
 
@@ -31,7 +31,10 @@ const redux = {
         isSelectingEntities,
         setEntities,
         setViewerSyncOn,
-        entitiesHigherOrderReducer
+        entitiesHigherOrderReducer: {
+            getFilteredEntitiesBy,
+            getEntityFromModel
+        }
     },
     User: {
         getUser
