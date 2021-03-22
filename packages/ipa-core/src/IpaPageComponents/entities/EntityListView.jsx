@@ -60,6 +60,35 @@ export const PinkCheckbox = withStyles({
     checkedIcon={<CheckBox style={{fontSize: 20, color: '#C71784'}}/>}
     {...produce(props, props => {delete props.classes.icon})} />);
 
+export const SquareInSquareCheckbox = withStyles({
+    icon: {
+
+        width: 18,
+        height: 18,
+        margin: 3,
+        border: '2px solid rgb(87,87,87)',
+        backgroundColor: '#f5f8fa',
+    },
+    checkedIcon: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 18,
+        height: 18,
+        margin: 3,
+        border: '2px solid #C71784',
+        backgroundColor: '#f5f8fa',
+    },
+    innerCheckedIcon: {
+        width: 8,
+        height: 8,
+        backgroundColor: '#C71784',
+    }
+})((props) => <Checkbox
+    icon={<span className={props.classes.icon}/>}
+    checkedIcon={<span className={props.classes.checkedIcon}><div className={props.classes.innerCheckedIcon}/></span>}
+    {...produce(props, props => {delete props.classes.icon; delete props.classes.checkedIcon; delete props.classes.innerCheckedIcon})} />);
+
 export const useChecked = (inputItems) => {
     const [items, setItems] = useState([]);
     const previousItems = usePrevious(inputItems)

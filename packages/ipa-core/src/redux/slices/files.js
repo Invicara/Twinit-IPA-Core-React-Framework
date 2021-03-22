@@ -236,7 +236,10 @@ const preProcess = async (files, script) => {
 }
 
 export const isComplete = file => file.status === FileStatus.COMPLETE;
-export const isReadyFor = columns => file => columns.filter(col => col.required).every(col => !!_.get(file.fileAttributes,col.name));
+export const isReadyFor = columns => file => columns.filter(col => col.required).every(col => col.isCompositeAttribute ?
+        col.name.every(name => !_.isEmpty(_.get(file.fileAttributes, `${col.name}.${name}`)))
+        : !!_.get(file.fileAttributes, col.name)
+);
 export const isPending = file => file.status === FileStatus.PENDING;
 export const isInProgress = file => file.status === FileStatus.PROGRESS;
 export const comesFromComplexSelect = (attrValue) => typeof attrValue === "object";

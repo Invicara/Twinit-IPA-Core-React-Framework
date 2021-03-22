@@ -85,7 +85,9 @@ const RawRelationsModal = ({entity: originalParentEntities, action, parentEntiti
         //if the original entities were not an array, we were acting on a single entity
         //if so we need to update the entity by calling the actions success method to get
         //the entity to update in the UI
-        if (!Array.isArray(originalParentEntities)) action.onSuccess(action.type, originalParentEntities)
+         setTimeout(() => {
+                if (!Array.isArray(originalParentEntities)) action.onSuccess(action.type, originalParentEntities)
+         }, 0) //For some reason if we do this synchronously, it messes up with the script. TODO: Find the root cause and remove the setTimeout
     }
 
     const cancel = () => {

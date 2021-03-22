@@ -14,7 +14,7 @@ let initialState = {//Using direct access instead of an array for better perform
     entitiesChanged: false
 };
 
-const sameRelation = (relation, other) => relation.childId === other.childId && relation.parentId === other.parentId
+export const sameRelation = (relation, other) => relation.childId === other.childId && relation.parentId === other.parentId
 
 const getRelation = (related, state, entityId) => related.isChild ?
         state.relations.find(r => sameRelation(r, {parentId: entityId, childId: related._id})) :
