@@ -13,6 +13,8 @@ import {
     setViewerSyncOn
 } from "./slices/entities";
 
+import entitiesHigherOrderReducer from './slices/entities-higher-order-reducer'
+
 import {getUser} from './slices/user'
 
 const redux = {
@@ -28,7 +30,8 @@ const redux = {
         getFetchingCurrent,
         isSelectingEntities,
         setEntities,
-        setViewerSyncOn
+        setViewerSyncOn,
+        entitiesHigherOrderReducer
     },
     User: {
         getUser
