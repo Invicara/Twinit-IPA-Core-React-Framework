@@ -1,4 +1,3 @@
-import { showError } from './slices/globalError'
 import _ from 'lodash'
 
 const templateError = message => `There's nothing worse than a technical difficulty,
@@ -24,7 +23,6 @@ export const createFetcherThunk = (
             window.location = `${window.location.protocol}//${window.location.host}`
         } else {
             console.error(err)
-            dispatch(showError(templateError(_.get(err, 'response.data.msg'))))
         }
     }
 }

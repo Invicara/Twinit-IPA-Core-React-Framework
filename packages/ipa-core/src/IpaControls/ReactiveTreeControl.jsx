@@ -1,12 +1,11 @@
 import React from "react";
 import _ from 'lodash'
 import clsx from "clsx";
-import {TreeNodeStatus,} from "../TreeSearch";
 import {produce} from "immer";
 import {
     defaultBranchRenderer,
     defaultLeafRenderer,
-    propagateNodeStatusDown, propagateNodeStatusUp,
+    propagateNodeStatusDown, propagateNodeStatusUp, TreeNodeStatus,
     withoutPropagation
 } from "../IpaUtils/TreeHelpers";
 import {curriedFlip} from "../IpaUtils/function";

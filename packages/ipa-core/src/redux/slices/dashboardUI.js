@@ -3,10 +3,10 @@ import { createSlice } from '@reduxjs/toolkit'
 import ChartTestPage from "../../IpaPageComponents/dashboards/ChartTestPage"
 import ChartStack from "../../IpaControls/ChartStack"
 import BigButtonBar from "../../IpaControls/BigButtonBar"
-import CompactButtonBar from "../../IpaControls//CompactButtonBar"
-import Image from "../../IpaControls//Image"
-import CrossEntitySearch from "../../IpaControls//CrossEntitySearch";
-import GenericIframe from "../../IpaControls//GenericIframe";
+import CompactButtonBar from "../../IpaControls/CompactButtonBar"
+import Image from "../../IpaControls/Image"
+import CrossEntitySearch from "../../IpaControls/CrossEntitySearch";
+import GenericIframe from "../../IpaControls/GenericIframe";
 
 const DASHBOARD_COMPONENTS = {
   "ChartTestPage": ChartTestPage,

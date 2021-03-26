@@ -12,9 +12,9 @@ const ENTITY_ACTION_COMPONENTS = {
   "EntityRelationsModal": EntityRelationsModalFactory
 }
 
-import {SimpleTableFactory, SimpleTableGroupFactory } from "../../IpaControls//SimpleTable";
-import {ImageFactory} from "../../IpaControls//Image";
-import {ScriptedChartFactory} from "../../IpaControls//ScriptedChart";
+import {SimpleTableFactory, SimpleTableGroupFactory } from "../../IpaControls/SimpleTable";
+import {ImageFactory} from "../../IpaControls/Image";
+import {ScriptedChartFactory} from "../../IpaControls/ScriptedChart";
 
 const ENTITY_DATA_COMPONENTS = {
   "SimpleTable": SimpleTableFactory,
