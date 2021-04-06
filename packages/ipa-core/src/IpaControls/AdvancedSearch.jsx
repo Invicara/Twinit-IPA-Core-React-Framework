@@ -1,6 +1,8 @@
 import React, {useCallback, useState} from "react";
 import {FetchButton} from "./FetchButton";
-import FilterControl, {FILTER2OP} from "./FilterControl"
+import FilterControl from "./FilterControl";
+import {FILTER2OP} from "./private/filter";
+
 
 
 const FILTER_SELECT_STYLES = {

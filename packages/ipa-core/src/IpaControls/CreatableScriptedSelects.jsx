@@ -1,12 +1,13 @@
 import React, {Fragment, useEffect, useRef, useState} from "react";
 import CreatableSelect from "react-select/creatable";
-import {asSelectOptions, selectStyles} from "./EnhancedScriptedSelects";
 import clsx from "clsx";
 import _ from "lodash"
 import {usePrevious} from "../IpaUtils/usePrevious";
 
 import ScriptCache from "../IpaUtils/script-cache";
 import {loadPlainInitialValueWithScriptedSelectFormat} from '../IpaUtils/ScriptedSelectsHelpers'
+import {asSelectOptions} from "../IpaUtils/controls";
+import {selectStyles} from "./private/selectStyles";
 
 export const CreatableScriptedSelects = ({currentValue, onChange, multi, script, disabled, filterInfo, compact, selectOverrideStyles, isClearable = true, reloadTrigger}) => {
     const [selects, setSelects] = useState({});

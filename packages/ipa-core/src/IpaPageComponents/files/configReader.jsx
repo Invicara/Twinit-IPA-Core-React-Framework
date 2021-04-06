@@ -1,6 +1,6 @@
 import {CreatableScriptedSelects} from "../../IpaControls/CreatableScriptedSelects";
 import produce from "immer";
-import {getControlComponent} from "../../IpaControls/EnhancedFetchControl";
+import {ControlProvider} from "../../IpaControls/ControlProvider";
 import React from "react";
 import {fileSelectStyles, FileTableInput, FileTableSelect} from "./misc";
 import _ from 'lodash'
@@ -34,7 +34,7 @@ const validateMulti = (query) => {
 
 const buildConfig = displayNames  => produce(async column => {
     if(typeof column.query === 'object'){
-        const Control = getControlComponent(column.query);
+        const Control = ControlProvider.getControlComponent(column.query);
         validateMulti(column.query)
         column.control = function (value, onChange) {//If this needs to be turned into an arrow function, be careful with the `this` reference
             return <Control currentValue={value} onChange={onChange} noFetch selects={this.query.selects}

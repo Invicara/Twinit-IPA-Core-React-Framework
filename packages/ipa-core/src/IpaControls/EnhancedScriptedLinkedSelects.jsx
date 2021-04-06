@@ -1,12 +1,13 @@
 import React, {Fragment, useEffect, useState} from "react";
 import Select from "react-select";
-import {asSelectOptions, selectStyles} from "./EnhancedScriptedSelects";
 import {FetchButton} from "./FetchButton";
 import clsx from "clsx";
 import _ from "lodash";
 import {loadPlainInitialValueWithScriptedSelectFormat} from "../IpaUtils/ScriptedSelectsHelpers";
 import ScriptCache from "../IpaUtils/script-cache";
 import { useWithLinkedSelectChange } from "./private/useWithLinkedSelectChange";
+import {selectStyles} from "./private/selectStyles";
+import {asSelectOptions} from "../IpaUtils/controls";
 
 const flattenIfNotMulti = (selectValues, selects) => {//This is necessary bc script helper does not handle single-option select values as a list
     return _.mapValues(selectValues, (selectedOptions, selectId) =>

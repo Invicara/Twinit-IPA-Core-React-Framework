@@ -1,9 +1,9 @@
 import Select from "react-select";
-import {asSelectOption, asSelectOptions} from "../../IpaControls/EnhancedScriptedSelects";
 import React, {useEffect, useRef} from "react";
 import GenericMatButton from "../../IpaControls/GenericMatButton";
 import clsx from "clsx";
 import _ from 'lodash'
+import {asSelectOption, asSelectOptions} from "../../IpaUtils/controls";
 
 export const fileSelectStyles = {
     control: (provided, {isFocused, isDisabled}) => ({

@@ -1,13 +1,13 @@
 import React, {Fragment, useEffect, useState} from "react";
 import Select from "react-select";
-import {selectStyles} from "./EnhancedScriptedSelects";
 import CreatableSelect from "react-select/creatable";
 import clsx from "clsx";
 import _ from "lodash";
-import {loadPlainInitialValueWithScriptedSelectFormat} from "./CreatableScriptedSelects";
+import {loadPlainInitialValueWithScriptedSelectFormat} from '../IpaUtils/ScriptedSelectsHelpers'
 import ScriptCache from "../IpaUtils/script-cache";
 import { useWithLinkedSelectChange } from "./private/useWithLinkedSelectChange";
 import {asSelectOptions} from "../IpaUtils/controls";
+import {selectStyles} from "./private/selectStyles";
 
 export const EnhancedPickListSelect = ({currentValue, onChange, disabled, selects: selectsConfig, compact, selectOverrideStyles, isClearable = true, pickListScript, initialPickListType, canCreateItems, updateScript}) => {
 

@@ -25,7 +25,7 @@ import clsx from "clsx";
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';
 import {ScriptedLinkedSelects} from '../../IpaControls/EnhancedScriptedLinkedSelects';
-import {getControlComponent}  from "../../IpaControls/EnhancedFetchControl";
+import {ControlProvider}  from "../../IpaControls/ControlProvider";
 
 import produce from "immer";
 
@@ -224,7 +224,7 @@ export default class EntityModal extends React.Component {
           case 'text': {
 
             if (this.props.action.component.propertyUiTypes && this.props.action.component.propertyUiTypes[prop]){
-              let Control = getControlComponent(this.props.action.component.propertyUiTypes[prop]);
+              let Control = ControlProvider.getControlComponent(this.props.action.component.propertyUiTypes[prop]);
               
               if (!Control)
                 return (<div key={prop}>Configured propertyUiType Component  for {prop} Doesn't Exist</div>)

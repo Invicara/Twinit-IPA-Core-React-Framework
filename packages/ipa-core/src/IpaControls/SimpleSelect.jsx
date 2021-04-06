@@ -17,7 +17,6 @@
 
 import React from "react";
 import Select from 'react-select'
-import {asSelectOptions} from "./EnhancedScriptedSelects";
 
 const SimpleSelect = ({title, options, handleChange, placeholder, className, value}) => {
   return (
