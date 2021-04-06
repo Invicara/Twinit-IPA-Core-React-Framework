@@ -4,22 +4,12 @@ import {FetchButton} from "./FetchButton";
 import clsx from "clsx";
 import _ from "lodash";
 import {loadPlainInitialValueWithScriptedSelectFormat} from "../IpaUtils/ScriptedSelectsHelpers";
+import {asSelectOptions} from "../IpaUtils/controls";
 
 import ScriptCache from "../IpaUtils/script-cache";
 
 import './EnhancedScriptedSelects.scss'
-
-
-export const selectStyles = (provided, {isFocused, isDisabled}) => ({
-    backgroundColor: isDisabled ? "hsl(0, 0%, 95%)" : "hsl(0, 0%, 100%)",
-    border: `2px solid ${isFocused && !isDisabled ? '#c71784' : '#E6E6E6'}`,
-    borderRadius: '5px',
-    display: 'flex'
-});
-
-export const asSelectOption = option => ({value: option, label: option, key: option})
-
-export const asSelectOptions = options => options.map(asSelectOption)
+import {selectStyles} from "./private/selectStyles";
 
 export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, selectOverrideStyles, onFetch, multi, script, disabled}) => {
     const [selects, setSelects] = useState({});

@@ -22,7 +22,7 @@ import PropTypes from "prop-types";
 
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';
-import {CreatableScriptedSelects} from "../../IpaControls/EnhancedCreatableScriptedSelects";
+import {CreatableScriptedSelects} from "../../IpaControls/CreatableScriptedSelects";
 
 import GenericModal from '../../IpaDialogs/GenericModal'
 

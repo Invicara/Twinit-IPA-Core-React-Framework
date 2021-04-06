@@ -5,7 +5,7 @@ import _ from 'lodash';
 var JSZip = require("jszip");
 var FileSaver = require('file-saver');
 
-async function downloadDocuments(fileItems) {
+export async function downloadDocuments(fileItems) {
   console.log('fileItems', fileItems)
   let fileUrls = [];
   let urlPromises = [];
@@ -68,7 +68,7 @@ async function downloadDocuments(fileItems) {
 
 }
 
-const getFileUrlForFilename = async (filename) => {
+export const getFileUrlForFilename = async (filename) => {
   
   let project = IafProj.getCurrent()
   return IafFile.getFileItems(project.rootContainer, {name: filename}).then((fileItems) => {
@@ -82,7 +82,7 @@ const getFileUrlForFilename = async (filename) => {
 }
 
 //need to fix this, it defaults to to returning the fist version and not the latest
-const getFileUrl = async (fileId, versionId) => {  
+export const getFileUrl = async (fileId, versionId) => {
   let result = await IafFileSvc.getFileVersionUrl(fileId, versionId ? versionId : await IafFileSvc.getFileVersions(fileId)._list[0]._id)
   return result._url
 }

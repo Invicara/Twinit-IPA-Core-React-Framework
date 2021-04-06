@@ -24,7 +24,7 @@ import GroupControl from "../../IpaControls/GroupControl"
 import FancyTreeControl from "../../IpaControls/FancyTreeControl"
 import _ from "lodash";
 import {listEquals} from "../../IpaUtils/compare";
-import {getFilteredEntitiesBy} from "../../redux/slices/entities-higher-order-reducer";
+import {getFilteredEntitiesBy} from "../../IpaUtils/entities";
 
 const GROUP_SELECT_STYLES = {
     control: styles => ({...styles, width: '90%', margin: '10px 0'}),

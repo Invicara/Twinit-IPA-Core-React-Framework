@@ -75,7 +75,7 @@ export const defaultTheme = {
   }
 };
 
-export default class DynamicAttributeInput extends React.Component {
+export class DynamicAttributeInput extends React.Component {
     
     constructor(props) {
         super(props);

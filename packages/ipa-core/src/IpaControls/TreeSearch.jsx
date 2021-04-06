@@ -5,13 +5,7 @@ import ScriptHelper from "../IpaUtils/ScriptHelper";
 import {produce} from "immer";
 import _ from "lodash";
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
-
-export const parseNode = node => ({
-    ...node,
-    expanded: JSON.parse(node.expanded),
-    isLeaf: JSON.parse(node.isLeaf),
-    level: JSON.parse(node.level)
-})
+import {parseNode} from "./private/tree";
 
 const treeControlLeafNodeRenderer = (group) => <div>{parseName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
 
@@ -25,12 +19,6 @@ const treeControlBranchNodeRenderer = (groupName, nodeValue) => {
           </span>
     )
 };
-
-export const stringifyName = (displayName, level, position) => `${level}-${position}-${displayName}`
-export const parseName = name => {
-    const [level, position, ...displayNameParts] = name.split("-");
-    return {level, position, displayName: displayNameParts.join("-")}
-}
 
 export const TreeSearch = ({ currentValue: filteringNodeIndex = {}, onChange, touched, onFetch, display, additionalOptions, isFetching, treeLevels }) => {
     const [tree, setTree] = useState({})

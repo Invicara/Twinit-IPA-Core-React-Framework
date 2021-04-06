@@ -26,6 +26,7 @@ export const {
     setUser
 } = actions;
 
+//TODO This thunk doesn't seem to really make sense
 //Thunks
 export const addUser = (user) => (dispatch, getState) => {
   

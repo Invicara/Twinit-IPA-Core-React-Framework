@@ -4,13 +4,10 @@ import {selectStyles} from "./EnhancedScriptedSelects";
 import CreatableSelect from "react-select/creatable";
 import clsx from "clsx";
 import _ from "lodash";
-import {loadPlainInitialValueWithScriptedSelectFormat} from "./EnhancedCreatableScriptedSelects";
+import {loadPlainInitialValueWithScriptedSelectFormat} from "./CreatableScriptedSelects";
 import ScriptCache from "../IpaUtils/script-cache";
-import { useWithLinkedSelectChange } from "./useWithLinkedSelectChange";
-
-export const asSelectOption = option => ({value: option.value, label: option.display, key: option.display})
-
-export const asSelectOptions = options => options.map(asSelectOption)
+import { useWithLinkedSelectChange } from "./private/useWithLinkedSelectChange";
+import {asSelectOptions} from "../IpaUtils/controls";
 
 export const EnhancedPickListSelect = ({currentValue, onChange, disabled, selects: selectsConfig, compact, selectOverrideStyles, isClearable = true, pickListScript, initialPickListType, canCreateItems, updateScript}) => {
 

@@ -3,7 +3,8 @@ import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import {setIncludesBy} from "../../IpaUtils/compare";
 import {applyFilters, queryFromFilter} from "../../IpaControls/FilterControl";
 import _ from "lodash";
-import {parseName, parseNode, SelectedStatus} from "../../IpaControls/TreeSearch";
+import {parseName} from "../../IpaControls/TreeSearch";
+import {parseNode} from "../../IpaControls/private/tree";
 
 
 let initialState = {//TODO if operations on these entities get too slow, use direct access instead of an array
@@ -173,16 +174,6 @@ export const entitiesSliceFactory = (identifier = '') => {
 }
 
 //Other
-export const getEntityFromModel = async (script, modelEntity) => {//TODO fix script so that it returns model id if possible
-    const entity = await ScriptHelper.executeScript(script, {modelInfo: modelEntity})
-    if (entity) return {...entity, modelViewerIds: [modelEntity.id]}
-    else return undefined
-}
-
-export const getFilteredEntitiesBy = (entities, filters) => applyFilters(entities, filters, (a, p) => {
-    return p == "Entity Name" ? a["Entity Name"] : a.properties[p]
-});
-
 const asOptional = (object, path) => _.isEmpty(_.get(object, path)) ? [] : [object];
 
 const getTreeSelectQuery = (selector, filteringNodes) => {

@@ -1,4 +1,4 @@
-import {CreatableScriptedSelects} from "../../IpaControls/EnhancedCreatableScriptedSelects";
+import {CreatableScriptedSelects} from "../../IpaControls/CreatableScriptedSelects";
 import produce from "immer";
 import {getControlComponent} from "../../IpaControls/EnhancedFetchControl";
 import React from "react";

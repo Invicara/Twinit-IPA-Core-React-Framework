@@ -30,6 +30,7 @@ export const {
     setUserConfig
 } = actions;
 
+//TODO This thunk doesn't seem to really make sense
 //Thunks
 export const addUserConfig = (config) => (dispatch, getState) => {
   

@@ -1,21 +1,33 @@
 import {
-    getCurrentEntityType,
-    getIsolatedEntities,
-    getSelectedEntities,
-    isViewerSyncOn,
-    selectEntitiesFromModels,
     clearEntities,
     getAllCurrentEntities,
     getAppliedFilters,
+    getCurrentEntityType,
     getFetchingCurrent,
+    getIsolatedEntities,
+    getSelectedEntities,
     isSelectingEntities,
+    isViewerSyncOn,
+    selectEntitiesFromModels,
     setEntities,
     setViewerSyncOn
 } from "./slices/entities";
 
-import {getFilteredEntitiesBy, getEntityFromModel} from './slices/entities-higher-order-reducer'
 
-import {getUser} from './slices/user'
+import {getUser, setUser} from './slices/user'
+import {
+    applySearchFiltering,
+    clearSearchedEntities,
+    getAllCurrentSearchedEntities,
+    getAppliedSearchFilters,
+    getCurrentSearchEntityType,
+    getSearchingCurrent,
+    getSelectedSearchedEntities,
+    resetSearchedEntities,
+    searchEntities,
+    setSelectedSearchedEntities
+} from "./slices/entities-pluggable-search";
+import {getEntitySelectConfig, setUserConfig} from "./slices/user-config";
 
 const redux = {
     Entities: {
@@ -30,14 +42,25 @@ const redux = {
         getFetchingCurrent,
         isSelectingEntities,
         setEntities,
-        setViewerSyncOn,
-        entitiesHigherOrderReducer: {
-            getFilteredEntitiesBy,
-            getEntityFromModel
-        }
+        setViewerSyncOn
+    },
+    EntitiesPluggableSearch: {
+        getAllCurrentSearchedEntities,
+        getSelectedSearchedEntities,
+        getSearchingCurrent,
+        getCurrentSearchEntityType,
+        getAppliedSearchFilters,
+        resetSearchedEntities,
+        clearSearchedEntities,
+        applySearchFiltering,
+        setSelectedSearchedEntities,
+        searchEntities
     },
     User: {
-        getUser
+        getUser,
+        setUser,
+        setUserConfig,
+        getEntitySelectConfig
     }
 }
 

@@ -5,33 +5,85 @@ import {StackableDrawer} from './StackableDrawer'
 import FancyTreeControl from './FancyTreeControl'
 import ChartStack from './ChartStack'
 import CrossEntitySearch from './CrossEntitySearch'
-import {CreatableScriptedSelects} from './EnhancedCreatableScriptedSelects'
-import {ScriptedLinkedSelects} from './EnhancedScriptedLinkedSelects'
-import {ScriptedSelects} from './EnhancedScriptedSelects'
+import {CreatableScriptedSelects} from './CreatableScriptedSelects'
 import GenericIframe from './GenericIframe'
-import Image from './Image'
 import MiniButton, {MiniIconButton} from './MiniButton'
-import ScriptedChart from './ScriptedChart'
-import SimpleTextThrobber from './SimpleTextThrobber'
+import {AdvancedSearch} from "./AdvancedSearch";
+import BigButtonBar from "./BigButtonBar";
+import CompactButtonBar from "./CompactButtonBar";
+import {DynamicAttributeInput, defaultTheme} from "./DynamicAttributeInput";
+import {EnhancedPickListSelect} from "./EnhancedPickListSelect";
+import {ScriptedLinkedSelects} from "./EnhancedScriptedLinkedSelects";
+import {ScriptedLinkedSelects as ScriptedLinkedSelectsOld} from "./ScriptedLinkedSelects";
+import {ScriptedSelects} from "./EnhancedScriptedSelects";
+import Image from "./Image";
+import {FetchButton} from "./FetchButton";
+import {FetchingLegend} from "./FetchingLegend";
+import FilterControl from "./FilterControl";
+import GenericButton from "./GenericButton";
+import GroupAndFilterControl from "./GroupAndFilterControl";
+import GroupControl from "./GroupControl";
+import HierarchyAttributeSelects from "./HierarchyAttributeSelects";
+import Item from "./Item";
+import LinkedIcon from "./LinkedIcon";
+import LinkedSelectsProgressive from "./LinkedSelectsProgressive";
+import {OrDivider} from "./OrDivider";
+import ReactiveTreeControl from "./ReactiveTreeControl";
+import ScriptedChart from "./ScriptedChart";
+import SimpleMultiSelect from "./SimpleMultiSelect";
+import SimpleSelect from "./SimpleSelect";
+import SimpleTextThrobber from "./SimpleTextThrobber";
+import {TextSearch} from "./TextSearch";
+import TreeControl from "./TreeControl";
+import {TreeSearch} from "./TreeSearch";
+import {ControlProvider} from "./ControlProvider";
 
 const IpaControls = {
-    SimpleTable,
-    IpaButton: GenericMatButton,
-    IpaMiniButton: MiniButton,
-    IpaMiniIconButton: MiniIconButton,
-    GenericMatButton,
-    EnhancedFetchControl,
-    StackableDrawer,
-    FancyTreeControl,
+    AdvancedSearch,
+    BigButtonBar,
     ChartStack,
-    CrossEntitySearch,
+    CompactButtonBar,
+    ControlProvider,
     CreatableScriptedSelects,
+    CrossEntitySearch,
+    DynamicAttributeInput,
+    EnhancedFetchControl,
+    EnhancedPickListSelect,
     ScriptedLinkedSelects,
+    ScriptedLinkedSelectsOld,
     ScriptedSelects,
+    FancyTreeControl,
+    FetchButton,
+    FetchingLegend,
+    FilterControl,
+    GenericButton,
     Iframe: GenericIframe,
+    GenericIframe,
+    IpaButton: GenericMatButton,
+    GenericMatButton,
+    GroupAndFilterControl,
+    GroupControl,
+    HierarchyAttributeSelects,
     Image,
+    Item,
+    LinkedIcon,
+    LinkedSelectsProgressive,
+    MiniButton,
+    IpaMiniButton: MiniButton,
+    MiniIconButton,
+    IpaMiniIconButton: MiniIconButton,
+    OrDivider,
+    ReactiveTreeControl,
     ScriptedChart,
-    SimpleTextThrobber
+    SimpleMultiSelect,
+    SimpleSelect,
+    SimpleTable,
+    SimpleTextThrobber,
+    StackableDrawer,
+    TextSearch,
+    TreeControl,
+    TreeSearch,
+    defaultTheme, //TODO This is a theme, not a control. I left it here bc it's just one, but if there were to be more, we should consider creating an IpaThemes module
 }
 
 export default IpaControls

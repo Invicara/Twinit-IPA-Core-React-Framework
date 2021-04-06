@@ -29,7 +29,10 @@ import LinkedSelectsProgressive from "./LinkedSelectsProgressive";
  * onChange()
  */
 
-export default class ScriptedLinkedSelects extends React.Component {
+/**
+ * @Deprecated, use {@link ./EnhancedScriptedLinkedSelects} instead
+ */
+export class ScriptedLinkedSelects extends React.Component {
     
     constructor(props) {
       super(props);

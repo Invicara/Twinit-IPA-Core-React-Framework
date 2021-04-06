@@ -14,7 +14,7 @@
 import GenericModal from './GenericModal'
 
 const IpaDialogs = {
-    GenericModal: GenericModal
+    GenericModal: GenericModal,
 }
 
 export default IpaDialogs
