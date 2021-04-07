@@ -12,7 +12,10 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
-  "main": "dist/ipa-core.js",
+  "exports": {
+    ".": "dist/index.js",
+    "./IpaUtils": "dist/IpaUtils/index.js"
+  },
   "dependencies": {
     "@invicara/expressions": "~0.14.0",
     "@invicara/platform-api": "~0.14.0",

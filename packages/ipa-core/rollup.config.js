@@ -25,17 +25,9 @@ import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
 import { uglify } from "rollup-plugin-uglify";
 
-export default {
-  input: 'src/main.js',
-  output: {
-    file: 'dist/ipa-core.js',
-    format: 'cjs',
-    name: 'IpaCore',
-    sourcemap: false
-  },
 
-  plugins: [
-    cleaner({targets: ['./dist']}),
+const plugins =  [
+  cleaner({targets: ['./dist']}),
     json(),
     resolve({
       mainFields: ['main'],
@@ -45,7 +37,7 @@ export default {
     babel({
       exclude: 'node_modules/**',
       sourceMaps: false,
-      presets: [  
+      presets: [
         "@babel/preset-env",
         "@babel/preset-react"
       ],
@@ -62,8 +54,9 @@ export default {
         {src: 'src/*/*.scss', dest: 'dist/styles'}
       ]
     })
-  ],
-  external: ['lodash', 'bootstrap', 'classnames',
+];
+
+const external =  ['lodash', 'bootstrap', 'classnames',
   'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
   '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles',
   '@nivo/bar', '@nivo/pie', '@nivo/line',
@@ -76,4 +69,25 @@ export default {
   '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
   '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
   'app-root-path', 'json5']
-};
+
+export default [{
+  input: 'src/main.js',
+  output: {
+    file: 'dist/index.js',
+    format: 'cjs',
+    name: 'IpaCore',
+    sourcemap: false
+  },
+  plugins,
+  external
+},{
+    input: 'src/IpaUtils/main.js',
+    output: {
+        file: 'dist/IpaUtils/index.js',
+        format: 'cjs',
+        name: 'IpaUtils',
+        sourcemap: false
+    },
+    plugins,
+    external
+}];
