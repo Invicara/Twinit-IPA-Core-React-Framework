@@ -73,21 +73,113 @@ const external =  ['lodash', 'bootstrap', 'classnames',
 export default [{
   input: 'src/main.js',
   output: {
-    file: 'dist/index.js',
+    dir: 'dist/IpaCore',
     format: 'cjs',
-    name: 'IpaCore',
+    name: 'A',
     sourcemap: false
   },
-  plugins,
+  plugins: [
+    cleaner({targets: ['./dist']}),
+    json(),
+    resolve({
+      mainFields: ['main'],
+      extensions: ['.js', '.jsx', '.css', '.scss']
+    }),
+    postcss(),
+    babel({
+      exclude: 'node_modules/**',
+      sourceMaps: false,
+      presets: [
+        "@babel/preset-env",
+        "@babel/preset-react"
+      ],
+      plugins: [
+        require("@babel/plugin-proposal-object-rest-spread"),
+        require("fast-async"),
+        ["@babel/plugin-proposal-class-properties", { "loose": true }]
+      ]
+    }),
+    commonjs(),
+    copy({
+      targets: [
+        {src: 'src/img/**/*', dest: 'dist/img'},
+        {src: 'src/*/*.scss', dest: 'dist/styles'}
+      ]
+    })
+  ],
+  external
+},{
+  input: 'src/IpaPageComponents/main.js',
+  output: {
+    dir: 'dist/IpaPageComponents',
+    format: 'cjs',
+    name: 'B',
+    sourcemap: false
+  },
+  plugins: [
+    json(),
+    resolve({
+      mainFields: ['main'],
+      extensions: ['.js', '.jsx', '.css', '.scss']
+    }),
+    postcss(),
+    babel({
+      exclude: 'node_modules/**',
+      sourceMaps: false,
+      presets: [
+        "@babel/preset-env",
+        "@babel/preset-react"
+      ],
+      plugins: [
+        require("@babel/plugin-proposal-object-rest-spread"),
+        require("fast-async"),
+        ["@babel/plugin-proposal-class-properties", { "loose": true }]
+      ]
+    }),
+    commonjs(),
+    copy({
+      targets: [
+        {src: 'src/img/**/*', dest: 'dist/img'},
+        {src: 'src/*/*.scss', dest: 'dist/styles'}
+      ]
+    })
+  ],
   external
 },{
     input: 'src/IpaUtils/main.js',
     output: {
-        file: 'dist/IpaUtils/index.js',
+        dir: 'dist/IpaUtils',
         format: 'cjs',
-        name: 'IpaUtils',
+        name: 'C',
         sourcemap: false
     },
-    plugins,
+  plugins: [
+    json(),
+    resolve({
+      mainFields: ['main'],
+      extensions: ['.js', '.jsx', '.css', '.scss']
+    }),
+    postcss(),
+    babel({
+      exclude: 'node_modules/**',
+      sourceMaps: false,
+      presets: [
+        "@babel/preset-env",
+        "@babel/preset-react"
+      ],
+      plugins: [
+        require("@babel/plugin-proposal-object-rest-spread"),
+        require("fast-async"),
+        ["@babel/plugin-proposal-class-properties", { "loose": true }]
+      ]
+    }),
+    commonjs(),
+    copy({
+      targets: [
+        {src: 'src/img/**/*', dest: 'dist/img'},
+        {src: 'src/*/*.scss', dest: 'dist/styles'}
+      ]
+    })
+  ],
     external
 }];

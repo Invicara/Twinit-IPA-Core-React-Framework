@@ -24,37 +24,45 @@ import postcss from 'rollup-plugin-postcss';
 import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
 
-const plugins =  [
-  cleaner({targets: ['./dist']}),
-  json(),
-  resolve({
-    mainFields: ['main'],
-    extensions: ['.js', '.jsx', '.css', '.scss']
-  }),
-  postcss(),
-  babel({
-    exclude: 'node_modules/**',
-    sourceMaps: false,
-    presets: [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    plugins: [
-      require("@babel/plugin-proposal-object-rest-spread"),
-      require("fast-async"),
-      ["@babel/plugin-proposal-class-properties", { "loose": true }]
-    ]
-  }),
-  commonjs(),
-  copy({
-    targets: [
-      {src: 'src/img/**/*', dest: 'dist/img'},
-      {src: 'src/*/*.scss', dest: 'dist/styles'}
-    ]
-  })
-];
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/ipa-core.js',
+    format: 'cjs',
+    name: 'IpaCore',
+    sourcemap: false
+  },
 
-const external =  ['lodash', 'bootstrap', 'classnames',
+  plugins: [
+    cleaner({targets: ['./dist']}),
+    json(),
+    resolve({
+      mainFields: ['main'],
+      extensions: ['.js', '.jsx', '.css', '.scss']
+    }),
+    postcss(),
+    babel({
+      exclude: 'node_modules/**',
+      sourceMaps: false,
+      presets: [
+        "@babel/preset-env",
+        "@babel/preset-react"
+      ],
+      plugins: [
+        require("@babel/plugin-proposal-object-rest-spread"),
+        require("fast-async"),
+        ["@babel/plugin-proposal-class-properties", { "loose": true }]
+      ]
+    }),
+    commonjs(),
+    copy({
+      targets: [
+        {src: 'src/img/**/*', dest: 'dist/img'},
+        {src: 'src/*/*.scss', dest: 'dist/styles'}
+      ]
+    })
+  ],
+  external: ['lodash', 'bootstrap', 'classnames',
   'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
   '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles',
   '@nivo/bar', '@nivo/pie', '@nivo/line',
@@ -66,27 +74,5 @@ const external =  ['lodash', 'bootstrap', 'classnames',
   'react-inspector', 'react-select', 'react-table',
   '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
   '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
-  'app-root-path', 'json5']
-
-
-export default [{
-  input: 'src/main.js',
-  output: {
-    file: 'dist/index.js',
-    format: 'cjs',
-    name: 'IpaCore',
-    sourcemap: false
-  },
-  plugins,
-  external
-},{
-  input: 'src/IpaUtils/main.js',
-  output: {
-    file: 'dist/IpaUtils/index.js',
-    format: 'cjs',
-    name: 'IpaUtils',
-    sourcemap: false
-  },
-  plugins,
-  external
-}];
+  'app-root-path']
+};

@@ -13,8 +13,9 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "exports": {
-    ".": "dist/index.js",
-    "./IpaUtils": "dist/IpaUtils/index.js"
+    ".": "dist/IpaCore/main.js",
+    "./IpaUtils": "dist/IpaUtils/main.js",
+    "./IpaPageComponents": "dist/IpaPageComponents/main.js"
   },
   "dependencies": {
     "@invicara/expressions": "~0.14.0",
