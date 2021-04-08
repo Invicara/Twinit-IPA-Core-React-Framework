@@ -12,8 +12,9 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
+  "main": "dist/ipa-core.js",
   "exports": {
-    ".": "dist/IpaCore/main.js",
+    ".": "dist/ipa-core.js",
     "./IpaUtils": "dist/IpaUtils/main.js",
     "./IpaPageComponents": "dist/IpaPageComponents/main.js"
   },

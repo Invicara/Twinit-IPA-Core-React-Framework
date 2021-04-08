@@ -73,7 +73,7 @@ const external =  ['lodash', 'bootstrap', 'classnames',
 export default [{
   input: 'src/main.js',
   output: {
-    dir: 'dist/IpaCore',
+    file: 'dist/ipa-core.js',
     format: 'cjs',
     name: 'A',
     sourcemap: false
