@@ -25,37 +25,6 @@ import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
 import { uglify } from "rollup-plugin-uglify";
 
-
-const plugins =  [
-  cleaner({targets: ['./dist']}),
-    json(),
-    resolve({
-      mainFields: ['main'],
-      extensions: ['.js', '.jsx', '.css', '.scss']
-    }),
-    postcss(),
-    babel({
-      exclude: 'node_modules/**',
-      sourceMaps: false,
-      presets: [
-        "@babel/preset-env",
-        "@babel/preset-react"
-      ],
-      plugins: [
-        require("@babel/plugin-proposal-object-rest-spread"),
-        require("fast-async"),
-        ["@babel/plugin-proposal-class-properties", { "loose": true }]
-      ]
-    }),
-    commonjs(),
-    copy({
-      targets: [
-        {src: 'src/img/**/*', dest: 'dist/img'},
-        {src: 'src/*/*.scss', dest: 'dist/styles'}
-      ]
-    })
-];
-
 const external =  ['lodash', 'bootstrap', 'classnames',
   'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
   '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles',
@@ -111,12 +80,13 @@ export default [{
 },{
   input: 'src/IpaPageComponents/main.js',
   output: {
-    file: 'dist/IpaPageComponents/index.js',
+    file: 'modules/IpaPageComponents/index.js',
     format: 'cjs',
     name: 'B',
     sourcemap: false
   },
   plugins: [
+    cleaner({targets: ['./modules']}),
     json(),
     resolve({
       mainFields: ['main'],
@@ -148,7 +118,7 @@ export default [{
 },{
     input: 'src/IpaUtils/main.js',
     output: {
-        file: 'dist/IpaUtils/index.js',
+        file: 'modules/IpaUtils/index.js',
         format: 'cjs',
         name: 'C',
         sourcemap: false
