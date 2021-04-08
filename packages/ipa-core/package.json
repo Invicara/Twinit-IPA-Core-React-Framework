@@ -14,8 +14,7 @@
   },
   "main": "dist/index.js",
   "files": [
-    "/dist",
-    "/modules"
+    "/dist", "/modules"
   ],
   "dependencies": {
     "@invicara/expressions": "~0.14.0",
