@@ -73,7 +73,7 @@ const external =  ['lodash', 'bootstrap', 'classnames',
 export default [{
   input: 'src/main.js',
   output: {
-    file: 'dist/ipa-core.js',
+    file: 'dist/index.js',
     format: 'cjs',
     name: 'A',
     sourcemap: false
@@ -111,7 +111,7 @@ export default [{
 },{
   input: 'src/IpaPageComponents/main.js',
   output: {
-    dir: 'dist/IpaPageComponents',
+    file: 'dist/IpaPageComponents/index.js',
     format: 'cjs',
     name: 'B',
     sourcemap: false
@@ -148,7 +148,7 @@ export default [{
 },{
     input: 'src/IpaUtils/main.js',
     output: {
-        dir: 'dist/IpaUtils',
+        file: 'dist/IpaUtils/index.js',
         format: 'cjs',
         name: 'C',
         sourcemap: false
