@@ -1,3 +1,10 @@
+import {TextSearch} from "./TextSearch";
+import {TreeSearch} from "./TreeSearch";
+import {AdvancedSearch} from "./AdvancedSearch";
+import {ScriptedSelects} from "./EnhancedScriptedSelects";
+import {ScriptedLinkedSelects} from "./EnhancedScriptedLinkedSelects";
+import {CreatableScriptedSelects} from "./CreatableScriptedSelects";
+
 const controlsMap = {
     '<<TEXT_SEARCH>>': TextSearch,
     '<<TREE_SEARCH>>': TreeSearch,

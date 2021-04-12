@@ -4,6 +4,7 @@ import {setIncludesBy} from "../../IpaUtils/compare";
 import _ from "lodash";
 import {parseNode, parseName} from "../../IpaControls/private/tree";
 import {queryFromFilter} from "../../IpaControls/private/filter";
+import {getEntityFromModel, getFilteredEntitiesBy} from "../../IpaUtils/entities";
 
 
 let initialState = {//TODO if operations on these entities get too slow, use direct access instead of an array

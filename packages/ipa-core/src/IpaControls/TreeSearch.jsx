@@ -5,7 +5,7 @@ import ScriptHelper from "../IpaUtils/ScriptHelper";
 import {produce} from "immer";
 import _ from "lodash";
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
-import {parseNode} from "./private/tree";
+import {parseName, parseNode, stringifyName} from "./private/tree";
 
 const treeControlLeafNodeRenderer = (group) => <div>{parseName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
 
