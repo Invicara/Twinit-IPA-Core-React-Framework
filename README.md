@@ -27,7 +27,8 @@ Notes:
 When the package owner is ready to create a new release, follow this process:
 
 1. Run `npm run release`
-1. Lerna will ask you which version you would like to increment (or if you would like to entire a custom version):
+1. `npm run build` will be executed to check the library is in good shape
+1. Then, lerna will ask you which version you would like to increment (or if you would like to entire a custom version):
    ```
    lerna notice cli v3.19.0
    lerna info versioning independent
@@ -79,6 +80,8 @@ When the package owner is ready to create a new release, follow this process:
 1. Lerna will automatically make a commit of these changes and tag those changes with the package name and version number.
 
 ### Advanced
+
+To release without building you can run `npm run quickrelease`
 
 To release ALL modules you can use the `lerna` command directly and the `--force-publish` option.
 

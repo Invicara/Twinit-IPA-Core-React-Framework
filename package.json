@@ -5,7 +5,8 @@
     "bootstrap": "lerna bootstrap --no-ci",
     "build": "lerna run build",
     "build-dev": "lerna run build-dev",
-    "release": "lerna version --exact",
+    "release": "echo Building... && npm run build && lerna version --exact",
+    "quickrelease": "lerna version --exact",
     "changed": "lerna changed",
     "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes"
   },
