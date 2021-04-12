@@ -23,7 +23,7 @@ import {
     defaultBranchRenderer,
     defaultLeafRenderer,
     propagateNodeStatusDown,
-    propagateNodeStatusUp, recalculateNodeStatus,
+    propagateNodeStatusUp, recalculateNodeStatus, TreeNodeStatus,
     withoutPropagation
 } from "./TreeHelpers";
 import {usePrevious} from "./usePrevious";
@@ -64,7 +64,8 @@ const IpaUtils = {
     branchNodeRendererOld: branchNodeRenderer,
     usePrevious,
     getFilteredEntitiesBy,
-    getEntityFromModel
+    getEntityFromModel,
+    TreeNodeStatus
 }
 
 export default IpaUtils
