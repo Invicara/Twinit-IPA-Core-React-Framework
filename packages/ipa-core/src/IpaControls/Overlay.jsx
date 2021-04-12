@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import clsx from "clsx";
+import './Overlay.scss'
 
 export const Overlay  = ({children, config: {show, duration, onFadeOut, content, noFade}}) => {
     const [durationElapsed, setDurationElapsed] = useState(false);

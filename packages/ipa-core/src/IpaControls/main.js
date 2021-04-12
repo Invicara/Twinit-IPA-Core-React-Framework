@@ -37,6 +37,8 @@ import {TextSearch} from "./TextSearch";
 import TreeControl from "./TreeControl";
 import {TreeSearch} from "./TreeSearch";
 import {ControlProvider} from "./ControlProvider";
+import {Overlay} from "./Overlay";
+import SplitButton from "./SplitButton";
 
 const IpaControls = {
     AdvancedSearch,
@@ -73,12 +75,14 @@ const IpaControls = {
     MiniIconButton,
     IpaMiniIconButton: MiniIconButton,
     OrDivider,
+    Overlay,
     ReactiveTreeControl,
     ScriptedChart,
     SimpleMultiSelect,
     SimpleSelect,
     SimpleTable,
     SimpleTextThrobber,
+    SplitButton,
     StackableDrawer,
     TextSearch,
     TreeControl,
