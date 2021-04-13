@@ -1,4 +1,3 @@
-import {useChecked} from "../entities/EntityListView";
 import React, {useEffect} from "react";
 import {Star} from "./misc";
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";

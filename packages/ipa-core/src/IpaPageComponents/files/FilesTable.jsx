@@ -1,4 +1,4 @@
-import {RoundCheckbox, TickCheckbox, useChecked} from "../entities/EntityListView";
+import {RoundCheckbox, TickCheckbox, useChecked} from "../../IpaControls/Checkboxes";
 import React from "react";
 import {Star} from "./misc";
 import {comesFromComplexSelect, isReadyFor} from "../../redux/slices/files";

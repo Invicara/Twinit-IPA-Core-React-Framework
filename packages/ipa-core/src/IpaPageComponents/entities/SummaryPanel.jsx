@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import SimpleSelect from "../../IpaControls/SimpleSelect"
-import {PinkCheckbox} from "./EntityListView";
 import LinkTwoToneIcon from '@material-ui/icons/LinkTwoTone';
 import LinkOff from '@material-ui/icons/LinkOff';
 import {FetchingLegend} from "../../IpaControls/FetchingLegend";
@@ -9,6 +8,7 @@ import {produce} from "immer";
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import _ from 'lodash';
+import {PinkCheckbox} from "../../IpaControls/Checkboxes";
 
 export const SummaryPanel = ({parentEntities: baseEntities, fetching, handleCheck, checkedEntities, entityTypeOptions, removeRelated, recoverRelated}) => {
     const [collapsed, setCollapsed] = useState([])

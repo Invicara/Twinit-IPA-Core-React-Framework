@@ -130,7 +130,7 @@ class Layout extends React.Component {
                         className="fas fa-window-maximize"></i></div>
                     <div className="model-viewer-splitter" onMouseDown={this._mouseDown.bind(this)}><i
                         className="fas fa-arrows-alt-v"></i></div>
-                    <div className="model-viewer-close" onClick={contextProps.actions.toggle3DModelPopup}/>
+                    <div className="model-viewer-close" onClick={contextProps.actions.toggleBottomPanel}/>
                 </div>
 
             </div>;

@@ -23,7 +23,6 @@ import {
     searchEntities,
     setSelectedSearchedEntities
 } from "../../redux/slices/entities-pluggable-search";
-import {useChecked} from "./EntityListView";
 import {SummaryPanel} from "./SummaryPanel";
 import {SearchPanel} from "./SearchPanel";
 import {RelatePanel} from "./RelatePanel";
@@ -31,6 +30,7 @@ import _ from 'lodash';
 
 import GenericModal from '../../IpaDialogs/GenericModal'
 import {Overlay} from "../../IpaControls/Overlay";
+import {useChecked} from "../../IpaControls/Checkboxes";
 
 const RawRelationsModal = ({entity: originalParentEntities, action, parentEntities, retrieveRelated, close, entitySelectConfig,
                                fetchingRelated, searchEntities, searchedEntities, fetching, appliedFilters, selectedEntities,

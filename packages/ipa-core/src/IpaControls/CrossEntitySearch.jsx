@@ -1,6 +1,6 @@
 import React, {useState} from "react"
 import {TextSearch} from "./TextSearch";
-import {EntityListView, RoundCheckbox, useChecked} from "../IpaPageComponents/entities/EntityListView";
+import {EntityListView} from "../IpaPageComponents/entities/EntityListView";
 import produce from "immer";
 
 import clsx from "clsx";
@@ -8,6 +8,7 @@ import _ from 'lodash'
 
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import './CrossEntitySearch.scss'
+import {RoundCheckbox, useChecked} from "./Checkboxes";
 
 const CrossEntitySearch = ({searchableEntities: rawSearchableEntities = [], script, dashboard: {doAction}}) => {
     const [searchTerm, setSearchTerm] = useState('');

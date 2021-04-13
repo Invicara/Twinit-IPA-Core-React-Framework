@@ -11,7 +11,7 @@ import MiniButton, {MiniIconButton} from './MiniButton'
 import {AdvancedSearch} from "./AdvancedSearch";
 import BigButtonBar from "./BigButtonBar";
 import CompactButtonBar from "./CompactButtonBar";
-import {DynamicAttributeInput, defaultTheme} from "./DynamicAttributeInput";
+import {defaultTheme, DynamicAttributeInput} from "./DynamicAttributeInput";
 import {EnhancedPickListSelect} from "./EnhancedPickListSelect";
 import {ScriptedLinkedSelects} from "./EnhancedScriptedLinkedSelects";
 import {ScriptedLinkedSelects as ScriptedLinkedSelectsOld} from "./ScriptedLinkedSelects";
@@ -39,11 +39,17 @@ import {TreeSearch} from "./TreeSearch";
 import {ControlProvider} from "./ControlProvider";
 import {Overlay} from "./Overlay";
 import SplitButton from "./SplitButton";
+import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useChecked} from "./Checkboxes";
 
 const IpaControls = {
     AdvancedSearch,
     BigButtonBar,
     ChartStack,
+    RoundCheckbox,
+    SquareInSquareCheckbox,
+    PinkCheckbox,
+    TickCheckbox,
+    useChecked,
     CompactButtonBar,
     ControlProvider,
     CreatableScriptedSelects,
