@@ -1,14 +1,9 @@
 import React from "react";
-import {TextSearch} from "./TextSearch";
-import {AdvancedSearch} from "./AdvancedSearch";
-import {ScriptedSelects} from "./EnhancedScriptedSelects";
-import {ScriptedLinkedSelects} from "./EnhancedScriptedLinkedSelects";
 import {OrDivider} from "./OrDivider";
-import {CreatableScriptedSelects} from "./CreatableScriptedSelects";
-import { listEquals } from "../IpaUtils/compare"
-import {TreeSearch} from "./TreeSearch";
+import {listEquals} from "../IpaUtils/compare"
 
 import './EnhancedFetchControl.scss'
+import {ControlProvider} from "./ControlProvider";
 
 class EnhancedFetchControl extends React.Component {
     constructor(props) {
@@ -56,7 +51,7 @@ class EnhancedFetchControl extends React.Component {
     }
 
     renderControl = (selector, position) => {
-        const Control = getControlComponent(selector);
+        const Control = ControlProvider.getControlComponent(selector);
         const handleChange = newValue => {
             this.setState({currentSelectorId: selector.id})
             this.setSelectorsMap({
