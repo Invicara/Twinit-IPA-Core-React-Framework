@@ -17,6 +17,7 @@
 
 import json from 'rollup-plugin-json'
 import resolve from 'rollup-plugin-node-resolve'
+import path from 'path';
 // Convert CJS modules to ES6 so they can be included in bundle
 import commonjs from 'rollup-plugin-commonjs'
 import babel from 'rollup-plugin-babel';
@@ -48,8 +49,9 @@ const getPlugins = () => [
     commonjs(),
     copy({
         targets: [
-            {src: 'src/img/**/*', dest: 'dist/img'},
-            {src: 'src/*/*.scss', dest: 'dist/styles'}
+            {src: 'src/img/**/*', dest: 'modules/img'},
+            {src: 'src/*/*.scss', dest: 'modules/styles'},
+            {src: 'src/IpaUtils/ScriptHelper.js', dest: 'modules/IpaUtils'}
         ]
     })]
 
@@ -62,21 +64,25 @@ const external = ['lodash', 'bootstrap', 'classnames',
     '@reduxjs/toolkit', 'react-redux',
     'react-autosuggest', 'react-click-outside', 'react-css-modules',
     'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
-    'react-inspector', 'react-select', 'react-table',
+    'react-inspector', 'react-select','react-select/creatable', 'react-table',
     '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
-    'app-root-path', 'json5']
+    'app-root-path', 'json5',
+    path.resolve( __dirname, 'src/IpaUtils/ScriptHelper.js' ),
+
+]
 
 export default [{
     input: 'src/main.js',
     output: {
-        file: 'dist/index.js',
+        file: 'modules/index.js',
         format: 'cjs',
         name: 'Main',
         sourcemap: false
     },
     plugins: [
         cleaner({targets: ['./dist']}),
+        cleaner({targets: ['./modules']}),
         ...getPlugins()
     ],
     external
@@ -89,7 +95,6 @@ export default [{
         sourcemap: false
     },
     plugins: [
-        cleaner({targets: ['./modules']}),
       ...getPlugins()
     ],
     external

@@ -6,8 +6,11 @@ import _ from "lodash";
 import {loadPlainInitialValueWithScriptedSelectFormat} from '../IpaUtils/ScriptedSelectsHelpers'
 import ScriptCache from "../IpaUtils/script-cache";
 import { useWithLinkedSelectChange } from "./private/useWithLinkedSelectChange";
-import {asSelectOptions} from "../IpaUtils/controls";
 import {selectStyles} from "./private/selectStyles";
+
+export const asSelectOption = option => ({value: option.value, label: option.display, key: option.display})
+
+export const asSelectOptions = options => options.map(asSelectOption)
 
 export const EnhancedPickListSelect = ({currentValue, onChange, disabled, selects: selectsConfig, compact, selectOverrideStyles, isClearable = true, pickListScript, initialPickListType, canCreateItems, updateScript}) => {
 
