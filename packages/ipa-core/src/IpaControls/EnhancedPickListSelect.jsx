@@ -99,7 +99,7 @@ export const EnhancedPickListSelect = ({currentValue, onChange, disabled, select
         }        
     };
 
-    return <div className={clsx("scripted-selects-control", compact && 'compact')}>
+    return <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
         {_.values(_.mapValues(selects, (select, selectId) => <Fragment key={selectId}>
             {!compact && <span className={clsx("select-title", select.required && "required")}>{selectId}</span>}
                 {!canCreateItems && <Select

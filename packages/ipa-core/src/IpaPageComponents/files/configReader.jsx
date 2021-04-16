@@ -15,7 +15,7 @@ const controlBuilders = {
     '<<CREATABLE_SCRIPTED_SELECTS>>':  column => {
         if(!column.script) throw new Error(`Error in file column config for ${column.name}: <<CREATABLE_SCRIPTED_SELECTS>> require a script to populate select options`)
         return function(value, onChange, entity){//If this needs to be turned into an arrow function, be careful with the `this` reference
-            return <CreatableScriptedSelects currentValue={value} onChange={onChange} noFetch compact isClearable={false}
+            return <CreatableScriptedSelects currentValue={value} onChange={onChange} noFetch compact horizontal isClearable={false}
                                              selectOverrideStyles={fileSelectStyles} filterInfo={entity} script={this.script}/>
         }
     },
@@ -38,7 +38,7 @@ const buildConfig = displayNames  => produce(async column => {
         validateMulti(column.query)
         column.control = function (value, onChange) {//If this needs to be turned into an arrow function, be careful with the `this` reference
             return <Control currentValue={value} onChange={onChange} noFetch selects={this.query.selects}
-                            compact isClearable={false} selectOverrideStyles={fileSelectStyles}/>
+                            compact horizontal isClearable={false} selectOverrideStyles={fileSelectStyles}/>
         }
     } else if(typeof column.query === 'string'){
         column.control = await (controlBuilders[column.query] || fallbackControlBuilder)(column)

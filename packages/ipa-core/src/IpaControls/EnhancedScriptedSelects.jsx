@@ -40,7 +40,7 @@ export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compa
     };
 
     return _.isEmpty(selects) ? 'Loading controls...\n' :
-        <div className={clsx("scripted-selects-control", compact && 'compact')}>
+        <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
             {_.values(_.mapValues(selects, (options, selectId) => <Fragment key={selectId}>
                     {!compact && <span className="select-title">{selectId}</span>}
                     <Select

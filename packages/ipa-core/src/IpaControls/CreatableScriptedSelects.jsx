@@ -9,7 +9,7 @@ import {loadPlainInitialValueWithScriptedSelectFormat} from '../IpaUtils/Scripte
 import {asSelectOptions} from "../IpaUtils/controls";
 import {selectStyles} from "./private/selectStyles";
 
-export const CreatableScriptedSelects = ({currentValue, onChange, multi, script, disabled, filterInfo, compact, selectOverrideStyles, isClearable = true, reloadTrigger}) => {
+export const CreatableScriptedSelects = ({currentValue, onChange, multi, script, disabled, filterInfo, compact, horizontal, selectOverrideStyles, isClearable = true, reloadTrigger}) => {
     const [selects, setSelects] = useState({});
     const {current: debouncedScriptExecutor} = useRef(_.debounce(ScriptCache.runScript, 1000, {leading: true, trailing: true}));
     const prevFilterInfo = usePrevious(filterInfo)
@@ -57,7 +57,7 @@ export const CreatableScriptedSelects = ({currentValue, onChange, multi, script,
     };
 
     return _.isEmpty(selects) ? 'Loading controls...\n' :
-        <div className={clsx("scripted-selects-control", compact && 'compact')}>
+        <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
             {_.values(_.mapValues(selects, (options, selectId) => <Fragment key={selectId}>
                 {!compact && <span className="select-title">{selectId}</span>}
                     <CreatableSelect
