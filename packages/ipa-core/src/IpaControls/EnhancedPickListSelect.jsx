@@ -12,7 +12,7 @@ export const asSelectOption = option => ({value: option.value, label: option.dis
 
 export const asSelectOptions = options => options.map(asSelectOption)
 
-export const EnhancedPickListSelect = ({currentValue, onChange, disabled, selects: selectsConfig, compact, selectOverrideStyles, isClearable = true, pickListScript, initialPickListType, canCreateItems, updateScript}) => {
+export const EnhancedPickListSelect = ({currentValue, onChange, disabled, selects: selectsConfig, compact, horizontal, selectOverrideStyles, isClearable = true, pickListScript, initialPickListType, canCreateItems, updateScript}) => {
 
     const [selects, setSelects] = useState(selectsConfig.reduce((acc, select, i) => ({
         ...acc,

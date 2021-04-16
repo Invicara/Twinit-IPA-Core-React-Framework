@@ -15,7 +15,7 @@ const flattenIfNotMulti = (selectValues, selects) => {//This is necessary bc scr
     )
 };
 
-export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched, noFetch, onFetch, selects: selectsConfig, compact, selectOverrideStyles, isClearable = true}) => {
+export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched, noFetch, onFetch, selects: selectsConfig, compact, horizontal, selectOverrideStyles, isClearable = true}) => {
 
     const [selects, setSelects] = useState(selectsConfig.reduce((acc, select, i) => ({
         ...acc,

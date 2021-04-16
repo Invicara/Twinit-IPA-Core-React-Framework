@@ -11,7 +11,7 @@ import ScriptCache from "../IpaUtils/script-cache";
 import './EnhancedScriptedSelects.scss'
 import {selectStyles} from "./private/selectStyles";
 
-export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, selectOverrideStyles, onFetch, multi, script, disabled}) => {
+export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, horizontal, selectOverrideStyles, onFetch, multi, script, disabled}) => {
     const [selects, setSelects] = useState({});
 
     const value = (currentValue || {})
