@@ -19,6 +19,8 @@ import * as qs from 'query-string';
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
 
+import '../IpaStyles/theme.scss'
+
 
 enableMapSet()
 
