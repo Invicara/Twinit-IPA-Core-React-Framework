@@ -1,6 +1,6 @@
 $top-nav-height: 80px;
-$grey: #666666;
-$light-grey: #999999;
+$dropbkg: var(--head-menu-bkg-color);
+$dropbkg-hover: var(--head-menu-hover-color);
 
 .always-flex {
     display: flex !important;
@@ -31,7 +31,7 @@ $light-grey: #999999;
         visibility: hidden;
         height: 1px;
         width: 400px;
-        background-color: $grey;
+        background-color: $dropbkg;
         transition: all 0.5s;
         display: flex;
         flex-direction: column;
@@ -64,7 +64,8 @@ $light-grey: #999999;
             }
 
             &:hover{
-                background-color: $light-grey;
+                background-color: $dropbkg-hover;
+                ;
                 transition: all 0.5s;
             }
         }

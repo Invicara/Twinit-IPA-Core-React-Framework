@@ -1,6 +1,6 @@
 $base-text-color: #666666;
 $step-color: $base-text-color;
-$highlight-pink: #C71784;
+$highlight-pink: var(--app-accent-color);
 $disabled-color: #E6E6E6;
 $selected-step: $highlight-pink;
 $step-width: 170px;

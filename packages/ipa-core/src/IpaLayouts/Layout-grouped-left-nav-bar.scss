@@ -1,6 +1,6 @@
 $left-panel-width: 80px;
 $navExpanded-width: 300px;
-$purple: #c71784;
+$purple: var(--app-accent-color);
 
 //TODO: remove !important tags when we remove the other !important tags from the other nav
 
@@ -164,7 +164,7 @@ $purple: #c71784;
 }
 
 nav.grouped-left-nav-bar{
-    background-color: #333333;
+    background-color: var(--nav-bkg-color);
     width: $left-panel-width;
     height: 100%;
     display: flex;

@@ -31,7 +31,7 @@
 
 .entities-selection-controls {
   padding-left: 20px;
-  border-left: #c71784 solid 10px;
+  border-left: var(--app-accent-color) solid 10px;
   border-radius: 15px;
 
   .entities-selection-controls-indent {

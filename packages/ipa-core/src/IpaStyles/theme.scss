@@ -1,11 +1,25 @@
 :root {
-    --hero-accent-color: #C71784;
+    //accent color for the entire application
+    --app-accent-color: #C71784;
 
+    //styles for the app header
+    --head-bkg-color: #333333;
+    --head-menu-bkg-color: #666666;
+    --head-menu-hover-color: #999999;
+
+    //styles for the left navbar
+    --nav-bkg-color: #333333;
+
+    //styles for the FancyTree control
     --fancytree-one-color: #C71784;
     --fancytree-one-channel-color: #f3d5e4;
     --fancytree-two-color:#f26827;
     --fancytree-two-channel-color: #fde0d7;
     --fancytree-three-color:#00a693;
     --fancytree-three-channel-color: #cdebe8;
+}
 
+//overriding the styles in ifef at the ipa-core level so ti can be further overridden by the app
+header {
+    background-color: var(--head-bkg-color) !important;
 }
