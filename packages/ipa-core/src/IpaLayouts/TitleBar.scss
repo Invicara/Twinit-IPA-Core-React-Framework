@@ -1,6 +1,7 @@
 $top-nav-height: 80px;
 $dropbkg: var(--head-menu-bkg-color);
 $dropbkg-hover: var(--head-menu-hover-color);
+$item-color: white;  //color of the text menu items
 
 .always-flex {
     display: flex !important;
@@ -50,12 +51,13 @@ $dropbkg-hover: var(--head-menu-hover-color);
             flex: 1;
             display: flex;    
             padding: 15px;
-            font-size: 18px;            
+            font-size: 18px;
+            color: $item-color;            
 
             a {
                 display: flex;
                 align-items: center;
-                color: white;
+                color: $item-color;
                 width: 100%;
 
                 &:hover {

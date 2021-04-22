@@ -20,6 +20,7 @@ import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
 
 import '../IpaStyles/theme.scss'
+import '../IpaIcons/icons.scss'
 
 
 enableMapSet()

@@ -87,7 +87,7 @@ class Layout extends React.Component {
 
     getGroupedNavItem(group){        
         const isActiveGroup = group.items.some(p=> this.isActivePage(p.path));
-        let items = group.items.map(p=> this.getNavItem(p, 'active-page', 'purple'));
+        let items = group.items.map(p=> this.getNavItem(p, 'active-page', 'purple active'));
 
         const groupClasses = classNames({
             'nav-group-li':true,
@@ -97,11 +97,11 @@ class Layout extends React.Component {
         return(
         <li className={groupClasses} key={group.groupName}>
                 <Item item={false}>
-                    {this._getIcon(group.icon, isActiveGroup ? 'purple' : undefined)}
+                    {this._getIcon(group.icon, isActiveGroup ? 'purple active' : undefined)}
                 </Item>
                 <FlexLeftNav customClasses="grouped-nav">
                 <div className={'group-header'}>
-                    {this._getIcon(group.icon, 'purple')}
+                    {this._getIcon(group.icon, 'purple active')}
                     <div className={'group-name'}>{group.groupName}</div>
                 </div>
                 <ul>                                            

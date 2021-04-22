@@ -15,7 +15,7 @@
   
   }
 
-  $highlight-pink: var(--app-accent-color);
+
 .dashboard {
   padding: 20px;
   height: calc(100vh - 80px);
@@ -54,7 +54,7 @@
       height: 45px;
       border-radius: 5px;
       color: white;
-      background: $highlight-pink;      
+      background: var(--app-accent-color);      
       box-shadow: none;
     }
   }
