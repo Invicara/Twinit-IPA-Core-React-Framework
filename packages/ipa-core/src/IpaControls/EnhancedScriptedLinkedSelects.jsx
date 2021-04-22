@@ -15,7 +15,7 @@ const flattenIfNotMulti = (selectValues, selects) => {//This is necessary bc scr
     )
 };
 
-export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched, noFetch, onFetch, selects: selectsConfig, compact, selectOverrideStyles, isClearable = true}) => {
+export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched, noFetch, onFetch, selects: selectsConfig, compact, horizontal, selectOverrideStyles, isClearable = true}) => {
 
     const [selects, setSelects] = useState(selectsConfig.reduce((acc, select, i) => ({
         ...acc,
@@ -74,7 +74,7 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
 
     const fetchDisabled = !value || _.isEmpty(_.values(value).flatMap(_.identity));
 
-    return <div className={clsx("scripted-selects-control", compact && 'compact')}>
+    return <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
         {_.values(_.mapValues(selects, (select, selectId) => <Fragment key={selectId}>
             {!compact && <span className={clsx("select-title", select.required && "required")}>{selectId}</span>}
                 <Select

@@ -11,7 +11,7 @@ import ScriptCache from "../IpaUtils/script-cache";
 import './EnhancedScriptedSelects.scss'
 import {selectStyles} from "./private/selectStyles";
 
-export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, selectOverrideStyles, onFetch, multi, script, disabled}) => {
+export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, horizontal, selectOverrideStyles, onFetch, multi, script, disabled}) => {
     const [selects, setSelects] = useState({});
 
     const value = (currentValue || {})
@@ -40,7 +40,7 @@ export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compa
     };
 
     return _.isEmpty(selects) ? 'Loading controls...\n' :
-        <div className={clsx("scripted-selects-control", compact && 'compact')}>
+        <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
             {_.values(_.mapValues(selects, (options, selectId) => <Fragment key={selectId}>
                     {!compact && <span className="select-title">{selectId}</span>}
                     <Select

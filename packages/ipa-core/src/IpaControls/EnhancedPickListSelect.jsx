@@ -12,7 +12,7 @@ export const asSelectOption = option => ({value: option.value, label: option.dis
 
 export const asSelectOptions = options => options.map(asSelectOption)
 
-export const EnhancedPickListSelect = ({currentValue, onChange, disabled, selects: selectsConfig, compact, selectOverrideStyles, isClearable = true, pickListScript, initialPickListType, canCreateItems, updateScript}) => {
+export const EnhancedPickListSelect = ({currentValue, onChange, disabled, selects: selectsConfig, compact, horizontal, selectOverrideStyles, isClearable = true, pickListScript, initialPickListType, canCreateItems, updateScript}) => {
 
     const [selects, setSelects] = useState(selectsConfig.reduce((acc, select, i) => ({
         ...acc,
@@ -99,7 +99,7 @@ export const EnhancedPickListSelect = ({currentValue, onChange, disabled, select
         }        
     };
 
-    return <div className={clsx("scripted-selects-control", compact && 'compact')}>
+    return <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
         {_.values(_.mapValues(selects, (select, selectId) => <Fragment key={selectId}>
             {!compact && <span className={clsx("select-title", select.required && "required")}>{selectId}</span>}
                 {!canCreateItems && <Select
