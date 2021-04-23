@@ -5,7 +5,7 @@ import clsx from "clsx";
 import _ from "lodash";
 import {loadPlainInitialValueWithScriptedSelectFormat} from '../IpaUtils/ScriptedSelectsHelpers'
 import ScriptCache from "../IpaUtils/script-cache";
-import { useWithLinkedSelectChange } from "./private/useWithLinkedSelectChange";
+import {useWithLinkedSelectChange} from "./private/useWithLinkedSelectChange";
 import {selectStyles} from "./private/selectStyles";
 
 export const asSelectOption = option => ({value: option.value, label: option.display, key: option.display})
@@ -61,8 +61,7 @@ export const EnhancedPickListSelect = ({currentValue, onChange, disabled, select
         if(select.createPickListOnUpdate){
             scriptArgs = {...scriptArgs, newType: optionValue}
         }
-        const updateResult = await ScriptCache.runScript(updateScript, scriptArgs);
-        return updateResult;
+        return await ScriptCache.runScript(updateScript, {pickList: scriptArgs});
     }
 
     const refreshParentPickListCachedResult = async (selectId) => {
