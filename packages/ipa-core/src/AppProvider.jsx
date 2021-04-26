@@ -54,8 +54,6 @@ class AppProvider extends React.Component {
   constructor(props) {
     super(props);
 
-    IafSession.setConfig(endPointConfig);
-
     this.authUrl = IafSession.getAuthUrl(endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot);
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
@@ -96,6 +94,12 @@ class AppProvider extends React.Component {
     this.handleRequestError = this.handleRequestError.bind(this);
     this.testConfig = this.testConfig.bind(this);
     this.onConfigLoad = this.onConfigLoad.bind(this);
+  }
+
+  componentDidMount() {
+    IafSession.setConfig(endPointConfig);
+    IafSession.setErrorCallback(this.handleRequestError);
+    this.state.actions.restartApp();
   }
 
   async userLogout() {
@@ -518,10 +522,7 @@ class AppProvider extends React.Component {
     window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
   }
 
-  componentDidMount() {
-    IafSession.setErrorCallback(this.handleRequestError);
-    this.state.actions.restartApp();
-  }
+  
 
   render() {
     return <AppContext.Provider value={this.state}>{this.props.children}</AppContext.Provider>
@@ -625,6 +626,39 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
     pGroups.push(group);
   }
 
+  function hasSisenseConnectors(config) {
+    if (config.connectors) {
+
+      if (_.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"}))
+        return true
+      else return false
+
+    } else return false
+  }
+
+  function getSisenseBasePath(config) {
+
+      let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
+      return sisenseConnector.config.url
+  }
+
+  //if sisense connectors are configured, load the login and logout routes for Sisense SSO
+  //also add Sisense url to endPointConfig
+  if (hasSisenseConnectors(config)) {
+
+    let loginPageComponent = getPageComponent('SisenseLoginPage')
+    let logoutPageComponent = getPageComponent('SisenseLogoutPage')
+
+    pRoutes.push(<Route exact path='/sisense-login' key='sisenseLoginPage'
+                      component={loginPageComponent}/>);
+    pRoutes.push(<Route exact path='/sisense-logout' key='sisenseLogoutPage'
+                      component={logoutPageComponent}/>);
+
+    let sisenseEndpointConfig = {sisenseBaseUrl: getSisenseBasePath(config)}
+    let newEndPointConfig = {...endPointConfig, ...sisenseEndpointConfig}
+
+    IafSession.setConfig(newEndPointConfig)
+  }
 
   let pages = config.pages ? Object.keys(config.pages) : Object.keys(config.groupedPages);
   const pagesConfig = config.pages || config.groupedPages;
