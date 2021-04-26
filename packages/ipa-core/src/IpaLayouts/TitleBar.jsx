@@ -21,9 +21,9 @@ import Logo from './Logo';
 import {getTitleBarInfoFromProps} from "../IpaUtils/helpers";
 import LinkedIcon from "../IpaControls/LinkedIcon"
 
-import './TitleBar.scss'
+import {getPlatformPath} from '../IpaPaths'
 
-const PASS_ACC_PAGE ='/passportsvc/api/accounts'
+import './TitleBar.scss'
 
 export default class TitleBar extends React.Component {
   render() {
@@ -36,8 +36,7 @@ export default class TitleBar extends React.Component {
 
       const goToUserAccount = (e) => {
           e.preventDefault()
-          console.log(endPointConfig.passportServiceOrigin)
-          window.open(endPointConfig.passportServiceOrigin + PASS_ACC_PAGE)
+          window.open(getPlatformPath('USER_ACCOUNT'))
       }
 
     return (

@@ -24,6 +24,8 @@ import {IafProj} from '@invicara/platform-api';
 import _ from 'lodash';
 import moment from 'moment';
 
+import {getPlatformPath} from '../IpaPaths'
+
 class DownloadsView extends React.Component {
     constructor(props) {
         super(props);
@@ -39,7 +41,7 @@ class DownloadsView extends React.Component {
 
     async _loadAsyncData() {
         
-        fetch(endPointConfig.pluginBaseUrl + 'index.json').then(async (resp) => {
+        fetch(getPlatformPath('DOWNLOADS')).then(async (resp) => {
           let downs = await resp.json();
 
           let manifests = [];
@@ -54,7 +56,7 @@ class DownloadsView extends React.Component {
                   let ver = mani.versions[v];
 
                   ver.showDetails = false;
-                  let resp = await fetch(endPointConfig.pluginBaseUrl + ver.manifest).catch((err) => {
+                  let resp = await fetch(getPlatformPath('PLUGIN_BASE', ver.manifest)).catch((err) => {
                       console.log(err);
                   });
                   ver.details = await resp.json();
@@ -130,7 +132,7 @@ class DownloadsView extends React.Component {
                                                 return <div key={ver.manifest} style={{verticalAlign: 'center'}}>
                                                     <h4 style={{display: 'inline', marginRight: '20px'}}>{ver.details.resources.en.name}</h4>
                                                     <i title='Info' style={{cursor: 'pointer', fontSize: '24px', display: 'inline', color: '#387ef5', marginRight: '20px'}} className='ion-ios-information-outline' onClick={(e) => this.toggleDetails(mani, ver)}></i>
-                                                    <a href={endPointConfig.pluginBaseUrl + ver.details.filename}>
+                                                    <a href={getPlatformPath('PLUGIN_BASE', ver.details.filename)}>
                                                         <i title='Download' style={{cursor: 'pointer', fontSize: '24px', display: 'inline', color: '#387ef5'}} className='icon ion-ios-cloud-download'></i>
                                                     </a>
                                                     {ver.showDetails && <div style={{marginLeft: '20px', marginTop: '10px'}}>
