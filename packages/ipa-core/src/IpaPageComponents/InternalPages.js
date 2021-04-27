@@ -13,8 +13,8 @@ const InternalPages = {
     'files/UploadFilesWizard': UploadFilesWizard,
     'solutionMgmt/ScriptRunnerView': ScriptRunnerView,
     'DownloadsView': DownloadsView,
-    SisenseLoginPage: SisenseLoginPage,
-    SisenseLogoutPage: SisenseLogoutPage
+    'SisenseLoginPage': SisenseLoginPage,
+    'SisenseLogoutPage': SisenseLogoutPage
 }
 
 export default InternalPages
