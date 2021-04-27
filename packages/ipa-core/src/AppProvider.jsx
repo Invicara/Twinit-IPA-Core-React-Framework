@@ -423,6 +423,18 @@ class AppProvider extends React.Component {
           callback(EmptyConfig, self.testConfig(EmptyConfig));
         }
       }
+
+      if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
+        let head = document.getElementsByTagName('head')[0]
+        this.props.ipaConfig.css.forEach((styleSheet) => {
+          let link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.type = 'text/css'
+          link.href = '../../../../app/ipaCore/css/'+ styleSheet
+          link.media = 'all'
+          head.appendChild(link)
+        })
+      }
     }
   }
 

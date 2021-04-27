@@ -1,6 +1,5 @@
 $left-panel-width: 80px;
 $navExpanded-width: 300px;
-$purple: #c71784;
 
 //TODO: remove !important tags when we remove the other !important tags from the other nav
 
@@ -10,7 +9,7 @@ $purple: #c71784;
     .icofont,
     .icofont-2x,
     .icofont-3x {
-        color:white;
+        color: var(--nav-icon-color);
     }
 
     .nav-group-li.active-group { 
@@ -19,7 +18,7 @@ $purple: #c71784;
         .icofont-2x,
         .icofont-3x
         {
-            color: $purple;
+            color: var(--app-accent-color);
         }
     }
 
@@ -119,7 +118,7 @@ $purple: #c71784;
 
             .group-name {
                 margin-top: 10px;
-                color: $purple;
+                color: var(--app-accent-color);
                 font-size: 17px;
                 font-weight: bold;
             }
@@ -130,15 +129,15 @@ $purple: #c71784;
         }
 
         .active-page{
-            border: 2px solid $purple;
+            border: 2px solid var(--app-accent-color);
 
             span{
-                color:$purple;
+                color: var(--app-accent-color);
             }
         }
 
         .purple{
-            color:$purple;
+            color: var(--app-accent-color);
         }
     }
 
@@ -164,7 +163,7 @@ $purple: #c71784;
 }
 
 nav.grouped-left-nav-bar{
-    background-color: #333333;
+    background-color: var(--nav-bkg-color);
     width: $left-panel-width;
     height: 100%;
     display: flex;
@@ -174,8 +173,8 @@ nav.grouped-left-nav-bar{
     z-index: 99; 
 
     .active-group {
-        background-color: #bfbfbf;
-        border-left: 10px solid $purple !important;
+        background-color: var(--nav-activegrp-bkg-color);
+        border-left: 10px solid var(--app-accent-color) !important;
     }
 
     li{
