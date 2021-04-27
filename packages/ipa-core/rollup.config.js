@@ -30,7 +30,7 @@ const getPlugins = () => [
     json(),
     resolve({
         mainFields: ['main'],
-        extensions: ['.js', '.jsx', '.css', '.scss']
+        extensions: ['.js', '.jsx', '.css', '.scss', '.svg']
     }),
     postcss(),
     babel({
@@ -51,7 +51,8 @@ const getPlugins = () => [
         targets: [
             {src: 'src/img/**/*', dest: 'modules/img'},
             {src: 'src/*/*.scss', dest: 'modules/styles'},
-            {src: 'src/IpaUtils/ScriptHelper.js', dest: 'modules/IpaUtils'}
+            {src: 'src/IpaUtils/ScriptHelper.js', dest: 'modules/IpaUtils'},
+            {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'}
         ]
     })]
 

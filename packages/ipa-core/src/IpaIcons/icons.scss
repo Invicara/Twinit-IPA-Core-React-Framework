@@ -1,0 +1,15 @@
+.ipa-icon-svg
+{
+  width: 42px;
+  height: 42px;
+  display: inline-block;
+  background-size: 42px;
+  background-position: -7px;
+  background-repeat: no-repeat;
+}
+
+.ipa-icon-logout   { background-image: url(/node_modules/@invicara/ipa-core/modules/IpaIcons/icon-logout.svg); }
+.ipa-icon-user     { background-image: url(/node_modules/@invicara/ipa-core/modules/IpaIcons/icon-user.svg); }
+
+.ipa-icon-logout.purple { background-image: url(/node_modules/@invicara/ipa-core/modules/IpaIcons/icon-logout-purple.svg); }
+.ipa-icon-user.purple { background-image: url(/node_modules/@invicara/ipa-core/modules/IpaIcons/icon-user-purple.svg); }

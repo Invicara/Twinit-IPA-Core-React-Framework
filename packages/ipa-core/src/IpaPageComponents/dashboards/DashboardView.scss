@@ -4,7 +4,7 @@
       font-family: "faricy-new-web", sans-serif;
       font-size: 200%;
       font-weight: bold;
-      color: #c71784;
+      color: var(--app-accent-color);
     }
     h2 {
       font-family: "faricy-new-web", sans-serif;
@@ -15,7 +15,7 @@
   
   }
 
-  $highlight-pink: #C71784;
+
 .dashboard {
   padding: 20px;
   height: calc(100vh - 80px);
@@ -42,7 +42,7 @@
     margin-left: 50px;
     font-size: 28px;
     font-weight: bold;
-    color: #C71784;
+    color: var(--app-accent-color);
   }
   
   .nav-button {
@@ -54,7 +54,7 @@
       height: 45px;
       border-radius: 5px;
       color: white;
-      background: $highlight-pink;      
+      background: var(--app-accent-color);      
       box-shadow: none;
     }
   }

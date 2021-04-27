@@ -1,5 +1,4 @@
 
-$purple: #C52083;
 $light-grey: #6d6e70; 
 
 .project-picker-modal {
@@ -15,8 +14,8 @@ $light-grey: #6d6e70;
     }
     button.load {
       color: white;
-      background-color: $purple;
-      border-color: $purple;
+      background-color: var(--app-accent-color);
+      border-color: var(--app-accent-color);
     }
     button.cancel {
       color: $light-grey;
@@ -36,7 +35,7 @@ $light-grey: #6d6e70;
         margin-left: 20px;
         margin-bottom: 5px;
         cursor: pointer;
-        color: #c71784;
+        color: var(--app-accent-color);
   
         i {
           padding-right: 0px;
@@ -50,8 +49,8 @@ $light-grey: #6d6e70;
     }
     .custom-control-input:checked~.custom-control-label::before {
       color: #fff;
-      border-color: $purple;
-      background-color: $purple;
+      border-color: var(--app-accent-color);
+      background-color: var(--app-accent-color);
     }
   
   }

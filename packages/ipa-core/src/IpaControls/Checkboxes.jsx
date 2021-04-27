@@ -13,20 +13,20 @@ const iconStyle = {fontSize: 18};
 
 export const TickCheckbox = ({...props}) => <Checkbox
     icon={<CheckIcon style={{...iconStyle, color: '#666666'}}/>}
-    checkedIcon={<CheckIcon style={{...iconStyle, color: '#C71784'}}/>}
+    checkedIcon={<CheckIcon style={{...iconStyle, color: 'var(--app-accent-color)'}}/>}
     {...props}
 />;
 
 export const RoundCheckbox = ({...props}) => <Checkbox
     icon={<UncheckedCircle style={{...iconStyle, color: '#666666'}}/>}
-    checkedIcon={<CheckedCircle style={{...iconStyle, color: '#C71784'}}/>}
+    checkedIcon={<CheckedCircle style={{...iconStyle, color: 'var(--app-accent-color)'}}/>}
     {...props}
 />;
 
 export const PinkCheckbox = withStyles({
     root: {
         '&$checked': {
-            color: '#C71784'
+            color: 'var(--app-accent-color)'
         },
     },
     checked: {},
@@ -52,7 +52,7 @@ export const PinkCheckbox = withStyles({
     }
 })((props) => <Checkbox
     icon={<span className={props.classes.icon}/>}
-    checkedIcon={<CheckBox style={{fontSize: 20, color: '#C71784'}}/>}
+    checkedIcon={<CheckBox style={{fontSize: 20, color: 'var(--app-accent-color)'}}/>}
     {...produce(props, props => {delete props.classes.icon})} />);
 
 export const SquareInSquareCheckbox = withStyles({
@@ -71,13 +71,13 @@ export const SquareInSquareCheckbox = withStyles({
         width: 18,
         height: 18,
         margin: 3,
-        border: '2px solid #C71784',
+        border: '2px solid var(--app-accent-color)',
         backgroundColor: '#f5f8fa',
     },
     innerCheckedIcon: {
         width: 8,
         height: 8,
-        backgroundColor: '#C71784',
+        backgroundColor: 'var(--app-accent-color)',
     }
 })((props) => <Checkbox
     icon={<span className={props.classes.icon}/>}
