@@ -424,7 +424,7 @@ class AppProvider extends React.Component {
         }
       }
 
-      if (this.props.ipaConfig && this.props.ipaConfig.css && !!this.props.ipaConfig.css.length) {
+      if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
         let head = document.getElementsByTagName('head')[0]
         this.props.ipaConfig.css.forEach((styleSheet) => {
           let link = document.createElement('link')
