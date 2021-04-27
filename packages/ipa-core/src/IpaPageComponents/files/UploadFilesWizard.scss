@@ -1,8 +1,7 @@
 $base-text-color: #666666;
 $step-color: $base-text-color;
-$highlight-pink: #C71784;
 $disabled-color: #E6E6E6;
-$selected-step: $highlight-pink;
+$selected-step: var(--app-accent-color);
 $step-width: 170px;
 $medium-grey: #B2B2B2;
 $cancel-grey: $medium-grey;
@@ -56,7 +55,7 @@ $black: black;
     align-items: center;
 
     &.dragging{
-      border: 3px solid $highlight-pink;
+      border: 3px solid var(--app-accent-color);
       background: #e0e0e0;
     }
 
@@ -66,7 +65,7 @@ $black: black;
 
     .cloud-icon{
       font-size: 90px;
-      color: $highlight-pink;
+      color:var(--app-accent-color);
     }
 
     .dropzone-legend{
@@ -142,7 +141,7 @@ $black: black;
     width: 170px;
     height: 44px;
     color: white;
-    background: $highlight-pink;
+    background: var(--app-accent-color);
     border-radius: 25px;
     box-shadow: none;
   }
@@ -166,7 +165,7 @@ $black: black;
 
   .dialog-title{
     font-size: 20px;
-    color: $highlight-pink
+    color: var(--app-accent-color);
   }
 
   .dialog-body{
@@ -184,7 +183,7 @@ $black: black;
 }
 
 .files-area-title {
-  color: $highlight-pink;
+  color: var(--app-accent-color);
   font-size: 17px;
   font-weight: 500;
   margin-bottom: 40px;
@@ -192,7 +191,7 @@ $black: black;
 
 ul li.file-asset::before {
   content: "\2022";
-  color: $highlight-pink;
+  color: var(--app-accent-color);
   font-weight: bold;
   display: inline-block;
   width: 1em;
@@ -283,7 +282,7 @@ ul li.file-asset::before {
 }
 
 .required-mark{
-  color: $highlight-pink;
+  color: var(--app-accent-color);
   font-weight: bold;
 }
 
@@ -294,7 +293,7 @@ ul li.file-asset::before {
   position: absolute;
   right: 25px;
   transform: translateY(100%);
-  background-color: $highlight-pink;
+  background-color: var(--app-accent-color);
   width: 50px;
   height: 50px;
   border-radius: 0 0 23px 23px;

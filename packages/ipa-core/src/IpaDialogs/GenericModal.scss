@@ -15,7 +15,7 @@
  * permission is obtained from Invicara Inc.
  */
 
- $purple: #C52083;
+
  $light-grey: #6d6e70;
  $invicara-text: $light-grey;
 
@@ -62,7 +62,7 @@ div.css-1hwfws3 {
 
     .title {
       display: inline;
-      color: $purple;
+      color: var(--app-accent-color);
       font-size: 1.5rem;
       padding-top: 20px;
       padding: 0% 3%;
@@ -72,7 +72,6 @@ div.css-1hwfws3 {
 
   .bar.bar-dark .title,
   .ion-ios-close-empty {
-    color: $invicara-text;
     padding: 1% 2%;
   }
 }
