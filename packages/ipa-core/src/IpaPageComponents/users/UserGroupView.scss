@@ -1,0 +1,21 @@
+.user-group-view {
+    display: flex;
+    height: calc(100vh - 80px);
+
+    .switchable-list-view {
+        display: flex;
+        flex-direction: column;
+        padding: 80px 20px;
+
+        .list-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            .invite-link {
+                font-size: 1rem;
+            }
+        }
+    }
+}
