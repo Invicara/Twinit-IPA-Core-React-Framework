@@ -84,10 +84,6 @@
 
         .row1 {
 
-            hr {
-                margin-bottom: 0px;
-            }
-
             .usergroup-name {
                 display: flex;
                 align-items: flex-end;
@@ -135,6 +131,10 @@
             }
         }
 
+        hr {
+            margin-bottom: 0px;
+        }
+
         .row2 {
             display: flex;
             flex-direction: row;
@@ -143,6 +143,30 @@
             .usergroup-members {
                 width: 50%;
                 border-right: 1px solid lightgray;
+                padding: 10px 10px 0px 10px;
+
+                h3 {
+                    color: var(--app-accent-color);
+                    padding-left: 15px;
+                }
+
+                .throbber {
+                    padding-left: 15px;
+                }
+
+                .user-group-list-item {
+                    list-style-type: none;
+                    border: 1px solid lightgray;
+                    border-radius: 10px;
+                    margin: 10px;
+                    padding: 5px 5px 5px 20px;
+    
+                    .user-email {
+                        padding-left: 10px;
+                        font-size: 0.75rem;
+                        font-style: italic;
+                    }
+                }
             }
 
             .usergroup-invites {

@@ -42,6 +42,7 @@ class UserGroupView extends React.Component {
         userGroupNameEdit: "", //the editable UserGroup name
         savingUserGroup: false, //if we are saving the UserGroup to the platform
         userGroupNameEditError: null, //any error with the UserGroup name
+        usersInSelectedGroup: [], //user who are in the currently selected UserGroup
         users: [], //list of all users in the project
         selectedUser: null //the currently selected user
       }
@@ -52,6 +53,7 @@ class UserGroupView extends React.Component {
       this.toggleUserGroupEditable = this.toggleUserGroupEditable.bind(this)
       this.onUserGroupNameChange = this.onUserGroupNameChange.bind(this)
       this.updateUserGroup = this.updateUserGroup.bind(this)
+      this.loadUserGroupData = this.loadUserGroupData.bind(this)
       this.getAllUsers = this.getAllUsers.bind(this)
       this.setSelectedUser = this.setSelectedUser.bind(this)
 
@@ -77,8 +79,9 @@ class UserGroupView extends React.Component {
     }
     
     onModeChange(e) {
-      console.log(e)
       this.setState({pageMode: e.target.value, editingUserGroup: false})
+      if (e.target.value === 'UserGroups') this.loadUserGroupData()
+      
     }
 
     async getAllUserGroups(selectedUserGroup) {
@@ -126,7 +129,13 @@ class UserGroupView extends React.Component {
     }
 
     setSelectedUserGroup(ug) {
-      this.setState({selectedUserGroup: ug})
+      this.setState({selectedUserGroup: ug, usersInSelectedGroup: []}, this.loadUserGroupData)
+    }
+
+    loadUserGroupData() {
+      IafUserGroup.getUsers(this.state.selectedUserGroup).then((users) => {
+        this.setState({usersInSelectedGroup: users})
+      })
     }
 
     toggleUserGroupEditable(e) {
@@ -135,7 +144,6 @@ class UserGroupView extends React.Component {
     }
 
     onUserGroupNameChange(e) {
-      console.log(e.target.value)
       this.setState({userGroupNameEdit: e.target.value})
     }
 
@@ -195,12 +203,12 @@ class UserGroupView extends React.Component {
                   <ul className='user-group-list'>
                     {this.state.userGroups.map(u => <li key={u._id} onClick={(e) => this.setSelectedUserGroup(u)} className={clsx('user-group-list-item', u._id === this.state.selectedUserGroup._id && 'active')}>{u._name}</li>)}
                   </ul>
-                  <div className='other-groups'>
+                  {this.state.invalidUserGroups.length > 0 && <div className='other-groups'>
                     <span>Other Groups</span>
                     <ul className='other-group-list'>
                       {this.state.invalidUserGroups.map(u => <li key={u._id} className='other-group-list-item'>{u._name}</li>)}
                     </ul>
-                  </div>
+                  </div>}
                 </div>}
                 {this.state.pageMode === 'Users' && <div>
                 {!this.state.selectedUser && <SimpleTextThrobber throbberText='Loading Users' />}
@@ -235,7 +243,16 @@ class UserGroupView extends React.Component {
               </div>
               <hr/>
               <div className='row2'>
-                <div className='usergroup-members'>Members</div>
+                <div className='usergroup-members'>
+                  <div><h3>Members</h3></div>
+                  {this.state.usersInSelectedGroup.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroup Members' /></div>}
+                  <ul className='group-users-list'>
+                    {this.state.usersInSelectedGroup.map(u => <li key={u._id} className='user-group-list-item'>
+                      <div className='user-full-name'>{u._lastname + ", " + u._firstname}</div>
+                      <div className='user-email'>{u._email}</div>
+                    </li>)}
+                  </ul>
+                </div>
                 <div className='usergroup-invites'>Invites</div>
               </div>
             </div>}
