@@ -291,6 +291,8 @@ class AppProvider extends React.Component {
       window.location = this.authUrl;
     } else {
 
+      if (this.props.ipaConfig) self.setSelectedItems({ipaConfig: this.props.ipaConfig})
+
       /* load script plugins */
 
       /*

@@ -1,5 +1,6 @@
 .user-group-view {
     display: flex;
+    width: 100%;
     height: calc(100vh - 80px);
 
     .switchable-list-view {
@@ -15,6 +16,125 @@
 
             .invite-link {
                 font-size: 1rem;
+                font-weight: bold;
+                border: 1px solid var(--app-accent-color);
+                padding: 7px;
+                border-radius: 10px;
+                color: var(--app-accent-color);
+                cursor: pointer;
+            }
+
+            .invite-link:hover {
+                background-color: #f2f2f2;
+            }
+            
+        }
+
+        .user-group-list {
+
+            .user-group-list-item {
+                list-style-type: none;
+                border: 1px solid lightgray;
+                border-radius: 10px;
+                margin: 10px;
+                padding: 5px 5px 5px 20px;
+                cursor: pointer;
+
+                .user-email {
+                    padding-left: 10px;
+                    font-size: 0.75rem;
+                    font-style: italic;
+                }
+            }
+
+            .user-group-list-item:hover {
+                background-color: #f2f2f2;  
+            }
+
+            .user-group-list-item.active {
+                list-style-type: none;
+                border-left: 10px solid var(--app-accent-color);
+                border-top: 1px solid lightgray;
+                border-right: 1px solid lightgray;
+                border-radius: 10px;
+                padding-left: 10px;
+                
+            }
+        }
+
+    }
+
+    .usergroup-mode-view {
+
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .row1 {
+
+            hr {
+                margin-bottom: 0px;
+            }
+
+            .usergroup-name {
+                display: flex;
+                align-items: flex-end;
+                padding-left: 50px;
+                padding-top: 20px;
+
+                h1 {
+                    margin-bottom: 0px;
+                }
+
+                .ug-btn {
+                    color: var(--app-accent-color);
+                    margin-left: 10px;
+
+                    a {
+                        color: var(--app-accent-color);
+                    }
+                }
+
+                .disabled-ug-btn {
+                    color: lightgray;
+                }
+            }
+
+            .usergroup-name.editable {
+
+                h1 {
+                    flex-basis: 50%;
+                }
+
+                .usergroup-name-input {
+                    background-color: #f2f2f2;
+                    border-top: none;
+                    border-right: none;
+                    border-bottom: 2px solid var(--app-accent-color);
+                    border-left: none;
+                    width: 100%;
+                }
+            }
+
+            .usergroup-name-error {
+                color: var(--app-accent-color);
+                padding-left: 50px;
+                font-weight: bold;
+            }
+        }
+
+        .row2 {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+
+            .usergroup-members {
+                width: 50%;
+                border-right: 1px solid lightgray;
+            }
+
+            .usergroup-invites {
+                width: 50%;
             }
         }
     }
