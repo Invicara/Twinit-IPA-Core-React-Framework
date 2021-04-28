@@ -113,7 +113,7 @@ class UserGroupView extends React.Component {
 
           //get the list of userGroups in the project with out config for this app
           let invalidGroups = groups.filter((g) => {
-            return !g._userAttributes.userConfig || !hasMatchingConfig(g, userConfigs)
+            return !g._userAttributes.userConfigs || !hasMatchingConfig(g, userConfigs)
           })
 
           let allUserGroupNamesUpper = groups.map(g => g._name.toUpperCase())
@@ -195,6 +195,12 @@ class UserGroupView extends React.Component {
                   <ul className='user-group-list'>
                     {this.state.userGroups.map(u => <li key={u._id} onClick={(e) => this.setSelectedUserGroup(u)} className={clsx('user-group-list-item', u._id === this.state.selectedUserGroup._id && 'active')}>{u._name}</li>)}
                   </ul>
+                  <div className='other-groups'>
+                    <span>Other Groups</span>
+                    <ul className='other-group-list'>
+                      {this.state.invalidUserGroups.map(u => <li key={u._id} className='other-group-list-item'>{u._name}</li>)}
+                    </ul>
+                  </div>
                 </div>}
                 {this.state.pageMode === 'Users' && <div>
                 {!this.state.selectedUser && <SimpleTextThrobber throbberText='Loading Users' />}
