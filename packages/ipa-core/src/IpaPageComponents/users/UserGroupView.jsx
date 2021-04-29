@@ -17,6 +17,7 @@
 
 import React from "react";
 import clsx from "clsx";
+import moment from 'moment'
 
 import {IafProj, IafUserGroup} from '@invicara/platform-api'
 import {StackableDrawer} from '../../IpaControls/StackableDrawer'
@@ -43,8 +44,12 @@ class UserGroupView extends React.Component {
         savingUserGroup: false, //if we are saving the UserGroup to the platform
         userGroupNameEditError: null, //any error with the UserGroup name
         usersInSelectedGroup: [], //user who are in the currently selected UserGroup
+        loadingInvites: false,
+        invitesInSelectedGroup: [],
+        expiredInvitesInSelectedGroup: [],
         users: [], //list of all users in the project
-        selectedUser: null //the currently selected user
+        selectedUser: null, //the currently selected user
+
       }
 
       this.onModeChange = this.onModeChange.bind(this)
@@ -54,6 +59,7 @@ class UserGroupView extends React.Component {
       this.onUserGroupNameChange = this.onUserGroupNameChange.bind(this)
       this.updateUserGroup = this.updateUserGroup.bind(this)
       this.loadUserGroupData = this.loadUserGroupData.bind(this)
+      this.getUserInviteCard = this.getUserInviteCard.bind(this)
       this.getAllUsers = this.getAllUsers.bind(this)
       this.setSelectedUser = this.setSelectedUser.bind(this)
 
@@ -129,12 +135,24 @@ class UserGroupView extends React.Component {
     }
 
     setSelectedUserGroup(ug) {
-      this.setState({selectedUserGroup: ug, usersInSelectedGroup: []}, this.loadUserGroupData)
+      this.setState({
+        selectedUserGroup: ug, 
+        usersInSelectedGroup: [], 
+        invitesInSelectedGroup: [],
+        expiredInvitesInSelectedGroup: []}, this.loadUserGroupData)
     }
 
     loadUserGroupData() {
+      this.setState({loadingInvites: true})
       IafUserGroup.getUsers(this.state.selectedUserGroup).then((users) => {
         this.setState({usersInSelectedGroup: users})
+      })
+      IafUserGroup.getInvites(this.state.selectedUserGroup).then((invites) => {
+        console.log(invites._list)
+        let pendingInvites = invites._list.filter(i => i._status === 'PENDING')
+        let expiredInvites = invites._list.filter(i => i._status === 'EXPIRED')
+
+        this.setState({invitesInSelectedGroup: pendingInvites, expiredInvitesInSelectedGroup: expiredInvites, loadingInvites: false})
       })
     }
 
@@ -182,6 +200,29 @@ class UserGroupView extends React.Component {
 
     setSelectedUser(ug) {
       this.setState({selectedUser: ug})
+    }
+
+    getUserInviteCard(invite) {
+
+      function getFormattedDate(ts) {
+        let expires = moment(ts)
+        return expires.format('MMM D, YYYY')
+      }
+
+      let userInProject = _.find(this.state.users, {_email: invite._email})
+      let expiresDate = getFormattedDate(invite._expireTime)
+      let expired = moment(invite._expireTime).isBefore(moment())
+
+      return  <li key={invite._id} className='user-group-list-item'>
+                <div className='invite-user-info'>
+                  {userInProject && <div className='user-full-name'>{userInProject._lastname + ', ' + userInProject._firstname}</div>}
+                  <div className='user-email'>{invite._email}</div>
+                </div>
+                <div className='invite-info'>
+                  <div className={clsx('invite-expires', expired && 'expired')}><span className='bold'>Expires:</span> {expiresDate}</div>
+                  <div className='invite-usergroup'><span className='bold'>UserGroup:</span> {invite._usergroup._name}</div>
+                </div>
+              </li>
     }
 
     render() {
@@ -253,7 +294,19 @@ class UserGroupView extends React.Component {
                     </li>)}
                   </ul>
                 </div>
-                <div className='usergroup-invites'>Invites</div>
+                <div className='usergroup-invites'>
+                  <div><h3>Invites</h3></div>
+                  {this.state.loadingInvites && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroup Invites' /></div>}
+                  {!this.state.loadingInvites && this.state.invitesInSelectedGroup.length === 0 && <span className='indent-header'>No pending invites</span>}
+                  <ul>
+                    {this.state.invitesInSelectedGroup.map(i => this.getUserInviteCard(i))}
+                  </ul>
+                  {this.state.expiredInvitesInSelectedGroup.length > 0 && <div><span className='indent-header'>Expired Invites</span>
+                    <ul>
+                    {this.state.expiredInvitesInSelectedGroup.map(i => this.getUserInviteCard(i))}
+                    </ul>
+                  </div>}
+                </div>
               </div>
             </div>}
 
