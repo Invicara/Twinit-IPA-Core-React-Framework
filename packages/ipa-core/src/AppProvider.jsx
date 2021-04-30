@@ -179,7 +179,8 @@ class AppProvider extends React.Component {
 
   getCurrentHandler() {
     let config = this.state.userConfig;
-    let pageArray = window.location.href.split('?')[0].split('/');
+    const getPageArray = () => window.location.href.split('?')[0].split('/')
+    let pageArray = getPageArray();
     let page = pageArray.pop();
     if (page === "")
       page = pageArray.pop();
@@ -226,12 +227,9 @@ class AppProvider extends React.Component {
     //this might be necessary for pages that appear in action handlers
     //but not the page list
     if (!handler) {
-      let allHandlers = Object.keys(config.handlers);
-      for (let i = 0; i < allHandlers.length; i++) {
-        if (config.handlers[allHandlers[i]].path === '/' + page) {
-          return config.handlers[allHandlers[i]];
-        }
-      }
+      const lastButOnePathElement = getPageArray()[getPageArray().length - 2]; //For detail components where the last element is the pathParam
+      const allHandlers = Object.values(config.handlers);
+      return allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
     }
 
     return handler;
@@ -616,10 +614,14 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
       title: handler.title || 'no title',
       icon: (handler.icon || ''),
       name: handlerName,
-      exact: handler.pageComponent === 'knack/KnackView' ? false : true,
+      exact: handler.pageComponent !== 'knack/KnackView',
     };
 
     pRoutes.push(<Route path={item.path} key={item.path} component={component} exact={item.exact}/>);
+    if(handler.detailPage){
+      const component = getPageComponent(handler.detailPage.component);
+      pRoutes.push(<Route path={`${handler.path}/${handler.detailPage.pathParam}`} key={handler.detailPage.pathParam} component={component} exact={item.exact}/>);
+    }
     if (addPage) {
       pList.push(item);
       if(pageGroup){
