@@ -232,4 +232,59 @@
             }
         }
     }
+
+    .user-mode-view {
+        width: 100%;
+
+        .row1 {
+
+            .user-name-title {
+                padding-left: 50px;
+                padding-top: 20px;
+
+                h1 {
+                    margin-bottom: 0px;
+                }
+            }
+        }
+
+        hr {
+            margin-bottom: 0px;
+        }
+
+        .row2 {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+
+            .member-usergroups {
+                width: 50%;
+                border-right: 1px solid lightgray;
+                padding: 10px 10px 0px 10px;
+                overflow-y: auto;
+
+                h3 {
+                    color: var(--app-accent-color);
+                    padding-left: 15px;
+                }
+
+                .throbber {
+                    padding-left: 15px;
+                }
+
+                .member-group-list-item {
+                    list-style-type: none;
+                    border: 1px solid lightgray;
+                    border-radius: 10px;
+                    margin: 10px;
+                    padding: 5px 5px 5px 20px;
+                    box-shadow: 2px 2px lightgrey;
+                }
+
+                .member-group-list-item:hover {
+                    background-color: #f2f2f2;
+                }
+            }
+        }
+    }
 }

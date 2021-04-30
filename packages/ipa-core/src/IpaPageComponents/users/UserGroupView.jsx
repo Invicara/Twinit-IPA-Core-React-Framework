@@ -44,12 +44,12 @@ class UserGroupView extends React.Component {
         savingUserGroup: false, //if we are saving the UserGroup to the platform
         userGroupNameEditError: null, //any error with the UserGroup name
         usersInSelectedGroup: [], //user who are in the currently selected UserGroup
-        loadingInvites: false,
-        invitesInSelectedGroup: [],
-        expiredInvitesInSelectedGroup: [],
+        loadingInvites: false, //whether we are loading invites for usergroup or user
+        invitesInSelectedGroup: [], //pending invites in a group
+        expiredInvitesInSelectedGroup: [], //expired invites in a group
         users: [], //list of all users in the project
         selectedUser: null, //the currently selected user
-
+        userGroupsForSelectedUser: []
       }
 
       this.onModeChange = this.onModeChange.bind(this)
@@ -62,6 +62,7 @@ class UserGroupView extends React.Component {
       this.getUserInviteCard = this.getUserInviteCard.bind(this)
       this.getAllUsers = this.getAllUsers.bind(this)
       this.setSelectedUser = this.setSelectedUser.bind(this)
+      this.loadUser = this.loadUser.bind(this)
 
     }
 
@@ -79,7 +80,7 @@ class UserGroupView extends React.Component {
 
     async _loadAsyncData() {
        
-      this.getAllUserGroups()
+      await this.getAllUserGroups()
       this.getAllUsers()
 
     }
@@ -106,32 +107,38 @@ class UserGroupView extends React.Component {
         return match
       }
       
-      IafProj.getUserGroups(this.props.selectedItems.selectedProject).then(async (groups) => {
+      return new Promise((resolve, reject) => [
+        IafProj.getUserGroups(this.props.selectedItems.selectedProject).then(async (groups) => {
         
-        //only show groups with a user config, as if there is no user config the group is not usable
-        let groupsWithAnyUserConfig = groups.filter(g => g._userAttributes.userConfigs)
-
-        //get all user configs int he project for this application (ie. _userType)
-        IafProj.getUserConfigs(this.props.selectedItems.selectedProject, {query: {_userType: this.props.selectedItems.ipaConfig.configUserType}}).then((userConfigs) => {
-          //further filter down to just the userGroups with a userConfig for this application
-          let groupsWithAppUserConfig = groupsWithAnyUserConfig.filter(g => hasMatchingConfig(g, userConfigs))
-
-          groupsWithAppUserConfig.sort((a,b) => {
-            return a._name.localeCompare(b._name)
+          //only show groups with a user config, as if there is no user config the group is not usable
+          let groupsWithAnyUserConfig = groups.filter(g => g._userAttributes.userConfigs)
+  
+          //get all user configs int he project for this application (ie. _userType)
+          IafProj.getUserConfigs(this.props.selectedItems.selectedProject, {query: {_userType: this.props.selectedItems.ipaConfig.configUserType}}).then((userConfigs) => {
+            //further filter down to just the userGroups with a userConfig for this application
+            let groupsWithAppUserConfig = groupsWithAnyUserConfig.filter(g => hasMatchingConfig(g, userConfigs))
+  
+            groupsWithAppUserConfig.sort((a,b) => {
+              return a._name.localeCompare(b._name)
+            })
+  
+            //get the list of userGroups in the project with out config for this app
+            let invalidGroups = groups.filter((g) => {
+              return !g._userAttributes.userConfigs || !hasMatchingConfig(g, userConfigs)
+            })
+  
+            let allUserGroupNamesUpper = groups.map(g => g._name.toUpperCase())
+  
+            let applySelectedUserGroup = selectedUserGroup ? selectedUserGroup : groupsWithAppUserConfig[0]
+  
+            this.setState({allUserGroupNamesUpper: allUserGroupNamesUpper, invalidUserGroups: invalidGroups, userGroups: groupsWithAppUserConfig, selectedUserGroup: applySelectedUserGroup})
+          
+            resolve(applySelectedUserGroup)
           })
-
-          //get the list of userGroups in the project with out config for this app
-          let invalidGroups = groups.filter((g) => {
-            return !g._userAttributes.userConfigs || !hasMatchingConfig(g, userConfigs)
-          })
-
-          let allUserGroupNamesUpper = groups.map(g => g._name.toUpperCase())
-
-          let applySelectedUserGroup = selectedUserGroup ? selectedUserGroup : groupsWithAppUserConfig[0]
-
-          this.setState({allUserGroupNamesUpper: allUserGroupNamesUpper, invalidUserGroups: invalidGroups, userGroups: groupsWithAppUserConfig, selectedUserGroup: applySelectedUserGroup})
         })
-      })
+      ])
+
+     
     }
 
     setSelectedUserGroup(ug) {
@@ -148,7 +155,6 @@ class UserGroupView extends React.Component {
         this.setState({usersInSelectedGroup: users})
       })
       IafUserGroup.getInvites(this.state.selectedUserGroup).then((invites) => {
-        console.log(invites._list)
         let pendingInvites = invites._list.filter(i => i._status === 'PENDING')
         let expiredInvites = invites._list.filter(i => i._status === 'EXPIRED')
 
@@ -171,7 +177,6 @@ class UserGroupView extends React.Component {
       if (!this.state.allUserGroupNamesUpper.includes(this.state.userGroupNameEdit.toUpperCase())) {
         this.setState({savingUserGroup: true})
         let updatedGroup = Object.assign({}, this.state.selectedUserGroup, {_name: this.state.userGroupNameEdit})
-        console.log('update ->', updatedGroup)
 
         IafUserGroup.update(updatedGroup).then((resGroup) => {
 
@@ -191,15 +196,52 @@ class UserGroupView extends React.Component {
 
     getAllUsers() {
       IafProj.getUsers(this.props.selectedItems.selectedProject).then((allUsers) => {
-        console.log(allUsers)
         allUsers.sort((a,b) => {return a._lastname.localeCompare(b._lastname)})
   
-        this.setState({users: allUsers, selectedUser: allUsers[0]})
+        this.setState({users: allUsers, selectedUser: allUsers[0]}, this.loadUser)
       })
     }
 
     setSelectedUser(ug) {
-      this.setState({selectedUser: ug})
+      this.setState({
+        selectedUser: ug,
+        userGroupsForSelectedUser: []}, this.loadUser)
+    }
+
+    async loadUser() {
+      
+      //this doesn't work though it should
+      //so instead we have to go the long way around to get the user groups for a user
+      // IafProj.getUserGroupsForUser(this.state.selectedUser, this.props.selectedItems.selectedProject).then((ugs) => {
+      //   console.log(ugs)
+      // })
+
+      //load user' usergroups
+      //since in _loadAsyncData we await on getAllUserGroups we can knwo the state below exists
+      //once the above is fixed, we shoudl remove the await in _loadAsyncData
+      let allUserGroups = [...this.state.userGroups, ...this.state.invalidUserGroups]
+      console.log('loadUser usergroups ->', allUserGroups)
+
+      // let ugPromises = []
+      // allUserGroups.forEach((ug) => {
+      //   ugPromises.push(IafUserGroup.getUsers(ug).then((users) => {
+      //     if (_.find(users, {_id: this.state.selectedUser._id})) return 
+      //   }))
+      // })
+
+      let ugresults = await Promise.all(allUserGroups.map((ug) => {
+        return IafUserGroup.getUsers(ug).then((users) => {
+          console.log(ug, users)
+          if (_.find(users, {_id: this.state.selectedUser._id})) return ug
+          else return null
+        })
+      }))
+
+      ugresults = ugresults.filter(u => u)
+      console.log(ugresults)
+
+      this.setState({userGroupsForSelectedUser: ugresults})
+
     }
 
     getUserInviteCard(invite) {
@@ -264,6 +306,7 @@ class UserGroupView extends React.Component {
             </StackableDrawer>
 
             {this.state.pageMode === 'UserGroups' && <div className='usergroup-mode-view'>
+
               <div className='row1'>
                 {!this.state.editingUserGroup && <div className='usergroup-name'>
                   <h1>{this.state.selectedUserGroup ? this.state.selectedUserGroup._name : ""}</h1>
@@ -282,7 +325,9 @@ class UserGroupView extends React.Component {
                 </div>
                 {this.state.userGroupNameEditError && <div className='usergroup-name-error'>{this.state.userGroupNameEditError}</div>}</div>}
               </div>
+
               <hr/>
+
               <div className='row2'>
                 <div className='usergroup-members'>
                   <div><h3>Members</h3></div>
@@ -308,10 +353,32 @@ class UserGroupView extends React.Component {
                   </div>}
                 </div>
               </div>
+
             </div>}
 
-            {this.state.pageMode === 'Users' && <div>User Mode</div>}
+            {this.state.pageMode === 'Users' && <div className='user-mode-view'>
 
+              <div className='row1'>
+                <div className='user-name-title'>
+                  <h1>{this.state.selectedUser ? this.state.selectedUser._lastname + ", " + this.state.selectedUser._firstname : ""}</h1>
+                </div>
+              </div>
+
+              <hr/>
+
+              <div className='row2'>
+                <div className='member-usergroups'>
+                  <div><h3>UserGroups</h3></div>
+                  {this.state.userGroupsForSelectedUser.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroups' /></div>}
+                  <ul className='member-usergroup-list'>
+                    {this.state.userGroupsForSelectedUser.map(u => <li key={u._id} className='member-group-list-item'>
+                      {u._name}
+                    </li>)}
+                  </ul>
+                </div>
+              </div>
+
+            </div>}
           </div>
         )
     }
