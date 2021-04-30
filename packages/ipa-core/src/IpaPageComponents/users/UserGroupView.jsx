@@ -63,6 +63,8 @@ class UserGroupView extends React.Component {
       this.updateUserGroup = this.updateUserGroup.bind(this)
       this.sortGroupsBasedOnConfig = this.sortGroupsBasedOnConfig.bind(this)
       this.loadUserGroupData = this.loadUserGroupData.bind(this)
+      this.getGroupCard = this.getGroupCard.bind(this)
+      this.getUserCard = this.getUserCard.bind(this)
       this.getUserInviteCard = this.getUserInviteCard.bind(this)
       this.getAllUsers = this.getAllUsers.bind(this)
       this.setSelectedUser = this.setSelectedUser.bind(this)
@@ -258,6 +260,34 @@ class UserGroupView extends React.Component {
       this.setState({invitesForSelectedUser: validInvites, expiredInvitesForSelectedUser: expiredInvites, loadingInvites: false})
     }
 
+    getGroupCard(group, selectable=false) {
+      if (selectable)
+        return <li key={group._id} onClick={(e) => this.setSelectedUserGroup(group)} className={clsx('user-group-list-item selectable', group._id === this.state.selectedUserGroup._id && 'active')}>
+          {group._name}
+        </li>
+      else
+        return <li key={group._id} className='user-group-list-item'>
+          {group._name}
+        </li>
+    }
+
+    getUserCard(user, selectable=false) {
+
+      let isMe = user._id === this.props.user._id
+      let isSelectedUser =  user._id === this.state.selectedUser._id
+
+      if (selectable)
+        return <li key={user._id} onClick={(e) => this.setSelectedUser(user)} className={clsx('user-group-list-item selectable', isSelectedUser && 'active')}>
+          <div className={clsx('user-full-name', isMe && 'current-user')}>{user._lastname + ", " + user._firstname}</div>
+          <div className='user-email'>{user._email}</div>
+        </li>
+      else return <li key={user._id} className='user-group-list-item'>
+        <div className={clsx('user-full-name', isMe && 'current-user')}>{user._lastname + ", " + user._firstname}</div>
+        <div className='user-email'>{user._email}</div>
+      </li>
+
+    }
+
     getUserInviteCard(invite) {
 
       function getFormattedDate(ts) {
@@ -265,13 +295,14 @@ class UserGroupView extends React.Component {
         return expires.format('MMM D, YYYY')
       }
 
+      let isMe = invite._email === this.props.user._email
       let userInProject = _.find(this.state.users, {_email: invite._email})
       let expiresDate = getFormattedDate(invite._expireTime)
       let expired = moment(invite._expireTime).isBefore(moment())
 
-      return  <li key={invite._id} className='user-group-list-item'>
+      return  <li key={invite._id} className='user-group-list-item invite'>
                 <div className='invite-user-info'>
-                  {userInProject && <div className='user-full-name'>{userInProject._lastname + ', ' + userInProject._firstname}</div>}
+                  {userInProject && <div className={clsx('user-full-name', isMe && 'current-user')}>{userInProject._lastname + ', ' + userInProject._firstname}</div>}
                   <div className='user-email'>{invite._email}</div>
                 </div>
                 <div className='invite-info'>
@@ -298,7 +329,7 @@ class UserGroupView extends React.Component {
                 {this.state.pageMode === 'UserGroups' && <div>
                   {!this.state.selectedUserGroup && <SimpleTextThrobber throbberText='Loading UserGroups' />}
                   <ul className='user-group-list'>
-                    {this.state.userGroups.map(u => <li key={u._id} onClick={(e) => this.setSelectedUserGroup(u)} className={clsx('user-group-list-item', u._id === this.state.selectedUserGroup._id && 'active')}>{u._name}</li>)}
+                    {this.state.userGroups.map(u => this.getGroupCard(u, true))}
                   </ul>
                   {this.state.invalidUserGroups.length > 0 && <div className='other-groups'>
                     <span>Other Groups</span>
@@ -310,10 +341,7 @@ class UserGroupView extends React.Component {
                 {this.state.pageMode === 'Users' && <div>
                 {!this.state.selectedUser && <SimpleTextThrobber throbberText='Loading Users' />}
                   <ul className='user-group-list'>
-                    {this.state.users.map(u => <li key={u._id} onClick={(e) => this.setSelectedUser(u)} className={clsx('user-group-list-item', u._id === this.state.selectedUser._id && 'active')}>
-                      <div className='user-full-name'>{u._lastname + ", " + u._firstname}</div>
-                      <div className='user-email'>{u._email}</div>
-                    </li>)}
+                    {this.state.users.map(u => this.getUserCard(u, true))}
                   </ul>
                 </div>}
               </div>
@@ -347,10 +375,7 @@ class UserGroupView extends React.Component {
                   <div><h3>Members</h3></div>
                   {this.state.usersInSelectedGroup.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroup Members' /></div>}
                   <ul className='group-users-list'>
-                    {this.state.usersInSelectedGroup.map(u => <li key={u._id} className='user-group-list-item'>
-                      <div className='user-full-name'>{u._lastname + ", " + u._firstname}</div>
-                      <div className='user-email'>{u._email}</div>
-                    </li>)}
+                    {this.state.usersInSelectedGroup.map(u => this.getUserCard(u))}
                   </ul>
                 </div>
                 <div className='usergroup-invites'>
@@ -385,9 +410,7 @@ class UserGroupView extends React.Component {
                   <div><h3>UserGroups</h3></div>
                   {this.state.userGroupsForSelectedUser.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroups' /></div>}
                   <ul className='member-usergroup-list'>
-                    {this.state.userGroupsForSelectedUser.map(u => <li key={u._id} className='member-group-list-item'>
-                      {u._name}
-                    </li>)}
+                    {this.state.userGroupsForSelectedUser.map(u => this.getGroupCard(u))}
                   </ul>
                 </div>
 
