@@ -18,13 +18,17 @@
 import React from "react";
 import clsx from "clsx";
 import moment from 'moment'
+import _ from 'lodash'
 
 import {IafProj, IafUserGroup} from '@invicara/platform-api'
 import {StackableDrawer} from '../../IpaControls/StackableDrawer'
 import RadioButtons from '../../IpaControls/RadioButtons'
 import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
 
-import _ from 'lodash'
+import {GroupCard} from './GroupCard'
+import {UserCard} from './UserCard'
+import {InviteCard} from './InviteCard'
+
 
 import './UserGroupView.scss'
 
@@ -36,7 +40,7 @@ class UserGroupView extends React.Component {
         pageModes: ['UserGroups', 'Users'],
         pageMode: 'UserGroups',
         allUserGroupNamesUpper: [], //list of uppercase usergroup names for easy comparisons
-        invalidUserGroups: [], //userGroups on the project th euser can't ineract with
+        invalidUserGroups: [], //userGroups on the project the user can't interact with
         userGroups: [], //userGroups on the project the user can interact with
         selectedUserGroup: null, //the currently selected UserGroup
         editingUserGroup: false, //if the user is editng the UserGroup
@@ -49,10 +53,9 @@ class UserGroupView extends React.Component {
         expiredInvitesInSelectedGroup: [], //expired invites in a group
         users: [], //list of all users in the project
         selectedUser: null, //the currently selected user
-        userGroupsForSelectedUser: [],
-        invalidUserGroupsForSelectedUser: [],
-        invitesForSelectedUser: [],
-        expiredInvitesForSelectedUser: []
+        userGroupsForSelectedUser: [], //the valid usergroups to which the selected user belongs
+        invitesForSelectedUser: [], //invites for the seleted user
+        expiredInvitesForSelectedUser: [] //expired invites for the selected user
       }
 
       this.onModeChange = this.onModeChange.bind(this)
@@ -63,12 +66,9 @@ class UserGroupView extends React.Component {
       this.updateUserGroup = this.updateUserGroup.bind(this)
       this.sortGroupsBasedOnConfig = this.sortGroupsBasedOnConfig.bind(this)
       this.loadUserGroupData = this.loadUserGroupData.bind(this)
-      this.getGroupCard = this.getGroupCard.bind(this)
-      this.getUserCard = this.getUserCard.bind(this)
-      this.getUserInviteCard = this.getUserInviteCard.bind(this)
       this.getAllUsers = this.getAllUsers.bind(this)
       this.setSelectedUser = this.setSelectedUser.bind(this)
-      this.loadUser = this.loadUser.bind(this)
+      this.loadUserData = this.loadUserData.bind(this)
 
     }
 
@@ -147,7 +147,7 @@ class UserGroupView extends React.Component {
   
             let applySelectedUserGroup = selectedUserGroup ? selectedUserGroup : sortedUserGroups.validGroups[0]
   
-            this.setState({allUserGroupNamesUpper: allUserGroupNamesUpper, invalidUserGroups: sortedUserGroups.invalidGroups, userGroups: sortedUserGroups.validGroups, selectedUserGroup: applySelectedUserGroup})
+            this.setState({allUserGroupNamesUpper: allUserGroupNamesUpper, invalidUserGroups: sortedUserGroups.invalidGroups, userGroups: sortedUserGroups.validGroups}, this.setSelectedUserGroup(applySelectedUserGroup))
           
             resolve(applySelectedUserGroup)
           })
@@ -214,7 +214,7 @@ class UserGroupView extends React.Component {
       IafProj.getUsers(this.props.selectedItems.selectedProject).then((allUsers) => {
         allUsers.sort((a,b) => {return a._lastname.localeCompare(b._lastname)})
   
-        this.setState({users: allUsers, selectedUser: allUsers[0]}, this.loadUser)
+        this.setState({users: allUsers, selectedUser: allUsers[0]}, this.loadUserData)
       })
     }
 
@@ -222,10 +222,10 @@ class UserGroupView extends React.Component {
       this.setState({
         selectedUser: ug,
         userGroupsForSelectedUser: [],
-        invitesForSelectedUser: []}, this.loadUser)
+        invitesForSelectedUser: []}, this.loadUserData)
     }
 
-    async loadUser() {
+    async loadUserData() {
       
       this.setState({loadingInvites: true})
       //this doesn't work though it should
@@ -243,7 +243,7 @@ class UserGroupView extends React.Component {
 
       ugresults = ugresults.filter(u => u)
 
-      this.setState({userGroupsForSelectedUser: ugresults, invalidUserGroupsForSelectedUser: []})
+      this.setState({userGroupsForSelectedUser: ugresults})
 
       //we have to do a similar workaround for invites because there is no access
       //to fetch invites by another user so we have go usergroup by usergroup
@@ -258,58 +258,6 @@ class UserGroupView extends React.Component {
       let expiredInvites = invresults.filter(i => i._status === "EXPIRED")
 
       this.setState({invitesForSelectedUser: validInvites, expiredInvitesForSelectedUser: expiredInvites, loadingInvites: false})
-    }
-
-    getGroupCard(group, selectable=false) {
-      if (selectable)
-        return <li key={group._id} onClick={(e) => this.setSelectedUserGroup(group)} className={clsx('user-group-list-item selectable', group._id === this.state.selectedUserGroup._id && 'active')}>
-          {group._name}
-        </li>
-      else
-        return <li key={group._id} className='user-group-list-item'>
-          {group._name}
-        </li>
-    }
-
-    getUserCard(user, selectable=false) {
-
-      let isMe = user._id === this.props.user._id
-      let isSelectedUser =  user._id === this.state.selectedUser._id
-
-      if (selectable)
-        return <li key={user._id} onClick={(e) => this.setSelectedUser(user)} className={clsx('user-group-list-item selectable', isSelectedUser && 'active')}>
-          <div className={clsx('user-full-name', isMe && 'current-user')}>{user._lastname + ", " + user._firstname}</div>
-          <div className='user-email'>{user._email}</div>
-        </li>
-      else return <li key={user._id} className='user-group-list-item'>
-        <div className={clsx('user-full-name', isMe && 'current-user')}>{user._lastname + ", " + user._firstname}</div>
-        <div className='user-email'>{user._email}</div>
-      </li>
-
-    }
-
-    getUserInviteCard(invite) {
-
-      function getFormattedDate(ts) {
-        let expires = moment(ts)
-        return expires.format('MMM D, YYYY')
-      }
-
-      let isMe = invite._email === this.props.user._email
-      let userInProject = _.find(this.state.users, {_email: invite._email})
-      let expiresDate = getFormattedDate(invite._expireTime)
-      let expired = moment(invite._expireTime).isBefore(moment())
-
-      return  <li key={invite._id} className='user-group-list-item invite'>
-                <div className='invite-user-info'>
-                  {userInProject && <div className={clsx('user-full-name', isMe && 'current-user')}>{userInProject._lastname + ', ' + userInProject._firstname}</div>}
-                  <div className='user-email'>{invite._email}</div>
-                </div>
-                <div className='invite-info'>
-                  <div className={clsx('invite-expires', expired && 'expired')}><span className='bold'>Expires:</span> {expiresDate}</div>
-                  <div className='invite-usergroup'><span className='bold'>UserGroup:</span> {invite._usergroup._name}</div>
-                </div>
-              </li>
     }
 
     render() {
@@ -329,19 +277,26 @@ class UserGroupView extends React.Component {
                 {this.state.pageMode === 'UserGroups' && <div>
                   {!this.state.selectedUserGroup && <SimpleTextThrobber throbberText='Loading UserGroups' />}
                   <ul className='user-group-list'>
-                    {this.state.userGroups.map(u => this.getGroupCard(u, true))}
+                    {this.state.userGroups.map(u => <GroupCard key={u._id} group={u} 
+                                                      selectable={true} 
+                                                      isSelected={u._id === this.state.selectedUserGroup._id} 
+                                                      onClick={(e) => this.setSelectedUserGroup(u)} />)}
                   </ul>
                   {this.state.invalidUserGroups.length > 0 && <div className='other-groups'>
                     <span>Other Groups</span>
                     <ul className='other-group-list'>
-                      {this.state.invalidUserGroups.map(u => <li key={u._id} className='other-group-list-item'>{u._name}</li>)}
+                      {this.state.invalidUserGroups.map(u => <GroupCard key={u._id} group={u} disabled={true} />)}
                     </ul>
                   </div>}
                 </div>}
                 {this.state.pageMode === 'Users' && <div>
                 {!this.state.selectedUser && <SimpleTextThrobber throbberText='Loading Users' />}
                   <ul className='user-group-list'>
-                    {this.state.users.map(u => this.getUserCard(u, true))}
+                    {this.state.users.map(u => <UserCard key={u._id} user={u} 
+                                                      isCurrentUser={u._id === this.props.user._id} 
+                                                      selectable={true} 
+                                                      isSelected={u._id === this.state.selectedUser._id}
+                                                      onClick={(e) => this.setSelectedUser(u)} />)}
                   </ul>
                 </div>}
               </div>
@@ -375,7 +330,8 @@ class UserGroupView extends React.Component {
                   <div><h3>Members</h3></div>
                   {this.state.usersInSelectedGroup.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroup Members' /></div>}
                   <ul className='group-users-list'>
-                    {this.state.usersInSelectedGroup.map(u => this.getUserCard(u))}
+                    {this.state.usersInSelectedGroup.map(u => <UserCard key={u._id} user={u} 
+                                                      isCurrentUser={u._id === this.props.user._id} />)}
                   </ul>
                 </div>
                 <div className='usergroup-invites'>
@@ -383,11 +339,15 @@ class UserGroupView extends React.Component {
                   {this.state.loadingInvites && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroup Invites' /></div>}
                   {!this.state.loadingInvites && this.state.invitesInSelectedGroup.length === 0 && <span className='indent-header'>No pending invites</span>}
                   <ul>
-                    {this.state.invitesInSelectedGroup.map(i => this.getUserInviteCard(i))}
+                    {this.state.invitesInSelectedGroup.map(i => <InviteCard key={i._id} invite={i}
+                                                                        isCurrentUser={i._email === this.props.user._email} 
+                                                                        existingUser={_.find(this.state.users, {_email: i._email})} />)}
                   </ul>
                   {this.state.expiredInvitesInSelectedGroup.length > 0 && <div><span className='indent-header'>Expired Invites</span>
                     <ul>
-                    {this.state.expiredInvitesInSelectedGroup.map(i => this.getUserInviteCard(i))}
+                    {this.state.expiredInvitesInSelectedGroup.map(i => <InviteCard key={i._id} invite={i}
+                                                                        isCurrentUser={i._email === this.props.user._email} 
+                                                                        existingUser={_.find(this.state.users, {_email: i._email})} />)}
                     </ul>
                   </div>}
                 </div>
@@ -410,7 +370,7 @@ class UserGroupView extends React.Component {
                   <div><h3>UserGroups</h3></div>
                   {this.state.userGroupsForSelectedUser.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroups' /></div>}
                   <ul className='member-usergroup-list'>
-                    {this.state.userGroupsForSelectedUser.map(u => this.getGroupCard(u))}
+                    {this.state.userGroupsForSelectedUser.map(u => <GroupCard key={u._id} group={u} />)}
                   </ul>
                 </div>
 
@@ -419,11 +379,15 @@ class UserGroupView extends React.Component {
                   {this.state.loadingInvites && <div className='throbber'><SimpleTextThrobber throbberText='Loading User Invites' /></div>}
                   {!this.state.loadingInvites && this.state.invitesForSelectedUser.length === 0 && <span className='indent-header'>No pending invites</span>}
                   <ul>
-                    {this.state.invitesForSelectedUser.map(i => this.getUserInviteCard(i))}
+                    {this.state.invitesForSelectedUser.map(i => <InviteCard key={i._id} invite={i}
+                                                                        isCurrentUser={i._email === this.props.user._email} 
+                                                                        existingUser={_.find(this.state.users, {_email: i._email})} />)}
                   </ul>
                   {this.state.expiredInvitesForSelectedUser.length > 0 && <div><span className='indent-header'>Expired Invites</span>
                     <ul>
-                    {this.state.expiredInvitesForSelectedUser.map(i => this.getUserInviteCard(i))}
+                    {this.state.expiredInvitesForSelectedUser.map(i => <InviteCard key={i._id} invite={i}
+                                                                        isCurrentUser={i._email === this.props.user._email} 
+                                                                        existingUser={_.find(this.state.users, {_email: i._email})} />)}
                     </ul>
                   </div>}
                 </div>
