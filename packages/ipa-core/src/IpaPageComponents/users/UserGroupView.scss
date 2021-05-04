@@ -80,20 +80,6 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-
-            .invite-link {
-                font-size: 1rem;
-                font-weight: bold;
-                border: 1px solid var(--app-accent-color);
-                padding: 7px;
-                border-radius: 10px;
-                color: var(--app-accent-color);
-                cursor: pointer;
-            }
-
-            .invite-link:hover {
-                background-color: #f2f2f2;
-            }
         }
     }
 
@@ -155,6 +141,7 @@
             display: flex;
             flex-direction: row;
             height: 100%;
+            padding-left: 50px;
 
             .usergroup-members {
                 width: 50%;
@@ -204,6 +191,7 @@
             display: flex;
             flex-direction: row;
             height: 100%;
+            padding-left: 50px;
 
             .member-usergroups {
                 width: 50%;

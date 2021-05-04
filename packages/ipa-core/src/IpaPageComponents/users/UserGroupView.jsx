@@ -28,6 +28,7 @@ import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
 import {GroupCard} from './GroupCard'
 import {UserCard} from './UserCard'
 import {InviteCard} from './InviteCard'
+import {InviteForm} from './InviteForm'
 
 
 import './UserGroupView.scss'
@@ -271,7 +272,6 @@ class UserGroupView extends React.Component {
                   <div className='radio-btns'>
                     <RadioButtons options={this.state.pageModes} value={this.state.pageMode} onChange={this.onModeChange} labelPlacement='end' />
                   </div>
-                  <div className='invite-link'>+ invite</div>
                 </div>
                 <hr/>
                 {this.state.pageMode === 'UserGroups' && <div>
@@ -301,6 +301,10 @@ class UserGroupView extends React.Component {
                 </div>}
               </div>
             </StackableDrawer>
+
+            {this.props.handler.config.allowUserGroupInvite && <StackableDrawer level={2} iconKey='fas fa-user-plus' defaultOpen={false}>
+              <InviteForm />
+            </StackableDrawer>}
 
             {this.state.pageMode === 'UserGroups' && <div className='usergroup-mode-view'>
 
