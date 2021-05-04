@@ -49,6 +49,20 @@ export default class ProjectPickerModal extends React.Component {
 
   loadModal = async () => {
 
+    function getFirstMatchingConfig(group, configs) {
+
+      let match = null
+      for (let i = 0; i < group._userAttributes.userConfigs.length; i++) {
+        let found = _.find(configs, {_id: group._userAttributes.userConfigs[i]._id})
+        if (found) {
+          match = found
+          break
+        }
+      }
+      
+      return match
+    }
+
     const {projects} = this.props;
     this.getInvites()
     if(projects && projects.length > 0) {
@@ -60,33 +74,30 @@ export default class ProjectPickerModal extends React.Component {
       for (let i = 0; i < projects.length; i++) {
 
         let userGroups = await IafProj.getUserGroupsForCurrentUser(projects[i])
- 
-        //for each userGroup get each the user configs with the application's configUserType
-        for (let ii = 0; ii < userGroups.length; ii++) {
-   
-          let userConfigs = await IafUserGroup.getUserConfigs(userGroups[ii], {_userType: this.props.configUserType} ,{_namespaces: projects[i]._namespaces})
-            .catch(e => console.log("ignoring this usergroup", userGroups[ii]._description, "reason", e));
-    
-          if (userConfigs.length > 0) {
-            if (userConfigs.length > 1) {
-              console.warn("User Group " + userGroups[ii]._name + " has more than one userConfig for configUserType " + this.props.configUserType)
-            }
+        
+        //filter out groups with no configs
+        userGroups = userGroups.filter(ug => ug._userAttributes.userConfigs)
 
-            //for some reason the query above doesnt correctly filter to the correct type of user config so we do it here
-            userGroups[ii].userConfig = userConfigs.filter(cfg => cfg._userType === this.props.configUserType)[0]
-          }
-        }
+        //get all userConfigs in the project
+        let userConfigs = await IafProj.getUserConfigs(projects[i], {_userType: this.props.configUserType})
+        
+        //get userConfig for each remaining userGroup
+        userGroups.forEach((ug) => [
+          ug.userConfig = getFirstMatchingConfig(ug, userConfigs)
+        ])
 
-        //if a userGroup has no userConfig rmeove the userGroup
-        let userGroupsWithConfigs = userGroups.filter(ug => ug.userConfig)
+        //find the userGroups in the project that have application configs
+        userGroups = userGroups.filter(ug => ug.userConfig)
 
         //if a project has no userGroups remove the project
-        if (userGroupsWithConfigs && userGroupsWithConfigs.length) {
+        if (userGroups && userGroups.length) {
           myProjects.push(projects[i])
-          myUserGroups[projects[i]._id] = userGroupsWithConfigs
+          myUserGroups[projects[i]._id] = userGroups
         }
 
       }
+
+      console.log(myProjects, myUserGroups)
       
       //serve projects and usergroups from state
       this.setState({projects: myProjects, appUserGroups: myUserGroups})
@@ -101,7 +112,6 @@ export default class ProjectPickerModal extends React.Component {
           usergroupid = projectid ? myUserGroups[myProjects[0]._id][0]._id : null
       }
       else {
-          //res = await this.checkUserConfigs(this.props.appContextProps.selectedItems.selectedProject);
 
           projectid = this.props.appContextProps.selectedItems.selectedProject._id;
 
