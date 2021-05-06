@@ -542,11 +542,7 @@ const addScriptFunction = (fn) => {
   let fnName = "$" + fn.name
   let fnWrapper = {}
   fnWrapper[fnName] = {
-    operate: async (a,b,c) => {
-      let args = expression.operate(a,b,c)
-      let result = await fn(args)
-      return result
-    }
+    operate: (a,b,c) => fn(expression.operate(a,b,c))
   }
   console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
   expression.use(fnWrapper)
