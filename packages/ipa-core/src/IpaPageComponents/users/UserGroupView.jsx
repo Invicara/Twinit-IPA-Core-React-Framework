@@ -16,8 +16,6 @@
  */
 
 import React from "react";
-import clsx from "clsx";
-import moment from 'moment'
 import _ from 'lodash'
 
 import {IafProj, IafUserGroup} from '@invicara/platform-api'
@@ -29,7 +27,6 @@ import {GroupCard} from './GroupCard'
 import {UserCard} from './UserCard'
 import {InviteCard} from './InviteCard'
 import {InviteForm} from './InviteForm'
-
 
 import './UserGroupView.scss'
 
@@ -70,6 +67,7 @@ class UserGroupView extends React.Component {
       this.getAllUsers = this.getAllUsers.bind(this)
       this.setSelectedUser = this.setSelectedUser.bind(this)
       this.loadUserData = this.loadUserData.bind(this)
+      this.updateCurrentView = this.updateCurrentView.bind(this)
 
     }
 
@@ -261,12 +259,29 @@ class UserGroupView extends React.Component {
       this.setState({invitesForSelectedUser: validInvites, expiredInvitesForSelectedUser: expiredInvites, loadingInvites: false})
     }
 
+    updateCurrentView() {
+
+      if (this.state.pageMode === 'UserGroups') this.loadUserGroupData()
+      else this.loadUserData()
+
+    }
+
     render() {
 
         return (
           <div className='user-group-view'>
 
-            <StackableDrawer level={1} iconKey='fas fa-users' defaultOpen={true}>
+            {this.props.handler.config.allowUserGroupInvite && <StackableDrawer level={1} iconKey='fas fa-user-plus' defaultOpen={false}>
+              <InviteForm appName={this.props.selectedItems.ipaConfig.appName} 
+                        appUrl={this.props.handler.config.appUrl}
+                        currentUser={this.props.user} 
+                        users={this.state.users} 
+                        userGroups={this.state.userGroups} 
+                        project={this.props.selectedItems.selectedProject}
+                        onInvitesSent={this.updateCurrentView}/>
+            </StackableDrawer>}
+
+            <StackableDrawer level={this.props.handler.config.allowUserGroupInvite ? 2 : 1} iconKey='fas fa-users' defaultOpen={true}>
               <div className='switchable-list-view'>
                 <div className='list-header'>
                   <div className='radio-btns'>
@@ -302,9 +317,7 @@ class UserGroupView extends React.Component {
               </div>
             </StackableDrawer>
 
-            {this.props.handler.config.allowUserGroupInvite && <StackableDrawer level={2} iconKey='fas fa-user-plus' defaultOpen={false}>
-              <InviteForm />
-            </StackableDrawer>}
+            
 
             {this.state.pageMode === 'UserGroups' && <div className='usergroup-mode-view'>
 
