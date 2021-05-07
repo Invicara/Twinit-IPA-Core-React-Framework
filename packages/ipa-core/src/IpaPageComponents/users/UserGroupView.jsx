@@ -68,6 +68,7 @@ class UserGroupView extends React.Component {
       this.setSelectedUser = this.setSelectedUser.bind(this)
       this.loadUserData = this.loadUserData.bind(this)
       this.updateCurrentView = this.updateCurrentView.bind(this)
+      this.onCancelInvite = this.onCancelInvite.bind(this)
 
     }
 
@@ -266,6 +267,16 @@ class UserGroupView extends React.Component {
 
     }
 
+    async onCancelInvite(invite) {
+      console.log('deleting invite -> ', invite)
+
+      let result = await IafUserGroup.cancelInvite(invite._usergroup, invite._id)
+      console.log(result)
+
+      this.updateCurrentView()
+
+    }
+
     render() {
 
         return (
@@ -358,13 +369,17 @@ class UserGroupView extends React.Component {
                   <ul>
                     {this.state.invitesInSelectedGroup.map(i => <InviteCard key={i._id} invite={i}
                                                                         isCurrentUser={i._email === this.props.user._email} 
-                                                                        existingUser={_.find(this.state.users, {_email: i._email})} />)}
+                                                                        existingUser={_.find(this.state.users, {_email: i._email})} 
+                                                                        showActions={this.props.handler.config.allowManageInvites}
+                                                                        onCancelInvite={this.onCancelInvite} />)}
                   </ul>
                   {this.state.expiredInvitesInSelectedGroup.length > 0 && <div><span className='indent-header'>Expired Invites</span>
                     <ul>
                     {this.state.expiredInvitesInSelectedGroup.map(i => <InviteCard key={i._id} invite={i}
                                                                         isCurrentUser={i._email === this.props.user._email} 
-                                                                        existingUser={_.find(this.state.users, {_email: i._email})} />)}
+                                                                        existingUser={_.find(this.state.users, {_email: i._email})} 
+                                                                        showActions={this.props.handler.config.allowManageInvites}
+                                                                        onCancelInvite={this.onCancelInvite} />)}
                     </ul>
                   </div>}
                 </div>
@@ -398,13 +413,17 @@ class UserGroupView extends React.Component {
                   <ul>
                     {this.state.invitesForSelectedUser.map(i => <InviteCard key={i._id} invite={i}
                                                                         isCurrentUser={i._email === this.props.user._email} 
-                                                                        existingUser={_.find(this.state.users, {_email: i._email})} />)}
+                                                                        existingUser={_.find(this.state.users, {_email: i._email})} 
+                                                                        showActions={this.props.handler.config.allowManageInvites}
+                                                                        onCancelInvite={this.onCancelInvite} />)}
                   </ul>
                   {this.state.expiredInvitesForSelectedUser.length > 0 && <div><span className='indent-header'>Expired Invites</span>
                     <ul>
                     {this.state.expiredInvitesForSelectedUser.map(i => <InviteCard key={i._id} invite={i}
                                                                         isCurrentUser={i._email === this.props.user._email} 
-                                                                        existingUser={_.find(this.state.users, {_email: i._email})} />)}
+                                                                        existingUser={_.find(this.state.users, {_email: i._email})} 
+                                                                        showActions={this.props.handler.config.allowManageInvites}
+                                                                        onCancelInvite={this.onCancelInvite} />)}
                     </ul>
                   </div>}
                 </div>
