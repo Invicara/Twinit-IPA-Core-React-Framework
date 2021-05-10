@@ -135,9 +135,10 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
       allResults.push(results)
     }
 
-    console.log(allResults)
-    let numInvites = inviteData.length * selectedUserGroups.length
-    setOverlayMsg('Sent ' + numInvites + ' invitation' + (numInvites > 1 ? 's' : ''))
+
+    let overlayMsg = 'Sent ' + selectedUserGroups.length + ' invite' + (selectedUserGroups.length > 1 ? 's': '') + ' to ' + inviteData.length + ' user' + (inviteData.length > 1 ? 's': '')
+
+    setOverlayMsg(overlayMsg)
     setSendingInvites(false)
     onInvitesSent()
 

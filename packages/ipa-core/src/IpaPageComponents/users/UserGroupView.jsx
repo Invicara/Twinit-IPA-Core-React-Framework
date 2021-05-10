@@ -69,6 +69,8 @@ class UserGroupView extends React.Component {
       this.loadUserData = this.loadUserData.bind(this)
       this.updateCurrentView = this.updateCurrentView.bind(this)
       this.onCancelInvite = this.onCancelInvite.bind(this)
+      this.canRemoveUser = this.canRemoveUser.bind(this)
+      this.removeUser = this.removeUser.bind(this)
 
     }
 
@@ -166,6 +168,7 @@ class UserGroupView extends React.Component {
     loadUserGroupData() {
       this.setState({loadingInvites: true})
       IafUserGroup.getUsers(this.state.selectedUserGroup).then((users) => {
+        users.sort((a,b) => {return a._lastname.localeCompare(b._lastname)})
         this.setState({usersInSelectedGroup: users})
       })
       
@@ -277,6 +280,82 @@ class UserGroupView extends React.Component {
 
     }
 
+    async canRemoveUser(user=false, group=false) {
+
+      //if user is passed we are in usergroup mode
+      //so we have a selectedUserGroup
+      if (user) {
+        if ((this.state.selectedUserGroup._id === this.props.selectedItems.selectedUserGroupId) && (user._id === this.props.user._id)) 
+          return {
+            allow: false,
+            message: "You can't remove your user from the current UserGroup"
+          }
+        else if (this.state.usersInSelectedGroup.length === 1) 
+          return {
+            allow: false,
+            message: "You can't remove the last User from a UserGroup"
+          }
+        else
+          return {
+            allow: true
+          }
+      } else if (group) {
+        //otherwise we are in user mode
+        //so we have a selectedUser
+        if ((group._id === this.props.selectedItems.selectedUserGroupId) && (this.state.selectedUser._id === this.props.user._id)) 
+          return {
+            allow: false,
+            message: "You can't remove your user from the current UserGroup"
+          }
+        else {
+          
+          let users = await IafUserGroup.getUsers(ug)
+          
+          if (users.length === 1)
+            return {
+              allow: false,
+              message: "You can't remove the last User from a UserGroup"
+            }
+          else 
+            return {
+              allow: true
+            }
+        }
+      }
+
+    }
+
+    async removeUser(user=false, group=false) {
+
+      let removeUser, fromGroup
+
+      if (user) {
+        removeUser = user
+        fromGroup = this.state.selectedUserGroup
+      } else {
+        removeUser = this.state.selectedUser
+        fromGroup = group
+      }
+
+      console.log(removeUser, fromGroup)
+
+      let canRemove = this.canRemoveUser(removeUser)
+
+      if (canRemove) {
+        IafUserGroup.deleteUserFromGroup(fromGroup, removeUser).then((result) => {
+          console.log(result)
+
+          //if in usermode and we are removing the last usergroup for user
+          //reload everything as the user will need to disappear from the user list
+          if (this.state.pageMode === 'Users' && this.state.userGroupsForSelectedUser.length === 1)
+            this._loadAsyncData()
+          else
+            this.updateCurrentView()
+        })
+      }
+        
+    }
+
     render() {
 
         return (
@@ -359,7 +438,10 @@ class UserGroupView extends React.Component {
                   {this.state.usersInSelectedGroup.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroup Members' /></div>}
                   <ul className='group-users-list'>
                     {this.state.usersInSelectedGroup.map(u => <UserCard key={u._id} user={u} 
-                                                      isCurrentUser={u._id === this.props.user._id} />)}
+                                                      isCurrentUser={u._id === this.props.user._id} 
+                                                      showActions={this.props.handler.config.allowManageUsers}
+                                                      canRemoveUser={this.canRemoveUser} 
+                                                      onRemoveUser={this.removeUser} />)}
                   </ul>
                 </div>
                 <div className='usergroup-invites'>

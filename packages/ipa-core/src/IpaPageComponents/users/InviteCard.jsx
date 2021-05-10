@@ -4,7 +4,7 @@ import moment from 'moment'
 
 import './UserGroupView.scss'
 
-export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, showActions, onCancelInvite}) => {
+export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, showActions=false, onCancelInvite}) => {
 
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -35,7 +35,7 @@ export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, sh
   let expired = invite._status === 'EXPIRED'
 
   return  <li className='user-group-list-item invite'>
-            <div className='invite-row1'>
+            <div className='card-row1'>
               <div className='invite-user-info'>
                 {existingUser && <div className={clsx('user-full-name', isCurrentUser && 'current-user')}>{existingUser._lastname + ', ' + existingUser._firstname}</div>}
                 <div className='user-email'>{invite._email}</div>
@@ -44,12 +44,12 @@ export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, sh
                 <div className={clsx('invite-expires', expired && 'expired')}><span className='bold'>Expires:</span> {expiresDate}</div>
                 <div className='invite-usergroup'><span className='bold'>UserGroup:</span> {invite._usergroup._name}</div>
               </div>
-              {showActions&& <div className='invite-actions'>
+              {showActions&& <div className='card-actions'>
                 {!isDeleting && <i className='fas fa-trash' onClick={confirmCancel}></i>}
               </div>}
             </div>
-            {isDeleting && <div className='invite-delete-confirm'>
-              <div className='confirm-invite-delete-text'>Confirm Invite Delete</div>
+            {isDeleting && <div className='card-row2'>
+              <div className='confirm-text'>Confirm Invite Delete</div>
               <div><a href='#' onClick={cancelConfirmed}><i className='fas fa-check'></i> Remove Invite</a></div>
               <div><a href='#' onClick={cancelCancel}><i className='fas fa-times'></i> Cancel</a></div>
             </div>}
