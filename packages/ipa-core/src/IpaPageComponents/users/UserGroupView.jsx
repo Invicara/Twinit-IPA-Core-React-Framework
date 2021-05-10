@@ -166,7 +166,7 @@ class UserGroupView extends React.Component {
     }
 
     loadUserGroupData() {
-      this.setState({loadingInvites: true})
+      this.setState({loadingInvites: true, usersInSelectedGroup: [], invitesInSelectedGroup: [], expiredInvitesInSelectedGroup:[]})
       IafUserGroup.getUsers(this.state.selectedUserGroup).then((users) => {
         users.sort((a,b) => {return a._lastname.localeCompare(b._lastname)})
         this.setState({usersInSelectedGroup: users})
@@ -230,7 +230,7 @@ class UserGroupView extends React.Component {
 
     async loadUserData() {
       
-      this.setState({loadingInvites: true})
+      this.setState({loadingInvites: true, userGroupsForSelectedUser: [], invitesForSelectedUser: [], expiredInvitesForSelectedUser: []})
       //this doesn't work though it should
       //so instead we have to go the long way around to get the user groups for a user
       // IafProj.getUserGroupsForUser(this.state.selectedUser, this.props.selectedItems.selectedProject).then((ugs) => {
@@ -263,13 +263,6 @@ class UserGroupView extends React.Component {
       this.setState({invitesForSelectedUser: validInvites, expiredInvitesForSelectedUser: expiredInvites, loadingInvites: false})
     }
 
-    updateCurrentView() {
-
-      if (this.state.pageMode === 'UserGroups') this.loadUserGroupData()
-      else this.loadUserData()
-
-    }
-
     async onCancelInvite(invite) {
       console.log('deleting invite -> ', invite)
 
@@ -281,7 +274,7 @@ class UserGroupView extends React.Component {
     }
 
     async canRemoveUser(user=false, group=false) {
-
+      
       //if user is passed we are in usergroup mode
       //so we have a selectedUserGroup
       if (user) {
@@ -295,10 +288,16 @@ class UserGroupView extends React.Component {
             allow: false,
             message: "You can't remove the last User from a UserGroup"
           }
-        else
-          return {
-            allow: true
-          }
+          else if (user._id === this.props.user._id)
+            return {
+              allow: true,
+              message: 'Are you sure you want to remove yourself from this UserGroup?'
+            }
+          else
+            return {
+              allow: true,
+              message: 'Confirm Remove User from Group'
+            }
       } else if (group) {
         //otherwise we are in user mode
         //so we have a selectedUser
@@ -309,17 +308,23 @@ class UserGroupView extends React.Component {
           }
         else {
           
-          let users = await IafUserGroup.getUsers(ug)
+          let users = await IafUserGroup.getUsers(group)
           
           if (users.length === 1)
             return {
               allow: false,
               message: "You can't remove the last User from a UserGroup"
             }
-          else 
+          else if (this.state.selectedUser._id === this.props.user._id)
             return {
-              allow: true
+              allow: true,
+              message: 'Are you sure you want to remove yourself from this UserGroup?'
             }
+            else
+              return {
+                allow: true,
+                message: 'Confirm Remove User from Group'
+              }
         }
       }
 
@@ -337,9 +342,11 @@ class UserGroupView extends React.Component {
         fromGroup = group
       }
 
-      console.log(removeUser, fromGroup)
-
-      let canRemove = this.canRemoveUser(removeUser)
+      let canRemove
+      if (this.state.pageMode === 'UserGroups')
+        canRemove = await this.canRemoveUser(removeUser)
+      else
+        canRemove = await this.canRemoveUser(null, fromGroup)
 
       if (canRemove) {
         IafUserGroup.deleteUserFromGroup(fromGroup, removeUser).then((result) => {
@@ -354,6 +361,13 @@ class UserGroupView extends React.Component {
         })
       }
         
+    }
+
+    updateCurrentView() {
+
+      if (this.state.pageMode === 'UserGroups') this.loadUserGroupData()
+      else this.loadUserData()
+
     }
 
     render() {
@@ -484,7 +498,10 @@ class UserGroupView extends React.Component {
                   <div><h3>UserGroups</h3></div>
                   {this.state.userGroupsForSelectedUser.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroups' /></div>}
                   <ul className='member-usergroup-list'>
-                    {this.state.userGroupsForSelectedUser.map(u => <GroupCard key={u._id} group={u} />)}
+                    {this.state.userGroupsForSelectedUser.map(u => <GroupCard key={u._id} group={u}
+                                                                        showActions={this.props.handler.config.allowManageUsers}
+                                                                        canRemoveUser={this.canRemoveUser} 
+                                                                        onRemoveUser={this.removeUser} />)}
                   </ul>
                 </div>
 

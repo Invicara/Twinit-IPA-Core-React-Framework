@@ -15,11 +15,9 @@ export const UserCard  = ({user, isCurrentUser=false, selectable=false, isSelect
     setAllowRemove(false)
     setIsDeleting(true)
     let canRemove = await canRemoveUser(user)
+    setActionText(canRemove.message)
 
-    if (!canRemove.allow) {
-      setActionText(canRemove.message)
-    } else {
-      setActionText('Confirm Remove User')
+    if (canRemove.allow) {
       setAllowRemove(true)
     }
   }
