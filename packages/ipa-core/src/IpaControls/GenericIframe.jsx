@@ -31,10 +31,8 @@ const GenericIframe = ({url, allowFullscreen, width, height}) => {
    }
 
   return (
-    <div style={{padding: '15px'}}>
-      <div className="generic-iframe-container">
-        {component}
-      </div>
+    <div className="generic-iframe-container">
+      {component}
     </div>
   )
 
