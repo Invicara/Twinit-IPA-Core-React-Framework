@@ -19,7 +19,7 @@ const distinctPropNames = (entities) => distinct(entities.flatMap(e => _.keys(e.
 const makeFilterFrom = (entities) => (propName) => ({
     name: propName,
     type: entities[0].properties[propName].type,
-    values: distinct(entities.map(e => e.properties[propName].val || "_empty_"))
+    values: distinct(entities.map(e => _.get(e.properties,`${propName}.val`) || "_empty_"))
 })
 
 const GroupAndFilterControl = ({fetchedEntities, nonGroupableProperties = [], nonFilterableProperties = [], fetching,
