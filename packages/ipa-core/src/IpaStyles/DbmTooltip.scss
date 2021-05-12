@@ -1,7 +1,7 @@
 
 .dbm-tooltip {
     position: relative;
-    display: inline-block;
+    display: flex;
   }
   
   .dbm-tooltip .dbm-tooltiptext {
@@ -19,6 +19,9 @@
     left: 50%;
     margin-left: -60px;
   }
+
+.dbm-tooltip:hover .dbm-tooltiptext {
+  visibility: visible;
   
   .dbm-tooltip:hover .dbm-toolTipText {
     visibility: visible;
