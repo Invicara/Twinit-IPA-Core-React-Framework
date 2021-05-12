@@ -78,12 +78,15 @@ export default class ProjectPickerModal extends React.Component {
         }
 
         //if a userGroup has no userConfig rmeove the userGroup
-        let userGroupsWithConfigs = userGroups.filter(ug => ug.userConfig)
+        //adding null check as we have some projects like that and prevent Project Picker from loading
+        if(userGroups) {
+          let userGroupsWithConfigs = userGroups.filter(ug => ug.userConfig)
 
-        //if a project has no userGroups remove the project
-        if (userGroupsWithConfigs && userGroupsWithConfigs.length) {
-          myProjects.push(projects[i])
-          myUserGroups[projects[i]._id] = userGroupsWithConfigs
+          //if a project has no userGroups remove the project
+          if (userGroupsWithConfigs && userGroupsWithConfigs.length) {
+            myProjects.push(projects[i])
+            myUserGroups[projects[i]._id] = userGroupsWithConfigs
+          }
         }
 
       }
