@@ -2,7 +2,6 @@ $border-grey: #EAEAEA;
 
 .drawer{
     display: flex;
-    height: 100%;
     border-right: 2px solid $border-grey;
     position: relative;
     transition: width 1s, min-width 1s;
