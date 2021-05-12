@@ -62,7 +62,7 @@ export default class ProjectPickerModal extends React.Component {
         let userGroups = await IafProj.getUserGroupsForCurrentUser(projects[i])
  
         //for each userGroup get each the user configs with the application's configUserType
-        for (let ii = 0; ii < userGroups.length; ii++) {
+        for (let ii = 0; userGroups && ii < userGroups.length; ii++) {
    
           let userConfigs = await IafUserGroup.getUserConfigs(userGroups[ii], {_userType: this.props.configUserType} ,{_namespaces: projects[i]._namespaces})
             .catch(e => console.log("ignoring this usergroup", userGroups[ii]._description, "reason", e));
