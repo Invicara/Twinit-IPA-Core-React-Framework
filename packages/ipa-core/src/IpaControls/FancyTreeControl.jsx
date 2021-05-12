@@ -104,7 +104,7 @@ const FancyTreeControl = ({
         if (expandedNodeNames.includes(n.name)) cn += " expanded"
         if (partialNodeNames.includes(n.name)) cn += " partial"
         return (
-          <li onClick={e => selectNode(e, n.name, n)} key={n._id} data-node-id={n._id} className={cn}>
+          <li onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
             <a>
               <span>{renderLeafNode(n)}</span>
             </a>
