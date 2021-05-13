@@ -69,6 +69,7 @@ class UserGroupView extends React.Component {
       this.loadUserData = this.loadUserData.bind(this)
       this.updateCurrentView = this.updateCurrentView.bind(this)
       this.onCancelInvite = this.onCancelInvite.bind(this)
+      this.onResendInvite = this.onResendInvite.bind(this)
       this.canRemoveUser = this.canRemoveUser.bind(this)
       this.removeUser = this.removeUser.bind(this)
 
@@ -273,6 +274,25 @@ class UserGroupView extends React.Component {
 
     }
 
+    async onResendInvite(invite) {
+
+      //cancel the original invite
+      let cancelResult = await IafUserGroup.cancelInvite(invite._usergroup, invite._id)
+
+      let inviteData = [
+        {
+          _email: invite._email,
+          _params: invite._params
+        }
+      ]
+
+      //send a new invite
+      let inviteResult = await IafUserGroup.inviteUsersToGroup(invite._usergroup, inviteData)
+
+      this.updateCurrentView()
+  
+    }
+
     async canRemoveUser(user=false, group=false) {
       
       //if user is passed we are in usergroup mode
@@ -467,7 +487,8 @@ class UserGroupView extends React.Component {
                                                                         isCurrentUser={i._email === this.props.user._email} 
                                                                         existingUser={_.find(this.state.users, {_email: i._email})} 
                                                                         showActions={this.props.handler.config.allowManageInvites}
-                                                                        onCancelInvite={this.onCancelInvite} />)}
+                                                                        onCancelInvite={this.onCancelInvite} 
+                                                                        onResendInvite={this.onResendInvite} />)}
                   </ul>
                   {this.state.expiredInvitesInSelectedGroup.length > 0 && <div><span className='indent-header'>Expired Invites</span>
                     <ul>
@@ -475,7 +496,8 @@ class UserGroupView extends React.Component {
                                                                         isCurrentUser={i._email === this.props.user._email} 
                                                                         existingUser={_.find(this.state.users, {_email: i._email})} 
                                                                         showActions={this.props.handler.config.allowManageInvites}
-                                                                        onCancelInvite={this.onCancelInvite} />)}
+                                                                        onCancelInvite={this.onCancelInvite} 
+                                                                        onResendInvite={this.onResendInvite} />)}
                     </ul>
                   </div>}
                 </div>
@@ -514,7 +536,8 @@ class UserGroupView extends React.Component {
                                                                         isCurrentUser={i._email === this.props.user._email} 
                                                                         existingUser={_.find(this.state.users, {_email: i._email})} 
                                                                         showActions={this.props.handler.config.allowManageInvites}
-                                                                        onCancelInvite={this.onCancelInvite} />)}
+                                                                        onCancelInvite={this.onCancelInvite} 
+                                                                        onResendInvite={this.onResendInvite} />)}
                   </ul>
                   {this.state.expiredInvitesForSelectedUser.length > 0 && <div><span className='indent-header'>Expired Invites</span>
                     <ul>
@@ -522,7 +545,8 @@ class UserGroupView extends React.Component {
                                                                         isCurrentUser={i._email === this.props.user._email} 
                                                                         existingUser={_.find(this.state.users, {_email: i._email})} 
                                                                         showActions={this.props.handler.config.allowManageInvites}
-                                                                        onCancelInvite={this.onCancelInvite} />)}
+                                                                        onCancelInvite={this.onCancelInvite} 
+                                                                        onResendInvite={this.onResendInvite} />)}
                     </ul>
                   </div>}
                 </div>

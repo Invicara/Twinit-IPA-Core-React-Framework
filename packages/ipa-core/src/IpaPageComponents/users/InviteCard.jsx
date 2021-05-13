@@ -4,31 +4,49 @@ import moment from 'moment'
 
 import './UserGroupView.scss'
 
-export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, showActions=false, onCancelInvite}) => {
+export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, showActions=false, onCancelInvite, onResendInvite}) => {
 
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isDoingAction, setIsDoingAction] = useState(false)
+  const [action, setAction] = useState(null)
+  const [actionText, setActionText] = useState('')
+  const [actionAcceptText, setActionAcceptText] = useState('')
 
   const getFormattedDate = (ts) => {
     let expires = moment(ts)
     return expires.format('MMM D, YYYY')
   }
 
-  const confirmCancel = (e) => {
-    e.preventDefault()
+  const confirmAction = (selectedAction) => {
 
-    setIsDeleting(true)
+    setAction(selectedAction)
+
+    if (selectedAction === 'CANCEL') {
+      setActionText('Confirm Invite Delete')
+      setActionAcceptText(' Remove Invite')
+    } else if (selectedAction === 'RESEND') {
+      setActionText('Confirm Resend Invite')
+      setActionAcceptText(' Resend Invite')
+    }
+    
+    setIsDoingAction(true)
   }
 
-  const cancelCancel = (e) => {
+  const cancelAction = (e) => {
     if (e) e.preventDefault()
 
-    setIsDeleting(false)
+    setAction(null)
+    setActionText('')
+    setActionAcceptText('')
+    setIsDoingAction(false)
   }
 
-  const cancelConfirmed = (e) => {
+  const actionConfirmed = (e) => {
     if(e) e.preventDefault()
 
-    onCancelInvite(invite)
+    if (action === 'CANCEL')
+      onCancelInvite(invite)
+    else if (action === 'RESEND')
+      onResendInvite(invite)
   }
 
   let expiresDate = getFormattedDate(invite._expireTime)
@@ -44,14 +62,15 @@ export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, sh
                 <div className={clsx('invite-expires', expired && 'expired')}><span className='bold'>Expires:</span> {expiresDate}</div>
                 <div className='invite-usergroup'><span className='bold'>UserGroup:</span> {invite._usergroup._name}</div>
               </div>
-              {showActions&& <div className='card-actions'>
-                {!isDeleting && <i className='fas fa-trash' onClick={confirmCancel}></i>}
+              {showActions && !isDoingAction && <div className='card-actions'>
+                <i className='fas fa-redo-alt' onClick={() => confirmAction('RESEND')}></i>
+                <i className='fas fa-trash' onClick={() => confirmAction('CANCEL')}></i>
               </div>}
             </div>
-            {isDeleting && <div className='card-row2'>
-              <div className='confirm-text'>Confirm Invite Delete</div>
-              <div><a href='#' onClick={cancelConfirmed}><i className='fas fa-check'></i> Remove Invite</a></div>
-              <div><a href='#' onClick={cancelCancel}><i className='fas fa-times'></i> Cancel</a></div>
+            {isDoingAction && <div className='card-row2'>
+              <div className='confirm-text'>{actionText}</div>
+              <div><a href='#' onClick={actionConfirmed}><i className='fas fa-check'></i>{actionAcceptText}</a></div>
+              <div><a href='#' onClick={cancelAction}><i className='fas fa-times'></i> Cancel</a></div>
             </div>}
           </li>
 }
