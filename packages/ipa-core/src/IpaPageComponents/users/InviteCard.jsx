@@ -4,7 +4,7 @@ import moment from 'moment'
 
 import './UserGroupView.scss'
 
-export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, showActions=false, onCancelInvite, onResendInvite}) => {
+export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, showActions=false, onCancelInvite, onResendInvite, onAcceptInvite}) => {
 
   const [isDoingAction, setIsDoingAction] = useState(false)
   const [action, setAction] = useState(null)
@@ -26,8 +26,11 @@ export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, sh
     } else if (selectedAction === 'RESEND') {
       setActionText('Confirm Resend Invite')
       setActionAcceptText(' Resend Invite')
+    }else if (selectedAction === 'ACCEPT') {
+      setActionText('Confirm Invite Accept')
+      setActionAcceptText(' Accept Invite')
     }
-    
+
     setIsDoingAction(true)
   }
 
@@ -43,10 +46,15 @@ export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, sh
   const actionConfirmed = (e) => {
     if(e) e.preventDefault()
 
-    if (action === 'CANCEL')
-      onCancelInvite(invite)
-    else if (action === 'RESEND')
-      onResendInvite(invite)
+    if (action === 'CANCEL') {
+      if (onCancelInvite) onCancelInvite(invite)
+    }
+    else if (action === 'RESEND') {
+      if (onResendInvite) onResendInvite(invite)
+    }
+    else if (action === 'ACCEPT') {
+      if (onAcceptInvite) onAcceptInvite(invite)
+    }
   }
 
   let expiresDate = getFormattedDate(invite._expireTime)
@@ -63,6 +71,7 @@ export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, sh
                 <div className='invite-usergroup'><span className='bold'>UserGroup:</span> {invite._usergroup._name}</div>
               </div>
               {showActions && !isDoingAction && <div className='card-actions'>
+                {isCurrentUser && <i className='fas fa-check' onClick={() => confirmAction('ACCEPT')}></i>}
                 <i className='fas fa-redo-alt' onClick={() => confirmAction('RESEND')}></i>
                 <i className='fas fa-trash' onClick={() => confirmAction('CANCEL')}></i>
               </div>}

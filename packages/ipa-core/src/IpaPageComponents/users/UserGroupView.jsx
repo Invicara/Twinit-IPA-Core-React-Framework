@@ -18,7 +18,7 @@
 import React from "react";
 import _ from 'lodash'
 
-import {IafProj, IafUserGroup} from '@invicara/platform-api'
+import {IafPassSvc, IafProj, IafUserGroup} from '@invicara/platform-api'
 import {StackableDrawer} from '../../IpaControls/StackableDrawer'
 import RadioButtons from '../../IpaControls/RadioButtons'
 import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
@@ -56,6 +56,7 @@ class UserGroupView extends React.Component {
         expiredInvitesForSelectedUser: [] //expired invites for the selected user
       }
 
+      this._loadAsyncData = this._loadAsyncData.bind(this)
       this.onModeChange = this.onModeChange.bind(this)
       this.getAllUserGroups = this.getAllUserGroups.bind(this)
       this.setSelectedUserGroup = this.setSelectedUserGroup.bind(this)
@@ -70,6 +71,7 @@ class UserGroupView extends React.Component {
       this.updateCurrentView = this.updateCurrentView.bind(this)
       this.onCancelInvite = this.onCancelInvite.bind(this)
       this.onResendInvite = this.onResendInvite.bind(this)
+      this.onAcceptInvite = this.onAcceptInvite.bind(this)
       this.canRemoveUser = this.canRemoveUser.bind(this)
       this.removeUser = this.removeUser.bind(this)
 
@@ -249,13 +251,20 @@ class UserGroupView extends React.Component {
 
       this.setState({userGroupsForSelectedUser: ugresults})
 
-      //we have to do a similar workaround for invites because there is no access
-      //to fetch invites by another user so we have go usergroup by usergroup
-      let invresults = await Promise.all(this.state.userGroups.map((ug) => {
-        return IafUserGroup.getInvites(ug).then((invs) => {
-          return _.find(invs._list, {_email: this.state.selectedUser._email})
-        })
-      }))
+      let invresults
+      //if currentUser is selected get the user's invites
+      if (this.props.user._id === this.state.selectedUser._id) {
+        invresults = await IafPassSvc.getUserInvites()
+      }
+      else {
+        //we have to do a similar workaround for invites because there is no access
+        //to fetch invites by another user so we have go usergroup by usergroup
+        invresults = await Promise.all(this.state.userGroups.map((ug) => {
+          return IafUserGroup.getInvites(ug).then((invs) => {
+            return _.find(invs._list, {_email: this.state.selectedUser._email})
+          })
+        }))
+      }
 
       invresults = invresults.filter(i => i)
       let validInvites = invresults.filter(i => i._status === "PENDING")
@@ -291,6 +300,14 @@ class UserGroupView extends React.Component {
 
       this.updateCurrentView()
   
+    }
+
+    async onAcceptInvite(invite) {
+
+      IafUserGroup.addUserToGroupByInvite(invite._usergroup, invite).then((r) => {
+          this._loadAsyncData()
+        }).catch(e => console.error('error accepting invite: ', e))
+
     }
 
     async canRemoveUser(user=false, group=false) {
@@ -488,7 +505,8 @@ class UserGroupView extends React.Component {
                                                                         existingUser={_.find(this.state.users, {_email: i._email})} 
                                                                         showActions={this.props.handler.config.allowManageInvites}
                                                                         onCancelInvite={this.onCancelInvite} 
-                                                                        onResendInvite={this.onResendInvite} />)}
+                                                                        onResendInvite={this.onResendInvite} 
+                                                                        onAcceptInvite={this.onAcceptInvite} />)}
                   </ul>
                   {this.state.expiredInvitesInSelectedGroup.length > 0 && <div><span className='indent-header'>Expired Invites</span>
                     <ul>
@@ -497,7 +515,8 @@ class UserGroupView extends React.Component {
                                                                         existingUser={_.find(this.state.users, {_email: i._email})} 
                                                                         showActions={this.props.handler.config.allowManageInvites}
                                                                         onCancelInvite={this.onCancelInvite} 
-                                                                        onResendInvite={this.onResendInvite} />)}
+                                                                        onResendInvite={this.onResendInvite} 
+                                                                        onAcceptInvite={this.onAcceptInvite}  />)}
                     </ul>
                   </div>}
                 </div>
@@ -537,7 +556,8 @@ class UserGroupView extends React.Component {
                                                                         existingUser={_.find(this.state.users, {_email: i._email})} 
                                                                         showActions={this.props.handler.config.allowManageInvites}
                                                                         onCancelInvite={this.onCancelInvite} 
-                                                                        onResendInvite={this.onResendInvite} />)}
+                                                                        onResendInvite={this.onResendInvite} 
+                                                                        onAcceptInvite={this.onAcceptInvite} />)}
                   </ul>
                   {this.state.expiredInvitesForSelectedUser.length > 0 && <div><span className='indent-header'>Expired Invites</span>
                     <ul>
@@ -546,7 +566,8 @@ class UserGroupView extends React.Component {
                                                                         existingUser={_.find(this.state.users, {_email: i._email})} 
                                                                         showActions={this.props.handler.config.allowManageInvites}
                                                                         onCancelInvite={this.onCancelInvite} 
-                                                                        onResendInvite={this.onResendInvite} />)}
+                                                                        onResendInvite={this.onResendInvite} 
+                                                                        onAcceptInvite={this.onAcceptInvite} />)}
                     </ul>
                   </div>}
                 </div>
