@@ -7,7 +7,7 @@ import ScriptHelper from "../IpaUtils/ScriptHelper"
 
 import './Image.scss'
 
-const Image = ({script, url, filename, styles, navigateTo, dashboard}) => {
+const Image = ({script, url, filename, styles, navigateTo, query, dashboard}) => {
 
   const [imageUrl, setImageUrl] = useState(null)
 
@@ -35,7 +35,8 @@ const Image = ({script, url, filename, styles, navigateTo, dashboard}) => {
     if (navigateTo && dashboard) {
       let action = {
         type: 'navigate',
-        navigateTo: navigateTo
+        navigateTo: navigateTo,
+        query: query
       }
       
       dashboard.doAction(action)

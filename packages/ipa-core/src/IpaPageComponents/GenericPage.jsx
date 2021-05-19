@@ -195,6 +195,7 @@ const withGenericPage = (PageComponent) => {
        *
        * Note: query, group and filter are handled by the GenericPage itself (this class).
        *       Call setQueryParams method from the child page.
+       *       The queryParams can be overridden by providing queryParams in selectionInfo
        *
        */
 
@@ -213,6 +214,11 @@ const withGenericPage = (PageComponent) => {
       }
       else {
         let query = Object.assign({}, this.state.queryParams)
+
+        //override the pages queryParams if the selectionInfo also provides queryParams
+        if (selectionInfo.queryParams) {
+          query = Object.assign(query, selectionInfo.queryParams)
+        }
         //if query has an array which represents the total entities to be fetched (not highlighted) turn it into a string
         //if its not an array leave as is as then it represents settings for a fetch control
         if (query.query && query.query.value && !query.query.id && query.query.id !== 0)
