@@ -381,8 +381,8 @@ export default class EntityModal extends React.Component {
               {!this.props.action.component.showGroupNames && <hr/>}
             <div>
               {_.keys(groups).filter(groupName => groups[groupName].length > 0).map(groupName =>
-                  <div>
-                      {this.props.action.component.showGroupNames &&  <div class={'group-name'}>
+                  <div key={groupName}>
+                      {this.props.action.component.showGroupNames &&  <div className={'group-name'}>
                           {groupName}
                       </div>}
                       {groups[groupName].filter(prop => !(this.props.action.component.hidden || []).includes(prop)).map(prop => this.getControl(prop))}
