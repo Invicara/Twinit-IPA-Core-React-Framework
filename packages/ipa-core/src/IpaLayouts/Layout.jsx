@@ -16,6 +16,7 @@ import classNames from "classnames";
 import './Layout-grouped-left-nav-bar.scss'
 import './Layout-MainNav.scss'
 import './Layout.scss'
+import clsx from "clsx";
 
 class Layout extends React.Component {
 
@@ -75,7 +76,7 @@ class Layout extends React.Component {
 
         let pageRegex = new RegExp(page.path + '(?:/|$)');
         return (
-            <li className={pageRegex.test(loc) ? activeClass : ''} key={page.path ? page.path : page.key}>
+            <li className={clsx('nav-li', pageRegex.test(loc) ? activeClass : '')} key={page.path ? page.path : page.key}>
                 <Item link={page.path} key={page.path ? page.path : page.key}
                           customClasses={page.customClasses} onClick={page.onClick} item={false}>
                     {this._getIcon(page.icon, iconClass)}
