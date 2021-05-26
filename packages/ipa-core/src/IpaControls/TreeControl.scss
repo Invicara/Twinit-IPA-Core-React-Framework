@@ -84,6 +84,12 @@
   li > a > span {
     margin-left: 1em;
     color: black;
+  } 
+
+  li > a > span > div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* Channel */

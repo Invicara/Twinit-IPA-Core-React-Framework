@@ -3,7 +3,7 @@ import '../IpaStyles/DbmTooltip.scss'
 
 //TODO Remove once fancy tree is everywhere replaced by ReactiveTree
 export const leafNodeRenderer = (entity) => 
-(<div>{entity["Entity Name"]} 
+(<div title={entity["Entity Name"]}>{entity["Entity Name"]}
     { entity["EntityWarningMessage"] && 
     <div className="tooltip-wrapper">
         <div className="dbm-tooltip">
