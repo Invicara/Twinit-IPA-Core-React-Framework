@@ -58,7 +58,7 @@ const Image = ({script, url, filename, styles, navigateTo, query, dashboard}) =>
   }
 
   return (
-    <div style={{padding: '15px'}}>
+    <div style={{padding: '15px', width: '100%', height: '100%'}}>
       <div className="configured-image-component">
         {component}
       </div>
