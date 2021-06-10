@@ -241,7 +241,6 @@ const withEntitySearch = WrappedComponent => {
         }
 
         doEntityAction = async (action, entityInfo) => {
-
             if (!Object.keys(this.getCurrentConfig().actions).includes(action)) {
                 console.error("Unconfigured action: '" + action + "' : No action taken!");
                 return undefined;
