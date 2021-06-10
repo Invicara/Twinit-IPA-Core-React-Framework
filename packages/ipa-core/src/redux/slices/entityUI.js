@@ -4,8 +4,6 @@ import {EntityModalFactory} from "../../IpaPageComponents/entities/EntityModal";
 import {EntityCollectionModalFactory} from "../../IpaPageComponents/entities/EntityCollectionModal";
 import {EntityRelationsModalFactory} from "../../IpaPageComponents/entities/EntityRelationsModal";
 import {RelationsModalFactory} from "../../IpaPageComponents/entities/RelationsModal";
-import {HaystackPointReadingTableFactory} from "../../IpaPageComponents/entities/HaystackPointReadingTable";
-import {HaystackPointReadingTableGroupFactory} from "../../IpaPageComponents/entities/HaystackPointReadingTableGroup";
 
 const ENTITY_ACTION_COMPONENTS = {
   "EntityModal": EntityModalFactory,
@@ -22,9 +20,7 @@ const ENTITY_DATA_COMPONENTS = {
   "SimpleTable": SimpleTableFactory,
   "SimpleTableGroup": SimpleTableGroupFactory,
   "Image": ImageFactory,
-  "ScriptedChart": ScriptedChartFactory,
-  "HaystackPointReadingTable": HaystackPointReadingTableFactory,
-  "HaystackPointReadingTableGroup": HaystackPointReadingTableGroupFactory
+  "ScriptedChart": ScriptedChartFactory
 }
 
 let applicatonActionComponents = {}
