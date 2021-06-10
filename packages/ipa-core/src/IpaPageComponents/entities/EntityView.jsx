@@ -108,7 +108,6 @@ class EntityView extends React.Component {
         if (this.props.fetching) {
             pageContent = <span className="info-message">Retrieving data</span>
         } else if (this.props.currentEntities.length > 0) {
-            console.log("displayDetail", this.state.displayDetail)
             if (this.state.displayDetail == true) {
                 pageContent = <EntityDetailPanel
                     context={this.context}

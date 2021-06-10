@@ -10,7 +10,7 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 
-export default function SplitButton({options, airaLabel, onClick, containerClass, buttonClass, disabled}) {
+export default function SplitButton({options, airaLabel, onClick, containerClass, buttonClass, disabled, onOptionChange}) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = React.useState(1);
@@ -22,6 +22,7 @@ export default function SplitButton({options, airaLabel, onClick, containerClass
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index);
     setOpen(false);
+    onOptionChange(options[index])
   };
 
   const handleToggle = () => {

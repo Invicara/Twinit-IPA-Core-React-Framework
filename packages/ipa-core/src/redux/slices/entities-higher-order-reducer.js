@@ -5,11 +5,12 @@ import _ from "lodash";
 import {parseNode, parseName} from "../../IpaControls/private/tree";
 import {queryFromFilter} from "../../IpaControls/private/filter";
 import {getEntityFromModel, getFilteredEntitiesBy} from "../../IpaUtils/entities";
+import ScriptCache from "../../IpaUtils/script-cache";
 
 
 let initialState = {//TODO if operations on these entities get too slow, use direct access instead of an array
     currentEntityType: null,
-    fetchingCurrent: false,
+    fetchingCurrent: 0,
     appliedFilters: {},
     selectingEntities: false,
     viewerSyncOn: false,
@@ -17,6 +18,8 @@ let initialState = {//TODO if operations on these entities get too slow, use dir
     selectedIds: [],
     isolatedIds: []
 };
+
+let currentFetchPromise = new Promise(res => res([]))
 
 const mapIds = entities => entities.map(({_id}) => _id)
 
@@ -39,7 +42,11 @@ export const entitiesSliceFactory = (identifier = '') => {
                 state.appliedFilters = filters
             },
             setFetching: (state, {payload: fetching}) => {
-                state.fetchingCurrent = fetching
+                if(fetching){
+                    state.fetchingCurrent++;
+                } else {
+                    state.fetchingCurrent--;
+                }
             },
             setSelecting: (state, {payload: selecting}) => {
                 state.selectingEntities = selecting
@@ -105,7 +112,7 @@ export const entitiesSliceFactory = (identifier = '') => {
 
     const getSelectedEntities = createSelector([getFilteredEntities, getSelectedEntitiesIds], fromIDs)
 
-    const getFetchingCurrent = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.fetchingCurrent)
+    const getFetchingCurrent = createSelector(getEntitiesSlice, entitiesSlice => !!entitiesSlice.fetchingCurrent)
 
     const isViewerSyncOn = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.viewerSyncOn)
 
@@ -157,13 +164,19 @@ export const entitiesSliceFactory = (identifier = '') => {
         if (!queryBuilder) console.error("unknown selector query type:", selector.query);
         const query = queryBuilder()
         dispatch(setFetching(true))
-        let entities = query ?
-            await ScriptHelper.executeScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query})
-            : []
-        entities.sort((a, b) => a["Entity Name"].localeCompare(b["Entity Name"]));
-        dispatch(setEntities({entities}));
+        currentFetchPromise = currentFetchPromise.then(() => query ?
+            ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query})
+            : new Promise(res => res([]))
+        )
+        let entities = await currentFetchPromise;
+        const sorted = _.sortBy(entities, a => a["Entity Name"]);
+        dispatch(setEntities({entities: sorted}));
         dispatch(setSelectedEntities([]));
-        dispatch(setFetching(false))
+        // We do this to wait for the next tick thus allowing react to render the loading page-in between.
+        // Otherwise when retrieving cached data it might happen so quickly that the loading page does not render and
+        // the user has a few milliseconds while the page with updated data renders to execute a navigate action with stale data.
+        // The real fix for this would be addressing the slow-render of the page, not a priority now.
+        setTimeout( () => dispatch(setFetching(false)), 0)
     }
 
     const thunks = {
