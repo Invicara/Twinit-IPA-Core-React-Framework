@@ -89,6 +89,7 @@ export const getEntityActionComponent = (componentName) => (dispatch, getState) 
 export const getEntityDataComponent = (componentName) => (dispatch, getState) => {
   
   let component = null
+  console.log("applicatonDataComponents", applicatonDataComponents)
   component = applicatonDataComponents[componentName]
   if (!component) component = ENTITY_DATA_COMPONENTS[componentName]
   
