@@ -28,6 +28,10 @@
             padding-left: 10px;
             font-size: 0.75rem;
             font-style: italic;
+            width: 100%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
     }
 
@@ -51,6 +55,12 @@
     .user-group-list-item.invite {
         display: flex;
         flex-direction: column;
+
+        .card-row1 {
+            .invite-user-info {
+                width: 30%;
+            }
+        }
     }
 
     .card-row1 {
