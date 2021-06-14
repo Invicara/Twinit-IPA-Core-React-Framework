@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 import './UserGroupView.scss'
 
-export const UserCard  = ({user, isCurrentUser=false, selectable=false, isSelected=false, showActions=false, onClick, canRemoveUser, onRemoveUser}) => {
+export const UserCard  = ({user, isCurrentUser=false, selectable=false, isSelected=false, showActions=false, onClick, canRemoveUser, onRemoveUser, removeUserText="Remove User", cancelText="Cancel"}) => {
 
   const [isDeleting, setIsDeleting] = useState(false)
   const [actionText, setActionText] = useState('')
@@ -40,7 +40,7 @@ export const UserCard  = ({user, isCurrentUser=false, selectable=false, isSelect
       </li>
   else return <li className='user-group-list-item'>
       <div className='card-row1'>
-        <div style={{width: '100%'}}>
+        <div style={{width: '90%'}}>
           {user._lastname && <div className={clsx('user-full-name', isCurrentUser && 'current-user')}>{user._lastname + ", " + user._firstname}</div>}
           <div className='user-email'>{user._email}</div>
         </div>
@@ -50,8 +50,8 @@ export const UserCard  = ({user, isCurrentUser=false, selectable=false, isSelect
       </div>
       {isDeleting && <div className='card-row2'>
         <div className='confirm-text'>{actionText}</div>
-        {allowRemove && <div><a href='#' onClick={removeConfirmed}><i className='fas fa-check'></i> Remove User</a></div>}
-        <div><a href='#' onClick={cancelRemove}><i className='fas fa-times'></i> Cancel</a></div>
+        {allowRemove && <div><a href='#' onClick={removeConfirmed}><i className='fas fa-check'></i> {removeUserText}</a></div>}
+        <div><a href='#' onClick={cancelRemove}><i className='fas fa-times'></i> {cancelText}</a></div>
       </div>}
     </li>
 }

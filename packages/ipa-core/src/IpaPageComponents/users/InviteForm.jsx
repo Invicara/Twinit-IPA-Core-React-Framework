@@ -27,6 +27,7 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
   const [renderForm, setRenderForm] = useState(true) //whether to render the form
   const [showForm, setShowForm] = useState(true) //whether to show the form
   const [overlayMsg, setOverlayMsg] = useState('') //the message to display on the overlay
+  const [inviteErrorMode, setInviteErrorMode] = useState(false) //if errors were encountered sending invites
 
 
   //all these useEffects are for controlling the fade in and out and rendering
@@ -117,6 +118,7 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
 
     displayOverlay()
     setSendingInvites(true)
+    setInviteErrorMode(false)
 
     let params = {
       base_url: endPointConfig.baseRoot,
@@ -132,16 +134,23 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
     let inviteData = allEmails.map((e) => {return {_email: e._email, _params: params}})
 
     let allResults = []
-
+    let inviteError = null
     //have to do this syncronously as the backend throws a 500 error if we
     //multiple usergroups and multiple invites at the same time
     for (let i = 0; i < selectedUserGroups.length; i++) {
-      let results = await IafUserGroup.inviteUsersToGroup(selectedUserGroups[i].ug, inviteData)
+      let results = await IafUserGroup.inviteUsersToGroup(selectedUserGroups[i].ug, inviteData).catch((err) => {
+        console.error('error sending invites: ', err)
+        inviteError = "Error Sending Invites"
+        setInviteErrorMode(true)
+      })
       allResults.push(results)
     }
 
-
-    let overlayMsg = 'Sent ' + selectedUserGroups.length + ' invite' + (selectedUserGroups.length > 1 ? 's': '') + ' to ' + inviteData.length + ' user' + (inviteData.length > 1 ? 's': '')
+    let overlayMsg
+    if (inviteError)
+      overlayMsg = inviteError
+    else
+      overlayMsg = 'Sent ' + selectedUserGroups.length + ' invite' + (selectedUserGroups.length > 1 ? 's': '') + ' to ' + inviteData.length + ' user' + (inviteData.length > 1 ? 's': '')
 
     setOverlayMsg(overlayMsg)
     setSendingInvites(false)
@@ -154,13 +163,28 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
     setCurrentEmail("")
     setAllEmails([])
     setEmailError(null)
+    setInviteErrorMode(false)
   }
 
   const closeOverlay = (e) => {
     if (e) e.preventDefault()
 
-    resetForm()
+    if (!inviteErrorMode) resetForm()
     hideOverlay()
+  }
+
+  const allowRemoveInvite = () =>{
+    return {
+      allow: true,
+      message: "Remove Email?"
+    }
+  }
+
+  const removeInviteEmail = (removeThis) => {
+    let someEmails = allEmails.filter((e) => {
+      return e._email !== removeThis._email
+    })
+    setAllEmails(someEmails)
   }
 
   return <div className='invite-form'>
@@ -191,7 +215,7 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
       <div className='invited-user-list'>
         <span className='send-to-label'>Send to</span>
         {allEmails.length > 0 && <ul>
-          {allEmails.map(e => <UserCard key={e._email} user={e}/>)}
+          {allEmails.map(e => <UserCard key={e._email} user={e} showActions={true} canRemoveUser={allowRemoveInvite} removeUserText='' cancelText='' onRemoveUser={() => removeInviteEmail(e)}/>)}
         </ul>}
         {allEmails.length === 0 && <div className='no-emails-msg'>No emails added</div>}
       </div>
