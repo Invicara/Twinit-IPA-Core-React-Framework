@@ -103,7 +103,7 @@ export default class ProjectPickerModal extends React.Component {
       this.setState({projects: myProjects, appUserGroups: myUserGroups})
 
       //check selectedItems and see if project and usergroup apply and if so set them to current
-      let res, projectid, usergroupid, projectUserGroups;
+      let projectid, usergroupid;
       if (!this.props.appContextProps.selectedItems.selectedProject || !myUserGroups[this.props.appContextProps.selectedItems.selectedProject._id]){
           IafSession.setSessionStorage('project', {_namespaces: _.get(projects, '0._namespaces')});
           //res = await this.checkUserConfigs(projects[0]);
@@ -132,6 +132,9 @@ export default class ProjectPickerModal extends React.Component {
         userGroupValue: _.find(selectUserGroupOptions, {value: usergroupid}),
         selectedUserGroupId: usergroupid,
         loadingModal: false});
+    }
+    else {
+      this.setState({loadingModal: false})
     }
   }
 
@@ -328,8 +331,8 @@ export default class ProjectPickerModal extends React.Component {
               (!this.state.loadingModal && (!projects || projects.length === 0)) &&
               <div>
                 You are not yet a member of any projects, please
-                {(!invites || invites.length === 0) && <span> contact your project admin for an invite</span>}
-                {(invites && invites.length > 0) && <span> accept an invite</span>}
+                {(!currentInvites || currentInvites.length === 0) && <span> contact your project admin for an invite</span>}
+                {(currentInvites && currentInvites.length > 0) && <span> accept an invite</span>}
               </div>
             }
 
