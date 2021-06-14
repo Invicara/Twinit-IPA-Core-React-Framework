@@ -252,11 +252,6 @@ class UserGroupView extends React.Component {
     async loadUserData() {
       
       this.setState({loadingInvites: true, userGroupsForSelectedUser: [], invitesForSelectedUser: [], expiredInvitesForSelectedUser: []})
-      //this doesn't work though it should
-      //so instead we have to go the long way around to get the user groups for a user
-      // IafProj.getUserGroupsForUser(this.state.selectedUser, this.props.selectedItems.selectedProject).then((ugs) => {
-      //   console.log(ugs)
-      // })
 
       let ugresults = await Promise.all(this.state.userGroups.map((ug) => {
         return IafUserGroup.getUsers(ug).then((users) => {
@@ -278,12 +273,15 @@ class UserGroupView extends React.Component {
         //we have to do a similar workaround for invites because there is no access
         //to fetch invites by another user so we have go usergroup by usergroup
         invresults = await Promise.all(this.state.userGroups.map((ug) => {
+          console.log('1', ug)
           return IafUserGroup.getInvites(ug).then((invs) => {
-            return _.find(invs._list, {_email: this.state.selectedUser._email})
+            console.log('2', invs)
+            return _.filter(invs._list, {_email: this.state.selectedUser._email})
           })
         }))
       }
 
+      invresults = _.flatten(invresults)
       invresults = invresults.filter(i => i)
       let validInvites = invresults.filter(i => i._status === "PENDING")
       let expiredInvites = invresults.filter(i => i._status === "EXPIRED")
