@@ -18,6 +18,13 @@ export const RoundFullCheckbox = ({...props}) => <Checkbox
 
 export const FileUploadTable = ({files:inputFiles}) => {
 
+    const getType = file => {
+        const extension = mime.extension(getBlob(file).type);
+        const splitFileName = getBlob(file).name.split('.');
+        const inferredExtension = splitFileName[splitFileName.length - 1];
+        return (extension && extension.toUpperCase()) || (inferredExtension && inferredExtension.toUpperCase()) || "UNKNOWN";
+    }
+
     return <div className="file-table-container">
         <table className="file-table">
             <thead>
@@ -37,7 +44,7 @@ export const FileUploadTable = ({files:inputFiles}) => {
                     <RoundFullCheckbox disabled checked={isComplete(file)} />
                 </td>
                 <td>{file.name}</td>
-                <td>{mime.extension(getBlob(file).type).toUpperCase()}</td>
+                <td>{getType(file)}</td>
                 <td>{isInProgress(file) ?  `${formatBytes(file.bytesUploaded)} of ${formatBytes(getBlob(file).size)}` : formatBytes(getBlob(file).size)}</td>
                 <td style={isComplete(file) ? {color: mainGreen} : {}}>{file.status}</td>
             </tr>)}

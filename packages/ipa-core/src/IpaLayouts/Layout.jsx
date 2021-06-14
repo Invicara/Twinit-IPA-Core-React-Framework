@@ -16,6 +16,7 @@ import classNames from "classnames";
 import './Layout-grouped-left-nav-bar.scss'
 import './Layout-MainNav.scss'
 import './Layout.scss'
+import clsx from "clsx";
 
 class Layout extends React.Component {
 
@@ -75,7 +76,7 @@ class Layout extends React.Component {
 
         let pageRegex = new RegExp(page.path + '(?:/|$)');
         return (
-            <li className={pageRegex.test(loc) ? activeClass : ''} key={page.path ? page.path : page.key}>
+            <li className={clsx('nav-li', pageRegex.test(loc) ? activeClass : '')} key={page.path ? page.path : page.key}>
                 <Item link={page.path} key={page.path ? page.path : page.key}
                           customClasses={page.customClasses} onClick={page.onClick} item={false}>
                     {this._getIcon(page.icon, iconClass)}
@@ -87,7 +88,7 @@ class Layout extends React.Component {
 
     getGroupedNavItem(group){        
         const isActiveGroup = group.items.some(p=> this.isActivePage(p.path));
-        let items = group.items.map(p=> this.getNavItem(p, 'active-page', 'purple'));
+        let items = group.items.map(p=> this.getNavItem(p, 'active-page', 'purple active'));
 
         const groupClasses = classNames({
             'nav-group-li':true,
@@ -97,11 +98,11 @@ class Layout extends React.Component {
         return(
         <li className={groupClasses} key={group.groupName}>
                 <Item item={false}>
-                    {this._getIcon(group.icon, isActiveGroup ? 'purple' : undefined)}
+                    {this._getIcon(group.icon, isActiveGroup ? 'purple active' : undefined)}
                 </Item>
                 <FlexLeftNav customClasses="grouped-nav">
                 <div className={'group-header'}>
-                    {this._getIcon(group.icon, 'purple')}
+                    {this._getIcon(group.icon, 'purple active')}
                     <div className={'group-name'}>{group.groupName}</div>
                 </div>
                 <ul>                                            

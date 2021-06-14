@@ -19,6 +19,9 @@ import * as qs from 'query-string';
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
 
+import '../IpaStyles/theme.scss'
+import '../IpaIcons/icons.scss'
+
 
 enableMapSet()
 
@@ -65,7 +68,6 @@ class IpaMainLayout extends React.Component {
     render() {
         return (
             <div>
-              <link rel='stylesheet' type='text/css' href='./node_modules/@invicara/react-ifef/dist/styles/react-ifef-styles.css'></link>
               <link rel='stylesheet' type='text/css' href='./node_modules/bootstrap/dist/css/bootstrap.min.css'></link>
               <Provider store={store}>
                 <HashRouter>

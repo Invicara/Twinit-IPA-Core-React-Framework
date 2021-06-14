@@ -40,6 +40,7 @@ import {ControlProvider} from "./ControlProvider";
 import {Overlay} from "./Overlay";
 import SplitButton from "./SplitButton";
 import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useChecked} from "./Checkboxes";
+import RadioButtons from './RadioButtons'
 
 const IpaControls = {
     AdvancedSearch,
@@ -50,6 +51,7 @@ const IpaControls = {
     PinkCheckbox,
     TickCheckbox,
     useChecked,
+    RadioButtons,
     CompactButtonBar,
     ControlProvider,
     CreatableScriptedSelects,

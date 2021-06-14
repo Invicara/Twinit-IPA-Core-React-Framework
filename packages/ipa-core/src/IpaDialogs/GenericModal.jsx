@@ -31,8 +31,9 @@ class GenericModal extends React.Component {
                  placeHolder={placeHolder}
                  width={width}
                  height={height}
+                 padding={!noPadding}
                  customClasses={this.props.customClasses ? this.props.customClasses : "ipa-modal"}>
-        <div style={{padding: noPadding? '0':'3% 10%', fontSize: '16px', background: noBackground? 'transparent' : 'white'}}>
+        <div style={{padding: noPadding? '0':'3% 10%', fontSize: '16px', background: noBackground? 'transparent' : 'white', height:'100%'}}>
 
             {modalBody}
 

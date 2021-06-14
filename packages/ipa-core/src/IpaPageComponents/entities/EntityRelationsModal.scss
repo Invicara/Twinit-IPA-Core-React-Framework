@@ -1,5 +1,4 @@
 $base-text-color: #666666;
-$highlight-pink: #C71784;
 $main-green: #00A693;
 $white: white;
 $light-grey:  #E6E6E6;
@@ -16,7 +15,7 @@ $panel-title-height: 60px;
         margin-bottom: 5px;
         
         .selected-relations-name-combo {
-          color: #C71784;
+          color: var(--app-accent-color);
           font-weight: bold;
         } 
 
@@ -52,7 +51,7 @@ $bar-height: 60px;
     .title {
       height: 100%;
       display: flex;
-      color: #C71784;
+      color: var(--app-accent-color);
       font-weight: 600;
       align-items: center;
       padding-left: 10px;
@@ -104,7 +103,7 @@ $bar-height: 60px;
   }
 
   .panel-title {
-    color: $highlight-pink;
+    color: var(--app-accent-color);
     font-weight: 500;
     font-size: 17px;
     height: $panel-title-height;
@@ -142,7 +141,7 @@ $bar-height: 60px;
       min-width: 130px;
       height: 35px;
       color: white;
-      background: $highlight-pink;
+      background: var(--app-accent-color);
       border-radius: 25px;
       box-shadow: none;
     }
@@ -189,7 +188,7 @@ $bar-height: 60px;
     width: 130px;
     height: 35px;
     color: white;
-    background: $highlight-pink;
+    background: var(--app-accent-color);
     border-radius: 25px;
     box-shadow: none;
   }
@@ -251,7 +250,7 @@ $bar-height: 60px;
   }
 
   .child-text {
-    color: $highlight-pink;
+    color: var(--app-accent-color);
     font-weight: 500;
     font-size: 0.85em;
     margin: 6px 10px;
@@ -263,7 +262,7 @@ $bar-height: 60px;
   .delete-button{
     border-radius: 5px;
     color: white;
-    background-color: $highlight-pink;
+    background-color: var(--app-accent-color);
     padding: 3px 6px;
     width: 23px;
     margin-right: 10px;
@@ -285,7 +284,7 @@ $bar-height: 60px;
 
   .link-icon{
     font-size: 18px;
-    color: $highlight-pink;
+    color: var(--app-accent-color);
   }
 
   .new{

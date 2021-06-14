@@ -28,35 +28,36 @@
 
   ul {
     // Level 1 color
-    --stroke-color: #c71784;
-    --channel-color: #f3d5e4;
+    --stroke-color: var(--fancytree-one-color);
+    --channel-color: var(--fancytree-one-channel-color);
 
     ul {
       padding-left: var(--tree-padding-left);
 
       // Level 2 color
-      --stroke-color: #f26827;
-      --channel-color: #fde0d7;
+      --stroke-color: var(--fancytree-two-color);
+      --channel-color: var(--fancytree-two-channel-color);
+
 
       ul {
         // Level 3 color
-        --stroke-color: #00a693;
-        --channel-color: #cdebe8;
+        --stroke-color: var(--fancytree-three-color);
+        --channel-color: var(--fancytree-three-channel-color);
 
         ul {
           // Level 4 color
-          --stroke-color: #c71784;
-          --channel-color: #f3d5e4;
+          --stroke-color: var(--fancytree-one-color);
+          --channel-color: var(--fancytree-one-channel-color);
 
           ul {
             // Level5 color
-            --stroke-color: #f26827;
-            --channel-color: #fde0d7;
+            --stroke-color: var(--fancytree-two-color);
+            --channel-color: var(--fancytree-two-channel-color);
 
             ul {
               // Level 6 color
-              --stroke-color: #00a693;
-              --channel-color: #cdebe8;
+              --stroke-color: var(--fancytree-three-color);
+              --channel-color: var(--fancytree-three-channel-color);
             }
           }
         }
@@ -83,6 +84,12 @@
   li > a > span {
     margin-left: 1em;
     color: black;
+  } 
+
+  li > a > span > div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* Channel */

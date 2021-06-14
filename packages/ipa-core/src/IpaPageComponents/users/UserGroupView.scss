@@ -1,0 +1,280 @@
+.user-group-view {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 80px);
+
+    .bold {
+        font-weight: bold;
+    }
+
+    hr {
+        margin-bottom: 0px;
+    }
+
+    .user-group-list-item {
+        list-style-type: none;
+        border: 1px solid lightgray;
+        border-radius: 10px;
+        margin: 10px;
+        padding: 5px 5px 5px 20px;
+        box-shadow: 2px 2px lightgrey;
+
+        .user-full-name.current-user {
+            color: var(--app-accent-color);
+            font-weight: bold;
+        }
+
+        .user-email {
+            padding-left: 10px;
+            font-size: 0.75rem;
+            font-style: italic;
+            width: 100%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
+
+    .user-group-list-item:hover {
+        background-color: #f2f2f2;
+    }
+
+    .user-group-list-item.selectable {
+        cursor: pointer;
+    }
+
+    .user-group-list-item.active {
+        list-style-type: none;
+        border-left: 10px solid var(--app-accent-color);
+        border-top: 1px solid lightgray;
+        border-right: 1px solid lightgray;
+        border-radius: 10px;
+        padding-left: 10px;
+    }
+
+    .user-group-list-item.invite {
+        display: flex;
+        flex-direction: column;
+
+        .card-row1 {
+            .invite-user-info {
+                width: 30%;
+            }
+        }
+    }
+
+    .card-row1 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .invite-info {
+        margin-left: 50px;
+    }
+
+    .card-actions {
+        align-self: center;
+        color: var(--app-accent-color);
+
+        i {
+            cursor: pointer;
+        }
+    }
+
+    .card-row2 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        border-top: solid 2px #f2f2f2;
+        padding: 10px;
+        margin-top: 10px;
+
+        .confirm-text {
+            font-weight: bold;
+        }
+
+        i {
+            padding-right: 0px;
+        }
+
+        a {
+            color: var(--app-accent-color);
+        }
+    }
+
+    .card-row2:hover {
+        background-color: white;
+        border-radius: 10px;
+        border: 1px solid var(--app-accent-color);
+    }
+
+    .disabled-group-list-item {
+        list-style-type: none;
+        border: 1px solid lightgray;
+        border-radius: 10px;
+        margin: 10px;
+        padding: 5px 5px 5px 20px;
+        background-color: #f2f2f2; 
+    }
+
+    .throbber {
+        padding-left: 15px;
+    }
+
+    .switchable-list-view {
+        display: flex;
+        flex-direction: column;
+        padding: 80px 20px;
+
+        .list-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .usergroup-mode-view {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: calc(100vh - 80px);
+
+        .row1 {
+
+            .usergroup-name {
+                display: flex;
+                align-items: flex-end;
+                padding-left: 50px;
+                padding-top: 20px;
+
+                h1 {
+                    margin-bottom: 0px;
+                }
+
+                .ug-btn {
+                    color: var(--app-accent-color);
+                    margin-left: 10px;
+
+                    a {
+                        color: var(--app-accent-color);
+                    }
+                }
+
+                .disabled-ug-btn {
+                    color: lightgray;
+                }
+            }
+
+            .usergroup-name.editable {
+
+                h1 {
+                    flex-basis: 50%;
+                }
+
+                .usergroup-name-input {
+                    background-color: #f2f2f2;
+                    border-top: none;
+                    border-right: none;
+                    border-bottom: 2px solid var(--app-accent-color);
+                    border-left: none;
+                    width: 100%;
+                }
+            }
+
+            .usergroup-name-error {
+                color: var(--app-accent-color);
+                padding-left: 50px;
+                font-weight: bold;
+            }
+        }
+
+        .row2 {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            padding-left: 50px;
+
+            .usergroup-members {
+                width: 50%;
+                border-right: 1px solid lightgray;
+                padding: 10px 10px 0px 10px;
+                overflow-y: auto;
+
+                h3 {
+                    color: var(--app-accent-color);
+                    padding-left: 15px;
+                }
+            }
+
+            .usergroup-invites {
+                width: 50%;
+                padding: 10px 10px 0px 10px;
+                overflow-y: auto;
+
+                h3 {
+                    color: var(--app-accent-color);
+                    padding-left: 15px;
+                }
+
+                .indent-header {
+                    margin-left: 15px;
+                }
+            }
+        }
+    }
+
+    .user-mode-view {
+        width: 100%;
+        height: calc(100vh - 80px);
+
+        .row1 {
+
+            .user-name-title {
+                padding-left: 50px;
+                padding-top: 20px;
+
+                h1 {
+                    margin-bottom: 0px;
+                }
+            }
+        }
+
+        .row2 {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            padding-left: 50px;
+
+            .member-usergroups {
+                width: 50%;
+                height: 100%;
+                border-right: 1px solid lightgray;
+                padding: 10px 10px 0px 10px;
+                overflow-y: auto;
+
+                h3 {
+                    color: var(--app-accent-color);
+                    padding-left: 15px;
+                }
+            }
+
+            .member-invites {
+                width: 50%;
+                height: 100%;
+                padding: 10px 10px 0px 10px;
+                overflow-y: auto;
+
+                h3 {
+                    color: var(--app-accent-color);
+                    padding-left: 15px;
+                }
+
+                .indent-header {
+                    margin-left: 15px;
+                }
+            }
+        }
+    }
+}

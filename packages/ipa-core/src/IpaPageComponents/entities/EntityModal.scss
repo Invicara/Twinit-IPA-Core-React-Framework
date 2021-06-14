@@ -12,7 +12,7 @@
     
     .select-title.required:after {
       content: " * ";
-      color: #c71784;
+      color: var(--app-accent-color);
     }
 
     .select-element {
@@ -22,19 +22,19 @@
   }
   
   .form-control:focus {
-    border: 2px solid #c71784 !important;
+    border: 2px solid var(--app-accent-color) !important;
     box-shadow: unset;
   }
   
   .required {
     .select-title:after {
       content: " * ";
-      color: #c71784;
+      color: var(--app-accent-color);
     }
     
     label:after {
       content: " * ";
-      color: #c71784;
+      color: var(--app-accent-color);
     }
   }
   
@@ -81,8 +81,8 @@
 
   .custom-control-input:checked ~ .custom-control-label::before {
     color: #fff;
-    border-color: #c71784;
-    background-color: #c71784;
+    border-color: var(--app-accent-color);
+    background-color: var(--app-accent-color);
   }
   
 }

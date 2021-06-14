@@ -65,7 +65,7 @@ class EnhancedFetchControl extends React.Component {
 
         return <div key={selector.id} onKeyUp={this.keyup}>
                 {position !== 0 && <OrDivider/>}
-                <Control {...selector}  onChange={handleChange} onFetch={e=>this.handleFetch(selector.id)} currentValue={selector.currentValue}/>
+                <Control {...selector}  onChange={handleChange} onFetch={() => this.handleFetch(selector.id)} currentValue={selector.currentValue}/>
             </div>
 
     }

@@ -21,6 +21,8 @@ import Logo from './Logo';
 import {getTitleBarInfoFromProps} from "../IpaUtils/helpers";
 import LinkedIcon from "../IpaControls/LinkedIcon"
 
+import {getPlatformPath} from '../IpaPaths'
+
 import './TitleBar.scss'
 
 export default class TitleBar extends React.Component {
@@ -30,6 +32,11 @@ export default class TitleBar extends React.Component {
       const switchProj = (e) => {
         e.preventDefault()
         titleInfo.switchProject()
+      }
+
+      const goToUserAccount = (e) => {
+          e.preventDefault()
+          window.open(getPlatformPath('USER_ACCOUNT'))
       }
 
     return (
@@ -42,8 +49,9 @@ export default class TitleBar extends React.Component {
                         <i className={'icofont-rounded-down'}/>
                         <div className={'session-options'}>         
                             <LinkedIcon customClass={'session-item'} clickHandler={switchProj} icon={'icofont-refresh icofont-2x'} linkText={'Switch Project'}/>
-                            <LinkedIcon customClass={'session-item'} clickHandler={this.props.parent.props.userLogout} icon={'inv-icon-svg inv-icon-logout'} linkText={'Logout'}/>
-                            <LinkedIcon customClass={'session-item'} clickHandler={(e) => e.preventDefault()} icon={'inv-icon-svg inv-icon-user'} linkText={this.props.contextProps.user._email}/>                                                                                                        
+                            <LinkedIcon customClass={'session-item'} clickHandler={this.props.parent.props.userLogout} icon={'ipa-icon-svg ipa-icon-logout'} linkText={'Logout'}/>
+                            <LinkedIcon customClass={'session-item'} clickHandler={goToUserAccount} icon={'ipa-icon-svg ipa-icon-user'} linkText={this.props.contextProps.user._firstname + " " + this.props.contextProps.user._lastname}/>                                                                                                        
+
                             <div className={'session-item'}>{version.package}</div>
                         </div>
                     </div>                    

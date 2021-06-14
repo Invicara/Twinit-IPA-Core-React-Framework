@@ -12,7 +12,7 @@ import './TreeControl.scss'
 //FIXME 1)This component shouldn't be mutating dom nodes manually. It is dangerous (in a React app) and hard to reason about
 const FancyTreeControl = ({
                             name, tree, renderBranchNode, renderLeafNode, onSelect, selectedIds = [], singleSelect=false,
-                            allSelected, treeSelectMode, onGroupSelect, selectedGroups, onExpand,
+                            allSelected, treeSelectMode, onGroupSelect, selectedGroups, onExpand = _.noop,
                             //TODO Refactor these to just pass down node index
                             selectedNodeNames = [], expandedNodeNames = [], partialNodeNames = []
 }) => {
@@ -104,7 +104,7 @@ const FancyTreeControl = ({
         if (expandedNodeNames.includes(n.name)) cn += " expanded"
         if (partialNodeNames.includes(n.name)) cn += " partial"
         return (
-          <li onClick={e => selectNode(e, n.name, n)} key={n._id} data-node-id={n._id} className={cn}>
+          <li onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
             <a>
               <span>{renderLeafNode(n)}</span>
             </a>
