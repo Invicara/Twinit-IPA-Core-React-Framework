@@ -144,13 +144,17 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
 
   }
 
-  const closeOverlay = (e) => {
-    if (e) e.preventDefault()
-
+  const resetForm = () => {
     setSelectedUserGroups([])
     setCurrentEmail("")
     setAllEmails([])
     setEmailError(null)
+  }
+
+  const closeOverlay = (e) => {
+    if (e) e.preventDefault()
+
+    resetForm()
     hideOverlay()
   }
 
@@ -187,6 +191,7 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
         {allEmails.length === 0 && <div className='no-emails-msg'>No emails added</div>}
       </div>
       <div className='align-right'>
+        <SimpleButton disabled={(allEmails.length === 0 && selectedUserGroups.length === 0) || sendingInvites} onClick={resetForm}>Clear</SimpleButton>
         <SimpleButton disabled={allEmails.length === 0 || selectedUserGroups.length === 0 || sendingInvites} onClick={sendInvites}>Send Invites</SimpleButton>
       </div>
     </div>}
