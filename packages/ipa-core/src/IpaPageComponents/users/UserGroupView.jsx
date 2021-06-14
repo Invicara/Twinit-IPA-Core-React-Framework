@@ -189,7 +189,25 @@ class UserGroupView extends React.Component {
     }
 
     onUserGroupNameChange(e) {
-      this.setState({userGroupNameEdit: e.target.value})
+      
+      this.setState({userGroupNameEditError: null})
+      if (e.target.value) {
+        if (e.target.value.length < 50) {
+          this.setState({userGroupNameEdit: e.target.value})
+  
+          if (!e.target.value.length)
+            this.setState({userGroupNameEditError: "UserGroup name is not allowed to be blank!"})
+        } else if (e.target.value.length > 50) {
+          let truncName = e.target.value.slice(0, 50)
+          this.setState({userGroupNameEdit: truncName})
+        }
+
+      } else {
+        this.setState({userGroupNameEdit: ""})
+        this.setState({userGroupNameEditError: "UserGroup name is not allowed to be blank!"})
+      }
+      
+      
     }
 
     //currently we only update the usergroup's name
@@ -470,8 +488,8 @@ class UserGroupView extends React.Component {
                 {this.state.editingUserGroup && <div><div className='usergroup-name editable'>
                   <h1><input className='usergroup-name-input' type='text' disabled={this.state.savingUserGroup} value={this.state.userGroupNameEdit} onChange={this.onUserGroupNameChange}/></h1>
                   <span className='ug-btn'>
-                    {!this.state.savingUserGroup && <a href="#" onClick={this.updateUserGroup}>save</a>}
-                    {this.state.savingUserGroup && <span className='disabled-ug-btn'>save</span>}
+                    {(!this.state.savingUserGroup && !this.state.userGroupNameEditError) && <a href="#" onClick={this.updateUserGroup}>save</a>}
+                    {(this.state.savingUserGroup || this.state.userGroupNameEditError) && <span className='disabled-ug-btn'>save</span>}
                   </span>
                   <span className='ug-btn'>
                     {!this.state.savingUserGroup && <a href="#" onClick={this.toggleUserGroupEditable}>cancel</a>}
