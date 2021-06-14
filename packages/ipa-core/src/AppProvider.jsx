@@ -54,6 +54,8 @@ class AppProvider extends React.Component {
   constructor(props) {
     super(props);
 
+    IafSession.setConfig(endPointConfig);
+
     this.authUrl = IafSession.getAuthUrl(endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot);
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
@@ -97,7 +99,6 @@ class AppProvider extends React.Component {
   }
 
   componentDidMount() {
-    IafSession.setConfig(endPointConfig);
     IafSession.setErrorCallback(this.handleRequestError);
     this.state.actions.restartApp();
   }
