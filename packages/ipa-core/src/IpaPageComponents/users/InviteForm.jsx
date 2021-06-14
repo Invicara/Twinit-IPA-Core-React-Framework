@@ -83,12 +83,17 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
     setEmailError(null)
 
     if (emailIsValid()) {
+      //check if email already in list
+      let existingEmail = _.find(allEmails, {_email: currentEmail})
+
       //check if existing user
       let existingUser = _.find(users, {_email: currentEmail})
       
-      //add to list
-      if (existingUser) setAllEmails([existingUser, ...allEmails])
-      else setAllEmails([{_email: currentEmail}, ...allEmails])
+      if (!existingEmail) {
+        //add to list
+        if (existingUser) setAllEmails([existingUser, ...allEmails])
+        else setAllEmails([{_email: currentEmail}, ...allEmails])
+      }
 
       setCurrentEmail("")
     }
