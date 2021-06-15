@@ -7,7 +7,7 @@ import {IafSession, IafDataSource} from "@invicara/platform-api";
 class SisenseLoginPage extends React.Component {
     componentDidMount() {
         //IafSession.setConfig(endPointConfig);
-        this.createSisenseToken();
+        //this.createSisenseToken();
     }
 
     async createSisenseToken() {
@@ -46,7 +46,8 @@ class SisenseLoginPage extends React.Component {
             redirect_url += "&return_to=" + urlParams.get('return_to');
         }
 
-        window.location.href = redirect_url;
+        return redirect_url
+        //window.location.href = redirect_url;
     }
 
     getProject() {
@@ -71,7 +72,7 @@ class SisenseLoginPage extends React.Component {
     }
 
     render() {
-        return null;
+        return this.createSisenseToken();
     }
 
 }
