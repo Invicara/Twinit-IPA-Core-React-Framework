@@ -71,7 +71,7 @@ export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, sh
                 <div className='invite-usergroup'><span className='bold'>UserGroup:</span> {invite._usergroup._name}</div>
               </div>
               {showActions && !isDoingAction && <div className='card-actions'>
-                {isCurrentUser && <i className='fas fa-check' onClick={() => confirmAction('ACCEPT')}></i>}
+                {isCurrentUser && !expired && <i className='fas fa-check' onClick={() => confirmAction('ACCEPT')}></i>}
                 <i className='fas fa-redo-alt' onClick={() => confirmAction('RESEND')}></i>
                 <i className='fas fa-trash' onClick={() => confirmAction('CANCEL')}></i>
               </div>}
