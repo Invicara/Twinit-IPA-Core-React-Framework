@@ -2,7 +2,7 @@ import React from "react";
 import _ from "lodash";
 import {IafSession, IafDataSource} from "@invicara/platform-api";
 
-const sisenseBaseUrl = endPointConfig.sisenseBaseUrl;
+//const sisenseBaseUrl = endPointConfig.sisenseBaseUrl;
 
 class SisenseLoginPage extends React.Component {
     componentDidMount() {
@@ -26,8 +26,8 @@ class SisenseLoginPage extends React.Component {
                 {
                     "sequence_type_id": _.get(sisenseSSOOrch, "orchsteps.0._compid"),
                     "params": {
-                        "userGroupId": this.props.selectedItems.selectedUserGroupId,
-                        "projectNamespace":  this.props.selectedItems.selectedProject._namespaces
+                        "userGroupId": this.getUserGroup(),
+                        "projectNamespace":  this.getProject()
                     }
                 }
             ]
@@ -36,7 +36,7 @@ class SisenseLoginPage extends React.Component {
         const orchResult = await IafDataSource.runOrchestrator(orchId, params);
         const encodedToken = _.get(orchResult, '_result.jwt');
 
-        let redirect_url = sisenseBaseUrl + "/jwt?jwt=" + encodedToken;
+        let redirect_url = this.getSisenseBaseUrl() + "/jwt?jwt=" + encodedToken;
 
         let url = _.get(this, "props.location.href", "");
 
@@ -49,22 +49,26 @@ class SisenseLoginPage extends React.Component {
         window.location.href = redirect_url;
     }
 
-    // getProject() {
-    //     return sessionStorage && sessionStorage.project ?
-    //         _.get(JSON.parse(sessionStorage.project), "_namespaces.0") : undefined;
-    // }
+    getProject() {
+        return sessionStorage && sessionStorage.project ?
+            _.get(JSON.parse(sessionStorage.project), "_namespaces.0") : undefined;
+    }
 
-    // getSelectedGroup(storage) {
-    //     return storage && storage.ipadt_selectedItems ?
-    //         _.get(JSON.parse(storage.ipadt_selectedItems), "selectedUserGroupId") : undefined;
-    // }
+    getSelectedGroup(storage) {
+        return storage && storage.ipadt_selectedItems ?
+            _.get(JSON.parse(storage.ipadt_selectedItems), "selectedUserGroupId") : undefined;
+    }
 
-    // getUserGroup() {
-    //     const selectedGroupInSessionStorage = this.getSelectedGroup(sessionStorage);
-    //     const selectedGroupId = selectedGroupInSessionStorage ?  selectedGroupInSessionStorage :
-    //         this.getSelectedGroup(localStorage);
-    //     return selectedGroupId;
-    // }
+    getUserGroup() {
+        const selectedGroupInSessionStorage = this.getSelectedGroup(sessionStorage);
+        const selectedGroupId = selectedGroupInSessionStorage ?  selectedGroupInSessionStorage :
+            this.getSelectedGroup(localStorage);
+        return selectedGroupId;
+    }
+
+    getSisenseBaseUrl() {
+        sessionStorage.getItem('sisenseBaseUrl')
+    }
 
     render() {
         return null;

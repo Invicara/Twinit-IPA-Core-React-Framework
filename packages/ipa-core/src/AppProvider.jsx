@@ -652,6 +652,7 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
   function getSisenseBasePath(config) {
 
       let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
+      sessionStorage.setItem('sisenseBaseUrl', sisenseConnector.config.url)
       return sisenseConnector.config.url
   }
 
