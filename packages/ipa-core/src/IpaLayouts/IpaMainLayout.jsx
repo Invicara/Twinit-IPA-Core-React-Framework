@@ -19,6 +19,9 @@ import * as qs from 'query-string';
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
 
+import SisenseLoginPage from '../IpaPageComponents/sisense/SisenseLoginPage'
+import SisenseLogoutPage from '../IpaPageComponents/sisense/SisenseLogoutPage'
+
 import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
@@ -46,6 +49,16 @@ class App extends React.Component {
   }
 
   render() {
+    const hashRouterPath = _.get(this, "props.location.hash");
+    if(hashRouterPath.indexOf('#/sisense-login') === 0) {
+      console.log('Redirect to sisense login router.');
+      return <SisenseLoginPage {...this.props}/>;
+    } else if(hashRouterPath.indexOf('#/sisense-logout') === 0) {
+      console.log('Redirect to sisense logout router.');
+      return <SisenseLogoutPage {...this.props}/>;
+    }
+
+
     var platform = getPlatform(this.state.platformOverride);
 
     return (
