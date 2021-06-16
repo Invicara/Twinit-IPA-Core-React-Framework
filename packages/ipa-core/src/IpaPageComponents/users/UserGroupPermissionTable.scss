@@ -1,0 +1,28 @@
+.permissions-table {
+    margin-top: 20px;
+    margin-left: 20px;
+
+    .ug-perm-table {
+
+        th {
+            font-weight: bold;
+            padding: 2px;
+            text-align: center;
+            border-right: 1px solid gray;
+        }
+
+        tr.odd-row {
+            background-color: lightgray;
+        }
+
+        td {
+            padding: 5px 15px 5px 5px;
+            border-right: 1px solid gray;
+            min-width: 60px;
+        }
+
+        td.perm-cell {
+            text-align: center;
+        }
+    }
+}

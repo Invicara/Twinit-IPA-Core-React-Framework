@@ -18,7 +18,7 @@
 import React from "react";
 import _ from 'lodash'
 
-import {IafPassSvc, IafProj, IafUserGroup} from '@invicara/platform-api'
+import {IafPassSvc, IafProj, IafUserGroup, IafItemSvc} from '@invicara/platform-api'
 import {StackableDrawer} from '../../IpaControls/StackableDrawer'
 import RadioButtons from '../../IpaControls/RadioButtons'
 import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
@@ -27,6 +27,8 @@ import {GroupCard} from './GroupCard'
 import {UserCard} from './UserCard'
 import {InviteCard} from './InviteCard'
 import {InviteForm} from './InviteForm'
+
+import {UserGroupPermissionTable} from './UserGroupPermissionTable'
 
 import './UserGroupView.scss'
 
@@ -37,6 +39,8 @@ class UserGroupView extends React.Component {
       this.state = {
         pageModes: ['UserGroups', 'Users'],
         pageMode: 'UserGroups',
+        userGroupModes: ['Users/Invites', 'Permissions'],
+        userGroupMode: 'Users/Invites',
         allUserGroupNamesUpper: [], //list of uppercase usergroup names for easy comparisons
         invalidUserGroups: [], //userGroups on the project the user can't interact with
         userGroups: [], //userGroups on the project the user can interact with
@@ -58,6 +62,7 @@ class UserGroupView extends React.Component {
 
       this._loadAsyncData = this._loadAsyncData.bind(this)
       this.onModeChange = this.onModeChange.bind(this)
+      this.onUserGroupModeChange = this.onUserGroupModeChange.bind(this)
       this.getAllUserGroups = this.getAllUserGroups.bind(this)
       this.setSelectedUserGroup = this.setSelectedUserGroup.bind(this)
       this.toggleUserGroupEditable = this.toggleUserGroupEditable.bind(this)
@@ -100,6 +105,10 @@ class UserGroupView extends React.Component {
       this.setState({pageMode: e.target.value, editingUserGroup: false})
       if (e.target.value === 'UserGroups') this.loadUserGroupData()
       
+    }
+
+    onUserGroupModeChange(e) {
+      this.setState({userGroupMode: e.target.value})
     }
 
     sortGroupsBasedOnConfig(groups, configs) {
@@ -169,18 +178,21 @@ class UserGroupView extends React.Component {
     }
 
     loadUserGroupData() {
-      this.setState({loadingInvites: true, usersInSelectedGroup: [], invitesInSelectedGroup: [], expiredInvitesInSelectedGroup:[]})
-      IafUserGroup.getUsers(this.state.selectedUserGroup).then((users) => {
-        users.sort((a,b) => {return a._lastname.localeCompare(b._lastname)})
-        this.setState({usersInSelectedGroup: users})
-      })
       
-      IafUserGroup.getInvites(this.state.selectedUserGroup).then((invites) => {
-        let pendingInvites = invites._list.filter(i => i._status === 'PENDING')
-        let expiredInvites = invites._list.filter(i => i._status === 'EXPIRED')
+      if (this.state.userGroupMode === 'Users/Invites') {
+        this.setState({loadingInvites: true, usersInSelectedGroup: [], invitesInSelectedGroup: [], expiredInvitesInSelectedGroup:[]})
+        IafUserGroup.getUsers(this.state.selectedUserGroup).then((users) => {
+          users.sort((a,b) => {return a._lastname.localeCompare(b._lastname)})
+          this.setState({usersInSelectedGroup: users})
+        })
+        
+        IafUserGroup.getInvites(this.state.selectedUserGroup).then((invites) => {
+          let pendingInvites = invites._list.filter(i => i._status === 'PENDING')
+          let expiredInvites = invites._list.filter(i => i._status === 'EXPIRED')
 
-        this.setState({invitesInSelectedGroup: pendingInvites, expiredInvitesInSelectedGroup: expiredInvites, loadingInvites: false})
-      })
+          this.setState({invitesInSelectedGroup: pendingInvites, expiredInvitesInSelectedGroup: expiredInvites, loadingInvites: false})
+        })
+      }
     }
 
     toggleUserGroupEditable(e) {
@@ -479,9 +491,14 @@ class UserGroupView extends React.Component {
             {this.state.pageMode === 'UserGroups' && <div className='usergroup-mode-view'>
 
               <div className='row1'>
-                {!this.state.editingUserGroup && <div className='usergroup-name'>
-                  <h1>{this.state.selectedUserGroup ? this.state.selectedUserGroup._name : ""}</h1>
-                  {this.props.handler.config.allowUserGroupEdit && this.state.selectedUserGroup && <span className='ug-btn'><a href="#" onClick={this.toggleUserGroupEditable}>edit</a></span>}
+                {!this.state.editingUserGroup && <div className='usergroup-info'>
+                  <div className='usergroup-name'>
+                    <h1>{this.state.selectedUserGroup ? this.state.selectedUserGroup._name : ""}</h1>
+                    {this.props.handler.config.allowUserGroupEdit && this.state.selectedUserGroup && <span className='ug-btn'><a href="#" onClick={this.toggleUserGroupEditable}>edit</a></span>}
+                  </div>
+                  <div>
+                    <RadioButtons options={this.state.userGroupModes} value={this.state.userGroupMode} onChange={this.onUserGroupModeChange} labelPlacement='end' />
+                  </div>
                 </div>}
                 {this.state.editingUserGroup && <div><div className='usergroup-name editable'>
                   <h1><input className='usergroup-name-input' type='text' disabled={this.state.savingUserGroup} value={this.state.userGroupNameEdit} onChange={this.onUserGroupNameChange}/></h1>
@@ -499,7 +516,7 @@ class UserGroupView extends React.Component {
 
               <hr/>
 
-              <div className='row2'>
+              {this.state.userGroupMode === "Users/Invites" && <div className='row2'>
                 <div className='usergroup-members'>
                   <div><h3>Members</h3></div>
                   {this.state.usersInSelectedGroup.length === 0 && <div className='throbber'><SimpleTextThrobber throbberText='Loading UserGroup Members' /></div>}
@@ -536,7 +553,11 @@ class UserGroupView extends React.Component {
                     </ul>
                   </div>}
                 </div>
-              </div>
+              </div>}
+
+              {this.state.userGroupMode === 'Permissions' && <div className='row2'>
+                <UserGroupPermissionTable usergroup={this.state.selectedUserGroup} />
+              </div>}
 
             </div>}
 

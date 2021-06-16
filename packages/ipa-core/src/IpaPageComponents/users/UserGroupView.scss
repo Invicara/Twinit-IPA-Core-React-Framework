@@ -11,6 +11,7 @@
         margin-bottom: 0px;
     }
 
+
     .user-group-list-item {
         list-style-type: none;
         border: 1px solid lightgray;
@@ -142,6 +143,12 @@
         height: calc(100vh - 80px);
 
         .row1 {
+
+            .usergroup-info {
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+            }
 
             .usergroup-name {
                 display: flex;
