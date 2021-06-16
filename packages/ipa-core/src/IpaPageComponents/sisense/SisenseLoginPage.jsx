@@ -72,7 +72,7 @@ class SisenseLoginPage extends React.Component {
     }
 
     render() {
-        return this.createSisenseToken();
+        return <div>{this.createSisenseToken()}</div>
     }
 
 }
