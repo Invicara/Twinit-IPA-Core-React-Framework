@@ -21,7 +21,7 @@ const RadioButtons = ({options, value, onChange, labelPlacement='end'}) => {
         <div className='ipa-radio-btns'>
             <FormControl component="fieldset">
                 <RadioGroup row value={value} onChange={onChange}>
-                    {options.map(o => <FormControlLabel value={o} control={<AccentRadio />} label={o} labelPlacement={labelPlacement} />)}
+                    {options.map(o => <FormControlLabel key={o} value={o} control={<AccentRadio />} label={o} labelPlacement={labelPlacement} />)}
                 </RadioGroup>
             </FormControl>
         </div>
