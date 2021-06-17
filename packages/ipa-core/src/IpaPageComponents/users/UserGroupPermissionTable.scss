@@ -1,8 +1,24 @@
 .permissions-table {
     margin-top: 20px;
     margin-left: 20px;
+    width: 80%;
+
+    .ug-perm-table-ctrls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 5px;
+
+        .ug-perm-filter {
+            display: flex;
+            align-items: center;
+            min-width: 300px;
+            z-index: 1000;
+        }
+    }
 
     .ug-perm-table {
+        width: 100%;
 
         th {
             font-weight: bold;
