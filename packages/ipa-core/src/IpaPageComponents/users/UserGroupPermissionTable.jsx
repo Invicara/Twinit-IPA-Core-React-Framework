@@ -84,7 +84,7 @@ export const UserGroupPermissionTable = ({usergroup}) => {
     const getUserItemsForProjectWithPermissions = () => {
 
         function createRowForTable(coll, permissions, all) {
-            console.log(coll, permissions, all)
+
             let collWithPerms = {
                 name: coll._name,
                 class: NamedUserItemsClassFriendlyNames[coll._itemClass] ? NamedUserItemsClassFriendlyNames[coll._itemClass] : coll._itemClass
@@ -99,7 +99,6 @@ export const UserGroupPermissionTable = ({usergroup}) => {
 
         const findPermissionsObjectByItemClass = (usergroupPermissions, itemClass, userTypeToFind) => {
 
-            console.log(usergroupPermissions, itemClass, userTypeToFind)
             const itemClassMap = {
                 NamedFileCollection: 'namedUserItems',
                 Script: 'scripts',

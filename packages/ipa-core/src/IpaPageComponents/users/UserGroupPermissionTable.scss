@@ -7,7 +7,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
 
         .ug-perm-filter {
             display: flex;
@@ -25,6 +25,11 @@
             padding: 2px;
             text-align: center;
             border-right: 1px solid gray;
+            border-top: unset;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: white;
         }
 
         tr.odd-row {

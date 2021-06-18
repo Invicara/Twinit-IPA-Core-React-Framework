@@ -555,7 +555,7 @@ class UserGroupView extends React.Component {
                 </div>
               </div>}
 
-              {this.state.userGroupMode === 'Permissions' && <div className='row2'>
+              {this.state.userGroupMode === 'Permissions' && <div className='row2 table'>
                 <UserGroupPermissionTable usergroup={this.state.selectedUserGroup} />
               </div>}
 
