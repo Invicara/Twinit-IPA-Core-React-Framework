@@ -487,7 +487,6 @@ class UserGroupView extends React.Component {
             </StackableDrawer>
 
             
-
             {this.state.pageMode === 'UserGroups' && <div className='usergroup-mode-view'>
 
               <div className='row1'>
@@ -496,9 +495,9 @@ class UserGroupView extends React.Component {
                     <h1>{this.state.selectedUserGroup ? this.state.selectedUserGroup._name : ""}</h1>
                     {this.props.handler.config.allowUserGroupEdit && this.state.selectedUserGroup && <span className='ug-btn'><a href="#" onClick={this.toggleUserGroupEditable}>edit</a></span>}
                   </div>
-                  <div>
+                  {this.props.handler.config.allowViewPermissions && <div>
                     <RadioButtons options={this.state.userGroupModes} value={this.state.userGroupMode} onChange={this.onUserGroupModeChange} labelPlacement='end' />
-                  </div>
+                  </div>}
                 </div>}
                 {this.state.editingUserGroup && <div><div className='usergroup-name editable'>
                   <h1><input className='usergroup-name-input' type='text' disabled={this.state.savingUserGroup} value={this.state.userGroupNameEdit} onChange={this.onUserGroupNameChange}/></h1>
@@ -556,7 +555,9 @@ class UserGroupView extends React.Component {
               </div>}
 
               {this.state.userGroupMode === 'Permissions' && <div className='row2 table'>
-                <UserGroupPermissionTable usergroup={this.state.selectedUserGroup} />
+                <UserGroupPermissionTable usergroup={this.state.selectedUserGroup} 
+                  allowManagePermissions={this.props.handler.config.allowManagePermissions}
+                  itemFetchScript={this.props.handler.config.scripts?.itemFetchScript}/>
               </div>}
 
             </div>}

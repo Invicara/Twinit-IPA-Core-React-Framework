@@ -36,14 +36,29 @@
             background-color: lightgray;
         }
 
+        .ug-perm-table-row {
+
+            .ug-perm-table-row-itemdesc {
+                padding-left: 10px;
+                font-size: smaller;
+                font-style: italic;
+            }
+        }
+
         td {
             padding: 5px 15px 5px 5px;
             border-right: 1px solid gray;
             min-width: 60px;
+
+            i {
+                padding: 0px;
+                color: gray;
+            }
         }
 
         td.perm-cell {
             text-align: center;
+            vertical-align: middle;
         }
     }
 }
