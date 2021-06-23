@@ -528,7 +528,7 @@ class AppProvider extends React.Component {
 
   if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
-  this.navigateToHomepage();
+  //this.navigateToHomepage();
   }
 
   navigateToHomepage() {
