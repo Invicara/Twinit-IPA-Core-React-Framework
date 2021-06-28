@@ -7,10 +7,11 @@ import Switch from '@material-ui/core/Switch';
 import { withStyles } from "@material-ui/styles";
 import Select from 'react-select'
 
-import { IafItemSvc, IafPermission, IafProj } from '@invicara/platform-api'
+import { IafItemSvc, IafPermission, IafFileSvc } from '@invicara/platform-api'
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 
 import { RoundCheckbox } from "../../IpaControls/Checkboxes";
+import SimpleTextThrobber from "../../IpaControls/SimpleTextThrobber"
 
 import './UserGroupPermissionTable.scss'
 
@@ -38,14 +39,25 @@ const AccentSwitch = withStyles({
 
 export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, itemFetchScript}) => {
 
-    const [allUserItems, setAllUserItems] = useState([])
-    const [usergroupPerms, setUserGroupPerms] = useState([])
-    const [tableData, setTableData] = useState([])
-    const [filterOptions, setFilterOptions] = useState([])
-    const [filterValue, setFilterValue] = useState({value: "All", label: "All"})
-    const [filteredTableData, setFilteredTableData] = useState([])
+    //top level state
     const [accessAll, setAccessAll] = useState(false)
     const [actions, setActions] = useState([])
+    
+
+    //itemservice state
+    const [allUserItems, setAllUserItems] = useState([])
+    const [usergroupItemPerms, setUserGroupItemPerms] = useState([])
+    const [itemTableData, setItemTableData] = useState([])
+    const [itemFilterOptions, setItemFilterOptions] = useState([])
+    const [itemFilterValue, setItemFilterValue] = useState({value: "All", label: "All"})
+    const [itemFilteredTableData, setItemFilteredTableData] = useState([])
+    const [loadingItemPerms, setLoadingItemPerms] = useState(true)
+
+    //fileservice state
+    const [filePerms, setFilePerms] = useState([])
+    const [fileTableData, setFileTableData] = useState([])
+    const [loadingFilePerms, setLoadingFilePerms] = useState(true)
+    
 
       useEffect(() => {
         
@@ -79,11 +91,7 @@ export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, ite
 
     }, [])
 
-    useEffect(() => {
-
-        getFilterOptions()
-       
-    }, [allUserItems])
+   
 
     useEffect(() => {
 
@@ -93,24 +101,60 @@ export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, ite
                 _namespace: usergroup._userAttributes.project_workspace._namespaces,
                 "_user._id": usergroup._id,
                 "_user._type": IafPermission.PermConst.UserType.UserGroup,
-                "_resourceDesc._irn": "itemsvc:nameduseritem:*"
+                "_resourceDesc._irn": IafPermission.NamedUserItemIrnAll
             }
 
             IafItemSvc.getPermissions(query).then((res) => {
-                setUserGroupPerms(res._list)
+                setUserGroupItemPerms(res._list)
             })
+
+            let filequery = {
+                _namespace: usergroup._userAttributes.project_workspace._namespaces,
+                "_user._id": usergroup._id,
+                "_user._type": IafPermission.PermConst.UserType.UserGroup,
+                "_resourceDesc._irn": IafPermission.FileIrnAll
+            }
+
+            IafFileSvc.getPermissions(filequery).then((fres) => {
+                setFilePerms(fres._list)
+            })
+
         }
 
+        resetPerms()
         getUserGroupPermissions()
 
     }, [usergroup])
 
     useEffect(() => {
 
-        getUserItemsWithPermissions()
-    }, [usergroupPerms, allUserItems])
+        getItemFilterOptions()
+       
+    }, [allUserItems])
 
-    const getFilterOptions = () => {
+    useEffect(() => {
+
+        getUserItemsWithPermissions()
+    }, [usergroupItemPerms, allUserItems, accessAll])
+
+    useEffect(() => {
+
+        getFilesWithPermissions()
+
+    }, [filePerms, accessAll])
+
+    const resetPerms = () => {
+        setLoadingItemPerms(true)
+        setLoadingFilePerms(true)
+        setAccessAll(false)
+        setUserGroupItemPerms([])
+        setFilePerms([])
+        setItemTableData([])
+        setItemFilteredTableData([])
+        setFileTableData([])
+    }
+
+    const getItemFilterOptions = () => {
         let newFilterValues = _.uniq(allUserItems.map(u => u._itemClass))
         let newFilterOptions = [{value: "All", label: "All"}]
         newFilterValues.forEach((o) => {
@@ -119,30 +163,41 @@ export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, ite
                 label: o
             })
         })
-        setFilterOptions(newFilterOptions)
+        setItemFilterOptions(newFilterOptions)
+    }
+
+    const createRowForTable = (item, permissions, all) => {
+
+        let allAction = false
+        if (!all && permissions.includes(IafPermission.PermConst.Action.All))
+            allAction = true
+
+        let collWithPerms = {
+            item: item
+        }   
+
+        Object.values(IafPermission.PermConst.Action).forEach((a) => {
+            collWithPerms[a] = all || allAction || permissions.includes(a)
+        })
+
+        return collWithPerms
+    }
+
+    const hasAllAccess = (where) => {
+        let hasAccessAll = accessAll || !!_.find(where, {_resourceDesc: {_irn: IafPermission.AllAccessIrn}})
+        if (hasAccessAll !== accessAll) setAccessAll(hasAccessAll)
+        return hasAccessAll
     }
 
     const getUserItemsWithPermissions = () => {
 
-        function hasAllAccess() {
-            return !!_.find(usergroupPerms, {_resourceDesc: {_irn: IafPermission.AllAccessIrn}})
-        }
-
         function getPermsForItem(item) {
-            console.log('---------> ', item._name)
 
-            let topLevelNamedUserItemPerms = usergroupPerms.filter(p => p._resourceDesc._irn === 'itemsvc:nameduseritem:*' && !p._resourceDesc._criteria)
-            console.log('topLevelNamedUserItemPerms', topLevelNamedUserItemPerms)
+            let topLevelNamedUserItemPerms = usergroupItemPerms.filter(p => p._resourceDesc._irn === 'itemsvc:nameduseritem:*' && !p._resourceDesc._criteria)
 
-            let itemClassItemPerms = usergroupPerms.filter(p => p._resourceDesc._criteria && p._resourceDesc._criteria._itemClass === item._itemClass)
-            console.log('itemClassItemPerms', itemClassItemPerms)
+            let itemClassItemPerms = usergroupItemPerms.filter(p => p._resourceDesc._criteria && p._resourceDesc._criteria._itemClass === item._itemClass)
 
-            let userTypeItemPerms = usergroupPerms.filter(p => p._resourceDesc._criteria && p._resourceDesc._criteria._userType === item._userType)
-            console.log('userTypeItemPerms', userTypeItemPerms)
-
-            // let topLevelActions = topLevelNamedUserItemPerms && topLevelNamedUserItemPerms._actions ? topLevelNamedUserItemPerms._actions : []
-            // let itemClassActions = itemClassItemPerms && itemClassItemPerms._actions ? itemClassItemPerms._actions : []
-            // let userTypeActions = userTypeItemPerms && userTypeItemPerms._actions ? userTypeItemPerms._actions : []
+            let userTypeItemPerms = usergroupItemPerms.filter(p => p._resourceDesc._criteria && p._resourceDesc._criteria._userType === item._userType)
 
             let topLevelActions = _.flatten(topLevelNamedUserItemPerms.map(p => p._actions))
             let itemClassActions = _.flatten(itemClassItemPerms.map(p => p._actions))
@@ -155,76 +210,13 @@ export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, ite
             ]
 
             combinedPerms.sort()
-            console.log('combinedPerms', combinedPerms)
 
             let uniquePerms = _.uniq(combinedPerms, true)
-            console.log('uniquePerms', uniquePerms)
 
             return uniquePerms
         }
 
-        function createRowForTable(item, permissions, all) {
-
-            let allAction = false
-            if (!all && permissions.includes(IafPermission.PermConst.Action.All))
-                allAction = true
-
-            let collWithPerms = {
-                item: item
-            }
-
-            Object.values(IafPermission.PermConst.Action).forEach((a) => {
-                collWithPerms[a] = all || allAction || permissions.includes(a)
-            })
-
-            return collWithPerms
-        }
-
-        const findPermissionsObjectByItemClass = (usergroupPermissions, itemClass, userTypeToFind) => {
-
-            //first look in the specialized location for permission set
-            let permissions = usergroupPermissions[itemClassPermObjMap[itemClass]]
-            permissions = permissions ? permissions : []
-            let perms = _.find(permissions, {desc: {_userType: userTypeToFind}})
-            if (perms) return perms
-
-            //if not found in the specialized location look in the default location
-            permissions = usergroupPermissions[itemClassPermObjMap['Default']]
-            permissions = permissions ? permissions : []
-            return _.find(permissions, {desc: {_userType: userTypeToFind}})
-        }
-
-        const isTopLevel = (permSet) => {
-            return permSet.hasOwnProperty('actions') && !permSet.hasOwnProperty('desc')
-        }
-
-        const getTopLevelPermissionsByItemClass = (usergroupPermissions, itemClass) => {
-
-            //first look in the specialized location
-            let permissions = usergroupPermissions[itemClassPermObjMap[itemClass]]
-            if (permissions) {
-                for (let i = 0; i < permissions.length; i++) {
-                    if (isTopLevel(permissions[i])) return permissions[i]
-                }
-            }
-
-            //if not found in the specialized location look in the default location
-            permissions = usergroupPermissions[itemClassPermObjMap['Default']]
-            if (permissions) {
-                for (let i = 0; i < permissions.length; i++) {
-                    if (isTopLevel(permissions[i])) return permissions[i]
-                }
-            }
-
-            return null
-        }
-
-        //let usergroupPermissions = usergroup._userAttributes.permissions
-        let hasAllPermissions = hasAllAccess()
-
-        console.log(hasAllAccess())
-
-        setAccessAll(hasAllPermissions)
+        let hasAllPermissions = hasAllAccess(usergroupItemPerms)
 
         let tableRows = allUserItems.map((item) => {
             if (hasAllPermissions)
@@ -235,47 +227,81 @@ export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, ite
             }
         })
 
-        // let tableRows = allUserItems.map((coll) => {
-        //     if (hasAllPermissions)
-        //         return createRowForTable(coll, null, null, true)
-        //     else {
-        //         let usergroupItemPerms = findPermissionsObjectByItemClass(usergroupPermissions, coll._itemClass, coll._userType)
-        //         let topLevelPerms = getTopLevelPermissionsByItemClass(usergroupPermissions, coll._itemClass)
-        //         if (!usergroupItemPerms && !topLevelPerms)
-        //             return createRowForTable(coll, null, null, false)
-        //         else {
-        //             return createRowForTable(coll, usergroupItemPerms, topLevelPerms, false)
-        //         }
-        //     }
-        // })
-
-        setTableData(tableRows)
-        setFilteredTableData(tableRows)
+        setItemTableData(tableRows)
+        setItemFilteredTableData(tableRows)
+        setLoadingItemPerms(false)
     }
 
     const onFilterChange = (f) => {
         
         if (f.value === 'All')
-            setFilteredTableData(tableData)
+            setItemFilteredTableData(itemTableData)
         else {
-            let filteredRows = tableData.filter(r => r.item._itemClass === f.value)
-            setFilteredTableData(filteredRows)
+            let filteredRows = itemTableData.filter(r => r.item._itemClass === f.value)
+            setItemFilteredTableData(filteredRows)
         }
 
-        setFilterValue(f)
+        setItemFilterValue(f)
+    }
+
+    const getFilesWithPermissions = () => {
+        
+        let hasAllPermissions = hasAllAccess(filePerms)
+
+        let item = {
+            _name: "All Files",
+            _descriptions: "All files in file service"
+        }
+
+        let permissionsObj = _.find(filePerms, {_resourceDesc: {_irn: IafPermission.FileIrnAll}})
+
+        let permissions = permissionsObj ? permissionsObj._actions : []
+
+        let fileTableRows = createRowForTable(item, permissions, hasAllPermissions)
+
+        setFileTableData([fileTableRows])
+        setLoadingFilePerms(false)
     }
 
 
     return <div className='permissions-table'>
+        <div className='access-switch'><AccentSwitch checked={accessAll} disabled={true}/> Access All</div>
         <div className='ug-perm-table-ctrls'>
-            <div className='access-switch'><AccentSwitch checked={accessAll} disabled={true}/> Access All</div>
+            <h3 className='service-name'>File Service</h3>
+        </div>
+        {loadingFilePerms && <SimpleTextThrobber throbberText="Loading File Permissions"/>}
+        {!loadingFilePerms && <table className='ug-perm-table'>
+            <thead>
+                <tr className='ug-perm-table-header'>
+                    <th></th>
+                    {actions.map(a => <th key={'file-head-'+a}>{a}</th>)}
+                </tr>
+            </thead>
+            <tbody>
+                {fileTableData.map((row, index) => {
+                        return <tr key={index} className={clsx('ug-perm-table-row', index%2 !== 0 && 'odd-row')}>
+                            <td>
+                                <div className='ug-perm-table-row-itemname'>{row.item._name}</div>
+                                <div className='ug-perm-table-row-itemdesc'>{row.item._description}</div>
+                            </td>
+                            {actions.map(a => <td key={row.name+a} className='perm-cell'>
+                                {(!accessAll && allowManagePermissions) && <RoundCheckbox checked={row[a]} />}
+                                {(accessAll || !allowManagePermissions) && <i className={clsx(row[a] && 'fas fa-check-circle', !row[a] && 'far fa-circle')}></i>}
+                            </td>)}
+                        </tr>
+                    })}
+            </tbody>
+        </table>}
+        <div className='ug-perm-table-ctrls'>
+            <h3 className='service-name'>Item Service</h3>
             <div className='ug-perm-filter'>Filter by: 
-                <div style={{minWidth: '300px'}}><Select options={filterOptions} value={filterValue} 
+                <div style={{minWidth: '300px'}}><Select options={itemFilterOptions} value={itemFilterValue} 
                     onChange={onFilterChange} />
                 </div>
             </div>
         </div>
-        <table className='ug-perm-table'>
+        {loadingItemPerms && <SimpleTextThrobber throbberText="Loading Item Permissions"/>}
+        {!loadingItemPerms && <table className='ug-perm-table'>
             <thead>
                 <tr className='ug-perm-table-header'>
                     <th>Name</th>
@@ -284,7 +310,7 @@ export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, ite
                 </tr>
             </thead>
             <tbody>
-                {filteredTableData.map((row, index) => {
+                {itemFilteredTableData.map((row, index) => {
                     return <tr key={index} className={clsx('ug-perm-table-row', index%2 !== 0 && 'odd-row')}>
                         <td>
                             <div className='ug-perm-table-row-itemname'>{row.item._name}</div>
@@ -298,7 +324,7 @@ export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, ite
                     </tr>
                 })}
             </tbody>
-        </table>
+        </table>}
     </div>
 
 }

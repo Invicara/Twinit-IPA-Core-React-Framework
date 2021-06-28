@@ -108,7 +108,7 @@ class UserGroupView extends React.Component {
     }
 
     onUserGroupModeChange(e) {
-      this.setState({userGroupMode: e.target.value})
+      this.setState({userGroupMode: e.target.value}, this.loadUserGroupData)
     }
 
     sortGroupsBasedOnConfig(groups, configs) {
@@ -178,7 +178,7 @@ class UserGroupView extends React.Component {
     }
 
     loadUserGroupData() {
-      
+      console.log(this.state.userGroupMode, this.state.selectedUserGroup)
       if (this.state.userGroupMode === 'Users/Invites') {
         this.setState({loadingInvites: true, usersInSelectedGroup: [], invitesInSelectedGroup: [], expiredInvitesInSelectedGroup:[]})
         IafUserGroup.getUsers(this.state.selectedUserGroup).then((users) => {
@@ -285,9 +285,7 @@ class UserGroupView extends React.Component {
         //we have to do a similar workaround for invites because there is no access
         //to fetch invites by another user so we have go usergroup by usergroup
         invresults = await Promise.all(this.state.userGroups.map((ug) => {
-          console.log('1', ug)
           return IafUserGroup.getInvites(ug).then((invs) => {
-            console.log('2', invs)
             return _.filter(invs._list, {_email: this.state.selectedUser._email})
           })
         }))
@@ -302,10 +300,8 @@ class UserGroupView extends React.Component {
     }
 
     async onCancelInvite(invite) {
-      console.log('deleting invite -> ', invite)
 
       let result = await IafUserGroup.cancelInvite(invite._usergroup, invite._id)
-      console.log(result)
 
       this.updateCurrentView()
 
@@ -415,7 +411,6 @@ class UserGroupView extends React.Component {
 
       if (canRemove) {
         IafUserGroup.deleteUserFromGroup(fromGroup, removeUser).then((result) => {
-          console.log(result)
 
           //if in usermode and we are removing the last usergroup for user
           //reload everything as the user will need to disappear from the user list

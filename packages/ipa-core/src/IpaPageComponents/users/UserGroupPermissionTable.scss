@@ -7,7 +7,13 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: solid 1px lightgray;
+
+        .service-name {
+            margin-bottom: 0px;
+            color: var(--app-accent-color);
+        }
 
         .ug-perm-filter {
             display: flex;
@@ -19,6 +25,7 @@
 
     .ug-perm-table {
         width: 100%;
+        margin-bottom: 15px;
 
         th {
             font-weight: bold;
