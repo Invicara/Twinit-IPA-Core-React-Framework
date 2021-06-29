@@ -7,7 +7,7 @@ import {IafSession, IafDataSource} from "@invicara/platform-api";
 class SisenseLoginPage extends React.Component {
     componentDidMount() {
         //IafSession.setConfig(endPointConfig);
-        //this.createSisenseToken();
+        this.createSisenseToken();
     }
 
     async createSisenseToken() {
