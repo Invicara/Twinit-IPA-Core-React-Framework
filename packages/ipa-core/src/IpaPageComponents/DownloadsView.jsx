@@ -17,7 +17,7 @@
 
 import React from "react";
 
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 
 import {IafProj} from '@invicara/platform-api';
 

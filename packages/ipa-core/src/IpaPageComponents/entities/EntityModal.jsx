@@ -17,7 +17,7 @@
 
 import React from 'react';
 import _ from "lodash";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import DatePicker from 'react-date-picker';
 import DateTimePicker from 'react-datetime-picker';
 import clsx from "clsx";
