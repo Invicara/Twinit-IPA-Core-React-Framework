@@ -19,7 +19,7 @@ import React from 'react';
 import qs from 'qs';
 import _ from 'lodash'
 
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import {PopoverMenuView} from "../IpaLayouts/PopoverMenuView";
 
 import ScriptHelper from "../IpaUtils/ScriptHelper";

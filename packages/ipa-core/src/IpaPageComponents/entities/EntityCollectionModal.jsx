@@ -18,7 +18,7 @@
 import React from 'react';
 import _ from "lodash";
 import Select from 'react-select';
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';
