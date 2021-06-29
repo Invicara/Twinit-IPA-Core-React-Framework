@@ -36,6 +36,7 @@ import {
 import {compose} from "@reduxjs/toolkit";
 import withEntitySearch from "./WithEntitySearch";
 import {branchNodeRenderer, leafNodeRenderer} from "../../IpaUtils/TreeRendererHelper"
+import {getFilteredEntitiesBy} from "../../IpaUtils/entities";
 
 import './EntityView.scss'
 
@@ -73,8 +74,14 @@ class EntityView extends React.Component {
     }
     
     actionSuccess = (actionType, newEntity, result) => {
-      
-      if (actionType === 'delete') this.openSummary();
+    if (actionType === 'delete') this.openSummary();
+    if (actionType === 'edit') {  
+        var updatedEntities = this.props.allEntities.map(a => {
+            return a._id === newEntity._id ? newEntity : a;
+        });
+        const filteredEntities = getFilteredEntitiesBy(updatedEntities, this.props.appliedFilters)
+        if(!_.isEmpty(filteredEntities) && _.isEmpty(filteredEntities.find(e => e._id === newEntity._id))) this.openSummary()
+      }
       this.props.onEntityChange(actionType, newEntity, result);
       
     }
