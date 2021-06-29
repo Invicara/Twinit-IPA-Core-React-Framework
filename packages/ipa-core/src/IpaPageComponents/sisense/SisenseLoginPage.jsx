@@ -23,13 +23,13 @@ class SisenseLoginPage extends React.Component {
 
         const orchId = sisenseSSOOrch.id;
         const params = {
-            "orchestratorId": orchId,
-            "_actualparams": [
+            orchestratorId: orchId,
+            _actualparams: [
                 {
-                    "sequence_type_id": _.get(sisenseSSOOrch, "orchsteps.0._compid"),
-                    "params": {
-                        "userGroupId": this.getUserGroup(),
-                        "projectNamespace":  this.getProject()
+                    sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
+                    params: {
+                        userGroupId: this.getUserGroup(),
+                        projectNamespace:  this.getProject()
                     }
                 }
             ]
@@ -47,8 +47,9 @@ class SisenseLoginPage extends React.Component {
         if(urlParams.has('return_to')) {
             redirect_url += "&return_to=" + urlParams.get('return_to');
         }
+
         console.log(redirect_url)
-        return redirect_url
+
         //window.location.href = redirect_url;
     }
 
