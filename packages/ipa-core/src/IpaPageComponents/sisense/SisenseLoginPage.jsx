@@ -12,6 +12,7 @@ class SisenseLoginPage extends React.Component {
 
     async createSisenseToken() {
         console.log(endPointConfig)
+        IafSession.setConfig(endPointConfig);
         const allOrchestrators = await IafDataSource.getOrchestrators();
         const sisenseSSOOrch = _.find(allOrchestrators._list, {_userType: 'Sisense_SSO_JWT_Generator'});
 
