@@ -45,7 +45,7 @@ class SisenseLoginPage extends React.Component {
         if(urlParams.has('return_to')) {
             redirect_url += "&return_to=" + urlParams.get('return_to');
         }
-
+        console.log(redirect_url)
         return redirect_url
         //window.location.href = redirect_url;
     }
@@ -72,7 +72,7 @@ class SisenseLoginPage extends React.Component {
     }
 
     render() {
-        return <div>{this.createSisenseToken()}</div>
+        return <div>hello</div>
     }
 
 }
