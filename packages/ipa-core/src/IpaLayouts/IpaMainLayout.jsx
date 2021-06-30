@@ -49,16 +49,6 @@ class App extends React.Component {
   }
 
   render() {
-    const hashRouterPath = _.get(this, "props.location.hash");
-    if(hashRouterPath.indexOf('#/sisense-login') === 0) {
-      console.log('Redirect to sisense login router.');
-      return <SisenseLoginPage {...this.props}/>;
-    } else if(hashRouterPath.indexOf('#/sisense-logout') === 0) {
-      console.log('Redirect to sisense logout router.');
-      return <SisenseLogoutPage {...this.props}/>;
-    }
-
-
     var platform = getPlatform(this.state.platformOverride);
 
     return (

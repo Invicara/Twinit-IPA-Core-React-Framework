@@ -258,10 +258,8 @@ class AppProvider extends React.Component {
     const sessionManage = sessionStorage.manage;
     let token, user;
 
-    store.dispatch({type: "PROJECT_SWITCHED"})
-    console.log(store.getState())
-
     const hashRouterPath = window.location.hash
+    console.log(hashRouterPath)
     if(hashRouterPath.indexOf('#/sisense-login') === 0) {
       console.log('Redirect to sisense login router.');
       return <SisenseLoginPage {...this.props}/>;
@@ -269,6 +267,9 @@ class AppProvider extends React.Component {
       console.log('Redirect to sisense logout router.');
       return <SisenseLogoutPage {...this.props}/>;
     }
+
+    store.dispatch({type: "PROJECT_SWITCHED"})
+    console.log(store.getState())
 
     //check for invites. If so - redirect to signup
     if (window.location.search) {
