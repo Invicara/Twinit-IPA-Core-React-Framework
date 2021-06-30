@@ -258,17 +258,6 @@ class AppProvider extends React.Component {
     const sessionManage = sessionStorage.manage;
     let token, user;
 
-    const hashRouterPath = window.location.hash
-    console.log(hashRouterPath)
-    if(hashRouterPath.indexOf('#/sisense-login') === 0) {
-      console.log('Redirect to sisense login router.');
-      //return <SisenseLoginPage {...this.props}/>;
-      window.location = endPointConfig.baseRoot + '/#/sisense-login'
-    } else if(hashRouterPath.indexOf('#/sisense-logout') === 0) {
-      console.log('Redirect to sisense logout router.');
-      //return <SisenseLogoutPage {...this.props}/>;
-    }
-
     store.dispatch({type: "PROJECT_SWITCHED"})
     console.log(store.getState())
 

@@ -69,6 +69,18 @@ class IpaMainLayout extends React.Component {
     }
 
     render() {
+
+      //const hashRouterPath = _.get(this, "props.location.hash");
+      const hashRouterPath = window.location.hash
+      console.log('hash', hashRouterPath)
+      if(hashRouterPath.indexOf('#/sisense-login') === 0) {
+        console.log('Redirect to sisense login router.');
+        return <SisenseLoginPage {...this.props}/>;
+      } else if(hashRouterPath.indexOf('#/sisense-logout') === 0) {
+        console.log('Redirect to sisense logout router.');
+        return <SisenseLogoutPage {...this.props}/>;
+      } else
+
         return (
             <div>
               <link rel='stylesheet' type='text/css' href='./node_modules/bootstrap/dist/css/bootstrap.min.css'></link>
