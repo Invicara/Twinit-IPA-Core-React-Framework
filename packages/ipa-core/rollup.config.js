@@ -23,6 +23,7 @@ import babel from '@rollup/plugin-babel';
 import postcss from 'rollup-plugin-postcss';
 import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
+import image from '@rollup/plugin-image';
 
 //We use a function and not a variable bc multi-module bundle can have trouble with shared plugin instances as per https://github.com/rollup/rollupjs.org/issues/69#issuecomment-306062235
 const getPlugins = () => [
@@ -32,6 +33,7 @@ const getPlugins = () => [
         extensions: ['.js', '.jsx', '.css', '.scss', '.svg']
     }),
     postcss(),
+    image({include:['src/IpaIcons/**/*']}),
     babel({
         exclude: 'node_modules/**',
         sourceMaps: false,
