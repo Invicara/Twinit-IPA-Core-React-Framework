@@ -261,7 +261,7 @@ class AppProvider extends React.Component {
     store.dispatch({type: "PROJECT_SWITCHED"})
     console.log(store.getState())
 
-    const hashRouterPath = _.get(this, "props.location.hash");
+    const hashRouterPath = window.location.hash
     if(hashRouterPath.indexOf('#/sisense-login') === 0) {
       console.log('Redirect to sisense login router.');
       return <SisenseLoginPage {...this.props}/>;
