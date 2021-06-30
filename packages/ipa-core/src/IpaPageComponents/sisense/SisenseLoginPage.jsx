@@ -50,7 +50,7 @@ class SisenseLoginPage extends React.Component {
 
         console.log(redirect_url)
 
-        //window.location.href = redirect_url;
+        window.location.href = redirect_url;
     }
 
     getProject() {
@@ -75,7 +75,7 @@ class SisenseLoginPage extends React.Component {
     }
 
     render() {
-        return <div>hello</div>
+        return <div></div>
     }
 
 }
