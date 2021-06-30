@@ -41,6 +41,9 @@ import { addEntityComponents } from './redux/slices/entityUI'
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
 
+import SisenseLoginPage from './IpaPageComponents/sisense/SisenseLoginPage'
+import SisenseLogoutPage from './IpaPageComponents/sisense/SisenseLogoutPage'
+
 export const AppContext = React.createContext();
 
 
@@ -257,6 +260,15 @@ class AppProvider extends React.Component {
 
     store.dispatch({type: "PROJECT_SWITCHED"})
     console.log(store.getState())
+
+    const hashRouterPath = _.get(this, "props.location.hash");
+    if(hashRouterPath.indexOf('#/sisense-login') === 0) {
+      console.log('Redirect to sisense login router.');
+      return <SisenseLoginPage {...this.props}/>;
+    } else if(hashRouterPath.indexOf('#/sisense-logout') === 0) {
+      console.log('Redirect to sisense logout router.');
+      return <SisenseLogoutPage {...this.props}/>;
+    }
 
     //check for invites. If so - redirect to signup
     if (window.location.search) {
