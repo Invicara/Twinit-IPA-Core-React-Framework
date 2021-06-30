@@ -262,10 +262,11 @@ class AppProvider extends React.Component {
     console.log(hashRouterPath)
     if(hashRouterPath.indexOf('#/sisense-login') === 0) {
       console.log('Redirect to sisense login router.');
-      return <SisenseLoginPage {...this.props}/>;
+      //return <SisenseLoginPage {...this.props}/>;
+      window.location = endPointConfig.baseRoot + '/#/sisense-login'
     } else if(hashRouterPath.indexOf('#/sisense-logout') === 0) {
       console.log('Redirect to sisense logout router.');
-      return <SisenseLogoutPage {...this.props}/>;
+      //return <SisenseLogoutPage {...this.props}/>;
     }
 
     store.dispatch({type: "PROJECT_SWITCHED"})
