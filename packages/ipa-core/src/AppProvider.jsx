@@ -98,6 +98,11 @@ class AppProvider extends React.Component {
     this.onConfigLoad = this.onConfigLoad.bind(this);
   }
 
+  componentDidMount() {
+    IafSession.setErrorCallback(this.handleRequestError);
+    this.state.actions.restartApp();
+  }
+
   async userLogout() {
     try {
       await IafSession.logout();
@@ -523,17 +528,14 @@ class AppProvider extends React.Component {
 
   if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
-  this.navigateToHomepage();
+  //this.navigateToHomepage();
   }
 
   navigateToHomepage() {
     window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
   }
 
-  componentDidMount() {
-    IafSession.setErrorCallback(this.handleRequestError);
-    this.state.actions.restartApp();
-  }
+  
 
   render() {
     return <AppContext.Provider value={this.state}>{this.props.children}</AppContext.Provider>
@@ -637,6 +639,29 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
     pGroups.push(group);
   }
 
+  function hasSisenseConnectors(config) {
+    if (config.connectors) {
+
+      let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
+      if (sisenseConnector) {
+        sessionStorage.setItem('sisenseBaseUrl', sisenseConnector.config.url)
+        return true
+      }
+      else return false
+
+    } else return false
+  }
+
+  //if sisense connectors are configured, load the login and logout routes for Sisense SSO
+  //also add Sisense url to endPointConfig
+  if (hasSisenseConnectors(config)) {
+
+    pRoutes.push(<Route exact path='/sisense-login' key='sisenseLoginPage'
+                      component={InternalPages['SisenseLoginPage']}/>);
+    pRoutes.push(<Route exact path='/sisense-logout' key='sisenseLogoutPage'
+                      component={InternalPages['SisenseLogoutPage']}/>);
+    console.log('Sisense pages loaded from framework')
+  }
 
   let pages = config.pages ? Object.keys(config.pages) : Object.keys(config.groupedPages);
   const pagesConfig = config.pages || config.groupedPages;

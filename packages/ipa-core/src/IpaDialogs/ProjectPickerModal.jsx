@@ -76,7 +76,13 @@ export default class ProjectPickerModal extends React.Component {
         let userGroups = await IafProj.getUserGroupsForCurrentUser(projects[i])
         
         //filter out groups with no configs
-        userGroups = userGroups.filter(ug => ug._userAttributes.userConfigs)
+        if (userGroups)
+          userGroups = userGroups.filter(ug => !!ug._userAttributes.userConfigs)
+        else {
+          console.log('no userGroups')
+          console.log(projects[i])
+          break
+        }
 
         //get all userConfigs in the project
         let userConfigs = await IafProj.getUserConfigs(projects[i], {_userType: this.props.configUserType})

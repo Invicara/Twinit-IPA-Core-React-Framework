@@ -66,6 +66,7 @@ class IpaMainLayout extends React.Component {
     }
 
     render() {
+
         return (
             <div>
               <link rel='stylesheet' type='text/css' href='./node_modules/bootstrap/dist/css/bootstrap.min.css'></link>
