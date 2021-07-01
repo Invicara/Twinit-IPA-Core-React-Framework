@@ -41,9 +41,6 @@ import { addEntityComponents } from './redux/slices/entityUI'
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
 
-import SisenseLoginPage from './IpaPageComponents/sisense/SisenseLoginPage'
-import SisenseLogoutPage from './IpaPageComponents/sisense/SisenseLogoutPage'
-
 export const AppContext = React.createContext();
 
 
@@ -645,36 +642,25 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
   function hasSisenseConnectors(config) {
     if (config.connectors) {
 
-      if (_.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"}))
+      let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
+      if (sisenseConnector) {
+        sessionStorage.setItem('sisenseBaseUrl', sisenseConnector.config.url)
         return true
+      }
       else return false
 
     } else return false
-  }
-
-  function getSisenseBasePath(config) {
-
-      let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
-      sessionStorage.setItem('sisenseBaseUrl', sisenseConnector.config.url)
-      return sisenseConnector.config.url
   }
 
   //if sisense connectors are configured, load the login and logout routes for Sisense SSO
   //also add Sisense url to endPointConfig
   if (hasSisenseConnectors(config)) {
 
-    // let loginPageComponent = getPageComponent('SisenseLoginPage')
-    // let logoutPageComponent = getPageComponent('SisenseLogoutPage')
-
     pRoutes.push(<Route exact path='/sisense-login' key='sisenseLoginPage'
-                      component={SisenseLoginPage}/>);
+                      component={InternalPages['SisenseLoginPage']}/>);
     pRoutes.push(<Route exact path='/sisense-logout' key='sisenseLogoutPage'
-                      component={SisenseLogoutPage}/>);
-
-    let sisenseEndpointConfig = {sisenseBaseUrl: getSisenseBasePath(config)}
-    let newEndPointConfig = {...endPointConfig, ...sisenseEndpointConfig}
-
-    IafSession.setConfig(newEndPointConfig)
+                      component={InternalPages['SisenseLogoutPage']}/>);
+    console.log('Sisense pages loaded from framework')
   }
 
   let pages = config.pages ? Object.keys(config.pages) : Object.keys(config.groupedPages);

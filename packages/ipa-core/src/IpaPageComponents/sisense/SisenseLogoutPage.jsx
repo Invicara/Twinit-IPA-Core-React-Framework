@@ -1,10 +1,14 @@
 import React from "react";
-const sisenseBaseUrl = endPointConfig.sisenseBaseUrl;
+
 
 class SisenseLogoutPage extends React.Component {
     componentDidMount() {
-        const redirect_url = sisenseBaseUrl + "/api/auth/logout";
+        const redirect_url = this.getSisenseBaseUrl() + "/api/auth/logout";
         window.location.href = redirect_url;
+    }
+
+    getSisenseBaseUrl() {
+        return sessionStorage.getItem('sisenseBaseUrl')
     }
 
     render() {

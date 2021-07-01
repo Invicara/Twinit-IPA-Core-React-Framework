@@ -19,9 +19,6 @@ import * as qs from 'query-string';
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
 
-import SisenseLoginPage from '../IpaPageComponents/sisense/SisenseLoginPage'
-import SisenseLogoutPage from '../IpaPageComponents/sisense/SisenseLogoutPage'
-
 import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
@@ -69,17 +66,6 @@ class IpaMainLayout extends React.Component {
     }
 
     render() {
-
-      //const hashRouterPath = _.get(this, "props.location.hash");
-      // const hashRouterPath = window.location.hash
-      // console.log('hash', hashRouterPath)
-      // if(hashRouterPath.indexOf('#/sisense-login') === 0) {
-      //   console.log('Redirect to sisense login router.');
-      //   return <SisenseLoginPage {...this.props}/>;
-      // } else if(hashRouterPath.indexOf('#/sisense-logout') === 0) {
-      //   console.log('Redirect to sisense logout router.');
-      //   return <SisenseLogoutPage {...this.props}/>;
-      // } else
 
         return (
             <div>
