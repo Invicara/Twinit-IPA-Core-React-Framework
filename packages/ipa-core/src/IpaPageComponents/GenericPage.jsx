@@ -247,8 +247,37 @@ const withGenericPage = (PageComponent) => {
 
       if (this.props.location.search) {
         let rawParams = this.props.location.search.split('?')[1];
-
-        let queryParams = qs.parse(rawParams);
+        //using decoder to parse boolean and int https://github.com/ljharb/qs/issues/91#issuecomment-437926409
+        let queryParams = qs.parse(rawParams, {
+              decoder(str, decoder, charset) {
+                    const strWithoutPlus = str.replace(/\+/g, ' ');
+                    if (charset === 'iso-8859-1') {
+                      // unescape never throws, no try...catch needed:
+                      return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
+                    }
+        
+                    if (/^(\d+|\d*\.\d+)$/.test(str)) {
+                      return parseFloat(str)
+                    }
+        
+                    const keywords = {
+                      true: true,
+                      false: false,
+                      null: null,
+                      undefined,
+                    }
+                    if (str in keywords) {
+                      return keywords[str]
+                    }
+        
+                    // utf-8
+                    try {
+                      return decodeURIComponent(strWithoutPlus);
+                    } catch (e) {
+                      return strWithoutPlus;
+                    }
+                  }
+        })
         
         //if the query contains no id and a value which is a string, turn the value into an array
         //in this case its a list of ids to fetch
