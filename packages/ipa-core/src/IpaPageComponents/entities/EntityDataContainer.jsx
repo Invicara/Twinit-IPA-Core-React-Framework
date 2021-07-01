@@ -40,14 +40,16 @@ class EntityDataContainer extends React.Component {
     
     componentDidUpdate(prevProps) {
         if (!_.isEmpty(this.props.entity)) {
-            let dataNeedsUpdate =
-                (this.props.entity._id !== prevProps.entity._id) // different entity
-                || (this.props.entity.lastUpdate && !prevProps.entity.lastUpdate) // first update
-                || (this.props.entity.lastUpdate > prevProps.entity.lastUpdate) // subsequent updates
-    
-            if (dataNeedsUpdate) {
-                this.getContainerData()
-            }
+            if (!_.isEmpty(prevProps.entity)) {
+                let dataNeedsUpdate =
+                    (this.props.entity._id !== prevProps.entity._id) // different entity
+                    || (this.props.entity.lastUpdate && !prevProps.entity.lastUpdate) // first update
+                    || (this.props.entity.lastUpdate > prevProps.entity.lastUpdate) // subsequent updates
+        
+                if (dataNeedsUpdate) {
+                    this.getContainerData()
+                }
+            } else this.getContainerData()
         }
     }
     

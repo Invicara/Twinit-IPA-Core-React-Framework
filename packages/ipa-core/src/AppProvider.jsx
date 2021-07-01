@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
@@ -307,7 +307,7 @@ class AppProvider extends React.Component {
       if (scriptPlugins) {
         scriptPlugins.forEach((filename) => {
           try {
-            let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
+            let funcs = require('../../../../../app/ipaCore/scriptPlugins/' + filename)
             for (let fnName in funcs) {
               addScriptFunction(funcs[fnName])
             }
@@ -333,7 +333,7 @@ class AppProvider extends React.Component {
       if (this.props.ipaConfig && this.props.ipaConfig.redux && this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
         this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
           try {
-            let slice = require('../../../../app/ipaCore/redux/' + sliceFile.file).default
+            let slice = require('../../../../../app/ipaCore/redux/' + sliceFile.file).default
             let newReducer = addReducerSlice({name: sliceFile.name, slice: slice})
             store.replaceReducer(newReducer)
           } catch(e) {
@@ -360,7 +360,7 @@ class AppProvider extends React.Component {
           let dashComponents = []
           this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
             try {
-              let dashComp = require('../../../../app/ipaCore/components/' + dashCompFile.file).default
+              let dashComp = require('../../../../../app/ipaCore/components/' + dashCompFile.file).default
               dashComponents.push({name: dashCompFile.name, component: dashComp})
             } catch(e) {
               console.error(e)
@@ -383,7 +383,7 @@ class AppProvider extends React.Component {
           let entityActionComponents = []
           this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
             try {
-              let actComp = require('../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
+              let actComp = require('../../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
               entityActionComponents.push({name: actionCompFile.name, component: actComp})
             } catch(e) {
               console.error(e)
@@ -397,7 +397,7 @@ class AppProvider extends React.Component {
           let entityDataComponents = []
           this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
             try {
-              let dataComp = require('../../../../app/ipaCore/components/'+ dataCompFile.file)
+              let dataComp = require('../../../../../app/ipaCore/components/'+ dataCompFile.file)
               let dataCompFactory = dataComp[dataCompFile.name+'Factory']
               entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
             } catch(e) {
@@ -435,7 +435,7 @@ class AppProvider extends React.Component {
           let link = document.createElement('link')
           link.rel = 'stylesheet'
           link.type = 'text/css'
-          link.href = '../../../../app/ipaCore/css/'+ styleSheet
+          link.href = '../../../../../app/ipaCore/css/'+ styleSheet
           link.media = 'all'
           head.appendChild(link)
         })
@@ -576,7 +576,7 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
 
     let component
     try {
-      component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
+      component = require('../../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
       component = asIpaPage(component)
       console.log(pageComponent + ' loaded from application')
     } catch(e) {

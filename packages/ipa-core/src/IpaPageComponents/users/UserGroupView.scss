@@ -11,6 +11,7 @@
         margin-bottom: 0px;
     }
 
+
     .user-group-list-item {
         list-style-type: none;
         border: 1px solid lightgray;
@@ -143,6 +144,12 @@
 
         .row1 {
 
+            .usergroup-info {
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+            }
+
             .usergroup-name {
                 display: flex;
                 align-items: flex-end;
@@ -195,6 +202,8 @@
             flex-direction: row;
             height: 100%;
             padding-left: 50px;
+            width: 100%;
+            overflow-y: auto;
 
             .usergroup-members {
                 width: 50%;
@@ -223,6 +232,10 @@
                 }
             }
         }
+
+        .row2.table {
+            margin-bottom: 30px;
+        }
     }
 
     .user-mode-view {
@@ -246,6 +259,7 @@
             flex-direction: row;
             height: 100%;
             padding-left: 50px;
+            overflow-y: auto;
 
             .member-usergroups {
                 width: 50%;

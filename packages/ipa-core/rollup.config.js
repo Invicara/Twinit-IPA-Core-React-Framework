@@ -17,13 +17,13 @@
 
 import json from 'rollup-plugin-json'
 import resolve from 'rollup-plugin-node-resolve'
-import path from 'path';
 // Convert CJS modules to ES6 so they can be included in bundle
 import commonjs from 'rollup-plugin-commonjs'
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import postcss from 'rollup-plugin-postcss';
 import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
+import image from '@rollup/plugin-image';
 
 //We use a function and not a variable bc multi-module bundle can have trouble with shared plugin instances as per https://github.com/rollup/rollupjs.org/issues/69#issuecomment-306062235
 const getPlugins = () => [
@@ -33,6 +33,7 @@ const getPlugins = () => [
         extensions: ['.js', '.jsx', '.css', '.scss', '.svg']
     }),
     postcss(),
+    image({include:['src/IpaIcons/**/*']}),
     babel({
         exclude: 'node_modules/**',
         sourceMaps: false,
@@ -51,7 +52,6 @@ const getPlugins = () => [
         targets: [
             {src: 'src/img/**/*', dest: 'modules/img'},
             {src: 'src/*/*.scss', dest: 'modules/styles'},
-            {src: 'src/IpaUtils/ScriptHelper.js', dest: 'modules/IpaUtils'},
             {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'}
         ]
     })]
@@ -69,74 +69,29 @@ const external = ['lodash', 'bootstrap', 'classnames',
     '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path', 'json5',
-    path.resolve( __dirname, 'src/IpaUtils/ScriptHelper.js' ),
 
 ]
 
-export default [{
-    input: 'src/main.js',
+export default {
+    input: {
+        'IpaControls':'src/IpaControls/main.js',
+        'IpaUtils':'src/IpaUtils/main.js',
+        'IpaDialogs':'src/IpaDialogs/main.js',
+        'IpaPageComponents':'src/IpaPageComponents/main.js',
+        'IpaRedux':'src/redux/main.js',
+        'IpaLayouts':'src/IpaLayouts/main.js',
+    },
     output: {
-        file: 'modules/index.js',
+        dir: 'modules',
         format: 'cjs',
-        name: 'Main',
-        sourcemap: false
+        name: 'IpaControls',
+        sourcemap: false,
+        entryFileNames: '[name]/index.js',
     },
     plugins: [
-        cleaner({targets: ['./dist']}),
         cleaner({targets: ['./modules']}),
+        cleaner({targets: ['./dist']}),
         ...getPlugins()
     ],
     external
-}, {
-    input: 'src/IpaControls/main.js',
-    output: {
-        file: 'modules/IpaControls/index.js',
-        format: 'cjs',
-        name: 'IpaControls',
-        sourcemap: false
-    },
-    plugins: [
-      ...getPlugins()
-    ],
-    external
-}, {
-  input: 'src/IpaDialogs/main.js',
-  output: {
-    file: 'modules/IpaDialogs/index.js',
-    format: 'cjs',
-    name: 'IpaDialogs',
-    sourcemap: false
-  },
-  plugins: getPlugins(),
-  external
-}, {
-  input: 'src/IpaPageComponents/main.js',
-  output: {
-    file: 'modules/IpaPageComponents/index.js',
-    format: 'cjs',
-    name: 'IpaPageComponents',
-    sourcemap: false
-  },
-  plugins: getPlugins(),
-  external
-}, {
-    input: 'src/IpaUtils/main.js',
-    output: {
-        file: 'modules/IpaUtils/index.js',
-        format: 'cjs',
-        name: 'C',
-        sourcemap: false
-    },
-    plugins: getPlugins(),
-    external
-},{
-  input: 'src/redux/main.js',
-  output: {
-    file: 'modules/IpaRedux/index.js',
-    format: 'cjs',
-    name: 'IpaRedux',
-    sourcemap: false
-  },
-  plugins: getPlugins(),
-  external
-}];
+};
