@@ -663,13 +663,13 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
   //also add Sisense url to endPointConfig
   if (hasSisenseConnectors(config)) {
 
-    let loginPageComponent = getPageComponent('SisenseLoginPage')
-    let logoutPageComponent = getPageComponent('SisenseLogoutPage')
+    // let loginPageComponent = getPageComponent('SisenseLoginPage')
+    // let logoutPageComponent = getPageComponent('SisenseLogoutPage')
 
     pRoutes.push(<Route exact path='/sisense-login' key='sisenseLoginPage'
-                      component={loginPageComponent}/>);
+                      component={SisenseLoginPage}/>);
     pRoutes.push(<Route exact path='/sisense-logout' key='sisenseLogoutPage'
-                      component={logoutPageComponent}/>);
+                      component={SisenseLogoutPage}/>);
 
     let sisenseEndpointConfig = {sisenseBaseUrl: getSisenseBasePath(config)}
     let newEndPointConfig = {...endPointConfig, ...sisenseEndpointConfig}

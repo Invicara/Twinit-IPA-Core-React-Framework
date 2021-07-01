@@ -2,11 +2,8 @@ import React from "react";
 import _ from "lodash";
 import {IafSession, IafDataSource} from "@invicara/platform-api";
 
-//const sisenseBaseUrl = endPointConfig.sisenseBaseUrl;
-
 class SisenseLoginPage extends React.Component {
     componentDidMount() {
-        //IafSession.setConfig(endPointConfig);
         this.createSisenseToken();
     }
 
