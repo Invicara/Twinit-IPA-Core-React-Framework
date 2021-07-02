@@ -1,0 +1,73 @@
+.datasource-list-item {
+    list-style-type: none;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 5px 5px 5px 20px;
+    box-shadow: 2px 2px lightgrey;
+    display: flex;
+    flex-direction: column;
+
+    .card-row1 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .datasource-info {
+            width: 30%;
+
+            .datasource-name {
+                color: var(--app-accent-color)
+            }
+            
+            .datasource-desc {
+                padding-left: 10px;
+                font-size: 0.75rem;
+                font-style: italic;
+            }
+        }
+    }
+
+}
+
+.datasource-list-item:hover {
+    background-color: #f2f2f2;
+}
+
+.card-actions {
+    align-self: center;
+    color: var(--app-accent-color);
+
+    i {
+        cursor: pointer;
+    }
+}
+
+.card-row2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border-top: solid 2px #f2f2f2;
+    padding: 10px;
+    margin-top: 10px;
+
+    .confirm-text {
+        font-weight: bold;
+    }
+
+    i {
+        padding-right: 0px;
+    }
+
+    a {
+        color: var(--app-accent-color);
+    }
+}
+
+.card-row2:hover {
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid var(--app-accent-color);
+}
+
+
