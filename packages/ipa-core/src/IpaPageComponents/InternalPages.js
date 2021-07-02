@@ -7,6 +7,7 @@ import DownloadsView from './DownloadsView'
 import UserGroupView from './users/UserGroupView'
 import SisenseLoginPage from './sisense/SisenseLoginPage'
 import SisenseLogoutPage from './sisense/SisenseLogoutPage'
+import DatasourcesView from './datasources/DatasourcesView'
 
 const InternalPages = {
     'entities/EntityView': EntityView,
@@ -16,7 +17,8 @@ const InternalPages = {
     'DownloadsView': DownloadsView,
     'users/UserGroupView': UserGroupView,
     'SisenseLoginPage': SisenseLoginPage,
-    'SisenseLogoutPage': SisenseLogoutPage
+    'SisenseLogoutPage': SisenseLogoutPage,
+    'datasources/DatasourcesView': DatasourcesView
 }
 
 export default InternalPages
