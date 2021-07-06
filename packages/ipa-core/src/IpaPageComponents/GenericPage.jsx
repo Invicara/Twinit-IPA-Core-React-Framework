@@ -247,8 +247,14 @@ const withGenericPage = (PageComponent) => {
 
       if (this.props.location.search) {
         let rawParams = this.props.location.search.split('?')[1];
-        //using decoder to parse boolean and int https://github.com/ljharb/qs/issues/91#issuecomment-437926409
-        let queryParams = qs.parse(rawParams, {
+        // using decoder to parse boolean and int https://github.com/ljharb/qs/issues/91#issuecomment-437926409
+        // qs will also limit specifying indices in an array to a maximum index of 20. Any array members with an 
+        // index of greater than 20 will instead be converted to an object with the index as the key. 
+        // This is needed to handle cases when someone sent, for example, a[999999999] and it will take significant time to iterate over this huge array.
+        // This limit can be overridden by passing an arrayLimit option: We are going to use an arraylimit of 100 to cover almost every case, 
+        // if we are still finding more bugs on this parse, we will need to implement another solution for these arrays
+
+        let queryParams = qs.parse(rawParams, { arrayLimit: 100,
               decoder(str, decoder, charset) {
                     const strWithoutPlus = str.replace(/\+/g, ' ');
                     if (charset === 'iso-8859-1') {
