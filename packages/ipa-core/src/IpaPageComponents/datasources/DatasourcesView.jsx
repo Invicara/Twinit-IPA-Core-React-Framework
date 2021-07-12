@@ -29,10 +29,13 @@ class DatasourcesView extends React.Component {
       super(props);
 
       this.state = {
-        orchestrators: []
+        orchestrators: [],
+        runs: {},
+        runInterval: null
       }
 
       this._loadAsyncData = this._loadAsyncData.bind(this)
+      this.getRuns = this.getRuns.bind(this)
 
     }
 
@@ -41,15 +44,43 @@ class DatasourcesView extends React.Component {
       this._loadAsyncData()
       console.log('props', this.props);
       console.log('state', this.state);
-  }
+    }
+
+    componentWillUnmount() {
+      clearInterval(this.state.runInterval)
+      this.setState({runInterval: null})
+    }
 
     async _loadAsyncData() {
        
-      let orchs = await IafDataSource.getOrchestrators()
-      this.setState({orchestrators: orchs._list})
-      this.props.onLoadComplete()
-
+      IafDataSource.getOrchestrators().then((orchs) => {
+        let allOrchs = orchs._list
+        allOrchs.sort((a,b) => a._name.localeCompare(b._name))
+        this.setState({orchestrators: allOrchs})
+        this.props.onLoadComplete()
+      })
+      
+      this.getRuns()
+      let interval = setInterval(this.getRuns, 5000)
+      this.setState({runInterval: interval})
+      
     }
+
+    async getRuns() {
+      IafDataSource.getOrchestratorRuns().then((runs) => {
+
+        let groupedRuns = {}
+        runs.forEach((run) => {
+          if (!groupedRuns[run._orchid]) {
+            groupedRuns[run._orchid] = []
+          }
+
+          groupedRuns[run._orchid].push(run)
+        })
+        this.setState({runs: groupedRuns})
+      })
+    }
+
 
     render() {
 
@@ -60,7 +91,7 @@ class DatasourcesView extends React.Component {
             <hr/>
           </div>
           <div className='datasources-list'>{this.state.orchestrators.map((o) => {
-            return <DatasourceCard orchestrator={o} />
+            return <DatasourceCard key={o.id} orchestrator={o} runs={this.state.runs[o.id]}/>
           })}</div>
         </div>
 
