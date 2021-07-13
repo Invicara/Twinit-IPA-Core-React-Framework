@@ -8,13 +8,16 @@
     display: flex;
     flex-direction: column;
 
+    .error {
+        color: var(--app-accent-color)
+    }
+
     .card-row1 {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
 
-        .datasource-info {
-            width: 30%;
+        .datasource-name {
+            flex-basis: 40%;
 
             .datasource-name {
                 color: var(--app-accent-color)
@@ -25,6 +28,11 @@
                 font-size: 0.75rem;
                 font-style: italic;
             }
+        }
+
+        .datasource-info {
+            flex-basis: 40%;
+            padding-left: 10px;
 
             .info-point {
                 display: flex;
@@ -81,21 +89,7 @@
     }
 }
 
-.datasource-history-table {
-    th {
-        padding: 5px;
-        color: var(--app-accent-color);
-        border-bottom: 1px solid black;
-    }
 
-    td {
-        padding: 5px;
-    }
-}
-
-.error {
-    color: var(--app-accent-color)
-}
 
 
 

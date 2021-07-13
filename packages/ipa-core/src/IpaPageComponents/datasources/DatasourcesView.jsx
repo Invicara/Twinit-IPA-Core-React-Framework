@@ -35,6 +35,7 @@ class DatasourcesView extends React.Component {
       }
 
       this._loadAsyncData = this._loadAsyncData.bind(this)
+      this.getOrchestrators = this.getOrchestrators.bind(this)
       this.getRuns = this.getRuns.bind(this)
 
     }
@@ -42,8 +43,8 @@ class DatasourcesView extends React.Component {
     async componentDidMount() {
 
       this._loadAsyncData()
-      console.log('props', this.props);
-      console.log('state', this.state);
+      console.log('props', this.props)
+      console.log('state', this.state)
     }
 
     componentWillUnmount() {
@@ -53,17 +54,21 @@ class DatasourcesView extends React.Component {
 
     async _loadAsyncData() {
        
-      IafDataSource.getOrchestrators().then((orchs) => {
+      await this.getOrchestrators()
+      
+      this.getRuns()
+      let interval = setInterval(this.getRuns, 5000)
+      this.setState({runInterval: interval})
+
+    }
+
+    async getOrchestrators() {
+      return IafDataSource.getOrchestrators().then((orchs) => {
         let allOrchs = orchs._list
         allOrchs.sort((a,b) => a._name.localeCompare(b._name))
         this.setState({orchestrators: allOrchs})
         this.props.onLoadComplete()
       })
-      
-      this.getRuns()
-      let interval = setInterval(this.getRuns, 5000)
-      this.setState({runInterval: interval})
-      
     }
 
     async getRuns() {
@@ -91,7 +96,7 @@ class DatasourcesView extends React.Component {
             <hr/>
           </div>
           <div className='datasources-list'>{this.state.orchestrators.map((o) => {
-            return <DatasourceCard key={o.id} orchestrator={o} runs={this.state.runs[o.id]}/>
+            return <DatasourceCard key={o.id} orchestrator={o} runs={this.state.runs[o.id]} readonly={!this.props.handler.config.allowManageDatasources} onDidUpdate={this.getOrchestrators}/>
           })}</div>
         </div>
 
