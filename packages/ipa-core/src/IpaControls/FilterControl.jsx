@@ -67,27 +67,6 @@ const isNumericOp = (op) => {
   )
 }
 
-
-const isTextOperator = (fop) => {
-  return (
-    fop == "equals" ||
-    fop == "does not equal" ||
-    fop == "starts with" ||
-    fop == "ends with" ||
-    fop == "contains" ||
-    fop == "does not start with" ||
-    fop == "does not end with" ||
-    fop == "does not contain"
-  )
-}
-
-const isRangeOperator = (fop) => {
-  return (
-    fop == "between" || fop == "outside of"
-  )
-}
-
-
 const getFormattedDateFromTimestamp = (ts, type) => {
   let d = new Date(ts)
   if (type=="dateTime")
