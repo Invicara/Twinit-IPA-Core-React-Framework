@@ -47,6 +47,9 @@ const getScriptedSelectQuery = (selector, value) => {//TODO make this code clean
     return query;
 }
 
+//Other
+const asOptional = (object, path) => _.isEmpty(_.get(object, path)) ? [] : [object];
+
 const getTreeSelectQuery = (selector, filteringNodes) => {
     const getQueryNodesFor = (nodeNames) => {
         return {
