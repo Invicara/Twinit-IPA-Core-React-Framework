@@ -146,7 +146,10 @@ export default class ProjectPickerModal extends React.Component {
     const {testConfig, onConfigLoad, defaultConfig} = this.props;
     try {
       if(userConfig) {
-        let _userData = JSON.parse(_.get(userConfig, '_versions.0._userData'));
+
+        let latestUserConfigVersion = _.find(userConfig._versions, {_version: userConfig._tipVersion})
+        let _userData = JSON.parse(latestUserConfigVersion._userData)
+
         _userData._id = userConfig._id;
 
         const routes = testConfig(_userData);
