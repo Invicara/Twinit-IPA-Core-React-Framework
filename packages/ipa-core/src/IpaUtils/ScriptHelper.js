@@ -24,8 +24,9 @@ async function loadScript(query, ctx) {
   }
 
   let script = scripts[0];
+  let tipScriptVersion = _.find(script._versions, {_version: script._tipVersion})
 
-  let res = await expression.evalExpressions(script._versions[0]._userData, undefined, ctx || _expressionExecCtx);
+  let res = await expression.evalExpressions(tipScriptVersion._userData, undefined, ctx || _expressionExecCtx);
 
   return res;
 }
