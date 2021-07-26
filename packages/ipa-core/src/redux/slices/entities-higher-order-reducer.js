@@ -130,7 +130,10 @@ export const entitiesSliceFactory = (identifier = '') => {
         try {
             dispatch(setSelecting(true))
             const {entityFromModelScript} = getCurrentEntityType(getState());
-            const entitiesToSelect = await Promise.all(modelEntities.map(modelEntity => getEntityFromModel(entityFromModelScript, modelEntity)));
+            const entitiesToSelect = await Promise.all(modelEntities.map(modelEntity => {
+                const foundEntity = getAllCurrentEntities(getState()).find(e => modelEntity.id === e.modelViewerIds[0])
+                return !_.isEmpty(foundEntity)  ? new Promise((resolve)=>resolve(foundEntity)) : getEntityFromModel(entityFromModelScript, modelEntity)
+            }));
             const filteredToSelect = entitiesToSelect.filter(e => e)
             if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, ({_id}) => _id))
                 dispatch(setEntities({entities: filteredToSelect, shouldIsolate: false}))
