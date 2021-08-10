@@ -129,7 +129,7 @@ export const entitiesSliceFactory = (identifier = '') => {
     //Thunks
     const selectEntitiesFromModels = (modelEntities) => async (dispatch, getState) => {
         try {
-            dispatch(setSelecting(true))
+            if (modelEntities.length === 1) dispatch(setSelecting(true))
             const {entityFromModelScript} = getCurrentEntityType(getState());
             const entitiesToSelect = await Promise.all(modelEntities.map(modelEntity => {
                 const foundEntity = getAllCurrentEntities(getState()).find(e => modelEntity.id === e.modelViewerIds[0])
