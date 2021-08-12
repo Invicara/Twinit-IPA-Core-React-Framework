@@ -614,7 +614,7 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
       title: handler.title || 'no title',
       icon: (handler.icon || ''),
       name: handlerName,
-      exact: handler.pageComponent !== 'knack/KnackView',
+      exact: true,
     };
 
     pRoutes.push(<Route path={item.path} key={item.path} component={component} exact={item.exact}/>);
