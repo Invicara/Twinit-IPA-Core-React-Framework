@@ -1,6 +1,6 @@
 ---
 title: Upload Files Wizard
-sidebar_position: 13
+sidebar_position: 15
 ---
 **Prerelease**
 

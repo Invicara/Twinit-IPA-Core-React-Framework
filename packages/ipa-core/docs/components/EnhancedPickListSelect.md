@@ -1,6 +1,6 @@
 ---
 title: EnhancedPickListSelect
-sidebar_position: 15
+sidebar_position: 18
 ---
 
 This control can be used to display linked pick lists. Linked means that the values of the second pick list is determined by the value selected in the first one. The control also allows the possibility to add new options to a list.
