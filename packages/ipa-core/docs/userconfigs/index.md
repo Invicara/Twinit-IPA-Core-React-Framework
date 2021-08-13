@@ -1,5 +1,5 @@
 ---
-title: User Configurations
+title: Overview
 sidebar_position: 6
 ---
 
