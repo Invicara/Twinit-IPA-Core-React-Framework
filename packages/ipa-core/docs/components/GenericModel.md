@@ -1,6 +1,6 @@
 ---
 title: EnhancedPickListSelect
-sidebar_position: 16
+sidebar_position: 19
 ---
 A generic modal dialog with a title bar and a close button. All other content is supplied via a “modal body” component. GenericModal is often wrapped by a HOC to create a specific template.  
   
