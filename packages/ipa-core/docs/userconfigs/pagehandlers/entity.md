@@ -53,8 +53,6 @@ The property name must match `type.singular`. The script must also return Entiti
 }
 ```
 
-See: [Data Models for Digital Twin Objects](NEED_LINK)
-
 ## `selectBy`
 
 **Optional (if using `entitySelectByConfig`)** Specify the ways in which the user can find entities. This controls which options appear in and are used by the Fetch button.If using `entitySelectByConfig`, providing selectBy configuration here will override the top level config in `entitySelectByConfig`.
