@@ -5,6 +5,7 @@ import _ from 'lodash'
 
 import './EntityListView.scss'
 import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
+import {isValidUrl} from '../../IpaUtils/helpers'
 
 
 export const sortEntities = (entitySingular) =>{
@@ -35,13 +36,16 @@ export const EntityListView = ({config, entities, onDetail, actions, context, en
     
     const buildCell = instance => (col, i) => {
         const value = _.get(instance, col.accessor);
+        let dispValue = value && typeof value === 'string' ? value : value ? value.val : null
+        dispValue = isValidUrl(dispValue) ? <a href={dispValue} target="_blank">{dispValue}</a> : dispValue
+
         const first = i === 0;
         return <div key={i} className={clsx({
             'content-column': true,
             ' first': first
         })}
                     {...(first && {onClick: () => onDetail(instance)})}>
-            {value && typeof value === 'string' ? value : value ? value.val : null}
+            {dispValue}
         </div>
     };    
 
