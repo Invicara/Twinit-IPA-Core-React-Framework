@@ -53,6 +53,8 @@ const withGenericPage = (PageComponent) => {
     }
 
     componentDidMount() {
+
+      console.log('generic onmount locatiom', window.location.href)
       this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
       this._loadPageData();
       this.onNavigated();
