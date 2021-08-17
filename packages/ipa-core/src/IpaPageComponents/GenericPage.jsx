@@ -64,7 +64,7 @@ const withGenericPage = (PageComponent) => {
       if (hrefSplits[1] === 'route=sisense-login') {
         let redirectTo = {
           pathname: '/sisense-login',
-          search: hrefSplits[2]
+          search: hrefSplits[2].slice(0, -2)
         }
         this.setState({redirectTo})
       }
