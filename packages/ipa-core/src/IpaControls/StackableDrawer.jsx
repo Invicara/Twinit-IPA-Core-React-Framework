@@ -7,7 +7,8 @@ import './StackableDrawer.scss'
 const toggleHeight = 50;
 const DEFAULT_DRAWER_WIDTH = 360;
 
-export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true, onOpen=()=>{}, onClose=()=>{}}) => {
+export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true, onOpen=()=>{}, onClose=()=>{}, isDrawerOpen}) => {
+
   const [stableWidth, setStableWidth] = useState(defaultOpen ? DEFAULT_DRAWER_WIDTH : 0)
   const drawer = useRef();
   const toggleOpen = useCallback(() => {
@@ -16,6 +17,9 @@ export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true,
     setStableWidth(stableWidth => stableWidth === 0 ? DEFAULT_DRAWER_WIDTH : 0)
   }, [stableWidth])
 
+  useEffect(() => {
+    if(isDrawerOpen)toggleOpen()
+  }, [isDrawerOpen])
 
   useEffect(() => {
     interact(drawer.current).resizable({
