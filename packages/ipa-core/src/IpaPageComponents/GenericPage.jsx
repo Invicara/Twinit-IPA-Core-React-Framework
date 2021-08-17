@@ -61,6 +61,7 @@ const withGenericPage = (PageComponent) => {
 
       if (hrefSplits[1] === 'route=sisense-login') {
         let newPath = hrefSplits[0] + '/#/sisense-login?' + hrefSplits[2]
+        console.log('newPath', newPath)
         this.props.history.push(newPath)
       }
 
