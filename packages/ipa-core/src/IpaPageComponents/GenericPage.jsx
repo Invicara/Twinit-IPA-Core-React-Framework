@@ -55,6 +55,16 @@ const withGenericPage = (PageComponent) => {
     componentDidMount() {
 
       console.log('generic onmount locatiom', window.location.href)
+
+      let hrefSplits = window.location.href.split('?')
+      console.log(hrefSplits)
+
+      if (hrefSplits[1] === 'route=sisense-login') {
+        let newPath = hrefSplits[0] + '/#/sisense-login?' + hrefSplits[2]
+        this.props.history.push(newPath)
+      }
+
+
       this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
       this._loadPageData();
       this.onNavigated();
