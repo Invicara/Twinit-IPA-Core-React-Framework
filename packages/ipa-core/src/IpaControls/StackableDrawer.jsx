@@ -19,6 +19,7 @@ export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true,
 
   useEffect(() => {
     if(isDrawerOpen)toggleOpen()
+    else setStableWidth(0)
   }, [isDrawerOpen])
 
   useEffect(() => {
@@ -43,10 +44,10 @@ export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true,
   const open = stableWidth !== 0;
 
   return <div ref={drawer} className={'drawer'} style={{width: stableWidth, minWidth: stableWidth}} >
-    <div style={{top: `${20 + toggleHeight * (level - 1)}px`}}
+    {iconKey && <div style={{top: `${20 + toggleHeight * (level - 1)}px`}}
          className={clsx({'drawer-toggle': true, 'drawer-toggle-open': open})} onClick={toggleOpen}>
       <i className={`fas ${iconKey}`}/>
-    </div>
+    </div>}
     <div className={clsx({'drawer-content': true, 'drawer-content-open': open})}>{children}</div>
   </div>
 }
