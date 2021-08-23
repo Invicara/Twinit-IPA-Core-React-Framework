@@ -47,7 +47,7 @@ class SisenseLoginPage extends React.Component {
         }
        
         if(queryParams) {
-            redirect_url += '?'+ queryParams
+            redirect_url += '&'+ queryParams
         }
 
         console.log(redirect_url)
