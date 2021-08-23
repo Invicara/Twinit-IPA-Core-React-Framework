@@ -16,7 +16,6 @@
  */
 
 import React from 'react';
-import { Redirect } from 'react-router-dom'
 import qs from 'qs';
 import _ from 'lodash'
 
@@ -43,8 +42,7 @@ const withGenericPage = (PageComponent) => {
         userConfig: null,
         isLoading: true,
         isPageLoading: true,
-        queryParams: {},
-        redirectTo: null
+        queryParams: {}
       };
 
       this._loadPageData = this._loadPageData.bind(this);
@@ -62,13 +60,8 @@ const withGenericPage = (PageComponent) => {
       console.log(hrefSplits)
 
       if (hrefSplits[1] === 'route=sisense-login') {
-        let redirectTo = {
-          pathname: '/sisense-login',
-          search: hrefSplits[2].slice(0, -2)
-        }
-        this.setState({redirectTo})
+        window.location.replace(hrefSplits[0] + '#/sisense-login?' + hrefSplits[2].slice(0, -2))
       }
-
 
       this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
       this._loadPageData();
@@ -334,29 +327,25 @@ const withGenericPage = (PageComponent) => {
 
     render() {
 
-      let content
-      if (this.state.redirectTo) content = <Redirect to={this.state.redirectTo} />
-      else  
-        content = <div className='page'>
-          <div className="generic-page-body">
-          {this.state.isPageLoading ?
-            <div style={{padding: '40px'}}>
-              <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
-            </div> : ''
-          }
+      return (
+        <div className='page'>
+            <div className="generic-page-body">
+            {this.state.isPageLoading ?
+              <div style={{padding: '40px'}}>
+                <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
+              </div> : ''
+            }
 
-          {!this.state.isLoading && <PageComponent {...this.props}
-                                        onLoadComplete={this.onLoadComplete}
-                                        handler={this.state.handler}
-                                        onNavigate={this.onNavigate}
-                                        setQueryParams={this.setQueryParams}
-                                        queryParams={this.state.queryParams}
-                                    />}
+            {!this.state.isLoading && <PageComponent {...this.props}
+                                          onLoadComplete={this.onLoadComplete}
+                                          handler={this.state.handler}
+                                          onNavigate={this.onNavigate}
+                                          setQueryParams={this.setQueryParams}
+                                          queryParams={this.state.queryParams}
+                                      />}
 
-        </div>
-    </div>
-
-      return content
+          </div>
+      </div>)
     }
 
   };
