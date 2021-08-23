@@ -38,12 +38,15 @@ class SisenseLoginPage extends React.Component {
         let redirect_url = this.getSisenseBaseUrl() + "/jwt?jwt=" + encodedToken;
 
         //let url = _.get(this, "props.location.href", "");
-        let url = window.location.href
+        let urlstring = window.location.href
+        console.log('urlstring', urlstring)
+        let url = new URL(window.location.href)
         console.log('url', url)
+        console.log('url.search', url.search)
         // let otherurl = window.location.href
         // console.log('otherurl', otherurl)
 
-        const urlParams = new URLSearchParams(url);
+        const urlParams = new URLSearchParams(url.search);
         console.log('return_to', urlParams.get('return_to'))
 
         if(urlParams.has('return_to')) {
