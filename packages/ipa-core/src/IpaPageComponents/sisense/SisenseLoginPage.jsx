@@ -40,6 +40,7 @@ class SisenseLoginPage extends React.Component {
         let url = _.get(this, "props.location.href", "");
 
         const urlParams = new URLSearchParams(url);
+        console.log(urlParams)
 
         if(urlParams.has('return_to')) {
             redirect_url += "&return_to=" + urlParams.get('return_to');
@@ -47,7 +48,7 @@ class SisenseLoginPage extends React.Component {
 
         console.log(redirect_url)
 
-        window.location.href = redirect_url;
+        //window.location.href = redirect_url;
     }
 
     getProject() {
