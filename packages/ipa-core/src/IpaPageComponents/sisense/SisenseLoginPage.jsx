@@ -47,12 +47,12 @@ class SisenseLoginPage extends React.Component {
         }
        
         if(queryParams) {
-            redirect_url += queryParams
+            redirect_url += '?'+ queryParams
         }
 
         console.log(redirect_url)
 
-        //window.location.href = redirect_url;
+        window.location.href = redirect_url;
     }
 
     getProject() {
