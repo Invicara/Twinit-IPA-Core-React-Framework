@@ -13,7 +13,7 @@ class SisenseLoginPage extends React.Component {
         const allOrchestrators = await IafDataSource.getOrchestrators();
         const sisenseSSOOrch = _.find(allOrchestrators._list, {_userType: 'Sisense_SSO_JWT_Generator'});
 
-        if(!sisenseSSOOrch) {
+        if (!sisenseSSOOrch) {
             console.error("Sisense SSO Orchestrator is not added in datasources for this project.");
             return;
         }

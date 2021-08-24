@@ -18,6 +18,7 @@
 import React from 'react';
 import qs from 'qs';
 import _ from 'lodash'
+import { Redirect } from 'react-router-dom'
 
 import * as PropTypes from "prop-types";
 import {PopoverMenuView} from "../IpaLayouts/PopoverMenuView";
@@ -42,7 +43,8 @@ const withGenericPage = (PageComponent) => {
         userConfig: null,
         isLoading: true,
         isPageLoading: true,
-        queryParams: {}
+        queryParams: {},
+        redirectTo: null
       };
 
       this._loadPageData = this._loadPageData.bind(this);
@@ -59,13 +61,21 @@ const withGenericPage = (PageComponent) => {
       let hrefSplits = window.location.href.split('?')
       console.log(hrefSplits)
 
-      if (hrefSplits[1] === 'route=sisense-login') {
-        window.location.replace(hrefSplits[0] + '#/sisense-login?' + hrefSplits[2].slice(0, -2))
-      }
+      if (hrefSplits[1].includes('route=')) {
+        let routeSplit = hrefSplits[1].split("=")
+        console.log(routeSplit)
+        let redirectTo = {
+          pathname: '#/' + routeSplit[1],
+          search: '?' + hrefSplits[2]
+        }
+        console.log(redirectTo)
 
-      this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
-      this._loadPageData();
-      this.onNavigated();
+        this.setState({redirectTo, isPageLoading: false})
+      } else {
+        this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
+        this._loadPageData();
+        this.onNavigated();
+      }
     }
 
     componentDidUpdate(prevProps) {
@@ -330,13 +340,14 @@ const withGenericPage = (PageComponent) => {
       return (
         <div className='page'>
             <div className="generic-page-body">
-            {this.state.isPageLoading ?
+            {this.state.isPageLoading &&
               <div style={{padding: '40px'}}>
                 <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
-              </div> : ''
-            }
+              </div>}
+            
+            {!this.state.isLoading && redirectTo && <Redirect to={this.state.redirectTo} />}
 
-            {!this.state.isLoading && <PageComponent {...this.props}
+            {!this.state.isLoading && !redirectTo && <PageComponent {...this.props}
                                           onLoadComplete={this.onLoadComplete}
                                           handler={this.state.handler}
                                           onNavigate={this.onNavigate}
