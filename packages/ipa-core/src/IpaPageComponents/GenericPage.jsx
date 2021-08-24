@@ -61,7 +61,7 @@ const withGenericPage = (PageComponent) => {
       let hrefSplits = window.location.href.split('?')
       console.log(hrefSplits)
 
-      if (hrefSplits[1].includes('route=')) {
+      if (hrefSplits.length > 1 && hrefSplits[1].includes('route=')) {
         let routeSplit = hrefSplits[1].split("=")
         console.log(routeSplit)
         let redirectTo = {
