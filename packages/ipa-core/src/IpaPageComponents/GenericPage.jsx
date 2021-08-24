@@ -345,9 +345,9 @@ const withGenericPage = (PageComponent) => {
                 <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
               </div>}
             
-            {!this.state.isLoading && redirectTo && <Redirect to={this.state.redirectTo} />}
+            {!this.state.isLoading && this.state.redirectTo && <Redirect to={this.state.redirectTo} />}
 
-            {!this.state.isLoading && !redirectTo && <PageComponent {...this.props}
+            {!this.state.isLoading && !this.state.redirectTo && <PageComponent {...this.props}
                                           onLoadComplete={this.onLoadComplete}
                                           handler={this.state.handler}
                                           onNavigate={this.onNavigate}
