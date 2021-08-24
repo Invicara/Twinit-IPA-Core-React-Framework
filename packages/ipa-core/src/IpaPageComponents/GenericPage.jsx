@@ -66,11 +66,11 @@ const withGenericPage = (PageComponent) => {
         console.log(routeSplit)
         let redirectTo = {
           pathname: '#/' + routeSplit[1],
-          search: '?' + hrefSplits[2]
+          search: '?' + hrefSplits[2].slice(0,-2)
         }
         console.log(redirectTo)
 
-        this.setState({redirectTo, isPageLoading: false})
+        this.setState({redirectTo, isLoading: false})
       } else {
         this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
         this._loadPageData();
