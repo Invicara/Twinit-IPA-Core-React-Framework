@@ -43,7 +43,7 @@ class SisenseLoginPage extends React.Component {
         let urlstringSplit = urlstring.split('?')
         console.log(urlstring, urlstringSplit)
         if (urlstringSplit.length > 1) {
-            queryParams = urlstringSplit[1]
+            queryParams = urlstringSplit[3]
         }
        
         if(queryParams) {
