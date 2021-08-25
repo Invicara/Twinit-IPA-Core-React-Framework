@@ -65,7 +65,7 @@ const withGenericPage = (PageComponent) => {
         let routeSplit = hrefSplits[1].split("=")
         console.log(routeSplit)
         let redirectTo = {
-          pathname: '#/' + routeSplit[1],
+          pathname: '/' + routeSplit[1],
           search: '?' + hrefSplits[2].slice(0,-2)
         }
         console.log(redirectTo)
@@ -354,7 +354,6 @@ const withGenericPage = (PageComponent) => {
                                           setQueryParams={this.setQueryParams}
                                           queryParams={this.state.queryParams}
                                       />}
-
           </div>
       </div>)
     }
