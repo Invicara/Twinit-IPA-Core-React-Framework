@@ -52,7 +52,19 @@ class SisenseLoginPage extends React.Component {
 
         console.log(redirect_url)
 
-        window.location.href = redirect_url;
+        let testget_url = this.getSisenseBaseUrl() + "/jwt?jwt=" + encodedToken;
+        console.log(testget_url)
+
+        fetch(testget_url, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            redirect: 'manual',
+            credentials: 'include'
+        })
+
+
+        //window.location.href = redirect_url;
     }
 
     getProject() {
