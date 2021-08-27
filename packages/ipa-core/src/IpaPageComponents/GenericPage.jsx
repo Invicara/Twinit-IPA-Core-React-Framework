@@ -18,6 +18,7 @@
 import React from 'react';
 import qs from 'qs';
 import _ from 'lodash'
+import { Redirect } from 'react-router-dom'
 
 import * as PropTypes from "prop-types";
 import {PopoverMenuView} from "../IpaLayouts/PopoverMenuView";
@@ -53,6 +54,7 @@ const withGenericPage = (PageComponent) => {
     }
 
     componentDidMount() {
+
       this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
       this._loadPageData();
       this.onNavigated();
@@ -316,27 +318,24 @@ const withGenericPage = (PageComponent) => {
     }
 
     render() {
+
       return (
         <div className='page'>
             <div className="generic-page-body">
+            {this.state.isPageLoading &&
+              <div style={{padding: '40px'}}>
+                <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
+              </div>}
 
-              {this.state.isPageLoading ?
-                <div style={{padding: '40px'}}>
-                  <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
-                </div> : ''
-              }
-
-              {!this.state.isLoading && <PageComponent {...this.props}
-                                            onLoadComplete={this.onLoadComplete}
-                                            handler={this.state.handler}
-                                            onNavigate={this.onNavigate}
-                                            setQueryParams={this.setQueryParams}
-                                            queryParams={this.state.queryParams}
-                                        />}
-
-            </div>
-        </div>
-      );
+            {!this.state.isLoading && <PageComponent {...this.props}
+                                          onLoadComplete={this.onLoadComplete}
+                                          handler={this.state.handler}
+                                          onNavigate={this.onNavigate}
+                                          setQueryParams={this.setQueryParams}
+                                          queryParams={this.state.queryParams}
+                                      />}
+          </div>
+      </div>)
     }
 
   };

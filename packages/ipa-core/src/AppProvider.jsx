@@ -20,7 +20,7 @@ import * as PropTypes from 'prop-types';
 import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
-import {IafSession, IafProj} from '@invicara/platform-api';
+import {IafSession, IafProj, IafDataSource} from '@invicara/platform-api';
 import { expression } from '@invicara/expressions'
 
 import EmptyConfig, {actualPage} from './emptyConfig';
@@ -107,6 +107,24 @@ class AppProvider extends React.Component {
     try {
       await IafSession.logout();
     } catch (e) {}
+
+    let sisUrl = sessionStorage.getItem('sisenseBaseUrl')
+
+    if (sisUrl) {
+      let sisenselogout_url = sisUrl + "/api/auth/logout"
+      fetch(sisenselogout_url, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        redirect: 'manual',
+        credentials: 'include'
+      }).catch((err) => {
+        console.error("ERROR LOGGING OUT OF SISENSE: " + sisenselogout_url)
+        console.error(err)
+      })
+      delete sessionStorage.sisenseBaseUrl
+    }
+
     // delete cached config
     delete sessionStorage.ipadt_configData;
     delete localStorage.ipadt_selectedItems;
@@ -443,8 +461,8 @@ class AppProvider extends React.Component {
     }
   }
 
-  testConfig(config) {
-    return calculateRoutes(config, this.state, this.props.ipaConfig);
+  async testConfig(config) {
+    return await calculateRoutes(config, this.state, this.props.ipaConfig);
   }
 
   showIpaModal(modalContent) {
@@ -454,6 +472,7 @@ class AppProvider extends React.Component {
 
   async onConfigLoad(config, routes, token, user) {
     console.log(config, routes)
+    routes = await routes
 
     //clear routes immediately so that the UI rmeoves the last project's routes
     this.setState({
@@ -552,7 +571,7 @@ const addScriptFunction = (fn) => {
   expression.use(fnWrapper)
 }
 
-function calculateRoutes(config, appContextProps, ipaConfig) {
+async function calculateRoutes(config, appContextProps, ipaConfig) {
   const pList = [];
   const pRoutes = [];
   const pGroups = [];
@@ -644,23 +663,66 @@ function calculateRoutes(config, appContextProps, ipaConfig) {
 
       let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
       if (sisenseConnector) {
-        sessionStorage.setItem('sisenseBaseUrl', sisenseConnector.config.url)
-        return true
+
+        let sisUrl = sisenseConnector.config.url
+        let lastChar = sisUrl.slice(-1)
+        if (lastChar === '/' || lastChar === '\\')
+          sisUrl = sisUrl.slice(0, -1)
+
+        sessionStorage.setItem('sisenseBaseUrl', sisUrl)
+        return sisUrl
       }
       else return false
 
     } else return false
   }
 
-  //if sisense connectors are configured, load the login and logout routes for Sisense SSO
-  //also add Sisense url to endPointConfig
-  if (hasSisenseConnectors(config)) {
+  /*
+   * If Sisense Connectors are configured then we need to sign in to Sisense
+   * This must be doen before any sisense content is needed
+  */
+  let sisenseUrl = hasSisenseConnectors(config)
+  if (sisenseUrl) {
+    const allOrchestrators = await IafDataSource.getOrchestrators();
+    const sisenseSSOOrch = _.find(allOrchestrators._list, {_userType: 'Sisense_SSO_JWT_Generator'});
 
-    pRoutes.push(<Route exact path='/sisense-login' key='sisenseLoginPage'
-                      component={InternalPages['SisenseLoginPage']}/>);
-    pRoutes.push(<Route exact path='/sisense-logout' key='sisenseLogoutPage'
-                      component={InternalPages['SisenseLogoutPage']}/>);
-    console.log('Sisense pages loaded from framework')
+    if (!sisenseSSOOrch) {
+      console.error('Sisense is configured in the project but the Sisense SSO Orchestrator is not present')
+    } else {
+      const orchId = sisenseSSOOrch.id;
+
+      const params = {
+          orchestratorId: orchId,
+          _actualparams: [
+              {
+                  sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
+                  params: {
+                      userGroupId: appContextProps.selectedItems.selectedUserGroupId,
+                      projectNamespace: appContextProps.selectedItems.selectedProject._namespaces[0]
+                  }
+              }
+          ]
+      }
+
+      const orchResult = await IafDataSource.runOrchestrator(orchId, params);
+      const encodedToken = _.get(orchResult, '_result.jwt');
+
+      let sisensejwt_url = sisenseUrl + "/jwt?jwt=" + encodedToken;
+
+      fetch(sisensejwt_url, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        redirect: 'manual',
+        credentials: 'include'
+      }).catch((err) => {
+        console.error("ERROR SIGNING IN TO SISENSE: " + sisensejwt_url)
+        console.error(err)
+      })
+
+
+    }
+
   }
 
   let pages = config.pages ? Object.keys(config.pages) : Object.keys(config.groupedPages);
