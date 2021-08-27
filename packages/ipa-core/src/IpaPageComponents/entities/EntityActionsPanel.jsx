@@ -8,7 +8,7 @@ import { getEntityActionComponent } from '../../redux/slices/entityUI'
 
 import '../../IpaStyles/DbmTooltip.scss'
 
-const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent}) => {
+const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer}) => {
   let icons = []
 
   const runPreEntityActionScript = async (payload) => {
@@ -23,6 +23,8 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
     return result ?? entity;
   }
+
+  const renderIcons = (icons) => iconRenderer ? iconRenderer(icons) : <div className="entity-actions-panel">{icons}</div>
 
   const doAction = async (actionName) => {
     let action = _.cloneDeep(actions[actionName])
@@ -79,7 +81,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
         )
     })
   }
-  return <div className="entity-actions-panel">{icons}</div>;
+  return renderIcons(icons);
 }
 
 //export default EntityActionsPanel
