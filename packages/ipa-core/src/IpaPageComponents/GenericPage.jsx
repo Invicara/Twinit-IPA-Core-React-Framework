@@ -43,8 +43,7 @@ const withGenericPage = (PageComponent) => {
         userConfig: null,
         isLoading: true,
         isPageLoading: true,
-        queryParams: {},
-        redirectTo: null
+        queryParams: {}
       };
 
       this._loadPageData = this._loadPageData.bind(this);
@@ -56,23 +55,9 @@ const withGenericPage = (PageComponent) => {
 
     componentDidMount() {
 
-      console.log('generic onmount locatiom', window.location.href)
-
-      let hrefSplits = window.location.href.split('?')
-      console.log(hrefSplits)
-
-      if (hrefSplits.length > 1 && hrefSplits[1].includes('route=')) {
-        let routeSplit = hrefSplits[1].split("=")
-        console.log(routeSplit)
-        let redirectTo = '/' + routeSplit[1] + '?' + hrefSplits[2].slice(0,-2)
-        console.log(redirectTo)
-
-        this.setState({redirectTo, isLoading: false})
-      } else {
-        this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
-        this._loadPageData();
-        this.onNavigated();
-      }
+      this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
+      this._loadPageData();
+      this.onNavigated();
     }
 
     componentDidUpdate(prevProps) {
@@ -341,10 +326,8 @@ const withGenericPage = (PageComponent) => {
               <div style={{padding: '40px'}}>
                 <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
               </div>}
-            
-            {!this.state.isLoading && this.state.redirectTo && <Redirect push to={this.state.redirectTo} />}
 
-            {!this.state.isLoading && !this.state.redirectTo && <PageComponent {...this.props}
+            {!this.state.isLoading && <PageComponent {...this.props}
                                           onLoadComplete={this.onLoadComplete}
                                           handler={this.state.handler}
                                           onNavigate={this.onNavigate}

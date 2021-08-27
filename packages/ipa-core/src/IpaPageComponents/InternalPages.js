@@ -16,8 +16,6 @@ const InternalPages = {
     'solutionMgmt/ScriptRunnerView': ScriptRunnerView,
     'DownloadsView': DownloadsView,
     'users/UserGroupView': UserGroupView,
-    'SisenseLoginPage': SisenseLoginPage,
-    'SisenseLogoutPage': SisenseLogoutPage,
     'datasources/DatasourcesView': DatasourcesView
 }
 

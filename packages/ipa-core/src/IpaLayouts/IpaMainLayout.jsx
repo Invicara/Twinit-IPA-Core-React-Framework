@@ -69,7 +69,6 @@ class IpaMainLayout extends React.Component {
 
         return (
             <div>
-              <link rel='stylesheet' type='text/css' href='./node_modules/bootstrap/dist/css/bootstrap.min.css'></link>
               <Provider store={store}>
                 <HashRouter>
                     <App history={history} location={location}>
