@@ -13,6 +13,7 @@ sidebar_position: 14
 |[`processUploadFile`](#processUploadFile%3A-(optional))|A script that allows you to modify the file’s name after the user has selected attributes in the upload table but before the file is uploaded.|
 |[`postProcessFiles`](#postProcessFiles%3A-(optional))|A script that runs after the user has selected files from disk but before the file appears in the upload table.|
 |[`downloadReport`](#downloadReport%3A-(optional))|A script that downloads an XLSX report of the uploaded files and their attributes if the user clicks the **Report** button.|
+|[`uploadContainer`](#uploadContainer%3A-(optional))|Provides the ability to set a file container to which to upload files.|
 
 ---
 
@@ -144,3 +145,24 @@ The script does not return anything.
 If provided, this script downloads an XLSX report of the uploaded files and their attributes if the user clicks the **Report** button. If the script is not provided the **Report** button will not appear for the user.
 
 The script receives an array of arrays in `$tableRows`, which represent the rows and cells for an XLSX export.
+
+### `uploadContainer`: (optional)
+If provided allows for files to be uplaoded into an alternate file container.
+
+```jsx
+uploadContainer: {
+  script: "getFileContainer",
+  containerDesc: {
+    _name: "Solutions Mgmt",
+    _userType: "file_container"
+  }
+}
+```
+
+#### `script`
+
+A script which returns the fiel container to which to upload files
+
+#### `containerDesc`
+
+A container description for the script to use to fetch the file container
