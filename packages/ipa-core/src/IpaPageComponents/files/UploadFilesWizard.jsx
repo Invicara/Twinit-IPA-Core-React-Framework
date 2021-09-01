@@ -41,9 +41,19 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
                                addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig}) => {
 
     const [selectedStep, setSelectedStep] = useState(1);
+    const [uploadContainer, setUploadContainer] = useState(selectedItems.selectedProject.rootContainer)
+
     useEffect(() => {
+
+        async function getUploadContainer() {
+            let newContainer = await ScriptHelper.executeScript(config.uploadContainer.script, {containerDesc: config.uploadContainer.containerDesc})
+            console.log(newContainer)
+            if (newContainer) setUploadContainer(newContainer)
+        }
+
         onLoadComplete();
         cleanFiles()
+        if (config.uploadContainer) getUploadContainer()
     }, []);
     useEffect(() => {fetchColumnConfig(config)}, [config])
     useEffect(() => {
@@ -52,7 +62,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
 
     const addFiles = newFiles => {
         setSelectedStep(2)
-        addFilesToUpload([...newFiles], selectedItems.selectedProject.rootContainer, config.scripts.preprocessFiles)
+        addFilesToUpload([...newFiles], uploadContainer, config.scripts.preprocessFiles)
     }
 
     const cancel = () => {
@@ -62,7 +72,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
 
     const startUpload = () => {
         setSelectedStep(3);
-        uploadFiles(selectedItems.selectedProject.rootContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles)
+        uploadFiles(uploadContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles)
     }
 
     const handleFileChange = config.readonly ? _.noop : (files, field, newValue) => updateMultipleFileAttribute(
