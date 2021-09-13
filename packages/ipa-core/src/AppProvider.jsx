@@ -96,6 +96,7 @@ class AppProvider extends React.Component {
     this.handleRequestError = this.handleRequestError.bind(this);
     this.testConfig = this.testConfig.bind(this);
     this.onConfigLoad = this.onConfigLoad.bind(this);
+    this.sisenseLogout = this.sisenseLogout.bind(this);
   }
 
   componentDidMount() {
@@ -103,11 +104,7 @@ class AppProvider extends React.Component {
     this.state.actions.restartApp();
   }
 
-  async userLogout() {
-    try {
-      await IafSession.logout();
-    } catch (e) {}
-
+  async sisenseLogout() {
     let sisUrl = sessionStorage.getItem('sisenseBaseUrl')
 
     if (sisUrl) {
@@ -124,6 +121,14 @@ class AppProvider extends React.Component {
       })
       delete sessionStorage.sisenseBaseUrl
     }
+  }
+
+  async userLogout() {
+    try {
+      await IafSession.logout();
+    } catch (e) {}
+
+    this.sisenseLogout()
 
     // delete cached config
     delete sessionStorage.ipadt_configData;
@@ -467,6 +472,26 @@ class AppProvider extends React.Component {
   }
 
   async onConfigLoad(config, routes, token, user) {
+    
+    function hasSisenseConnectors(config) {
+      if (config.connectors) {
+  
+        let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
+        if (sisenseConnector) {
+  
+          let sisUrl = sisenseConnector.config.url
+          let lastChar = sisUrl.slice(-1)
+          if (lastChar === '/' || lastChar === '\\')
+            sisUrl = sisUrl.slice(0, -1)
+  
+          sessionStorage.setItem('sisenseBaseUrl', sisUrl)
+          return sisUrl
+        }
+        else return false
+  
+      } else return false
+    }
+    
     console.log(config, routes)
     routes = await routes
 
@@ -482,6 +507,8 @@ class AppProvider extends React.Component {
       userConfig: config
     });
 
+    this.sisenseLogout()
+
     //Clear all script state in cache and in script engine
     ScriptCache.clearCache();
     ScriptHelper.releaseExpressionExecCtx()
@@ -491,6 +518,51 @@ class AppProvider extends React.Component {
 
     let selectedProj = IafProj.getCurrent();
     if (selectedProj) {
+
+      /*
+      * If Sisense Connectors are configured then we need to sign in to Sisense
+      * This must be doen before any sisense content is needed
+      */
+      let sisenseUrl = hasSisenseConnectors(config)
+      if (sisenseUrl) {
+        const allOrchestrators = await IafDataSource.getOrchestrators();
+        const sisenseSSOOrch = _.find(allOrchestrators._list, {_userType: 'Sisense_SSO_JWT_Generator'});
+
+        if (!sisenseSSOOrch) {
+          console.error('Sisense is configured in the project but the Sisense SSO Orchestrator is not present')
+        } else {
+          const orchId = sisenseSSOOrch.id;
+
+          const params = {
+              orchestratorId: orchId,
+              _actualparams: [
+                  {
+                      sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
+                      params: {
+                          userGroupId: appContextProps.selectedItems.selectedUserGroupId,
+                          projectNamespace: appContextProps.selectedItems.selectedProject._namespaces[0]
+                      }
+                  }
+              ]
+          }
+
+          const orchResult = await IafDataSource.runOrchestrator(orchId, params);
+          const encodedToken = _.get(orchResult, '_result.jwt');
+
+          let sisensejwt_url = sisenseUrl + "/jwt?jwt=" + encodedToken;
+
+          fetch(sisensejwt_url, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            redirect: 'manual',
+            credentials: 'include'
+          }).catch((err) => {
+            console.error("ERROR SIGNING IN TO SISENSE: " + sisensejwt_url)
+            console.error(err)
+          })
+        }
+      }
 
       //load all config level scripts
       if (!!config.onConfigLoad && !!config.onConfigLoad.load && config.onConfigLoad.load.length > 0) {
@@ -543,7 +615,6 @@ class AppProvider extends React.Component {
 
   if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
-  //this.navigateToHomepage();
   }
 
   navigateToHomepage() {
@@ -652,73 +723,6 @@ async function calculateRoutes(config, appContextProps, ipaConfig) {
       items: []
     }
     pGroups.push(group);
-  }
-
-  function hasSisenseConnectors(config) {
-    if (config.connectors) {
-
-      let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
-      if (sisenseConnector) {
-
-        let sisUrl = sisenseConnector.config.url
-        let lastChar = sisUrl.slice(-1)
-        if (lastChar === '/' || lastChar === '\\')
-          sisUrl = sisUrl.slice(0, -1)
-
-        sessionStorage.setItem('sisenseBaseUrl', sisUrl)
-        return sisUrl
-      }
-      else return false
-
-    } else return false
-  }
-
-  /*
-   * If Sisense Connectors are configured then we need to sign in to Sisense
-   * This must be doen before any sisense content is needed
-  */
-  let sisenseUrl = hasSisenseConnectors(config)
-  if (sisenseUrl) {
-    const allOrchestrators = await IafDataSource.getOrchestrators();
-    const sisenseSSOOrch = _.find(allOrchestrators._list, {_userType: 'Sisense_SSO_JWT_Generator'});
-
-    if (!sisenseSSOOrch) {
-      console.error('Sisense is configured in the project but the Sisense SSO Orchestrator is not present')
-    } else {
-      const orchId = sisenseSSOOrch.id;
-
-      const params = {
-          orchestratorId: orchId,
-          _actualparams: [
-              {
-                  sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
-                  params: {
-                      userGroupId: appContextProps.selectedItems.selectedUserGroupId,
-                      projectNamespace: appContextProps.selectedItems.selectedProject._namespaces[0]
-                  }
-              }
-          ]
-      }
-
-      const orchResult = await IafDataSource.runOrchestrator(orchId, params);
-      const encodedToken = _.get(orchResult, '_result.jwt');
-
-      let sisensejwt_url = sisenseUrl + "/jwt?jwt=" + encodedToken;
-
-      fetch(sisensejwt_url, {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        redirect: 'manual',
-        credentials: 'include'
-      }).catch((err) => {
-        console.error("ERROR SIGNING IN TO SISENSE: " + sisensejwt_url)
-        console.error(err)
-      })
-
-
-    }
-
   }
 
   let pages = config.pages ? Object.keys(config.pages) : Object.keys(config.groupedPages);
