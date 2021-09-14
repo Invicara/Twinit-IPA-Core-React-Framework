@@ -539,8 +539,8 @@ class AppProvider extends React.Component {
                   {
                       sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
                       params: {
-                          userGroupId: appContextProps.selectedItems.selectedUserGroupId,
-                          projectNamespace: appContextProps.selectedItems.selectedProject._namespaces[0]
+                          userGroupId: this.state.selectedItems.selectedUserGroupId,
+                          projectNamespace: this.state.selectedItems.selectedProject._namespaces[0]
                       }
                   }
               ]
