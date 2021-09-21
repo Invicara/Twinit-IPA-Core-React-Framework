@@ -81,7 +81,7 @@ export default class ProjectPickerModal extends React.Component {
         else {
           console.log('no userGroups')
           console.log(projects[i])
-          break
+          continue
         }
 
         //get all userConfigs in the project
