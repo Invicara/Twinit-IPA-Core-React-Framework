@@ -7,7 +7,7 @@ import './StackableDrawer.scss'
 const toggleHeight = 50;
 const DEFAULT_DRAWER_WIDTH = 360;
 
-export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true, onOpen=()=>{}, onClose=()=>{}, isDrawerOpen=true, fixedWidth=0}) => {
+export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true, onOpen=()=>{}, onClose=()=>{}, isDrawerOpen=true, fixedWidth=0, tooltip}) => {
   const [stableWidth, setStableWidth] = useState(defaultOpen ? DEFAULT_DRAWER_WIDTH : 0)
   const drawer = useRef();
   const toggleOpen = useCallback(() => {
@@ -45,7 +45,10 @@ export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true,
   return <div ref={drawer} className={'drawer'} style={{width: stableWidth, minWidth: stableWidth}} >
     {iconKey && <div style={{top: `${20 + toggleHeight * (level - 1)}px`}}
          className={clsx({'drawer-toggle': true, 'drawer-toggle-open': open})} onClick={toggleOpen}>
-      <i className={`fas ${iconKey}`}/>
+           {tooltip ? <div className="dbm-tooltip">
+              <i className={`fas ${iconKey}`}/>
+                <span className="dbm-tooltiptext">{tooltip}</span>
+            </div> : <i className={`fas ${iconKey}`}/>}
     </div>}
     <div className={clsx({'drawer-content': true, 'drawer-content-open': open})}>{children}</div>
   </div>

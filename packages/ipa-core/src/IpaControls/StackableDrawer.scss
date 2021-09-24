@@ -13,6 +13,7 @@ $border-grey: #EAEAEA;
     }
   
   }
+  
   .drawer-content{
     flex-grow: 1;
     opacity: 0;
@@ -48,6 +49,19 @@ $border-grey: #EAEAEA;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+    }
+
+    .dbm-tooltip {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transform: scale(0.75);
+      
+      .dbm-tooltiptext{
+            bottom: 0px;
+            left: 299%;
+            transform: scale(0.75);
+      }
     }
   }
   .drawer-toggle-open {
