@@ -17,7 +17,7 @@ export const StackableDrawer = ({level = 1, iconKey, children, defaultOpen=true,
   }, [stableWidth])
 
   useEffect(() => {
-    if(isDrawerOpen) setStableWidth(fixedWidth != 0 ? fixedWidth : DEFAULT_DRAWER_WIDTH)
+    if(isDrawerOpen)setStableWidth(fixedWidth != 0 ? fixedWidth : DEFAULT_DRAWER_WIDTH)
     else setStableWidth(0)
   }, [isDrawerOpen])
 
