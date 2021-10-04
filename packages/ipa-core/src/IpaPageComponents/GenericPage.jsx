@@ -301,13 +301,21 @@ const withGenericPage = (PageComponent) => {
           }
         }
         
-         if (!this.isSelectionInfoValid(queryParams)) {
-            console.error('Navigation occurred with invalid query parameters!');
-            this.setState({queryParams: {}});
-          }
+        if (!this.isSelectionInfoValid(queryParams)) {
+          console.error('Navigation occurred with invalid query parameters!');
+          this.setState({queryParams: {}});
+        }
 
         if (queryParams.groups)
           queryParams.groups = queryParams.groups.split(',');
+
+        if (queryParams.query && queryParams.query.type && queryParams.query.value) {
+          if (queryParams.query.type === "<<TEXT_SEARCH>>")
+            queryParams.query.value = queryParams.query.value.toString()
+
+          delete queryParams.query.type
+        }
+        
 
         console.log("on nav qp", queryParams)
 

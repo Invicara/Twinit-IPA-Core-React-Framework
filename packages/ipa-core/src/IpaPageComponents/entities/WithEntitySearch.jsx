@@ -309,7 +309,7 @@ const withEntitySearch = WrappedComponent => {
             await this.props.fetchEntities(script, selector, value);
             if(onInitialFetchComplete) onInitialFetchComplete()
             this.props.setQueryParams({
-                query: {id: selector.id, value},
+                query: {type: selector.query, id: selector.id, value},
                 senderEntityType: originalSender || this.state.entitySingular,
                 entityType: this.state.entitySingular
             });
