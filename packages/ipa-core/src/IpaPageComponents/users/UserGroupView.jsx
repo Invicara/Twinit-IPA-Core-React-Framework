@@ -435,7 +435,7 @@ class UserGroupView extends React.Component {
         return (
           <div className='user-group-view'>
 
-            {this.props.handler.config.allowUserGroupInvite && <StackableDrawer level={1} iconKey='fas fa-user-plus' defaultOpen={false}>
+            {this.props.handler.config.allowUserGroupInvite && <StackableDrawer level={1} iconKey='fas fa-user-plus' isDrawerOpen={false}>
               <InviteForm appName={this.props.selectedItems.ipaConfig.appName} 
                         appUrl={this.props.handler.config.appUrl}
                         currentUser={this.props.user} 
@@ -445,7 +445,7 @@ class UserGroupView extends React.Component {
                         onInvitesSent={this.updateCurrentView}/>
             </StackableDrawer>}
 
-            <StackableDrawer level={this.props.handler.config.allowUserGroupInvite ? 2 : 1} iconKey='fas fa-users' defaultOpen={true}>
+            <StackableDrawer level={this.props.handler.config.allowUserGroupInvite ? 2 : 1} iconKey='fas fa-users' isDrawerOpen={true}>
               <div className='switchable-list-view'>
                 <div className='list-header'>
                   <div className='radio-btns'>

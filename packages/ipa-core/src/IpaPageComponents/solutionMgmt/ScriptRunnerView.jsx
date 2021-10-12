@@ -660,7 +660,7 @@ class ScriptRunnerView extends React.Component {
         return (
         <div style={{display: 'flex'}}>
           {this.props.handler.config && this.props.handler.config.allowScriptInput &&
-            <StackableDrawer level={1} iconKey='fas fa-cut' defaultOpen={false}>
+            <StackableDrawer level={1} iconKey='fas fa-cut' isDrawerOpen={false}>
                 <div style={{fontWeight: 'bold', marginTop: '20px', marginBottom: '20px', marginLeft: '60px'}}>Snippets</div>
                 <div className='script-input' style={{marginLeft: '20px'}}>
                   <textarea id="snippet" 
@@ -676,7 +676,7 @@ class ScriptRunnerView extends React.Component {
                 </div>
             </StackableDrawer>}
           {this.props.handler.config && this.props.handler.config.allowScriptInput &&
-              <StackableDrawer level={2} iconKey='far fa-file-code' defaultOpen={false}>
+              <StackableDrawer level={2} iconKey='far fa-file-code' isDrawerOpen={false}>
                 <div style={{marginTop: '10px', marginLeft: '60px'}}>
                   <input type="text" id="newscripttoadd" value={this.state.newScriptName} onChange={this.handleNewScriptName} style={{width: "80%"}}/>
                   <GenericMatButton disabled={this.state.isRunning} styles={{marginLeft: '110px', marginRight: '10px', marginTop: '5px'}} onClick={this.addNewScript}>
@@ -692,7 +692,7 @@ class ScriptRunnerView extends React.Component {
                 </div>
           </StackableDrawer>}
           {this.props.handler.config && this.props.handler.config.allowScriptInput &&
-              <StackableDrawer level={3} iconKey='fas fa-eye' defaultOpen={false}>
+              <StackableDrawer level={3} iconKey='fas fa-eye' isDrawerOpen={false}>
                 <div style={{marginTop: '10px', marginLeft: '60px'}}>
                 <div style={{display: 'inline-flex', alignItems: 'center'}}>
                   <input type="text" id="varnametoadd" value={this.state.addVariable} onChange={this.handleVariableName}/>
@@ -724,7 +724,7 @@ class ScriptRunnerView extends React.Component {
               </div>
           </StackableDrawer>}
           {this.props.handler.config && this.props.handler.config.allowScriptInput && this.state.helpLinks.length > 0 &&
-              <StackableDrawer level={4} iconKey='fas fa-dollar-sign' defaultOpen={false}>
+              <StackableDrawer level={4} iconKey='fas fa-dollar-sign' isDrawerOpen={false}>
                 <div style={{marginTop: '10px', marginLeft: '60px'}}>
                   <div style={{display: 'inline-flex', alignItems: 'center'}}>
                     <input type="text" id="opsearchterm" value={this.state.operatorSearchTerm} onChange={this.handleOpSearchTerm}/>
@@ -745,7 +745,7 @@ class ScriptRunnerView extends React.Component {
                 </div>
           </StackableDrawer>}
           {this.props.handler.config && this.props.handler.config.allowScriptInput && this.state.helpLinks.length > 0 &&
-              <StackableDrawer level={5} iconKey='fas fa-question' defaultOpen={false}>
+              <StackableDrawer level={5} iconKey='fas fa-question' isDrawerOpen={false}>
                 <div style={{fontWeight: 'bold', marginTop: '20px', marginLeft: '60px'}}>Help Topics</div>
                 <div style={{marginTop: '40px', marginLeft: '60px'}}>
                   {this.state.helpLinks.map((link, index) => (<div style={{marginBottom: '10px'}} key={index}>
