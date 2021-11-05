@@ -6,7 +6,7 @@ const Logo = ({appName, children, homepage, contextProps}) => {
   
   console.log(contextProps)
   
-  const [imgSrc, setImgSrc] = useState(require('../img/invicara-logo_white.svg'))
+  const [imgSrc, setImgSrc] = useState("")
   
   useEffect(() => {
     const getImgSrc = async (settings) => {
