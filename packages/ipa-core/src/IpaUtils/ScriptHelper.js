@@ -92,6 +92,19 @@ function getScriptOperators() {
   return expression.getOperators()
 }
 
+function isProjectNextGenJs() {
+  const sessionProject = JSON.parse(sessionStorage.getItem('project'))
+  console.log("sessionProject", sessionProject)
+  console.log("sessionProject._userAttributes.nextScriptEngine", sessionProject._userAttributes.nextScriptEngine)
+  if(sessionProject._userAttributes.hasOwnProperty('nextScriptEngine')) {
+    return sessionProject._userAttributes.nextScriptEngine  
+  }
+  else {  
+    const currentProject = IafProj.getCurrent()
+    console.log("currentProject", currentProject)
+    return (currentProject._userAttributes.nextScriptEngine ? currentProject._userAttributes.nextScriptEngine : false)
+  }
+}
 
 let ScriptHelper = {
   loadScript: loadScript,
@@ -101,10 +114,11 @@ let ScriptHelper = {
   getScriptVar: getScriptVar,
   setScriptVar: setScriptVar,
   getFilterFunction: getFilterFunction,
-  getFilterQuery: getFilterQuery,
+  getFilterQuery: getFilterQuery, 
   initExpressionExecCtx: initExpressionExecCtx,
   releaseExpressionExecCtx: releaseExpressionExecCtx,
-  getScriptOperators: getScriptOperators
+  getScriptOperators: getScriptOperators,
+  isProjectNextGenJs: isProjectNextGenJs
 };
 
 export default ScriptHelper;
