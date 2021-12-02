@@ -600,8 +600,7 @@ class AppProvider extends React.Component {
 
     // Eval the "autoeval" script for any bootstrap setup of app.
     if (config.scripts && config.scripts.autoeval) {
-      if(!ScriptHelper.isProjectNextGenJs())
-       let res = ScriptHelper.evalExpressions(config.scripts.autoeval);
+      if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
     }
   } else {
       //This is state where the user has an account but no accepted invites
