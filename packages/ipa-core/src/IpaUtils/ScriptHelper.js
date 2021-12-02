@@ -1,34 +1,47 @@
-import { IafProj} from "@invicara/platform-api";
+import { IafProj, IafScriptEngine, IafSession} from "@invicara/platform-api";
 
 import { expression, sift } from '@invicara/expressions';
 
-
+import * as PlatformApi from '@invicara/platform-api'
+import * as UiUtils from '@invicara/ui-utils'
 
 async function loadScript(query, ctx) {
-  if(!query)
-  {
-    console.warn("No script query in loadScript");
-    return;
+  if (!query) {
+      console.warn("No script query in loadScript");
+      return;
   }
+  if (isProjectNextGenJs()) {
+      const ctx = { _namespaces: IafProj.getCurrent()._namespaces, authToken: IafSession.getAuthToken() }
 
-  // There should only be one, but API gets all, filters and then passes back.  Test return
-  let scripts = await IafProj.getScripts(IafProj.getCurrent(), {query: query});
+      let scriptModule = await IafScriptEngine.dynamicImport(query, ctx)
+      console.log("scriptModule", scriptModule)
+      let loadedScripts = IafScriptEngine.getVar("loadedScripts")
+      console.log("loadedScripts", loadedScripts)
 
-  if(!scripts || scripts.length === 0){
-    console.warn('No scripts found in loadScript.');
-    return;
+      if (!loadedScripts) loadedScripts = scriptModule
+      else loadedScripts = Object.assign({}, loadedScripts, scriptModule)
+
+      IafScriptEngine.setVar("loadedScripts", loadedScripts)
+  } else {
+      // There should only be one, but API gets all, filters and then passes back.  Test return
+      let scripts = await IafProj.getScripts(IafProj.getCurrent(), { query: query });
+
+      if (!scripts || scripts.length === 0) {
+          console.warn('No scripts found in loadScript.');
+          return;
+      }
+      if (scripts.length > 1) {
+          console.warn("Expecting a unique script in loadScript!");
+          console.log(scripts);
+      }
+
+      let script = scripts[0];
+      let tipScriptVersion = _.find(script._versions, { _version: script._tipVersion })
+
+      let res = await expression.evalExpressions(tipScriptVersion._userData, undefined, ctx || _expressionExecCtx);
+
+      return res;
   }
-  if (scripts.length > 1) {
-    console.warn("Expecting a unique script in loadScript!");
-    console.log(scripts);
-  }
-
-  let script = scripts[0];
-  let tipScriptVersion = _.find(script._versions, {_version: script._tipVersion})
-
-  let res = await expression.evalExpressions(tipScriptVersion._userData, undefined, ctx || _expressionExecCtx);
-
-  return res;
 }
 
 async function evalExpressions(str, operand, ctx) {
@@ -44,8 +57,23 @@ async function _execScript(scriptName, operand, scriptResVar, ctx) {
   return scriptRes;
 }
 
-async function executeScript(scriptName, operand, scriptResVar, ctx){
-  return await _execScript(scriptName, operand, scriptResVar, ctx || _expressionExecCtx);
+async function executeScript(scriptName, operand, scriptResVar, ctx, callback){
+  if (isProjectNextGenJs()) {
+    //execute js script
+    let loadedScripts = IafScriptEngine.getVar('loadedScripts')
+    if (!loadedScripts[scriptName]) {
+      //log console error and throw exception
+      console.error(`executeScript "${scriptName}" not found on loadedScripts `)
+    } else {
+      let libraries = { PlatformApi, UiUtils }
+      let result = loadedScripts[scriptName](operand, libraries, ctx, callback)
+      if (result && result instanceof Promise) result = await result
+      return result
+    }
+  } else {
+    //execute DSL script existing code
+    return await _execScript(scriptName, operand, scriptResVar, ctx || _expressionExecCtx);
+  }
 }
 
 async function executeScriptCallback(callbackName, operand, scriptResVar, ctx) {
@@ -60,11 +88,17 @@ async function executeScriptCallback(callbackName, operand, scriptResVar, ctx) {
 }
 
 function getScriptVar(scriptVar, ctx) {
-  return expression.getHeapVar(scriptVar, ctx || _expressionExecCtx);
+  if (isProjectNextGenJs())
+    return IafScriptEngine.getVar(scriptVar)
+  else
+    return expression.getHeapVar(scriptVar, ctx || _expressionExecCtx);
 }
 
 function setScriptVar(scriptVar, value, ctx) {
-  return expression.setHeapVar(scriptVar, value, ctx || _expressionExecCtx);
+  if (isProjectNextGenJs())
+    return IafScriptEngine.setVar(scriptVar, value)
+  else
+    return expression.setHeapVar(scriptVar, value, ctx || _expressionExecCtx);
 }
 
 // Replacements for the above; decouple from IAF_EXT_ specifics.  jl 01/26/19

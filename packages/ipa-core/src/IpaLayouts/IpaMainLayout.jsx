@@ -62,7 +62,6 @@ class IpaMainLayout extends React.Component {
         IafPlugins.BAM_Script.initBAMScriptPlugins();
         LocalFilePlugins.initScriptPlugins();
         DataPlugins.initScriptPlugins();
-        ScriptHelper.initExpressionExecCtx();   // sets up an ExpressionExecCtx in ScriptHelper (browser here)
     }
 
     render() {
