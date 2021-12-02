@@ -20,7 +20,7 @@ import * as PropTypes from 'prop-types';
 import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
-import {IafSession, IafProj, IafDataSource} from '@invicara/platform-api';
+import {IafSession, IafProj, IafDataSource, IafScriptEngine} from '@invicara/platform-api';
 import { expression } from '@invicara/expressions'
 
 import EmptyConfig, {actualPage} from './emptyConfig';
@@ -511,9 +511,12 @@ class AppProvider extends React.Component {
 
     //Clear all script state in cache and in script engine
     ScriptCache.clearCache();
-    ScriptHelper.releaseExpressionExecCtx()
-    ScriptHelper.initExpressionExecCtx()
-
+    if(!ScriptHelper.isProjectNextGenJs()) {
+      ScriptHelper.releaseExpressionExecCtx()
+      ScriptHelper.initExpressionExecCtx()
+    } else {
+      IafScriptEngine.clearVars()
+    }
     this.context.ifefShowModal(false);
 
     let selectedProj = IafProj.getCurrent();
@@ -597,7 +600,8 @@ class AppProvider extends React.Component {
 
     // Eval the "autoeval" script for any bootstrap setup of app.
     if (config.scripts && config.scripts.autoeval) {
-      let res = ScriptHelper.evalExpressions(config.scripts.autoeval);
+      if(!ScriptHelper.isProjectNextGenJs())
+       let res = ScriptHelper.evalExpressions(config.scripts.autoeval);
     }
   } else {
       //This is state where the user has an account but no accepted invites
