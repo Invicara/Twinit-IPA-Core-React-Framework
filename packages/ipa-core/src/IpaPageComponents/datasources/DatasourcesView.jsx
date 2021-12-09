@@ -48,17 +48,22 @@ class DatasourcesView extends React.Component {
     }
 
     componentWillUnmount() {
-      clearInterval(this.state.runInterval)
-      this.setState({runInterval: null})
+      //See below about polling
+      // clearInterval(this.state.runInterval)
+      // this.setState({runInterval: null})
     }
 
     async _loadAsyncData() {
        
       await this.getOrchestrators()
-      
       this.getRuns()
+
+       /*
+         * This polling was causing a problem as the total number of orch runs gets large
+         * will re-examine once the API provides us a way to mroe efficiently query orch runs
       let interval = setInterval(this.getRuns, 5000)
       this.setState({runInterval: interval})
+      */
 
     }
 
