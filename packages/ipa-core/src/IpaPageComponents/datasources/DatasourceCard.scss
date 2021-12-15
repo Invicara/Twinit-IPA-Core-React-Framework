@@ -60,10 +60,12 @@
         }
     
         i {
-            padding-right: 0px;
+            padding-right: 5px;
         }
     
         a {
+            display: inline-flex;
+            align-items: center;
             color: var(--app-accent-color);
         }
     }
@@ -83,7 +85,7 @@
 .datasource-card-options {
     align-self: center;
     color: var(--app-accent-color);
-
+    margin-left: 5px;
     i {
         cursor: pointer;
     }

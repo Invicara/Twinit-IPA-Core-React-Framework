@@ -10,12 +10,18 @@ import { DatasourceScheduleTable } from './DatasourceScheduleTable'
 import './DatasourceCard.scss'
 import { IafDataSource } from "@invicara/platform-api";
 
-export const DatasourceCard  = ({orchestrator, readonly=true, runs, onDidUpdate}) => {
-
+export const DatasourceCard  = ({
+  orchestrator, 
+  readonly=true, 
+  runs, 
+  onDidUpdate, 
+  removeOrchestrator
+}) => {
   const [isDoingAction, setIsDoingAction] = useState(false)
   const [showRowTwo, setShowRowTwo] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [showSchedule, setShowSchedule] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
 
   const getFormattedDate = (stamp) => {
     let rundate = moment(parseInt(stamp))
@@ -23,18 +29,29 @@ export const DatasourceCard  = ({orchestrator, readonly=true, runs, onDidUpdate}
   }
 
   const toggleHistory = () => {
-    if(showSchedule) setShowSchedule(false)
-    if (showHistory) setShowRowTwo(false)
-    else setShowRowTwo(true)
-    setShowHistory(!showHistory)
-  }
+    if (showSchedule) setShowSchedule(false);
+    if (showDelete) showDelete(false);
+    if (showHistory) setShowRowTwo(false);
+    else setShowRowTwo(true);
+    setShowHistory(!showHistory);
+  };
 
   const toggleSchedule = () => {
-    if(showHistory) setShowHistory(false)
-    if (showSchedule) setShowRowTwo(false)
-    else setShowRowTwo(true)
-    setShowSchedule(!showSchedule)
-  }
+    if (showHistory) setShowHistory(false);
+    if (showDelete) setShowDelete(false);
+    if (showSchedule) setShowRowTwo(false);
+    else setShowRowTwo(true);
+    setShowSchedule(!showSchedule);
+  };
+
+  const toggleDelete = (e) => {
+    if (e) e.preventDefault()
+    if (showSchedule) setShowSchedule(false);
+    if (showHistory) setShowHistory(false);
+    if (showDelete) setShowRowTwo(false);
+    else setShowRowTwo(true);
+    setShowDelete(!showDelete);
+  };
 
   const sortRuns = () => {
     if (runs) return [...runs].sort((a,b) => parseInt(b._createdat) - parseInt(a._createdat))
@@ -72,6 +89,12 @@ export const DatasourceCard  = ({orchestrator, readonly=true, runs, onDidUpdate}
 
     })
   }
+  
+  const deleteOrchestrator = (e) => {
+    e.preventDefault()
+
+    removeOrchestrator(orchestrator)
+  }
 
 
   return  <li className='datasource-list-item'>
@@ -101,11 +124,21 @@ export const DatasourceCard  = ({orchestrator, readonly=true, runs, onDidUpdate}
               {!isDoingAction && <div className='datasource-card-options'>
                 {runs && <i className='fas fa-history' onClick={toggleHistory}></i>}
                 {orchestrator._class === "SCHEDULED" && <i className='far fa-calendar-alt' onClick={toggleSchedule}></i>}
+                {!readonly && <i className='fas fa-trash' onClick={toggleDelete}></i>}
               </div>}
             </div>
-            {showRowTwo && <div className='card-row2'>
-              {showHistory && <DatasourceHistoryTable runs={runs} />}
-              {showSchedule && <DatasourceScheduleTable orchestrator={orchestrator} readonly={readonly} updateOrchestratorSchedule={updateSchedule}/>}
-            </div>}
+            {showRowTwo && 
+              <div className='card-row2'>
+                {showHistory && <DatasourceHistoryTable runs={runs} />}
+                {showSchedule && <DatasourceScheduleTable orchestrator={orchestrator} readonly={readonly} updateOrchestratorSchedule={updateSchedule}/>}
+                {showDelete && 
+                  <>
+                    <div className='confirm-text'>Confirm Remove Datasource</div>
+                    <a href='#' onClick={deleteOrchestrator}><i className='fas fa-check'></i>Remove Datasource</a>
+                    <a href='#' onClick={toggleSchedule}><i className='fas fa-times'></i>Cancel</a>
+                  </>
+                }
+              </div>
+            }
           </li>
 }
