@@ -28,6 +28,14 @@ allowManageDatasources: false,
 
 Whether a user should have access to edit or modify datasources and schedules.
 
+### `allowDeleteDatasources` (optional)
+
+```jsx
+allowDeleteDatasources: false,
+```
+
+Whether a user should have access to delete datasources.
+
 ---
 
 ## Example
@@ -40,7 +48,8 @@ userGroup: {
    pageComponent: "datasource/DatasourcesView",
    path: '/Datasources',
    config: {
-    allowManageDatasources: true
+    allowManageDatasources: true,
+    allowDeleteDatasources: true
   }
 }
 ```
