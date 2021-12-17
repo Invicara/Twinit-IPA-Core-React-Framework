@@ -107,7 +107,7 @@ class DatasourcesView extends React.Component {
             <hr/>
           </div>
           <div className='datasources-list'>{this.state.orchestrators.map((o) => {
-            return <DatasourceCard key={o.id} orchestrator={o} runs={this.state.runs[o.id]} readonly={!this.props.handler.config.allowManageDatasources} onDidUpdate={this.getOrchestrators} removeOrchestrator={this.removeOrchestrator}/>
+            return <DatasourceCard key={o.id} orchestrator={o} runs={this.state.runs[o.id]} readonly={!this.props.handler.config.allowManageDatasources} onDidUpdate={this.getOrchestrators} removeOrchestrator={this.props.handler.config.allowDeleteDatasources ? this.removeOrchestrator : false}/>
           })}</div>
         </div>
 

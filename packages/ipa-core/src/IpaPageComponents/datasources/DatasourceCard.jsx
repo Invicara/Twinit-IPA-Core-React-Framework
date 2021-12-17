@@ -124,7 +124,7 @@ export const DatasourceCard  = ({
               {!isDoingAction && <div className='datasource-card-options'>
                 {runs && <i className='fas fa-history' onClick={toggleHistory}></i>}
                 {orchestrator._class === "SCHEDULED" && <i className='far fa-calendar-alt' onClick={toggleSchedule}></i>}
-                {!readonly && <i className='fas fa-trash' onClick={toggleDelete}></i>}
+                {!readonly && removeOrchestrator && <i className='fas fa-trash' onClick={toggleDelete}></i>}
               </div>}
             </div>
             {showRowTwo && 
