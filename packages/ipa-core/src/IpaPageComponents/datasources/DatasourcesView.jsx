@@ -37,7 +37,7 @@ class DatasourcesView extends React.Component {
       this._loadAsyncData = this._loadAsyncData.bind(this)
       this.getOrchestrators = this.getOrchestrators.bind(this)
       this.getRuns = this.getRuns.bind(this)
-
+      this.removeOrchestrator = this.removeOrchestrator.bind(this)
     }
 
     async componentDidMount() {
@@ -91,6 +91,12 @@ class DatasourcesView extends React.Component {
       })
     }
 
+    removeOrchestrator(orchestrator) {
+      IafDataSource.deleteOrchestrator(orchestrator.id).then((result) => {
+        this._loadAsyncData()
+      })
+    }
+
 
     render() {
 
@@ -101,7 +107,7 @@ class DatasourcesView extends React.Component {
             <hr/>
           </div>
           <div className='datasources-list'>{this.state.orchestrators.map((o) => {
-            return <DatasourceCard key={o.id} orchestrator={o} runs={this.state.runs[o.id]} readonly={!this.props.handler.config.allowManageDatasources} onDidUpdate={this.getOrchestrators}/>
+            return <DatasourceCard key={o.id} orchestrator={o} runs={this.state.runs[o.id]} readonly={!this.props.handler.config.allowManageDatasources} onDidUpdate={this.getOrchestrators} removeOrchestrator={this.props.handler.config.allowDeleteDatasources ? this.removeOrchestrator : false}/>
           })}</div>
         </div>
 
