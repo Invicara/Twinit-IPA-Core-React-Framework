@@ -5,3 +5,4 @@ node_modules/.bin/atob
 node_modules/
 lerna-debug.log
 .idea/*
+packages/ipa-core/package-lock.json
