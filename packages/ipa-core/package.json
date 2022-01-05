@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "@invicara/expressions": "~1.1.0",
-    "@invicara/platform-api": "~1.1.0",
+    "@invicara/platform-api": "1.1.5",
     "@invicara/react-ifef": "~1.1.0",
     "@invicara/script-data": "~1.1.0",
     "@invicara/script-iaf": "~1.1.0",
