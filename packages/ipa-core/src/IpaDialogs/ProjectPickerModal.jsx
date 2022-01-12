@@ -158,7 +158,7 @@ export default class ProjectPickerModal extends React.Component {
     });
   }
 
-  loadConfig = (userConfig) => {
+  loadConfig = async (userConfig) => {
     const {testConfig, onConfigLoad, defaultConfig} = this.props;
     try {
       if(userConfig) {
@@ -168,7 +168,7 @@ export default class ProjectPickerModal extends React.Component {
 
         _userData._id = userConfig._id;
 
-        const routes = testConfig(_userData);
+        const routes = await testConfig(_userData);
 
         if (this.state.remember) {
           this.saveChoice(_userData)

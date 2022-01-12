@@ -602,21 +602,22 @@ class AppProvider extends React.Component {
     if (config.scripts && config.scripts.autoeval) {
       if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
     }
-  } else {
-      //This is state where the user has an account but no accepted invites
-      if (routes)
+    
+    } else {
+        //This is state where the user has an account but no accepted invites
+        if (routes)
+          this.setState({
+            router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
+          });
         this.setState({
-          router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
+          isLoading: false
         });
-      this.setState({
-        isLoading: false
-      });
-  }
+    }
 
-  store.dispatch(addUserConfig(config))
-  store.dispatch(addUser(user))
+    store.dispatch(addUserConfig(config))
+    store.dispatch(addUser(user))
 
-  if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
+    if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
   }
 
