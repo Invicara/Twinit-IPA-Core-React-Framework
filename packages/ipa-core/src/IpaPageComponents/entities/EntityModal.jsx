@@ -214,114 +214,124 @@ export default class EntityModal extends React.Component {
       let {newEntity} = this.state;
 
       let propInfo = this.state.newEntity.properties[prop];
- 
-      if (this.state.newEntity.properties[prop].type !== 'HIERARCHY>>') {
+      let propType = (propInfo && propInfo.type) ? propInfo.type : 'missing'
 
-        switch(propInfo.type) {
+      switch(propType) {
 
-          case 'number':
-          case 'tags':
-          case 'text': {
+        case 'number':
+        case 'tags':
+        case 'text': {
 
-            if (this.props.action.component.propertyUiTypes && this.props.action.component.propertyUiTypes[prop]){
-              let Control = ControlProvider.getControlComponent(this.props.action.component.propertyUiTypes[prop]);
-              
-              if (!Control)
-                return (<div key={prop}>Configured propertyUiType Component  for {prop} Doesn't Exist</div>)
-              else {
-                  
-                let currentValue = {};
-                currentValue[prop] = Array.isArray(this.state.newEntity.properties[prop].val) ? this.state.newEntity.properties[prop].val : [this.state.newEntity.properties[prop].val];
-
-                return (<div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
-                  <div className="entity-property-control-row">
-                    <Control {...this.props.action.component.propertyUiTypes[prop]} 
-                                  currentValue={currentValue}
-                                  onChange={(e) => this.onChange(prop, propInfo, e[prop])}
-                                  noFetch={true}
-                                  id={prop}
-                                  filterInfo={this.props.action.component.propertyUiTypes[prop].queryFilter ? newEntity : null}
-                                  disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
-                               />
-                    {!!this.state.newEntity.properties[prop].uom && <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>}
-                  </div>
-                </div>)
-              }
-            }
+          if (this.props.action.component.propertyUiTypes && this.props.action.component.propertyUiTypes[prop]){
+            let Control = ControlProvider.getControlComponent(this.props.action.component.propertyUiTypes[prop]);
+            
+            if (!Control)
+              return (<div key={prop}>Configured propertyUiType Component  for {prop} Doesn't Exist</div>)
             else {
+                
+              let currentValue = {};
+              currentValue[prop] = Array.isArray(this.state.newEntity.properties[prop].val) ? this.state.newEntity.properties[prop].val : [this.state.newEntity.properties[prop].val];
+
               return (<div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
-                  <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
-                  <div className="entity-property-control-row">
-                    <input
-                      key={prop}
-                      type={propInfo.type}
-                      value={this.state.newEntity.properties[prop].val}
-                      onChange={(e) => this.onChange(prop, propInfo, e.target.value)}
-                      disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
-                      className='form-control'
-                      style={{backgroundColor: 'white !important', borderColor: 'rgb(204,204,204) !important', borderWidth: '1px !important'}}>
-                    </input>
-                    {!!this.state.newEntity.properties[prop].uom && <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>}
-                  </div>
-                </div>)
+                <div className="entity-property-control-row">
+                  <Control {...this.props.action.component.propertyUiTypes[prop]} 
+                                currentValue={currentValue}
+                                onChange={(e) => this.onChange(prop, propInfo, e[prop])}
+                                noFetch={true}
+                                id={prop}
+                                filterInfo={this.props.action.component.propertyUiTypes[prop].queryFilter ? newEntity : null}
+                                disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
+                              />
+                  {!!this.state.newEntity.properties[prop].uom && <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>}
+                </div>
+              </div>)
             }
-            
-            
           }
+          else {
+            return (<div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
+                <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
+                <div className="entity-property-control-row">
+                  <input
+                    key={prop}
+                    type={propInfo.type}
+                    value={this.state.newEntity.properties[prop].val}
+                    onChange={(e) => this.onChange(prop, propInfo, e.target.value)}
+                    disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
+                    className='form-control'
+                    style={{backgroundColor: 'white !important', borderColor: 'rgb(204,204,204) !important', borderWidth: '1px !important'}}>
+                  </input>
+                  {!!this.state.newEntity.properties[prop].uom && <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>}
+                </div>
+              </div>)
+          }
+          
+          
+        }
 
-          case 'date': {
+        case 'date': {
 
-            let displayDate = !!this.state.newEntity.properties[prop].epoch ? new Date(this.state.newEntity.properties[prop].epoch) : null;
-            return <div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
-                      <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
-                      <div className="entity-property-control-row">
-                         <DatePicker
-                           key={prop}
-                           onChange={(e) => this.onChange(prop, propInfo, e)}
-                           value={displayDate}
-                           className='form-control'
-                           calendarIcon={null}
-                           disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
-                         />
+          let displayDate = !!this.state.newEntity.properties[prop].epoch ? new Date(this.state.newEntity.properties[prop].epoch) : null;
+          return <div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
+                    <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
+                    <div className="entity-property-control-row">
+                        <DatePicker
+                          key={prop}
+                          onChange={(e) => this.onChange(prop, propInfo, e)}
+                          value={displayDate}
+                          className='form-control'
+                          calendarIcon={null}
+                          disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
+                        />
+                    </div>
+                  </div>
+        }
+
+        case 'datetime': {
+
+          let displayDate = !!this.state.newEntity.properties[prop].epoch ? new Date(this.state.newEntity.properties[prop].epoch) : null;
+          return <div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
+                    <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
+                    <div className="entity-property-control-row">
+                        <DateTimePicker
+                          key={prop}
+                          onChange={(e) => this.onChange(prop, propInfo, e)}
+                          value={displayDate}
+                          className='form-control'
+                          calendarIcon={null}
+                          disableClock={true}
+                          disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
+                        />
+                    </div>
+                  </div>
+
+        }
+
+        case 'boolean': {
+          let value = this.state.newEntity.properties[prop].val ? this.state.newEntity.properties[prop].val : false;
+          return <div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
+                    <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
+                    <div className="entity-property-control-row">
+                      <div className='custom-control custom-switch' style={{marginLeft: '10px', zIndex: '0'}}>
+                        <input type="checkbox" className="custom-control-input" value={value} id={propInfo.dName} checked={value} onChange={(e) => this.onChange(prop, propInfo, e.target.checked)}/>
+                        <label className="custom-control-label" htmlFor={propInfo.dName}>{value.toString()}</label>
                       </div>
                     </div>
-          }
+                  </div>
+        }
 
-          case 'datetime': {
+        case 'missing': {
+          return <div key={prop + '_div'} className={clsx(this.dashPropDName(prop) + '-div')}>
+          <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
+          <div className="entity-property-control-row">
+            <div style={{color: 'red'}}>{prop + ' is missing a valid property type configuration'}</div>
+          </div>
+        </div>
+        }
 
-            let displayDate = !!this.state.newEntity.properties[prop].epoch ? new Date(this.state.newEntity.properties[prop].epoch) : null;
-            return <div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
-                      <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
-                      <div className="entity-property-control-row">
-                         <DateTimePicker
-                           key={prop}
-                           onChange={(e) => this.onChange(prop, propInfo, e)}
-                           value={displayDate}
-                           className='form-control'
-                           calendarIcon={null}
-                           disableClock={true}
-                           disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
-                         />
-                      </div>
-                    </div>
-
-          }
-
-          case 'boolean': {
-            let value = this.state.newEntity.properties[prop].val ? this.state.newEntity.properties[prop].val : false;
-            return <div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
-                      <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
-                      <div className="entity-property-control-row">
-                        <div className='custom-control custom-switch' style={{marginLeft: '10px', zIndex: '0'}}>
-                          <input type="checkbox" className="custom-control-input" value={value} id={propInfo.dName} checked={value} onChange={(e) => this.onChange(prop, propInfo, e.target.checked)}/>
-                          <label className="custom-control-label" htmlFor={propInfo.dName}>{value.toString()}</label>
-                        </div>
-                      </div>
-                    </div>
-          }
+        default: {
+          return null
         }
       }
-      else return null;
     }
     
     getScriptedHierarchyInputs = () => {
