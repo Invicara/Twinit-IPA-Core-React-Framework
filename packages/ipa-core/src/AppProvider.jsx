@@ -56,7 +56,13 @@ class AppProvider extends React.Component {
 
     IafSession.setConfig(endPointConfig);
 
-    this.authUrl = IafSession.getAuthUrl(endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot);
+    //this is a workaround for a platform issue
+    //platform needs the url to have a forward slash prior to the ? for query params
+    //so if the baseroot does nto already have one we add it here
+    let authRoot = endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot
+    if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/'
+    this.authUrl = IafSession.getAuthUrl(authRoot);
+
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
     this.state = {
