@@ -32,6 +32,8 @@ import produce from "immer";
 import GenericModal from '../../IpaDialogs/GenericModal'
 import '../../lib/mobiscroll.scss'
 import './EntityModal.scss'
+import BaseTextInput from '../../IpaControls/BaseTextInput';
+import EntityModalTextInput from './EntityModalTextInput';
 
 
 export default class EntityModal extends React.Component {
@@ -215,58 +217,58 @@ export default class EntityModal extends React.Component {
 
       let propInfo = this.state.newEntity.properties[prop];
       let propType = (propInfo && propInfo.type) ? propInfo.type : 'missing'
+      let disableControl = this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))
 
-      switch(propType) {
+        switch(propType) {
 
-        case 'number':
-        case 'tags':
-        case 'text': {
+          case 'number':
+          case 'tags':
+          case 'text': {
 
-          if (this.props.action.component.propertyUiTypes && this.props.action.component.propertyUiTypes[prop]){
-            let Control = ControlProvider.getControlComponent(this.props.action.component.propertyUiTypes[prop]);
-            
-            if (!Control)
-              return (<div key={prop}>Configured propertyUiType Component  for {prop} Doesn't Exist</div>)
+            if (this.props.action.component.propertyUiTypes && this.props.action.component.propertyUiTypes[prop]){
+              let Control = ControlProvider.getControlComponent(this.props.action.component.propertyUiTypes[prop]);
+              
+              if (!Control)
+                return (<div key={prop}>Configured propertyUiType Component  for {prop} Doesn't Exist</div>)
+              else {
+                  
+                let currentValue = {};
+                currentValue[prop] = Array.isArray(this.state.newEntity.properties[prop].val) ? this.state.newEntity.properties[prop].val : [this.state.newEntity.properties[prop].val];
+
+                return (<div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
+                  <div className="entity-property-control-row">
+                    <Control {...this.props.action.component.propertyUiTypes[prop]} 
+                                  currentValue={currentValue}
+                                  onChange={(e) => this.onChange(prop, propInfo, e[prop])}
+                                  noFetch={true}
+                                  id={prop}
+                                  filterInfo={this.props.action.component.propertyUiTypes[prop].queryFilter ? newEntity : null}
+                                  disabled={disableControl}
+                               />
+                    {!!this.state.newEntity.properties[prop].uom && <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>}
+                  </div>
+                </div>)
+              }
+            }
             else {
-                
-              let currentValue = {};
-              currentValue[prop] = Array.isArray(this.state.newEntity.properties[prop].val) ? this.state.newEntity.properties[prop].val : [this.state.newEntity.properties[prop].val];
-
               return (<div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
-                <div className="entity-property-control-row">
-                  <Control {...this.props.action.component.propertyUiTypes[prop]} 
-                                currentValue={currentValue}
-                                onChange={(e) => this.onChange(prop, propInfo, e[prop])}
-                                noFetch={true}
-                                id={prop}
-                                filterInfo={this.props.action.component.propertyUiTypes[prop].queryFilter ? newEntity : null}
-                                disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
-                              />
-                  {!!this.state.newEntity.properties[prop].uom && <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>}
-                </div>
-              </div>)
+                    <EntityModalTextInput
+                      className='entity-property-control-row'
+                      key={prop}
+                      labelProps={{
+                        text: prop,
+                      }}
+                      inputProps={{
+                        type: propInfo.type,
+                        value: this.state.newEntity.properties[prop].val,
+                        onChange: (e) => this.onChange(prop, propInfo, e.target.value),
+                        disabled: disableControl,
+                      }}
+                    />
+                    {!!this.state.newEntity.properties[prop].uom && <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>}
+                </div>)
             }
           }
-          else {
-            return (<div key={propInfo.dName + '_div'} className={clsx(this.dashPropDName(propInfo.dName) + '-div', this.propIsRequired(prop) && 'required')}>
-                <label style={{margin: '10px', fontWeight: 'bold'}}>{prop}</label>
-                <div className="entity-property-control-row">
-                  <input
-                    key={prop}
-                    type={propInfo.type}
-                    value={this.state.newEntity.properties[prop].val}
-                    onChange={(e) => this.onChange(prop, propInfo, e.target.value)}
-                    disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
-                    className='form-control'
-                    style={{backgroundColor: 'white !important', borderColor: 'rgb(204,204,204) !important', borderWidth: '1px !important'}}>
-                  </input>
-                  {!!this.state.newEntity.properties[prop].uom && <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>}
-                </div>
-              </div>)
-          }
-          
-          
-        }
 
         case 'date': {
 
@@ -280,7 +282,7 @@ export default class EntityModal extends React.Component {
                           value={displayDate}
                           className='form-control'
                           calendarIcon={null}
-                          disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
+                          disabled={disableControl}
                         />
                     </div>
                   </div>
@@ -299,7 +301,7 @@ export default class EntityModal extends React.Component {
                           className='form-control'
                           calendarIcon={null}
                           disableClock={true}
-                          disabled={this.state.working || !!this.props.action.component.disableAll || (this.state.config.disabled && this.state.config.disabled.includes(prop))}
+                          disabled={disableControl}
                         />
                     </div>
                   </div>

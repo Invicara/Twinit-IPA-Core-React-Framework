@@ -20,11 +20,7 @@
       margin-bottom: 10px;
     }
   }
-  
-  .form-control:focus {
-    border: 2px solid var(--app-accent-color) !important;
-    box-shadow: unset;
-  }
+
   
   .required {
     .select-title:after {

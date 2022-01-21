@@ -1,0 +1,14 @@
+.entity-modal-text-input {
+    position: relative;
+    input {
+        background-color: transparent;
+        z-index: 1;
+    }
+    .entity-modal-text-input__overlay {
+        position: absolute;
+        z-index: 0;
+        color: var(--app-accent-color);
+        transform: translate(12px);
+        bottom: 0;
+    }
+}
