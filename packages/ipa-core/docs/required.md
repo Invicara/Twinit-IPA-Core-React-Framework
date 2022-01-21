@@ -55,7 +55,8 @@ The `ipaConfig` configuration specifies
 
 The ipaConfig must contain:
 
-- Your applications names
+- Your application's name
+- Your application's unique id
 - The user `configUserType` for your application
 - The location of any Redux slices you want to add
 - The location and types of any components you want to make available to framework-provided pages
@@ -74,6 +75,7 @@ All Redux slices and components will be loaded from `app/ipaCore` folder.
 ```jsx
 const ipaConfig = {
   appName: "My Platform Application",
+  applicationId: "07b8b191-b465-461d-be7e-8f3e9b492708",
   configUserType: 'my-ipa',
   css: ['myTheme.css'],
   redux: {

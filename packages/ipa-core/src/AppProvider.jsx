@@ -61,7 +61,12 @@ class AppProvider extends React.Component {
     //so if the baseroot does nto already have one we add it here
     let authRoot = endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot
     if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/'
-    this.authUrl = IafSession.getAuthUrl(authRoot);
+
+    
+    let appId = endPointConfig?.applicationId ? endPointConfig.applicationId : this.props.ipaConfig?.applicationId
+    if (!appId) console.error('Application ID missing from endPointConfig or ipaConfig')
+
+    this.authUrl = IafSession.getAuthUrl(authRoot, appId);
 
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
