@@ -36,8 +36,6 @@ const GroupAndFilterControl = ({fetchedEntities, nonGroupableProperties = [], no
     return (
         <div className="entity-tree-panel">
             {fetching && <div className="centered">Retrieving data</div>}
-            {_.isEmpty(fetchedEntities) ?
-                <div className="centered">No results</div> :
                 <>
                     <label>Group by:</label>
                     <GroupControl className="entity-group"
@@ -52,7 +50,6 @@ const GroupAndFilterControl = ({fetchedEntities, nonGroupableProperties = [], no
                                    filters={selectedFilters}
                                    availableFilters={availableFilters()}/>
                 </>
-            }
         </div>
     )
 }
