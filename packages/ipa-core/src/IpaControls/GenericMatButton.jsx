@@ -25,8 +25,8 @@ export default class GenericMatButton extends React.Component {
     
     
     return (
-        <div className="GenericMatButton">    
-          <Button variant="contained" style={{...this.props.styles}} onClick={this.props.onClick} disabled={this.props.disabled} className={this.props.customClasses}>
+        <div className={`GenericMatButton ${this.props.className}`}>    
+          <Button variant="contained" size={this.props.size} style={{...this.props.styles}} onClick={this.props.onClick} disabled={this.props.disabled} className={this.props.customClasses}>
               {this.props.children}
           </Button>
         </div>

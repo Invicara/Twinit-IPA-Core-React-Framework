@@ -1,3 +1,5 @@
-export const asSelectOption = option => ({value: option, label: option, key: option})
+import _ from "lodash"
 
-export const asSelectOptions = options => options.map(asSelectOption)
+export const asSelectOption = option => option ? ({value: option, label: option, key: option}) : undefined
+
+export const asSelectOptions = options => _.defaultTo(options, []).map(asSelectOption)

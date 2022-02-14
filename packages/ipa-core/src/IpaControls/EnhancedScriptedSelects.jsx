@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from "react";
-import Select from "react-select";
+import Select, { highlightOptions } from "./Select";
 import {FetchButton} from "./FetchButton";
 import clsx from "clsx";
 import _ from "lodash";
@@ -9,9 +9,8 @@ import {asSelectOptions} from "../IpaUtils/controls";
 import ScriptCache from "../IpaUtils/script-cache";
 
 import './EnhancedScriptedSelects.scss'
-import {selectStyles} from "./private/selectStyles";
 
-export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, horizontal, selectOverrideStyles, onFetch, multi, script, disabled}) => {
+export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, horizontal, selectOverrideStyles, onFetch, multi, placeholder, highlightedOptions, isClearable, script, disabled}) => {
     const [selects, setSelects] = useState({});
 
     const value = (currentValue || {})
@@ -20,8 +19,8 @@ export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compa
         const fetchOptions = async () => {
             setSelects({});
             const selectOptions = await ScriptCache.runScript(script);
-            setSelects(_.mapValues(selectOptions, options => options.sort((a, b) => a.localeCompare(b))))
-            loadPlainInitialValueWithScriptedSelectFormat(onChange, currentValue, selectOptions);
+            setSelects(_.mapValues(selectOptions, options => options?.sort((a, b) => a.localeCompare(b))))
+            loadPlainInitialValueWithScriptedSelectFormat(onChange, value, selectOptions);
         };
         fetchOptions();
     }, [script]);
@@ -30,8 +29,8 @@ export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compa
 
         let selectedValues;
         if (!selected || (Array.isArray(selected) && !selected.length)) {
-          delete value[selectId]
-          onChange({...value})
+            let newValue = {...value, [selectId]: []}
+            onChange(newValue)
         }
         else {
           selectedValues = selected ? (multi ? selected : [selected]).map(opt => opt.value) : [];
@@ -41,24 +40,27 @@ export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compa
 
     return _.isEmpty(selects) ? 'Loading controls...\n' :
         <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
-            {_.values(_.mapValues(selects, (options, selectId) => <Fragment key={selectId}>
-                    {!compact && <span className="select-title">{selectId}</span>}
+            {_.values(_.mapValues(selects, (options, selectId) => {
+                const selectValue = _.compact(value[selectId])
+                let selectOptions = _.compact(asSelectOptions(options))
+                selectOptions = highlightOptions(highlightedOptions, selectOptions)
+                return <Fragment key={selectId}>
                     <Select
-                        styles={selectOverrideStyles || {control: selectStyles}}
+                        labelProps={compact ? undefined : {text: selectId}}
                         isMulti={multi}
-                        value={value[selectId] ? asSelectOptions(value[selectId]) : null}
+                        value={asSelectOptions(selectValue)}
                         onChange={selected => handleChange(selectId, selected)}
-                        options={asSelectOptions(options)}
-                        className="select-element"
+                        options={selectOptions}
                         closeMenuOnSelect={!multi}
-                        isClearable={true}
-                        placeholder={`Select a ${selectId}`}
+                        styles={selectOverrideStyles}
+                        isClearable={isClearable}
+                        placeholder={placeholder}
                         isDisabled={_.isEmpty(options) || disabled}
                         menuPlacement="auto"
                         menuPosition="fixed"
                     />
                 </Fragment>
-            ))}
+            }))}
             {!noFetch && <FetchButton disabled={disabled} onClick={onFetch}
                          customClasses={touched && !disabled && 'attention'}>Fetch</FetchButton>}
         </div>

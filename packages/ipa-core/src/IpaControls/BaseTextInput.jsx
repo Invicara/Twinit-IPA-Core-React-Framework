@@ -1,21 +1,44 @@
-import React from 'react';
-import { any, bool, func, object, string } from 'prop-types';
+import React, {useState} from 'react';
+import { any, bool, element, func, node, object, shape, string } from 'prop-types';
 import './BaseTextInput.scss'
+import ControlLabel from './ControlLabel';
+import { components } from 'react-select';
 
 const BaseTextInput = (props) => {
 
+    const [isFocused, setIsFocused] = useState(false);
 
-    return <div className={`base-text-input ${props.className}`}>
-        {props.labelProps && <label style={props.labelProps.style} className={props.labelProps.className}>{props.labelProps.text}</label>}
-        <input
-            type={props.inputProps.type}
-            value={props.inputProps.value}
-            onChange={props.inputProps.onChange}
-            placeholder={props.inputProps.placeholder}
-            disabled={props.inputProps.disabled}
-            className={`form-control ${props.inputProps.className}`}
-            style={props.style}>
-        </input>
+    const handleFocus = () => {
+        setIsFocused(true);
+        props.inputProps.onFocusChange?.(true);
+    }
+
+    const handleBlur = () => {
+        setIsFocused(false);
+        props.inputProps.onFocusChange?.(false);
+    }
+
+    const baseClassName = 'base-text-input';
+    let classNameModifiers = isFocused ? `${baseClassName}--is-focused` : '';
+
+    let inputProps = {
+        value: props.inputProps.value,
+        type: props.inputProps.type,
+        onChange: props.inputProps.onChange,
+        placeholder: props.inputProps.placeholder,
+        disabled: props.inputProps.disabled,
+        onFocus: handleFocus,
+        onBlur: handleBlur,
+        className: `form-control ${props.inputProps.className}`,
+        style: props.style
+    }
+
+    return <div className={`${baseClassName} ${props.className} ${classNameModifiers}`}>
+        {props.labelProps && <ControlLabel {...props.labelProps}/>}
+        {props.component ? 
+            <props.component {...inputProps}/> : 
+            <input {...inputProps}/>
+        }
         {props.children}
     </div>
 }
@@ -23,11 +46,8 @@ const BaseTextInput = (props) => {
 
 BaseTextInput.propTypes = {
     className: string,
-    labelProps: {
-        style: object,
-        text: string
-    },
-    inputProps: {
+    labelProps: ControlLabel.propTypes,
+    inputProps: shape({
         type: string,
         value: any,
         onChange: func,
@@ -35,7 +55,9 @@ BaseTextInput.propTypes = {
         disabled: bool,
         className: string,
         style: object,
-    }
+        onFocusChange: func,
+        component: element,
+    }).isRequired,
 }
 
 

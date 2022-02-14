@@ -1,0 +1,7 @@
+.collapsible-text-input {
+    .collapsible-text-input__show-hide {
+        align-self: end;
+        margin-right: 4px;
+        transform: translateY(calc(-100% - 4px));
+    }
+}

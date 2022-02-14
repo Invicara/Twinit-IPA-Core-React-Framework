@@ -343,7 +343,8 @@ const withEntitySearch = WrappedComponent => {
             return <WrappedComponent onEntityChange={this.onEntityChange} doEntityAction={this.doEntityAction}
                                      getEntityExtendedData={this.getEntityExtendedData}
                                      getPerEntityConfig={this.getPerEntityConfig}
-                                     entitiesSelected={this.entitiesSelected} getFetcher={this.getFetcher}
+                                     entitiesSelected={this.entitiesSelected}
+                                     getFetcher={this.getFetcher}
                                      setAvailableDataGroups={this.setAvailableDataGroups}
                                      updateEntityType={this.updateEntityType}
                                      onGroupOrFilterChange={this.onGroupOrFilterChange}

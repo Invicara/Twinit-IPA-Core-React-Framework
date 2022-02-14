@@ -5,7 +5,7 @@ import produce from "immer";
 import React, {useEffect, useState} from "react";
 import {usePrevious} from "../IpaUtils/usePrevious";
 import _ from "lodash";
-import {CheckBox} from "@material-ui/icons";
+import {CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBoxRounded} from "@material-ui/icons";
 import CheckedCircle from '@material-ui/icons/CheckCircle';
 import UncheckedCircle from '@material-ui/icons/RadioButtonUnchecked';
 
@@ -25,34 +25,20 @@ export const RoundCheckbox = ({...props}) => <Checkbox
 
 export const PinkCheckbox = withStyles({
     root: {
+        color: "#B8B8B8",
         '&$checked': {
             color: 'var(--app-accent-color)'
         },
     },
+    indeterminate: {
+        color: 'var(--app-accent-color)'
+    },
     checked: {},
-    icon: {
-        borderRadius: 3,
-        width: 14,
-        height: 14,
-        margin: 3,
-        border: ' 2px solid rgb(87,87,87)',
-        backgroundColor: '#f5f8fa',
-        backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
-        '$root.Mui-focusVisible &': {
-            outline: '2px auto rgba(19,124,189,.6)',
-            outlineOffset: 2,
-        },
-        'input:hover ~ &': {
-            backgroundColor: '#ebf1f5',
-        },
-        'input:disabled ~ &': {
-            boxShadow: 'none',
-            background: 'rgba(206,217,224,.5)',
-        },
-    }
 })((props) => <Checkbox
-    icon={<span className={props.classes.icon}/>}
-    checkedIcon={<CheckBox style={{fontSize: 20, color: 'var(--app-accent-color)'}}/>}
+    icon={<CheckBoxOutlineBlank/>}
+    indeterminateIcon={<IndeterminateCheckBoxRounded/>}
+    checkedIcon={<CheckBox/>}
+    
     {...produce(props, props => {delete props.classes.icon})} />);
 
 export const SquareInSquareCheckbox = withStyles({

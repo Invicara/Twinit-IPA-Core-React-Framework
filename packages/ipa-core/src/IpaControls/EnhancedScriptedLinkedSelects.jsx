@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from "react";
-import Select from "react-select";
+import Select, { highlightOptions } from "./Select";
 import {FetchButton} from "./FetchButton";
 import clsx from "clsx";
 import _ from "lodash";
@@ -15,7 +15,7 @@ const flattenIfNotMulti = (selectValues, selects) => {//This is necessary bc scr
     )
 };
 
-export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched, noFetch, onFetch, selects: selectsConfig, compact, horizontal, selectOverrideStyles, isClearable = true}) => {
+export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched, noFetch, onFetch, selects: selectsConfig, compact, horizontal, selectOverrideStyles, highlightedOptions, placeholders, isClearable = true}) => {
 
     const [selects, setSelects] = useState(selectsConfig.reduce((acc, select, i) => ({
         ...acc,
@@ -23,10 +23,6 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
     }), {}));
 
     const value = (currentValue || {})
-
-    useEffect(() => {
-        updateFetchOptions();
-    }, []);
     
     useEffect(() => {
         updateFetchOptions();
@@ -37,7 +33,7 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
     }
     
     const updateFetchOptions = () => {
-      fetchOptions();
+        fetchOptions();
 
         if (currentValue) {
 
@@ -59,7 +55,7 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
     const fetchOptions = async (currentSelect, previousSelectsValues) => {
         const nextSelect = _.values(selects)[currentSelect ? currentSelect.index + 1 : 0]
         if (nextSelect) {                       
-            const selectOptions = await ScriptCache.runScript(nextSelect.script,
+            let selectOptions = await ScriptCache.runScript(nextSelect.script,
                 previousSelectsValues ? {input: flattenIfNotMulti(previousSelectsValues, selects)} : undefined
             );            
             setSelects(selects => ({
@@ -75,24 +71,34 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
     const fetchDisabled = !value || _.isEmpty(_.values(value).flatMap(_.identity));
 
     return <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
-        {_.values(_.mapValues(selects, (select, selectId) => <Fragment key={selectId}>
-            {!compact && <span className={clsx("select-title", select.required && "required")}>{selectId}</span>}
+        {_.values(_.mapValues(selects, (select, selectId) => {
+            const selectValue = _.compact(value[selectId])
+            
+            let selectOptions = _.compact(asSelectOptions(select.options))
+            if(highlightedOptions?.[selectId]) {
+                selectOptions =  highlightOptions(highlightedOptions[selectId], selectOptions)
+            }
+
+            const placeholder = placeholders?.[selectId];
+
+            return <Fragment key={selectId}>
                 <Select
-                    styles={selectOverrideStyles || {control: selectStyles}}
+                    labelProps={compact ? undefined : {text: selectId}}
                     isMulti={select.multi}
-                    value={value[selectId] ? asSelectOptions(value[selectId]) : []}
+                    styles={selectOverrideStyles}
+                    value={asSelectOptions(selectValue)}
                     onChange={selected => onLinkedSelectChange(selectId, selected, select)}
-                    options={asSelectOptions(select.options)}
-                    className="select-element"
+                    options={selectOptions}
+                    placeholder={placeholder}
                     closeMenuOnSelect={!select.multi}
                     isClearable={isClearable}
-                    placeholder={`Select a ${selectId}`}
+                    required={select.required}
                     isDisabled={_.isEmpty(select.options) || disabled}
                     menuPlacement="auto"
                     menuPosition="fixed"
                 />
             </Fragment>
-        ))}
+        }))}
         {!noFetch && <FetchButton disabled={fetchDisabled} onClick={onFetch}
                      customClasses={touched && !fetchDisabled && 'attention'}>Fetch</FetchButton>}
     </div>
