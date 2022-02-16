@@ -49,6 +49,7 @@ class EntityModal extends React.Component {
     typeMapKeys: [],
     typeMap: {},
     error: null,
+    formError: null,
     modalOpen: false,
     shouldLoadForm: true,
     config: {}
@@ -73,6 +74,7 @@ class EntityModal extends React.Component {
       ...this.INITIAL_STATE,
       config,
       error: null,
+      formError: null,
       modalOpen: false
     })
     this.getControlValues()
@@ -153,13 +155,13 @@ class EntityModal extends React.Component {
       try {
         newEntity = this.getBulkEntity(entity)
       } catch (err) {
-        if (err.message === 'No entity to intersect') {
+        if (err.message === 'No entity to edit') {
           this.setState({
             shouldLoadForm: false,
             error: (
-              <>
+              <div className='entity-modal-error-container'> 
                 <div className='entity-modal-error'>
-                  Please select an entity before editing
+                  Please select an entity before editing.
                 </div>
                 <GenericMatButton
                   onClick={this.onCancel}
@@ -168,7 +170,7 @@ class EntityModal extends React.Component {
                 >
                   Go back
                 </GenericMatButton>
-              </>
+              </div>
             )
           })
         } else {
@@ -338,7 +340,7 @@ class EntityModal extends React.Component {
   }
 
   onSave = async () => {
-    this.setState({ working: true, error: null })
+    this.setState({ working: true, error: null, formError: null })
 
     const isBulkEdit = _.isArray(this.props.entity)
 
@@ -377,15 +379,15 @@ class EntityModal extends React.Component {
         this.close()
         this.resetState();
       } catch (err) {
-        let errorMessage =
+        let formErrorMessage =
           'Unexpected error while preparing the entities for saving, please try again later'
         if (err.message === 'MISSING_REQUIRED_PROPERTIES') {
-          errorMessage = 'Required properties are missing values!'
+          formErrorMessage = 'Required properties are missing values!'
         } else if (err.message) {
-          errorMessage = err.message
+          formErrorMessage = err.message
         }
-        const error = <div className='entity-modal-error'>{errorMessage}</div>
-        this.setState({ working: false, error })
+        const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
+        this.setState({ working: false, formError })
       }
     }
   }
@@ -741,34 +743,39 @@ class EntityModal extends React.Component {
 
     let modalBody = (
       <div className='mbsc-grid'>
-        {body}
-        <hr />
-        {this.state.error}
-        <div
-          style={{
-            width: '100%',
-            display: 'inline-flex',
-            justifyContent: 'flex-end',
-            marginTop: '20px'
-          }}
-        >
-          <GenericMatButton
-            onClick={this.onCancel}
-            disabled={this.state.working}
-            styles={{ marginRight: '15px' }}
-          >
-            Cancel
-          </GenericMatButton>
-          <GenericMatButton
-            onClick={this.onSave}
-            disabled={this.state.working}
-            customClasses='attention'
-          >
-            {this.props.action.component.okButtonText
-              ? this.props.action.component.okButtonText
-              : 'OK'}
-          </GenericMatButton>
-        </div>
+        {this.state.error || (
+          <>
+            {body}
+            <hr />
+            {this.state.formError}
+            <div
+              style={{
+                width: '100%',
+                display: 'inline-flex',
+                justifyContent: 'flex-end',
+                marginTop: '20px'
+              }}
+            >
+              <GenericMatButton
+                onClick={this.onCancel}
+                disabled={this.state.working}
+                styles={{ marginRight: '15px' }}
+              >
+                Cancel
+              </GenericMatButton>
+              <GenericMatButton
+                onClick={this.onSave}
+                disabled={this.state.working}
+                customClasses='attention'
+              >
+                {this.props.action.component.okButtonText
+                  ? this.props.action.component.okButtonText
+                  : 'OK'}
+              </GenericMatButton>
+            </div>
+          </>
+        )}
+        
       </div>
     )
 
