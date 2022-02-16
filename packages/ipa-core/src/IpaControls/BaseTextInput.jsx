@@ -56,8 +56,8 @@ BaseTextInput.propTypes = {
         className: string,
         style: object,
         onFocusChange: func,
-        component: element,
     }).isRequired,
+    component: element,
 }
 
 

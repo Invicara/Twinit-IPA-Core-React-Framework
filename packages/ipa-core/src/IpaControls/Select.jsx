@@ -1,20 +1,20 @@
 import React from 'react'
-import Select from 'react-select'
+import {default as ReactSelect} from 'react-select'
 import CreatableSelect from 'react-select/creatable'
 import { selectStyles } from './private/selectStyles'
 import clsx from "clsx";
-import _ from 'lodash';
+import _, { functionsIn } from 'lodash';
 
 import './Select.scss'
 import ControlLabel from './ControlLabel';
-import {shape} from 'prop-types'
+import {any, array, bool, func, object, shape, string} from 'prop-types'
 
 
-const IpaSelect = props => {
+const Select = props => {
 
-  let Component = props.creatable ? CreatableSelect : Select
+  let Component = props.creatable ? CreatableSelect : ReactSelect
 
-  let optionStyle = (styles, { data, isDisabled, isFocused, isSelected }) => {
+  let optionStyle = (styles, { data }) => {
     return {
       ...styles,
       color: data.highlight ? 'var(--app-accent-color)' : styles.color
@@ -55,11 +55,22 @@ export const highlightOptions = (keysToHighlight, options) => options.map((optio
         highlight: _.defaultTo(keysToHighlight, []).includes(option.key)
 }))
 
-IpaSelect.propTypes = {
+Select.propTypes = {
   labelProps: shape({...ControlLabel.propTypes}),
-  ...Select.propTypes,
-  ...CreatableSelect.propTypes
+  creatable: bool,
+  isMulti: bool,
+  value: any,
+  onChange: func,
+  options: array,
+  closeMenuOnSelect: func,
+  isClearable: bool,
+  placeholder: string,
+  label: string,
+  isDisabled: bool,
+  menuPlacement: string,
+  menuPosition: string,
+  styles: object
 }
 
 
-export default IpaSelect
+export default Select
