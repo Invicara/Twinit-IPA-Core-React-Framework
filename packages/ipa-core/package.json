@@ -61,6 +61,7 @@
     "react-router-dom": "^4.3.1",
     "react-select": "^3.0.8",
     "react-table": "^6.8.6",
+    "react-touch": "^0.4.4",
     "react-transition-group": "^2.2.1"
   },
   "devDependencies": {
