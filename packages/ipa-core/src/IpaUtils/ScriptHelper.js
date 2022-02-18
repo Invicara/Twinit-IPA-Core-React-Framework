@@ -61,12 +61,13 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback){
   if (isProjectNextGenJs()) {
     //execute js script
     let loadedScripts = IafScriptEngine.getVar('loadedScripts')
-    if (!loadedScripts[scriptName]) {
+    console.log("loadedScripts", loadedScripts)
+    if (!loadedScripts.default[scriptName]) {
       //log console error and throw exception
       console.error(`executeScript "${scriptName}" not found on loadedScripts `)
     } else {
       let libraries = { PlatformApi, UiUtils }
-      let result = loadedScripts[scriptName](operand, libraries, ctx, callback)
+      let result = loadedScripts.default[scriptName](operand, libraries, ctx, callback)
       if (result && result instanceof Promise) result = await result
       return result
     }
