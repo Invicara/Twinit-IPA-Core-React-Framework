@@ -75,7 +75,7 @@ export const useChecked = (inputItems) => {
     const previousItems = usePrevious(inputItems)
 
     useEffect(() => {//if items get added or removed, update. This behavior is simplified for current use cases
-        if (inputItems.length !== _.get(previousItems, 'length', 0)) setItems(inputItems.map(instance => ({
+        setItems(inputItems.map(instance => ({
             ...instance,
             checked: (instance.checked || false)
         })))

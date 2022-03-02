@@ -1,6 +1,6 @@
 import React from "react"
 import {compose} from "redux";
-import {connect} from "react-redux";
+import {connect, useStore} from "react-redux";
 import _ from 'lodash'
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 
@@ -10,6 +10,8 @@ import '../../IpaStyles/DbmTooltip.scss'
 
 const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer}) => {
   let icons = []
+
+  const reduxStore = useStore();
 
   const runPreEntityActionScript = async (payload) => {
 
@@ -44,12 +46,12 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
         return null
       }
 
-      let newEntity = Array.isArray(entity) ? [...entity] : Object.assign({}, entity)
+      let newEntity = Array.isArray(entity) ? [...entity] :  {...entity}
 
       newEntity = await runPreEntityActionScript({action, entity: newEntity, type})
       // the factory create method can use the app context to display the component
       // e.g. context.ifefShowModal(modal);
-      factory.create({action, entity: newEntity, type, context})
+      factory.create({action, entity: newEntity, type, context, reduxStore})
     }
     else {
       // if there's no component execute the action directly

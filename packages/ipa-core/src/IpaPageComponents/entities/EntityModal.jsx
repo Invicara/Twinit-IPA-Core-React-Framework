@@ -38,7 +38,7 @@ import { connect } from 'react-redux'
 import CollapsibleTextInput from '../../IpaControls/CollapsibleTextInput'
 import { FormControlLabel } from '@material-ui/core'
 import { PinkCheckbox } from '../../IpaControls/Checkboxes'
-
+import * as modal from '../../redux/slices/modal'
 class EntityModal extends React.Component {
 
 
@@ -73,17 +73,11 @@ class EntityModal extends React.Component {
     this.setState({
       ...this.INITIAL_STATE,
       config,
-      error: null,
-      formError: null,
-      modalOpen: false
+      modalOpen: true,
+      ...overridingState
     })
-    this.getControlValues()
-  }
 
-  componentDidUpdate (prevProps, prevState) {
-    if(!_.isEqual(this.props.entity, prevProps.entity)) {
-      this.initiateModal()
-    }
+    this.getControlValues()
   }
 
   shouldDisableAllControls = _.memoize(
@@ -248,7 +242,7 @@ class EntityModal extends React.Component {
   }
 
   close = () => {
-    this.context.ifefShowModal(false)
+    this.props.destroyModal()
   }
 
   onCancel = async () => {
@@ -780,13 +774,12 @@ class EntityModal extends React.Component {
     )
 
     let title = <span>{this.props.action.name + ' ' + entityType}</span>
-    return (
-      <GenericModal
-        title={title}
-        customClasses={'ipa-modal ipa-modal-no-x-close'}
-        modalBody={modalBody}
-      />
-    )
+
+    return <GenericModal
+      title={title}
+      customClasses={'ipa-modal ipa-modal-no-x-close'}
+      modalBody={modalBody}
+    />
   }
 
   getGroups () {
@@ -797,10 +790,13 @@ class EntityModal extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({})
+const mapStateToProps = state => ({
+  modal: state.modal
+})
 
 const mapDispatchToProps = {
-  changeEntity
+  changeEntity,
+  destroyModal: modal.actions.destroy
 }
 
 
@@ -820,12 +816,12 @@ const ConnectedEntityModal =  connect(mapStateToProps, mapDispatchToProps)(Entit
 export default ConnectedEntityModal
 
 export const EntityModalFactory = {
-  create: ({ type, action, entity, context }) => {
-    let modal = (
-      <ConnectedEntityModal action={action} entity={entity} type={type} />
-    )
-    context.ifefShowModal(modal)
-    return modal
+  create: ({ type, action, entity, context, reduxStore}) => {
+    reduxStore.dispatch(modal.actions.setModal({
+      component: ConnectedEntityModal, 
+      props: {action, entity, type}, 
+      open: true
+    }))
   }
 }
 
