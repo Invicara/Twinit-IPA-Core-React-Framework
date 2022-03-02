@@ -13,6 +13,8 @@ import {
     setViewerSyncOn
 } from "./slices/entities";
 
+import * as modal from './slices/modal'
+
 
 import {getUser, setUser} from './slices/user'
 import {
@@ -61,6 +63,9 @@ const redux = {
         setUser,
         setUserConfig,
         getEntitySelectConfig
+    },
+    Modals: {
+        ...modal.actions
     }
 }
 

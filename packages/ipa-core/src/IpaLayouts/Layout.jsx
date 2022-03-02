@@ -17,6 +17,7 @@ import './Layout-grouped-left-nav-bar.scss'
 import './Layout-MainNav.scss'
 import './Layout.scss'
 import clsx from "clsx";
+import { connect } from 'react-redux';
 
 class Layout extends React.Component {
 
@@ -172,6 +173,11 @@ class Layout extends React.Component {
                         </FlexContent>
                     </FlexContainer>
                 </SidePanelContainer>
+                {   
+                    this.props.modal?.open && 
+                    this.props.modal?.component && 
+                    <this.props.modal.component {...this.props.modal.props}/>
+                }
             </div>
         );
     }
@@ -184,4 +190,10 @@ Layout.contextTypes = {
     appContext: PropTypes.object
 };
 
-export default Layout
+const mapStateToProps = state => ({modal: state.modal})
+
+const mapDispatchToProps = {
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Layout)

@@ -6,20 +6,19 @@ import user from './slices/user'
 import files from './slices/files'
 import dashboardUI from './slices/dashboardUI'
 import entityUI from './slices/entityUI'
+import modal from './slices/modal'
 
 import {combineReducers} from "redux"
 
 import {configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
 
 const frameworkReducers = {
-  entitiesGeneral, entitiesPluggableSearch, entityRelations, entityUI, userConfig, user, files, dashboardUI
+  entitiesGeneral, entitiesPluggableSearch, entityRelations, entityUI, userConfig, user, files, dashboardUI, modal,
 }
 
 let appReducers = {}
 
-const combinedReducers = combineReducers({
-  entitiesGeneral, entitiesPluggableSearch, entityRelations, entityUI, userConfig, user, files, dashboardUI
-})
+const combinedReducers = combineReducers({...frameworkReducers, ...appReducers})
 
 export const addReducerSlice = (addSlice) => {
   
