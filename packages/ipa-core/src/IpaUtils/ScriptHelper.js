@@ -6,22 +6,29 @@ import * as PlatformApi from '@invicara/platform-api'
 import * as UiUtils from '@invicara/ui-utils'
 
 async function loadScript(query, ctx) {
+  console.log('loadScript query', query)
   if (!query) {
       console.warn("No script query in loadScript");
       return;
   }
   if (isProjectNextGenJs()) {
       const ctx = { _namespaces: IafProj.getCurrent()._namespaces, authToken: IafSession.getAuthToken() }
-
-      let scriptModule = await IafScriptEngine.dynamicImport(query, ctx)
-      console.log("scriptModule", scriptModule)
-      let loadedScripts = IafScriptEngine.getVar("loadedScripts")
-      console.log("loadedScripts", loadedScripts)
-
-      if (!loadedScripts) loadedScripts = scriptModule
-      else loadedScripts = Object.assign({}, loadedScripts, scriptModule)
-
-      IafScriptEngine.setVar("loadedScripts", loadedScripts)
+      let criteria = { query: {_userType: query._userType }} 
+      console.log('criteria', criteria)
+      let scriptModule = await IafScriptEngine.dynamicImport(criteria, ctx)
+      if(scriptModule){
+        console.log("loadScript scriptModule", scriptModule)
+        let loadedScripts = await IafScriptEngine.getVar('loadedScripts')
+        console.log("loadScript loadedScripts", loadedScripts)
+  
+        if (!loadedScripts) loadedScripts = scriptModule.default
+        else loadedScripts = _.assign({}, loadedScripts, scriptModule.default)
+  
+        console.log("loadScript loadedScripts2", loadedScripts)
+        await IafScriptEngine.setVar('loadedScripts', loadedScripts)
+      } else {
+        console.warn(`No script type ${query._userType} found.`);
+      }
   } else {
       // There should only be one, but API gets all, filters and then passes back.  Test return
       let scripts = await IafProj.getScripts(IafProj.getCurrent(), { query: query });
@@ -61,13 +68,13 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback){
   if (isProjectNextGenJs()) {
     //execute js script
     let loadedScripts = IafScriptEngine.getVar('loadedScripts')
-    console.log("loadedScripts", loadedScripts)
-    if (!loadedScripts.default[scriptName]) {
+    console.log("executeScript loadedScripts", loadedScripts)
+    if (!loadedScripts[scriptName]) {
       //log console error and throw exception
       console.error(`executeScript "${scriptName}" not found on loadedScripts `)
     } else {
       let libraries = { PlatformApi, UiUtils }
-      let result = loadedScripts.default[scriptName](operand, libraries, ctx, callback)
+      let result = loadedScripts[scriptName](operand, libraries, ctx, callback)
       if (result && result instanceof Promise) result = await result
       return result
     }
