@@ -44,6 +44,7 @@ class EntityModal extends React.Component {
 
 
   INITIAL_STATE = {
+    intialNewEntity: null,
     newEntity: null,
     working: false,
     typeMapKeys: [],
@@ -77,7 +78,8 @@ class EntityModal extends React.Component {
       ...overridingState
     })
 
-    this.getControlValues()
+    let intialNewEntity = this.getControlValues()
+    this.setState({intialNewEntity})
   }
 
   shouldDisableAllControls = _.memoize(
@@ -192,6 +194,7 @@ class EntityModal extends React.Component {
     }
 
     this.setState({ newEntity })
+    return newEntity
   }
 
   onChangeMulti = attObj => {
@@ -338,8 +341,13 @@ class EntityModal extends React.Component {
 
     const isBulkEdit = _.isArray(this.props.entity)
 
-    if (this.props.action.doEntityAction) {
-      try {
+    if(_.isEqual(this.state.intialNewEntity, this.state.newEntity)) {
+      this.close()
+      return
+    }    
+
+    try {
+      if (this.props.action.doEntityAction) {
         if (isBulkEdit) {
           let preparedEntities = []
           let oldEntities = []
@@ -372,17 +380,21 @@ class EntityModal extends React.Component {
         }
         this.close()
         this.resetState();
-      } catch (err) {
-        let formErrorMessage =
-          'Unexpected error while preparing the entities for saving, please try again later'
-        if (err.message === 'MISSING_REQUIRED_PROPERTIES') {
-          formErrorMessage = 'Required properties are missing values!'
-        } else if (err.message) {
-          formErrorMessage = err.message
-        }
-        const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
-        this.setState({ working: false, formError })
       }
+    } catch (err) {
+      let formErrorMessage =
+        'Unexpected error while preparing the entities for saving, please try again later'
+      
+      switch(err.message) {
+        case "MISSING_REQUIRED_PROPERTIES":
+          formErrorMessage = 'Required properties are missing values!'
+          break;
+        default:
+          formErrorMessage = err.message
+          break;
+      }
+      const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
+      this.setState({ working: false, formError })
     }
   }
 
