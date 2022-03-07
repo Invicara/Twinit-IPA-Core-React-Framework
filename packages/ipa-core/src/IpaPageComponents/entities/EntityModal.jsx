@@ -156,8 +156,8 @@ class EntityModal extends React.Component {
             shouldLoadForm: false,
             error: (
               <div className='entity-modal-error-container'> 
-                <div className='entity-modal-error'>
-                  Please select an entity before editing.
+                <div>
+                  No entity selected
                 </div>
                 <GenericMatButton
                   onClick={this.onCancel}
