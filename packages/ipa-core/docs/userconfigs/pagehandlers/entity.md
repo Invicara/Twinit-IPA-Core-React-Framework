@@ -173,6 +173,7 @@ actions: {
     component: {
         name: "AssetModal",
         disabled: ['Asset Tag'],
+        disabledInMulti: ['Unique Asset Prop'],
         okButtonText: 'Save'
     }
   }
@@ -185,13 +186,15 @@ actions: {
 - `script`: the script name that knows how to edit the entity. This includes how to update extended data which are not directly linked to the asset itself.
 - `component`: the component to use to accomplish the edit (or action). In this case using the AssetModal. Other configuration is also provided which the AssetModal accepts:
 - `name`: the name of the component to use for the action.
-- `disabled`: a list of properties to disable editing of int he dialog.
+- `disabled`: a list of properties to disable editing of in the dialog.
+- `disabledInMulti`: a list of properties to disable editing of in the dialog while editing multiple entities at once.
 - `disableAll`: (not shown) a shortcut to disable all properties in the dialog. Used in Delete below.
 - `okButtonText`: the text to show on the "OK" button in the modal.
 
 ### Use Case
 
 When the user clicks the edit icon on the asset, the AssetModal is presented to the user.The Asset Tag property is not able to be edited however all other properties are.
+When the user clicks the edit icon while multiple assets are selected, he is presented with the  Asset Modal. The Asset Tag and the Unique Asset Prop fields will be disabled.
 
 ## `Delete`
 
