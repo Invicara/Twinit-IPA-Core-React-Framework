@@ -52,7 +52,7 @@ const Select = props => {
 
 export const highlightOptions = (keysToHighlight, options) => options.map((option) => ({
         ...option,
-        highlight: _.defaultTo(keysToHighlight, []).includes(option.key)
+        highlight: _.defaultTo(keysToHighlight, []).includes(option.key.trim())
 }))
 
 Select.propTypes = {

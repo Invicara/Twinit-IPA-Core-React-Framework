@@ -230,9 +230,7 @@ class EntityModal extends React.Component {
       if (propInfo && propInfo.type === 'tags' && value === undefined)
         value = []
 
-      if (newEntity.properties?.[att]?.hasMultipleValues === true) {
-        newEntity.properties[att].hasMultipleValues = false
-      }
+      newEntity.properties[att].hasMultipleValues = false
 
       if (att === 'name') {
         newEntity['Entity Name'] = value
@@ -351,7 +349,6 @@ class EntityModal extends React.Component {
         if (isBulkEdit) {
           let preparedEntities = []
           let oldEntities = []
-
           this.props.entity.forEach(entity => {
             let newProperties = this.filterObjectProperties(
               this.state.newEntity.properties,
@@ -636,8 +633,10 @@ class EntityModal extends React.Component {
   getScriptedHierarchyInputs = () => {
     let selects = this.props.action.component.hierarchySelects.selects
 
-    selects.forEach(s => {
-      if (this.propIsRequired(s.display)) s.required = true
+    selects = selects.map((s) => {
+      let newS = {...s};
+      if (this.propIsRequired(s.display)) newS.required = true
+      return newS
     })
 
     let currentValue = {}
