@@ -181,7 +181,7 @@ class UserGroupView extends React.Component {
       console.log(this.state.userGroupMode, this.state.selectedUserGroup)
       if (this.state.userGroupMode === 'Users/Invites') {
         this.setState({loadingInvites: true, usersInSelectedGroup: [], invitesInSelectedGroup: [], expiredInvitesInSelectedGroup:[]})
-        IafUserGroup.getUsers(this.state.selectedUserGroup).then((users) => {
+        IafUserGroup.getUsers(this.state.selectedUserGroup, null, {_offset: 0, _pageSize: 200}).then((users) => {
           users.sort((a,b) => {return a._lastname.localeCompare(b._lastname)})
           this.setState({usersInSelectedGroup: users})
         })
