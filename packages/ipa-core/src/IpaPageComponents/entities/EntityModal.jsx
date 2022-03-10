@@ -70,10 +70,8 @@ class EntityModal extends React.Component {
   }
 
   initiateModal = (overridingState = {}) => {
-    let config = this.props.action.component && {}
     this.setState({
       ...this.INITIAL_STATE,
-      config,
       modalOpen: true,
       ...overridingState
     })
@@ -337,7 +335,7 @@ class EntityModal extends React.Component {
   onSave = async () => {
     this.setState({ working: true, error: null, formError: null })
 
-    const isBulkEdit = _.isArray(this.props.entity)
+    const isBulkEdit = _.isArray(this.props.entity) && this.props.entity.length > 1
 
     if(_.isEqual(this.state.intialNewEntity, this.state.newEntity)) {
       this.close()
@@ -408,12 +406,16 @@ class EntityModal extends React.Component {
 
   getControl = prop => {
     let { newEntity } = this.state
+    
+    const isBulkEdit = _.isArray(this.props.entity) && this.props.entity.length > 1
 
     let propInfo = this.state.newEntity.properties[prop]
     let propType = propInfo && propInfo.type ? propInfo.type : 'missing'
     let disableControl =
       this.shouldDisableAllControls() ||
-      this.state?.config?.disabled?.includes(prop)
+      this.props?.action?.component?.disabled?.includes(prop) ||
+      isBulkEdit && this.props?.action?.component?.disabledInMulti?.includes(prop);
+
 
     switch (propType) {
       case 'number':
@@ -658,6 +660,22 @@ class EntityModal extends React.Component {
       currentValue[propertyKey] = value
     })
 
+    const isBulkEdit = _.isArray(this.props.entity) && this.props.entity.length > 1
+
+    const isAlwaysDisabled = _.isArray(this.props.action?.component?.disabled) &&
+      selectKeys.some(prop =>
+        this.props.action.component.disabled.includes(prop)
+      )
+    const isDisabledInBulkEdit = isBulkEdit &&
+    _.isArray(this.props.action?.component?.disabledInMulti) &&
+    selectKeys.some(prop =>
+      this.props.action.component.disabled.includes(prop)
+    )
+
+    const disabled = this.shouldDisableAllControls() || 
+      isAlwaysDisabled || 
+      isDisabledInBulkEdit
+
     return (
       <div>
         <hr />
@@ -667,13 +685,7 @@ class EntityModal extends React.Component {
           noFetch={true}
           highlightedOptions={highlightedOptions}
           placeholders={placeholders}
-          disabled={
-            this.shouldDisableAllControls() ||
-            (this.state.config.disabled &&
-              selectKeys.some(prop =>
-                this.state.config.disabled.includes(prop)
-              ))
-          }
+          disabled={disabled}
           selects={selects}
         />
       </div>
@@ -684,6 +696,7 @@ class EntityModal extends React.Component {
 
     let body = null
     let entityType = 'Entity'
+    const isBulkEdit = _.isArray(this.props.entity) && this.props.entity.length > 1
     if (this.props.type && this.props.type.singular)
       entityType = this.props.type.singular
 
@@ -695,7 +708,9 @@ class EntityModal extends React.Component {
       name = multipleValues ? name.join('; ') : name
       const shouldDisableControl = this.shouldDisableAllControls() || 
         multipleValues ||
-        this.state.config?.disabled?.includes('Entity Name')
+        this.props.action.component.disabled?.includes('Entity Name') ||
+        isBulkEdit && this.props.action.component.disabledInMulti?.includes('Entity Name')
+        
 
       const InputComponent = multipleValues ? CollapsibleTextInput : EntityModalTextInput;
 
