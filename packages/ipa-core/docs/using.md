@@ -1,6 +1,6 @@
 ---
 title: Use the Twinit.io UI Framework
-sidebar_position: 2
+sidebar_position: 200
 ---
 
 ## index.js

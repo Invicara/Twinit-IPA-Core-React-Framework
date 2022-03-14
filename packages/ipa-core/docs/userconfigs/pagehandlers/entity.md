@@ -1,6 +1,6 @@
 ---
 title: Entity View
-sidebar_position: 12
+sidebar_position: 1200
 ---
 
 ## Entity View Configuration

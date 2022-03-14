@@ -1,6 +1,6 @@
 ---
 title: Dashboard View
-sidebar_position: 9
+sidebar_position: 900
 ---
 
 |Name|Description|

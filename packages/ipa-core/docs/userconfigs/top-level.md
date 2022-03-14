@@ -1,6 +1,6 @@
 ---
 title: Top-Level User Configuration
-sidebar_position: 7
+sidebar_position: 700
 ---
 This topic describes top-level user configurations.
 

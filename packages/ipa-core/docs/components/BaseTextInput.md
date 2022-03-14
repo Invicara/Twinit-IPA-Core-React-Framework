@@ -1,6 +1,6 @@
 ---
 title: BaseTextInput
-sidebar_position: 1000
+sidebar_position: 1800
 ---
 A text input that provides basic functionality and styling but can be extended or composed to create a wide range of text input variants.
 

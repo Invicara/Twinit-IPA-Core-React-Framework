@@ -1,6 +1,6 @@
 ---
 title: Required Configurations
-sidebar_position: 3
+sidebar_position: 300
 ---
 
 The Twinit.io UI framework requires two types of configuration:

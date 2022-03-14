@@ -1,6 +1,6 @@
 ---
 title: Install Node.JS and Set Up Client Application Structure
-sidebar_position: 1
+sidebar_position: 100
 ---
 # Installation
 

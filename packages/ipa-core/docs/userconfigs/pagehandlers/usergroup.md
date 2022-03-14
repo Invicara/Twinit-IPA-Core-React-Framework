@@ -1,6 +1,6 @@
 ---
 title: User Groups View
-sidebar_position: 15
+sidebar_position: 1500
 ---
 
 |**Name**|**Description**|

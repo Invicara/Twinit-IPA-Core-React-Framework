@@ -1,6 +1,6 @@
 ---
 title: Custom Logo, App Name, and Colors
-sidebar_position: 4
+sidebar_position: 400
 ---
 ## Application Logo
 
