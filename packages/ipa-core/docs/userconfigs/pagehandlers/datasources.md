@@ -3,8 +3,6 @@ title: Datasources View
 sidebar_position: 1000
 ---
 
-## Prerelease
-
 |Name|Description|
 |---|---|
 |[`pageComponent`](#pageComponent)|Use `'pageComponent: ‘datasources/DatasourcesView’` in a handler to activate the User Management View.|
