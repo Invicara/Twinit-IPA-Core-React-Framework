@@ -6,6 +6,7 @@ import ScriptRunnerView from './solutionMgmt/ScriptRunnerView'
 import DownloadsView from './DownloadsView'
 import UserGroupView from './users/UserGroupView'
 import DatasourcesView from './datasources/DatasourcesView'
+import OMAPIView from './omapi/OMAPIView'
 
 const InternalPages = {
     'entities/EntityView': EntityView,
@@ -14,7 +15,9 @@ const InternalPages = {
     'solutionMgmt/ScriptRunnerView': ScriptRunnerView,
     'DownloadsView': DownloadsView,
     'users/UserGroupView': UserGroupView,
-    'datasources/DatasourcesView': DatasourcesView
+    'datasources/DatasourcesView': DatasourcesView,
+    'omapi/OMAPIView': OMAPIView
+
 }
 
 export default InternalPages

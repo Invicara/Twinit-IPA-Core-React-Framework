@@ -1,0 +1,151 @@
+.omapi-card {
+  list-style-type: none;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 5px 5px 5px 20px;
+  box-shadow: 2px 2px lightgrey;
+
+  .card-row1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: large;
+    padding: 2px;
+    color: var(--app-accent-color);
+
+    .partial-path {
+      cursor: pointer;
+
+      .method {
+        font-weight: bold;
+      }
+    }
+
+    .full-path-wrapper {
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      .full-path {
+        margin-left: 20px;
+        -webkit-user-select: all;  
+        -moz-user-select: all;     
+        -ms-user-select: all;      
+        user-select: all;     
+      }
+    }
+  }
+
+  .card-row2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: solid 2px #f2f2f2;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+  }
+
+  .card-row3 {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 10px;
+    margin-top: 10px;
+
+    .path-config-items {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: space-evenly;
+      margin-top: -10px;
+
+      .even-row-space {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+      }
+
+      .config-card-full {
+        width: 100%;
+      }
+
+      .config-card-half {
+        width: 48%;
+      }
+
+      .config-card {
+        border: 1px solid lightgray;
+        border-radius: 10px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        margin-right: 10px;
+        padding: 10px;
+
+        .config-card-title {
+          align-self: center;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+
+        .config-card-val {
+          display: flex;
+          padding: 5px;
+
+
+          .val-name {
+            font-weight: bold;
+            min-width: 25%;
+            text-align: center;
+          }
+
+          .val-container {
+            width: 50%;
+          }
+
+          .val-value {
+            margin-bottom: 3px;
+            border-width: 0px 0px 3px 0px;
+            border-color: var(--app-accent-color);
+            width: 100%;
+          }
+
+          .config-card-desc {
+            font-style: italic;
+          }
+        }
+
+        .config-body {
+          height: 100%;
+
+          .resp {
+            font-weight: bold;
+            text-align: end;
+            font-size: large;
+            padding-right: 10px;
+          }
+
+          .resp-ok {
+            color: green;
+          }
+
+          .resp-error {
+            color: red;
+          }
+
+          .fetching {
+            align-items: center;
+          }
+        }
+      }
+    }
+  }
+}

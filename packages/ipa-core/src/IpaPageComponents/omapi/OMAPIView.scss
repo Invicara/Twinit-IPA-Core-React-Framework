@@ -1,0 +1,48 @@
+.omapi-page {
+  padding: 20px 50px 20px 50px;
+
+  .page-header {
+    padding-bottom: 10px;
+
+    h1 {
+      color: var(--app-accent-color);
+    }
+  }
+
+  .error-msg {
+    font-size: large;
+    color: red;
+  }
+
+  .path-header {
+      cursor: pointer;
+
+      h2 {
+        display: inline-flex;
+        margin-left: 10px;
+        min-width: 15%;
+      }
+
+      .missing-options {
+        color: red;
+        display: inline-flex;
+        align-items: center;
+      }
+  }
+
+  .root-info {
+    .root-label {
+      font-weight: bold;
+      font-size: larger;
+    }
+
+    .root-url {
+      margin-left: 10px;
+      font-size: larger;
+      -webkit-user-select: all;  
+      -moz-user-select: all;     
+      -ms-user-select: all;      
+      user-select: all;           
+    }
+  }
+}
