@@ -266,7 +266,7 @@ class UserGroupView extends React.Component {
       this.setState({loadingInvites: true, userGroupsForSelectedUser: [], invitesForSelectedUser: [], expiredInvitesForSelectedUser: []})
 
       let ugresults = await Promise.all(this.state.userGroups.map((ug) => {
-        return IafUserGroup.getUsers(ug).then((users) => {
+        return IafUserGroup.getUsers(ug, null, {_offset: 0, _pageSize: 200}).then((users) => {
           if (_.find(users, {_id: this.state.selectedUser._id})) return ug
           else return null
         })
@@ -369,7 +369,7 @@ class UserGroupView extends React.Component {
           }
         else {
           
-          let users = await IafUserGroup.getUsers(group)
+          let users = await IafUserGroup.getUsers(group, null, {_offset: 0, _pageSize: 200})
           
           if (users.length === 1)
             return {
