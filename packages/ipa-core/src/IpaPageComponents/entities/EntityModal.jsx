@@ -62,7 +62,30 @@ class EntityModal extends React.Component {
   }
 
   async componentDidMount () {
-    this.initiateModal()
+    try {
+      this.initiateModal()
+    } catch(err) {
+      if (err.message === 'ENTITY_NOT_VALID') {
+        this.setState({
+          shouldLoadForm: false,
+          error: (
+            <div className='entity-modal-error-container'> 
+              <div>
+                Cannot edit, selected entities have different properties, or they are missing properties. You should check you project's configuration
+              </div>
+              <GenericMatButton
+                onClick={this.onCancel}
+                disabled={this.state.working}
+                styles={{ marginRight: '15px' }}
+              >
+                Go back
+              </GenericMatButton>
+            </div>
+          )
+        })
+      }
+    }
+    
   }
 
   resetState = () => {
@@ -70,6 +93,11 @@ class EntityModal extends React.Component {
   }
 
   initiateModal = (overridingState = {}) => {
+
+    if(!this.checkEntityIsValid()) {
+      throw new Error("ENTITY_NOT_VALID")
+    }
+
     this.setState({
       ...this.INITIAL_STATE,
       modalOpen: true,
@@ -136,10 +164,66 @@ class EntityModal extends React.Component {
     return bulkEntityProperties
   }
 
+  isBulkEdit = () => _.isArray(this.props.entity) && this.props.entity.length > 1
+
   getBulkEntity = entities => ({
     'Entity Name': entities.map(entity => entity['Entity Name']),
     properties: this.getBulkEntityProperties(entities)
   })
+
+  checkEntitiesHaveSameProperties = (entities) => {
+    let propertyKeys = []
+
+    let i = 0
+    let differenceFound = false
+
+    while(i < entities.length && !differenceFound) {
+      let entity = entities[i];
+      if(i === 0) {
+        propertyKeys = Object.keys(entity.properties)
+      } else {
+        differenceFound = !_.isEqual(_.sortBy(propertyKeys), _.sortBy(Object.keys(entity.properties)))
+      }
+      i++;
+    }
+    return !differenceFound
+  }
+
+  canEditEntityProperty = (entity, propertyKey) => {
+    let propType = entity?.properties[propertyKey]?.type
+
+    if(!propType) {
+      return false
+    }
+
+    let propertyUiType = this.props.action?.component?.propertyUiTypes?.[propertyKey]
+    if (propertyUiType) {
+      let Control = ControlProvider.getControlComponent(propertyUiType)
+      return !!Control
+    }
+    return true;
+  }
+
+  canEditEntityProperties = (entity) => {
+    return Object.keys(entity.properties).every(key => this.canEditEntityProperty(entity, key));
+  }
+
+
+  checkEntityIsValid = () => {
+    let entities = []
+    if(_.isArray(this.props.entity)) {
+      entities = [...this.props.entity]
+    } else {
+      entities = [this.props.entity]
+    }
+
+
+    if(!this.checkEntitiesHaveSameProperties(entities)) {
+      return false
+    }
+
+    return entities.every(this.canEditEntityProperties);
+  }
 
   getControlValues = () => {
     let entity
@@ -281,7 +365,11 @@ class EntityModal extends React.Component {
   prepareEntityForSaving = entity => {
     let newEntity = _.cloneDeep(entity)
 
-    newEntity['Entity Name'] = newEntity['Entity Name'].trim()
+    if(_.isArray(newEntity['Entity Name'])) {
+      newEntity['Entity Name'] = newEntity['Entity Name'].map(name => name.trim())
+    } else {
+      newEntity['Entity Name'] = newEntity['Entity Name'].trim()
+    }
     Object.keys(newEntity.properties).forEach(prop => {
       let propertyCanBeTrimmed =
         newEntity.properties[prop].val &&
@@ -335,7 +423,6 @@ class EntityModal extends React.Component {
   onSave = async () => {
     this.setState({ working: true, error: null, formError: null })
 
-    const isBulkEdit = _.isArray(this.props.entity) && this.props.entity.length > 1
 
     if(_.isEqual(this.state.intialNewEntity, this.state.newEntity)) {
       this.close()
@@ -344,7 +431,7 @@ class EntityModal extends React.Component {
 
     try {
       if (this.props.action.doEntityAction) {
-        if (isBulkEdit) {
+        if (this.isBulkEdit()) {
           let preparedEntities = []
           let oldEntities = []
           this.props.entity.forEach(entity => {
@@ -404,17 +491,32 @@ class EntityModal extends React.Component {
     return hasReqProps && componentCfg.requiredProperties.includes(prop)
   }
 
+  canEditProperty = (entity, propertyKey) => {
+    let propType = entity?.properties[propertyKey]?.type
+    if(!propType) {
+      return false
+    }
+
+    let propertyUiType = this.props.action?.component?.propertyUiTypes?.[propertyKey]
+
+    if (propertyUiType) {
+      let Control = ControlProvider.getControlComponent(propertyUiType)
+      return !!Control
+    }
+
+    return true;
+  }
+
   getControl = prop => {
     let { newEntity } = this.state
     
-    const isBulkEdit = _.isArray(this.props.entity) && this.props.entity.length > 1
 
     let propInfo = this.state.newEntity.properties[prop]
     let propType = propInfo && propInfo.type ? propInfo.type : 'missing'
     let disableControl =
       this.shouldDisableAllControls() ||
       this.props?.action?.component?.disabled?.includes(prop) ||
-      isBulkEdit && this.props?.action?.component?.disabledInMulti?.includes(prop);
+      this.isBulkEdit() && this.props?.action?.component?.disabledInMulti?.includes(prop);
 
 
     switch (propType) {
@@ -660,13 +762,11 @@ class EntityModal extends React.Component {
       currentValue[propertyKey] = value
     })
 
-    const isBulkEdit = _.isArray(this.props.entity) && this.props.entity.length > 1
-
     const isAlwaysDisabled = _.isArray(this.props.action?.component?.disabled) &&
       selectKeys.some(prop =>
         this.props.action.component.disabled.includes(prop)
       )
-    const isDisabledInBulkEdit = isBulkEdit &&
+    const isDisabledInBulkEdit = this.isBulkEdit() &&
     _.isArray(this.props.action?.component?.disabledInMulti) &&
     selectKeys.some(prop =>
       this.props.action.component.disabled.includes(prop)
@@ -696,7 +796,6 @@ class EntityModal extends React.Component {
 
     let body = null
     let entityType = 'Entity'
-    const isBulkEdit = _.isArray(this.props.entity) && this.props.entity.length > 1
     if (this.props.type && this.props.type.singular)
       entityType = this.props.type.singular
 
@@ -709,7 +808,7 @@ class EntityModal extends React.Component {
       const shouldDisableControl = this.shouldDisableAllControls() || 
         multipleValues ||
         this.props.action.component.disabled?.includes('Entity Name') ||
-        isBulkEdit && this.props.action.component.disabledInMulti?.includes('Entity Name')
+        this.isBulkEdit() && this.props.action.component.disabledInMulti?.includes('Entity Name')
         
 
       const InputComponent = multipleValues ? CollapsibleTextInput : EntityModalTextInput;
