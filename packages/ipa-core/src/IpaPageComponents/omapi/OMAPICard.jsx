@@ -263,7 +263,7 @@ export const OMAPICard  = ({path, rootUrl, token}) => {
               <div className={clsx({'config-card': true, 'config-card-full': !requestBody, 'config-card-half': requestBody})}>
                 <div className='config-card-title'>Response Body</div>
                 <hr/>
-                <div>{Object.keys(flattenObject(path.docs['Response Body'])).map((k) => {
+                {path.docs && path.docs['Response Body'] && <div>{Object.keys(flattenObject(path.docs['Response Body'])).map((k) => {
                   return <div key={k}>
                     <div className='config-card-val'>
                       <div className='val-name'>{k}</div>
@@ -272,7 +272,7 @@ export const OMAPICard  = ({path, rootUrl, token}) => {
                       </div>
                     </div>
                   </div>
-                })}</div>
+                })}</div>}
                 <hr/>
                 <div className='config-body'>
                   {fetching && <div className='resp resp-ok fetching'><i className="fas fa-spinner fa-spin"></i> fetching...</div>}
