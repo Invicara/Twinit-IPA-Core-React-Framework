@@ -190,18 +190,21 @@ class EntityModal extends React.Component {
   }
 
   canEditEntityProperty = (entity, propertyKey) => {
-    let propType = entity?.properties[propertyKey]?.type
-
-    if(!propType) {
-      return false
+    let isHidden = _.defaultTo(this.props.action?.component?.hidden, [])
+      .find(prop => prop === propertyKey);
+    if(isHidden) {
+      return true;
     }
 
     let propertyUiType = this.props.action?.component?.propertyUiTypes?.[propertyKey]
     if (propertyUiType) {
       let Control = ControlProvider.getControlComponent(propertyUiType)
-      return !!Control
+      if(Control) return true
     }
-    return true;
+
+    let propType = entity?.properties[propertyKey]?.type
+    
+    return !!propType;
   }
 
   canEditEntityProperties = (entity) => {
@@ -908,10 +911,16 @@ class EntityModal extends React.Component {
   }
 
   getGroups () {
-    const allProps = _.keys(this.state.newEntity.properties)
-    const groupedProps = _.flatten(_.values(this.props.action.component.groups))
+    const hiddenProps = this.props.action.component?.hidden || []
+    const allProps = _.difference(_.keys(this.state.newEntity.properties), hiddenProps)
+    const groupedProps = _.difference(_.flatten(_.values(this.props.action.component.groups)), hiddenProps)
     const otherProps = _.difference(allProps, groupedProps)
-    return { ...this.props.action.component.groups, Other: otherProps }
+
+    let groups = {...this.props.action.component.groups};
+    if(otherProps) {
+      groups["Other"] = otherProps;
+    }
+    return groups
   }
 }
 
