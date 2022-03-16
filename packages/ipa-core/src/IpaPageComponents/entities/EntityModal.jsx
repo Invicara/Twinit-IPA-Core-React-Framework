@@ -207,8 +207,27 @@ class EntityModal extends React.Component {
     return !!propType;
   }
 
+  isEntityMissingProperties = (entity) => {
+    let propertyUiTypes = this.props.action?.component?.propertyUiTypes 
+    propertyUiTypes = _.isObject(propertyUiTypes) ? propertyUiTypes : {};
+
+    let propertyUiTypesProperties = Object.keys(propertyUiTypes);
+    let groupedProperties = _.flatten(_.values(this.props.action.component.groups))
+
+    const hiddenProps = this.props.action.component?.hidden || [];
+
+    let neededProperties = _.difference([...groupedProperties, ...propertyUiTypesProperties], hiddenProps);
+    
+    let propertyKeys = Object.keys(entity.properties)
+    return _.difference(neededProperties, propertyKeys).length > 0
+  }
+
   canEditEntityProperties = (entity) => {
-    return Object.keys(entity.properties).every(key => this.canEditEntityProperty(entity, key));
+    let entityIsMissingProperties = this.isEntityMissingProperties(entity);
+
+    let canEditAllEntityProperties = Object.keys(entity.properties).every(key => this.canEditEntityProperty(entity, key))
+
+    return !entityIsMissingProperties && canEditAllEntityProperties;
   }
 
 
