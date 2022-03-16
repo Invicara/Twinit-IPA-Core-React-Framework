@@ -32,18 +32,16 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
         return option.value
     }
     
-    const updateFetchOptions = () => {
-        fetchOptions();
-
+    const updateFetchOptions = async () => {
+        let newSelects = await fetchOptions(selects);
         if (currentValue) {
 
           let selectKeys = Object.keys(selects);
           let previousSelectValues = {};
           for (let i = 1; i < selectKeys.length; i++) {
-
-            if (currentValue[selectKeys[i]] && currentValue[selectKeys[i]].length) {              
+            if (currentValue?.[selectKeys?.[i-1]]?.length > 0) {              
               previousSelectValues[selectKeys[i-1]] = currentValue[selectKeys[i-1]];
-              fetchOptions(selects[selectKeys[i-1]], previousSelectValues);
+              newSelects = await fetchOptions(newSelects, selects[selectKeys[i-1]], previousSelectValues);
             }
             else break;
 
@@ -52,18 +50,23 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
         }
     }
 
-    const fetchOptions = async (currentSelect, previousSelectsValues) => {
+    const fetchOptions = async (selects, currentSelect, previousSelectsValues) => {
         const nextSelect = _.values(selects)[currentSelect ? currentSelect.index + 1 : 0]
+        let newSelects;
         if (nextSelect) {                       
             let selectOptions = await ScriptCache.runScript(nextSelect.script,
                 previousSelectsValues ? {input: flattenIfNotMulti(previousSelectsValues, selects)} : undefined
-            );            
-            setSelects(selects => ({
+            );  
+
+            newSelects = {
                 ...selects,
                 [nextSelect.display]: {...nextSelect, options: selectOptions.sort((a, b) => a.localeCompare(b))}
-            }))
+            }
+
+            setSelects(newSelects)
         }
         loadPlainInitialValueWithScriptedSelectFormat(onChange, currentValue, selects);
+        return newSelects;
     };
 
     const [onLinkedSelectChange] = useWithLinkedSelectChange(selects, setSelects, value, getSelectedValue, onChange, fetchOptions);

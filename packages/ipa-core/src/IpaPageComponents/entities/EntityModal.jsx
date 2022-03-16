@@ -453,7 +453,7 @@ class EntityModal extends React.Component {
 
     try {
       if (this.props.action.doEntityAction) {
-        if (this.isBulkEdit()) {
+        if (_.isArray(this.props.entity)) {
           let preparedEntities = []
           let oldEntities = []
           this.props.entity.forEach(entity => {
@@ -788,11 +788,12 @@ class EntityModal extends React.Component {
       selectKeys.some(prop =>
         this.props.action.component.disabled.includes(prop)
       )
+
     const isDisabledInBulkEdit = this.isBulkEdit() &&
-    _.isArray(this.props.action?.component?.disabledInMulti) &&
-    selectKeys.some(prop =>
-      this.props.action.component.disabledInMulti.includes(prop)
-    )
+      _.isArray(this.props.action?.component?.disabledInMulti) &&
+      selectKeys.some(prop =>
+        this.props.action.component.disabledInMulti.includes(prop)
+      )
 
     const disabled = this.shouldDisableAllControls() || 
       isAlwaysDisabled || 
