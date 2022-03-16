@@ -791,7 +791,7 @@ class EntityModal extends React.Component {
     const isDisabledInBulkEdit = this.isBulkEdit() &&
     _.isArray(this.props.action?.component?.disabledInMulti) &&
     selectKeys.some(prop =>
-      this.props.action.component.disabled.includes(prop)
+      this.props.action.component.disabledInMulti.includes(prop)
     )
 
     const disabled = this.shouldDisableAllControls() || 
