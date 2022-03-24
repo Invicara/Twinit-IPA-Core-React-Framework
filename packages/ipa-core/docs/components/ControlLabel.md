@@ -21,6 +21,6 @@ A generic and easy to use label that encompasses common behaviour and style acro
 ```
 
 ### Examples
-You can find examples of usage in the components below :
+You can find examples below of usage in the components :
 - **`BaseTextInput`**: `ControlLabel` is used for a text input. The label props are directly requested by the parent component as a `labelProps` prop.
 - **`Select`**: `ControlLabel` is used for a select control. The label props are directly requested by the parent component as a `labelProps` prop.
