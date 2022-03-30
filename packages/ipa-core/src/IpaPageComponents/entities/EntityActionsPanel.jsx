@@ -21,7 +21,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       return entity;
     }
 
-    let result = await ScriptHelper.executeScript(action.preActionScript, {entity: entity, entityType: action.entitySchema ? action.entitySchema : type.singular.toLowerCase()});
+    let result = await ScriptHelper.executeScript(action.preActionScript, {entity: entity, entityType: action.entitySchema ? action.entitySchema : type?.singular?.toLowerCase()});
 
     return result ?? entity;
   }
@@ -52,8 +52,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       // the factory create method can use the app context to display the component
       // e.g. context.ifefShowModal(modal);
       factory.create({action, entity: newEntity, type, context, reduxStore})
-    }
-    else {
+    } else {
       // if there's no component execute the action directly
       let newEntity = action.showOnTable && Array.isArray(entity) ? [...entity] : Object.assign({}, entity)
 
