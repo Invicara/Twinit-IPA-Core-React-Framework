@@ -456,7 +456,7 @@ class EntityModal extends React.Component {
       }, {})
   }
 
-  prepareEntityAndDoAction = async () => {
+  prepareEntityAndDoAction = async (onlyOnChangedEntity = false) => {
     if (this.props.action.doEntityAction) {
       if (_.isArray(this.props.entity)) {
         let preparedEntities = []
@@ -468,7 +468,7 @@ class EntityModal extends React.Component {
               propertyValue.hasMultipleValues === false
           )
           const countNewProperties = Object.keys(newProperties).length
-          if (countNewProperties > 0) {
+          if (onlyOnChangedEntity === false || countNewProperties > 0) {
             let newEntity = {
               ...entity,
               properties: { ...entity.properties, ...newProperties }
@@ -485,7 +485,7 @@ class EntityModal extends React.Component {
         await Promise.all(entityActionPromises)
       } else {
         let preparedEntity = this.prepareEntityForAction(this.state.newEntity)
-        this.doEntityAction(preparedEntity, this.props.entity)
+        await this.doEntityAction(preparedEntity, this.props.entity)
       }
       this.close()
       this.resetState();
@@ -499,7 +499,7 @@ class EntityModal extends React.Component {
     }    
 
     try {
-      await this.prepareEntityAndDoAction();
+      await this.prepareEntityAndDoAction(true);
     } catch (err) {
       let formErrorMessage =
         'Unexpected error while preparing the entities for saving, please try again later'
@@ -543,6 +543,7 @@ class EntityModal extends React.Component {
 
   onConfirm = async () => {
     this.setState({ working: true, error: null, formError: null })
+    console.log("onConfirm action", this.props.action)
     switch(this.props.action.name) {
       case "Edit":
         await this.startEdit();
