@@ -33,7 +33,6 @@ import '../../lib/mobiscroll.scss'
 import './EntityModal.scss'
 import EntityModalTextInput from './EntityModalTextInput'
 import ControlTextOverlay from '../../IpaControls/ControlTextOverlay'
-import { changeEntity } from '../../redux/slices/entities'
 import { connect } from 'react-redux'
 import CollapsibleTextInput from '../../IpaControls/CollapsibleTextInput'
 import { FormControlLabel } from '@material-ui/core'
@@ -435,7 +434,6 @@ class EntityModal extends React.Component {
         newEntity,
         result.result
       )
-      this.props.changeEntity(this.props.action?.name?.toLowerCase(), newEntity)
 
       return result
       
@@ -1018,7 +1016,6 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  changeEntity,
   destroyModal: modal.actions.destroy
 }
 

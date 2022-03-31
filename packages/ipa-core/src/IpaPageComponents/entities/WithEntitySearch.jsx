@@ -231,14 +231,14 @@ const withEntitySearch = WrappedComponent => {
             }
         }
 
-        onEntityChange = (changeType, entity, result) => {
-          
+        onEntityChange = (changeType, entity, result) => {          
           if (Array.isArray(entity)) {
             entity.forEach((ent) => {
               this.props.changeEntity(changeType, ent, result)
             })
-          } else
-            this.props.changeEntity(changeType, entity, result)
+          } else {
+              this.props.changeEntity(changeType, entity, result)
+          }
         }
 
         doEntityAction = async (action, entityInfo) => {
