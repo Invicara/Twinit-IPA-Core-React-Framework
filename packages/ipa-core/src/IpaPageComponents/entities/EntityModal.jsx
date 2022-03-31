@@ -436,11 +436,9 @@ class EntityModal extends React.Component {
         result.result
       )
       this.props.changeEntity(this.props.action?.name?.toLowerCase(), newEntity)
-      this.props.action.onSuccess?.(
-        this.props.action.type,
-        result.entity || mergedEntity,
-        result
-      )
+
+      return result
+      
     } else {
       this.props.action.onError?.(this.props.action.type, result, newEntity)
       throw new Error(result.message)
@@ -482,11 +480,22 @@ class EntityModal extends React.Component {
           this.doEntityAction(preparedEntity, oldEntities[i])
         )
 
-        await Promise.all(entityActionPromises)
+        let results = await Promise.all(entityActionPromises)
+        this.props.action.onSuccess?.(
+          this.props.action.type,
+          preparedEntities,
+          results[0]
+        )
       } else {
         let preparedEntity = this.prepareEntityForAction(this.state.newEntity)
-        await this.doEntityAction(preparedEntity, this.props.entity)
+        let result = await this.doEntityAction(preparedEntity, this.props.entity)
+        this.props.action.onSuccess?.(
+          this.props.action.type,
+          preparedEntity,
+          result
+        )
       }
+      
       this.close()
       this.resetState();
     }

@@ -104,7 +104,7 @@ const withEntitySearch = WrappedComponent => {
                 let scriptPromises = []
                 Object.entries(this.getPerEntityConfig()).forEach(([entityType, config]) => {
                     Object.entries(config.data).forEach(([dataGroupName, dataGroup]) => {
-                        if (dataGroup.script) {
+                        if (dataGroup.script && entity) {
                             scriptPromises.push(ScriptCache.runScript(dataGroup.script, {entityInfo: entity}, {scriptExpiration: dataGroup.scriptExpiration})
                                 .then(extendedData => {
                                     _setAvailable(entityType, dataGroupName, extendedData)
@@ -115,10 +115,11 @@ const withEntitySearch = WrappedComponent => {
                         }
                     })
                 })
-                
-                Promise.all(scriptPromises).then(() => {
+                Promise.all(scriptPromises).finally(() => {
                   this.setState({loadingAvailableDataGroups: false})
                 })
+            } else {
+                this.setState({loadingAvailableDataGroups: false})
             }
         };
 

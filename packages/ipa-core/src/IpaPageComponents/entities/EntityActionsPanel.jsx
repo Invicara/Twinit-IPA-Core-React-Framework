@@ -50,7 +50,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
       newEntity = await runPreEntityActionScript({action, entity: newEntity, type})
       // the factory create method can use the app context to display the component
-      // e.g. context.ifefShowModal(modal);
+      // e.g. context.ifefShowModal(modal)
       factory.create({action, entity: newEntity, type, context, reduxStore})
     } else {
       // if there's no component execute the action directly
@@ -62,7 +62,9 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
       let result = await action.doEntityAction(action.name, {new: newEntity, original: origEntity});
       if (result.success) {
-        if (action.onSuccess) action.onSuccess(action.type, newEntity, result)
+        if (action.onSuccess) {
+          action.onSuccess(action.type, newEntity, result)
+        }
       }
       else {
         if (action.onError) action.onError(action.type, entity, result)
