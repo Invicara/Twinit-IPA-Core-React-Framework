@@ -85,9 +85,9 @@ class EntityDataContainer extends React.Component {
 
         const {config, entity} = this.props
         //let factory = ENTITY_DATA_COMPONENTS[config.component.name]
-        let factory = this.props.getEntityDataComponent(config.component.name)
+        let factory = this.props.getEntityDataComponent(config?.component?.name)
         if (!factory) {
-            console.error("No factory for " + config.component.name)
+            console.error("No factory for " + config?.component?.name)
             return null
         }
         // console.log("last update = ", this.props.lastUpdate)
