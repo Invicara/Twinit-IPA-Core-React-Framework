@@ -7,6 +7,7 @@ import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import { getEntityActionComponent } from '../../redux/slices/entityUI'
 
 import '../../IpaStyles/DbmTooltip.scss'
+import { Tooltip } from "@material-ui/core";
 
 const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer}) => {
   let icons = []
@@ -21,7 +22,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       return entity;
     }
 
-    let result = await ScriptHelper.executeScript(action.preActionScript, {entity: entity, entityType: action.entitySchema ? action.entitySchema : type.singular.toLowerCase()});
+    let result = await ScriptHelper.executeScript(action.preActionScript, {entity: entity, entityType: action.entitySchema ? action.entitySchema : type?.singular?.toLowerCase()});
 
     return result ?? entity;
   }
@@ -50,10 +51,9 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
       newEntity = await runPreEntityActionScript({action, entity: newEntity, type})
       // the factory create method can use the app context to display the component
-      // e.g. context.ifefShowModal(modal);
+      // e.g. context.ifefShowModal(modal)
       factory.create({action, entity: newEntity, type, context, reduxStore})
-    }
-    else {
+    } else {
       // if there's no component execute the action directly
       let newEntity = action.showOnTable && Array.isArray(entity) ? [...entity] : Object.assign({}, entity)
 
@@ -61,9 +61,11 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
       let origEntity = action.showOnTable && !Array.isArray(entity) ? [{...entity}] : entity;
 
-      let result = await action.doEntityAction(action.name, {new: newEntity, original: origEntity});
+      let result = await action.doEntityAction(action.name, {new: newEntity, original: origEntity}, type);
       if (result.success) {
-        if (action.onSuccess) action.onSuccess(action.type, newEntity, result)
+        if (action.onSuccess) {
+          action.onSuccess(action.type, newEntity, result)
+        }
       }
       else {
         if (action.onError) action.onError(action.type, entity, result)
@@ -76,10 +78,9 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       let action = actions[actionName]
       if (action.allow)
         icons.push(
-          <div key={"icon-"+actionName} className="dbm-tooltip">
+          <Tooltip key={"icon-"+actionName} title={actionName}>
             <i className={action.icon}  onClick={e=>doAction(actionName)}/>
-            <span className="dbm-tooltiptext">{actionName}</span>
-          </div>
+          </Tooltip>
         )
     })
   }

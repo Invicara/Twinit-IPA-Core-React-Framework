@@ -1,4 +1,5 @@
 import SimpleTable from './SimpleTable'
+import SimpleTabbedTable from './SimpleTabbedTable'
 import GenericMatButton from './GenericMatButton'
 import EnhancedFetchControl from './EnhancedFetchControl'
 import {StackableDrawer} from './StackableDrawer'
@@ -89,6 +90,7 @@ const IpaControls = {
     SimpleMultiSelect,
     SimpleSelect,
     SimpleTable,
+    SimpleTabbedTable,
     SimpleTextThrobber,
     SplitButton,
     StackableDrawer,
