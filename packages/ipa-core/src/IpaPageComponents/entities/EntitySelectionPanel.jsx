@@ -64,7 +64,7 @@ class EntitySelectionPanel extends React.Component {
     //FIXME Remove this props-to-state copy
     static getDerivedStateFromProps(props, state) {
 
-    let derivedState = Object.assign({}, state)
+    let derivedState = {...state}
     if (state.entities.length>0 && !listEquals(props.entities.map(e => e.id),state.entities.map(e => e.id))) {
       derivedState.groups = []
       derivedState.filters = {}
@@ -145,13 +145,15 @@ class EntitySelectionPanel extends React.Component {
     let selectedIds = _.map(this.props.selectedEntities, e => e._id)
     const allSelected = this.state.numFilteredEntities === this.props.selectedEntities.length
 
+    const selected = this.props.selectedGroups !== undefined ? this.props.selectedGroups : this.state.groups
+    
     return (
       <div className="entity-tree-panel">
         <label>Group by:</label>
         <GroupControl className="entity-group"
           styles={GROUP_SELECT_STYLES}
           groups={this.getAvailableGroupValues()}
-          selected={this.state.groups}
+          selected={selected}
           onChange={this.groupsChanged} />
         <label>Filter by:</label>
         <FilterControl className="entities-filter"

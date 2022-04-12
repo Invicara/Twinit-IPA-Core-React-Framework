@@ -78,7 +78,6 @@ const objectsToTable = (objects, columns) => {
 }
 
 const objectToRows = (object, columns) => {
-  console.log(object, columns)
   let rows = [];
   
   columns.forEach((col) => {

@@ -14,11 +14,12 @@ const ENTITY_ACTION_COMPONENTS = {
 
 import {ImageFactory} from "../../IpaControls/Image";
 import {ScriptedChartFactory} from "../../IpaControls/ScriptedChart";
-import {SimpleTableFactory, SimpleTableGroupFactory} from "../../IpaControls/private/simple-table";
+import {SimpleTabbedTableFactory, SimpleTableFactory, SimpleTableGroupFactory} from "../../IpaControls/private/simple-table";
 
 const ENTITY_DATA_COMPONENTS = {
   "SimpleTable": SimpleTableFactory,
   "SimpleTableGroup": SimpleTableGroupFactory,
+  "SimpleTabbedTable": SimpleTabbedTableFactory,
   "Image": ImageFactory,
   "ScriptedChart": ScriptedChartFactory
 }

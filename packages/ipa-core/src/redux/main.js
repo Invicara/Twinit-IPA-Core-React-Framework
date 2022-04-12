@@ -10,6 +10,7 @@ import {
     isViewerSyncOn,
     selectEntitiesFromModels,
     setEntities,
+    setIsolatedEntities,
     setViewerSyncOn
 } from "./slices/entities";
 
@@ -44,6 +45,7 @@ const redux = {
         getFetchingCurrent,
         isSelectingEntities,
         setEntities,
+        setIsolatedEntities,
         setViewerSyncOn
     },
     EntitiesPluggableSearch: {

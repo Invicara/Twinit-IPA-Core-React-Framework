@@ -1,9 +1,14 @@
 import React, {useState} from "react";
+import { useEffect } from "react";
 import Select from 'react-select';
 
 const GroupControl = ({selected, styles, groups, onChange}) => {
 
   const [value, setValue] = useState(selected || [])
+
+  useEffect(() => {
+    setValue(selected || []);
+  }, [selected])
 
   const _onChange = (selections) => {
 
