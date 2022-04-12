@@ -181,7 +181,7 @@ const withGenericPage = (PageComponent) => {
 
     }
 
-    setQueryParams = (partial) => this.setState({queryParams: {...this.state.queryParams, ...partial}})
+    setQueryParams = (partial) => this.setState({queryParams: Object.assign(this.state.queryParams, partial)})
 
     //provide pageComponents with a navigate function to place query criteria in the url to pass to other pages
     onNavigate(destinationHandler, selectionInfo) {

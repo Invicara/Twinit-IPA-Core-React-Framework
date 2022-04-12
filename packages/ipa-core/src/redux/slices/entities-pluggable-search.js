@@ -21,8 +21,6 @@ export const clearSearchedEntities = actionCreators.clearEntities
 
 export const applySearchFiltering = actionCreators.applyFiltering
 
-export const resetSearchFiltering = actionCreators.resetFiltering
-
 export const setSelectedSearchedEntities = actionCreators.setSelectedEntities
 
 //Thunks

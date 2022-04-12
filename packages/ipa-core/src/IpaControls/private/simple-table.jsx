@@ -1,5 +1,4 @@
 import React from "react";
-import SimpleTabbedTable from "../SimpleTabbedTable";
 import SimpleTable from "../SimpleTable";
 
 export const SimpleTableFactory = {
@@ -8,33 +7,6 @@ export const SimpleTableFactory = {
             return <SimpleTable className={config.className} objects={data} columns={config.columns}/>
         else
             return <SimpleTable className={config.className} rows={data} />
-    }
-}
-
-export const SimpleTabbedTableFactory = {
-    create: ({config, data}) => {
-
-        let flattenedGroupedAndHiddenProps = []
-        if(config.groups) {
-            Object.values(config.groups)
-                .forEach(props => flattenedGroupedAndHiddenProps.push(...props));
-        }
-
-        if(config?.components?.hidden) {
-            flattenedGroupedAndHiddenProps.push(...config.components.hidden)
-        }
-
-        let allProps = Object.keys(data)
-
-        let otherProps = allProps.filter(prop => !flattenedGroupedAndHiddenProps.includes(prop))
-
-        let tabs = {...config.groups};
-        
-        if(otherProps.length > 0) {
-            tabs["Other"] = otherProps
-        }
-
-        return <SimpleTabbedTable className={config.className} data={data} tabs={tabs}/>
     }
 }
 

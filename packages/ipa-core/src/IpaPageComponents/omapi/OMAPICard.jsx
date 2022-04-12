@@ -8,7 +8,7 @@ import GenericButton from '../../IpaControls/GenericButton'
 import { JSONEditor } from './JSONEditor'
 import { OMAPICardError } from './OMAPICardError'
 
-import './OMAPICard.scss'
+import './OMAPICARD.scss'
 
 export const OMAPICard  = ({path, rootUrl, token}) => {
 

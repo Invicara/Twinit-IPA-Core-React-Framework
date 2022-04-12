@@ -27,9 +27,7 @@ class EnhancedFetchControl extends React.Component {
 
     getSelectors = () => this.state.selectorIds.map(id => this.state.selectorsMap[id]);
 
-    setSelectorsMap = updatedSelectorsMap => {
-        this.setState({selectorsMap: updatedSelectorsMap})
-    };
+    setSelectorsMap = updatedSelectorsMap => this.setState({selectorsMap: updatedSelectorsMap});
 
     resetSelectorsMap = (selectors, initialValue) => selectors.reduce((accum, selector, i) => ({
         ...accum,
@@ -43,16 +41,13 @@ class EnhancedFetchControl extends React.Component {
         this.handleFetch(this.state.currentSelectorId)
     }
 
-
-    //value is optional, it can be used to provide a value not yet available in the state.
-    handleFetch = (selectorId, value) => {
+    handleFetch = (selectorId) => {
         let selector = this.state.selectorsMap[selectorId]
-        let newValue = value || selector.currentValue
         this.setSelectorsMap({
             ...this.resetSelectorsMap(this.props.selectors),
-            [selector.id]: {...selector, currentValue: newValue, touched: false}
+            [selector.id]: {...selector, currentValue: selector.currentValue, touched: false}
         });
-        this.props.doFetch(selector, newValue);
+        this.props.doFetch(selector, selector.currentValue);
     }
 
     renderControl = (selector, position) => {
@@ -70,13 +65,7 @@ class EnhancedFetchControl extends React.Component {
 
         return <div key={selector.id} onKeyUp={this.keyup}>
                 {position !== 0 && <OrDivider/>}
-                <Control 
-                    {...selector}  
-                    onChange={handleChange} 
-                    onFetch={(value) => this.handleFetch(selector.id, value)} 
-                    currentValue={selector.currentValue}
-                    reloadToken={this.props.reloadToken}
-                />
+                <Control {...selector}  onChange={handleChange} onFetch={() => this.handleFetch(selector.id)} currentValue={selector.currentValue}/>
             </div>
 
     }

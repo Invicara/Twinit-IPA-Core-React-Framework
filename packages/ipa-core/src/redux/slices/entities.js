@@ -24,8 +24,8 @@ export const getCurrentEntityType = selectors.getCurrentEntityType
 
 //Action creators
 export const {
-    setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setSelectedEntities, setCurrentEntityType, setSelecting,
-    applyFiltering, resetFiltering, addEntity, deleteEntity, updateEntity, clearEntities
+    setEntities, setFetching, resetEntities, setViewerSyncOn, setSelectedEntities, setCurrentEntityType, setSelecting,
+    applyFiltering, addEntity, deleteEntity, updateEntity, clearEntities
 } = actionCreators;
 
 //Thunks

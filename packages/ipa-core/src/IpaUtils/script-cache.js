@@ -34,9 +34,7 @@ const getCachingArguments = (args) => {
 }
 
 const runScript = (...args) => {    
-    console.log("runScript args", args);
     const {scriptArgs, scriptExpiration, ignoreCachedResult} = getCachingArguments(args);
-    console.log("ignoreCachedResult", ignoreCachedResult);
     const plainArgs = JSON.stringify(scriptArgs);
     const cachedPromise = getCached(plainArgs);
     if(cachedPromise && !ignoreCachedResult) {

@@ -33,6 +33,7 @@ import '../../lib/mobiscroll.scss'
 import './EntityModal.scss'
 import EntityModalTextInput from './EntityModalTextInput'
 import ControlTextOverlay from '../../IpaControls/ControlTextOverlay'
+import { changeEntity } from '../../redux/slices/entities'
 import { connect } from 'react-redux'
 import CollapsibleTextInput from '../../IpaControls/CollapsibleTextInput'
 import { FormControlLabel } from '@material-ui/core'
@@ -93,7 +94,7 @@ class EntityModal extends React.Component {
 
   initiateModal = (overridingState = {}) => {
 
-    if(this.props.action.name === 'Edit' && !this.checkEntityIsValid()) {
+    if(!this.checkEntityIsValid()) {
       throw new Error("ENTITY_NOT_VALID")
     }
 
@@ -202,10 +203,6 @@ class EntityModal extends React.Component {
     }
 
     let propType = entity?.properties[propertyKey]?.type
-
-    if(!propType) {
-      console.warn("Property ", propertyKey, " from entity ", entity?.['EntityName'], " is missing a type or a propertyUiTypes in the user config")
-    }
     
     return !!propType;
   }
@@ -222,16 +219,7 @@ class EntityModal extends React.Component {
     let neededProperties = _.difference([...groupedProperties, ...propertyUiTypesProperties], hiddenProps);
     
     let propertyKeys = Object.keys(entity.properties)
-
-    let missingProperties = _.difference(neededProperties, propertyKeys)
-    let isMissingProperties = missingProperties.length > 0;
-
-    if(isMissingProperties){
-      let entityName = entity?.["Entity Name"];
-      console.warn("Entity ", entityName, " is missing the following properties : ", missingProperties)
-    }
-
-    return isMissingProperties;
+    return _.difference(neededProperties, propertyKeys).length > 0
   }
 
   canEditEntityProperties = (entity) => {
@@ -253,7 +241,6 @@ class EntityModal extends React.Component {
 
 
     if(!this.checkEntitiesHaveSameProperties(entities)) {
-      console.warn("Entities do not have the same properties")
       return false
     }
 
@@ -397,7 +384,7 @@ class EntityModal extends React.Component {
     return { ...entity, ...createResult }
   }
 
-  prepareEntityForAction = entity => {
+  prepareEntityForSaving = entity => {
     let newEntity = _.cloneDeep(entity)
 
     if(_.isArray(newEntity['Entity Name'])) {
@@ -421,7 +408,7 @@ class EntityModal extends React.Component {
     }
   }
 
-  doEntityAction = async (newEntity, oldEntity) => {
+  saveEntity = async (newEntity, oldEntity) => {
     let result = await this.props.action.doEntityAction(
       this.props.action.name,
       { new: newEntity, original: oldEntity }
@@ -434,9 +421,12 @@ class EntityModal extends React.Component {
         newEntity,
         result.result
       )
-
-      return result
-      
+      this.props.changeEntity('edit', newEntity)
+      this.props.action.onSuccess?.(
+        this.props.action.type,
+        result.entity || mergedEntity,
+        result
+      )
     } else {
       this.props.action.onError?.(this.props.action.type, result, newEntity)
       throw new Error(result.message)
@@ -452,61 +442,49 @@ class EntityModal extends React.Component {
       }, {})
   }
 
-  prepareEntityAndDoAction = async (onlyOnChangedEntity = false) => {
-    if (this.props.action.doEntityAction) {
-      if (_.isArray(this.props.entity)) {
-        let preparedEntities = []
-        let oldEntities = []
-        this.props.entity.forEach(entity => {
-          let newProperties = this.filterObjectProperties(
-            this.state.newEntity.properties,
-            ([propertyKey, propertyValue]) =>
-              propertyValue.hasMultipleValues === false
-          )
-          const countNewProperties = Object.keys(newProperties).length
-          if (onlyOnChangedEntity === false || countNewProperties > 0) {
-            let newEntity = {
-              ...entity,
-              properties: { ...entity.properties, ...newProperties }
-            }
-            preparedEntities.push(this.prepareEntityForAction(newEntity))
-            oldEntities.push(entity)
-          }
-        })
+  onSave = async () => {
+    this.setState({ working: true, error: null, formError: null })
 
-        let entityActionPromises = preparedEntities.map((preparedEntity, i) =>
-          this.doEntityAction(preparedEntity, oldEntities[i])
-        )
 
-        let results = await Promise.all(entityActionPromises)
-        this.props.action.onSuccess?.(
-          this.props.action.type,
-          preparedEntities,
-          results[0]
-        )
-      } else {
-        let preparedEntity = this.prepareEntityForAction(this.state.newEntity)
-        let result = await this.doEntityAction(preparedEntity, this.props.entity)
-        this.props.action.onSuccess?.(
-          this.props.action.type,
-          preparedEntity,
-          result
-        )
-      }
-      
-      this.close()
-      this.resetState();
-    }
-  }
-
-  startEdit = async () => {
     if(_.isEqual(this.state.intialNewEntity, this.state.newEntity)) {
       this.close()
       return
     }    
 
     try {
-      await this.prepareEntityAndDoAction(true);
+      if (this.props.action.doEntityAction) {
+        if (_.isArray(this.props.entity)) {
+          let preparedEntities = []
+          let oldEntities = []
+          this.props.entity.forEach(entity => {
+            let newProperties = this.filterObjectProperties(
+              this.state.newEntity.properties,
+              ([propertyKey, propertyValue]) =>
+                propertyValue.hasMultipleValues === false
+            )
+            const countNewProperties = Object.keys(newProperties).length
+            if (countNewProperties > 0) {
+              let newEntity = {
+                ...entity,
+                properties: { ...entity.properties, ...newProperties }
+              }
+              preparedEntities.push(this.prepareEntityForSaving(newEntity))
+              oldEntities.push(entity)
+            }
+          })
+
+          let saveEntityPromises = preparedEntities.map((preparedEntity, i) =>
+            this.saveEntity(preparedEntity, oldEntities[i])
+          )
+
+          await Promise.all(saveEntityPromises)
+        } else {
+          let preparedEntity = this.prepareEntityForSaving(this.state.newEntity)
+          this.saveEntity(preparedEntity, this.state.entity)
+        }
+        this.close()
+        this.resetState();
+      }
     } catch (err) {
       let formErrorMessage =
         'Unexpected error while preparing the entities for saving, please try again later'
@@ -520,56 +498,11 @@ class EntityModal extends React.Component {
           break;
       }
       const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
-      this.setState({formError})
+      this.setState({ working: false, formError })
     }
-  }
-
-  startCreate = async () => {
-
-  }
-
-  startDelete = async () => {
-    try {
-      await this.prepareEntityAndDoAction();
-    } catch (err) {
-      let formErrorMessage =
-        'Unexpected error while preparing the entities for deletion, please try again later'
-      
-      switch(err.message) {
-        case "MISSING_REQUIRED_PROPERTIES":
-          formErrorMessage = 'Required properties are missing values!'
-          break;
-        default:
-          formErrorMessage = err.message
-          break;
-      }
-      const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
-      this.setState({formError})
-    }
-  }
-
-  onConfirm = async () => {
-    this.setState({ working: true, error: null, formError: null })
-    console.log("onConfirm action", this.props.action)
-    switch(this.props.action.name) {
-      case "Edit":
-        await this.startEdit();
-        break;
-      case "Create":
-        await this.startCreate();
-        break;
-      case "Delete":
-        await this.startDelete();
-        break;
-      default:
-        console.warn("Unexpected action name : ", this.props.action.name);
-        break;
-      }
-      this.setState({working: false})
   }
 
   dashPropDName = propDName => {
-    if(!_.isString(propDName)) return propDName
     return propDName.split(' ').join('-')
   }
 
@@ -973,7 +906,7 @@ class EntityModal extends React.Component {
                 Cancel
               </GenericMatButton>
               <GenericMatButton
-                onClick={this.onConfirm}
+                onClick={this.onSave}
                 disabled={this.state.working}
                 customClasses='attention'
               >
@@ -1016,6 +949,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
+  changeEntity,
   destroyModal: modal.actions.destroy
 }
 

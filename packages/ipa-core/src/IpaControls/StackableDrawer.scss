@@ -2,9 +2,9 @@ $border-grey: #EAEAEA;
 
 .drawer{
     display: flex;
+    border-right: 2px solid $border-grey;
     position: relative;
     transition: width 1s, min-width 1s;
-    height: 100%;
   
     .handle{
       width: 2px;

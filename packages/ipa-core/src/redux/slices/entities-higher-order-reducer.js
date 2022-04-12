@@ -36,17 +36,11 @@ export const entitiesSliceFactory = (identifier = '') => {
                 //Maybe this will change over time as requirements get more specific
                 state.isolatedIds = shouldIsolate ? mapIds(entities) : []
             },
-            setIsolatedEntities: (state, {payload: entities}) => {
-                state.isolatedIds = mapIds(entities)
-            },
             setSelectedEntities: (state, {payload: entities}) => {
                 state.selectedIds = mapIds(entities)
             },
             applyFiltering: (state, {payload: filters}) => {
                 state.appliedFilters = filters
-            },
-            resetFiltering: (state) => {
-                state.appliedFilters = initialState.appliedFilters
             },
             setFetching: (state, {payload: fetching}) => {
                 if(fetching){
@@ -93,8 +87,8 @@ export const entitiesSliceFactory = (identifier = '') => {
 
     //Action creators
     const {
-        setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setSelectedEntities, setCurrentEntityType, setSelecting,
-        applyFiltering, resetFiltering, addEntity, deleteEntity, updateEntity, clearEntities
+        setEntities, setFetching, resetEntities, setViewerSyncOn, setSelectedEntities, setCurrentEntityType, setSelecting,
+        applyFiltering, addEntity, deleteEntity, updateEntity, clearEntities
     } = actionCreators
 
     //Private selectors
@@ -162,12 +156,11 @@ export const entitiesSliceFactory = (identifier = '') => {
         (entityChanges[changeType] || defaultChangeHandler)(entity)
     }
 
-    const fetchEntities = (script, selector, value, runScriptOptions) => async (dispatch, getState) => {
-        console.log("fetchEntities", runScriptOptions)
+    const fetchEntities = (script, selector, value) => async (dispatch, getState) => {
         const query = ControlProvider.getQuery(value, selector);
         dispatch(setFetching(true))
         currentFetchPromise = currentFetchPromise.then(() => query ?
-            ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query}, runScriptOptions)
+            ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query})
             : new Promise(res => res([]))
         )
         let entities = await currentFetchPromise;

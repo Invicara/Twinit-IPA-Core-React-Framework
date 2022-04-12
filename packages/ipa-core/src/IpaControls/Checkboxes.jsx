@@ -70,7 +70,7 @@ export const SquareInSquareCheckbox = withStyles({
     checkedIcon={<span className={props.classes.checkedIcon}><div className={props.classes.innerCheckedIcon}/></span>}
     {...produce(props, props => {delete props.classes.icon; delete props.classes.checkedIcon; delete props.classes.innerCheckedIcon})} />);
 
-export const useChecked = (inputItems, checkCallback, allCheckCallback) => {
+export const useChecked = (inputItems) => {
     const [items, setItems] = useState([]);
     const previousItems = usePrevious(inputItems)
 
@@ -81,24 +81,20 @@ export const useChecked = (inputItems, checkCallback, allCheckCallback) => {
         })))
     }, [inputItems])
 
-    const handleCheck = (checkedInstance) => {
-        checkCallback?.(checkedInstance, !checkedInstance.checked);
-        setItems(instances =>
+    const handleCheck = (checkedInstance) => setItems(instances =>
         instances.map(instance => instance === checkedInstance ? {
             ...checkedInstance,
             checked: !checkedInstance.checked
-        } : instance))
-    };
+        } : instance)
+    );
 
     const allChecked = items.every(i => i.checked);
 
-    const handleAllCheck = () => {
-        allCheckCallback?.(!allChecked);
-        setItems(instances => instances.map(instance => ({
+    const handleAllCheck = () => setItems(instances => instances.map(instance => ({
             ...instance,
             checked: !allChecked
-        })));
-    }
+        }))
+    );
 
     const resetChecked = (newInstances) => {
         setItems(oldInstances => (newInstances || oldInstances).map(instance => ({
