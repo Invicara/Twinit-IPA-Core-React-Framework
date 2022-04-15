@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useState,useMemo, useCallback} from "react"
 import {TextSearch} from "./TextSearch";
 import {EntityListView} from "../IpaPageComponents/entities/EntityListView";
 import produce from "immer";
@@ -10,35 +10,36 @@ import ScriptHelper from "../IpaUtils/ScriptHelper";
 import './CrossEntitySearch.scss'
 import {RoundCheckbox, useChecked} from "./Checkboxes";
 
-const CrossEntitySearch = ({searchableEntities: rawSearchableEntities = [], script, dashboard: {doAction}}) => {
+const CrossEntitySearch = ({searchableEntities = [], script, dashboard: {doAction}}) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [fetching, setFetching] = useState(false);
     const [fetchedEntities, setFetchedEntities] = useState([]);
-    const {handleCheck, items: searchableEntities} = useChecked(rawSearchableEntities.map(produce(se => {
+    const entities = useMemo(()=>searchableEntities.map(produce(se => {
         se.checked = se.default
-    })));
+    })),[searchableEntities]);
+    const {handleCheck, items: rawSearchableEntities} = useChecked(entities);
 
-    const onFetch = async () => {
+    const onFetch = useCallback(async () => {
         setFetching(true)
         setFetchedEntities(await ScriptHelper.executeScript(script,
             {
-                entityTypes: searchableEntities.filter(et => et.checked).map(et => et.entityType.plural),
+                entityTypes: rawSearchableEntities.filter(et => et.checked).map(et => et.entityType.plural),
                 searchQuery: {$text: {$search: searchTerm}}
             }
         ))
         setFetching(false)
-    }
+    },[rawSearchableEntities,searchTerm]);
 
     const searchEntities = <div>
         <div>Search among:</div>
         <div className={'entity-types'}>{
-            searchableEntities.map(et => <div key={et.entityType.plural}><RoundCheckbox checked={et.checked}
+            rawSearchableEntities.map(et => <div key={et.entityType.plural}><RoundCheckbox checked={et.checked}
                                                       onChange={() => handleCheck(et)}/>{et.entityType.plural}</div>)
         }</div>
     </div>
 
-    const navigate = entity => {
-        const currentSearchableEntity = searchableEntities.find(e => e.entityType.plural === entity.entityType);
+    const navigate = useCallback((entity) => {
+        const currentSearchableEntity = rawSearchableEntities.find(e => e.entityType.plural === entity.entityType);
         doAction({
             type: "navigate", //TODO model action types as enum rather than string
             navigateTo: currentSearchableEntity.handler,
@@ -47,7 +48,17 @@ const CrossEntitySearch = ({searchableEntities: rawSearchableEntities = [], scri
                 entityType: currentSearchableEntity.entityType.singular
             }
         })
-    };
+    },[rawSearchableEntities]);
+
+    const config = useMemo(()=>{ return {
+        columns: [{
+            "name": "Entity Name",
+            "accessor": "entityName"
+        }, {
+            "name": "Entity Type",
+            "accessor": "entityType"
+        }]
+    }},[]);
 
     return (
         <div className={'cross-entity-search'}>
@@ -64,7 +75,7 @@ const CrossEntitySearch = ({searchableEntities: rawSearchableEntities = [], scri
                 {_.isEmpty(fetchedEntities) && <div className={'no-results'}>No results fetched</div>}
             </div>
             <div className={clsx('search-results', _.isEmpty(fetchedEntities) && 'collapsed')}>
-                <EntityListView config={{columns: [{"name": "Entity Name", "accessor": "entityName"}, {"name": "Entity Type", "accessor": "entityType"}]}}
+                <EntityListView config={config}
                                 entities={fetchedEntities} onDetail={navigate}/>
             </div>
         </div>
