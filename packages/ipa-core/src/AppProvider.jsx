@@ -40,6 +40,7 @@ import { addEntityComponents } from './redux/slices/entityUI'
 
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
+import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
 
 export const AppContext = React.createContext();
 
@@ -671,7 +672,7 @@ async function calculateRoutes(config, appContextProps, ipaConfig) {
    * pageComponents must be in the ./app/ipaCore/pageComponents folder
    */
   function asIpaPage(rawPageComponent) {
-    return withAppContext(withGenericPage(rawPageComponent))
+    return withAppContext(withGenericPageErrorBoundary(withGenericPage(rawPageComponent)))
   }
 
   function getPageComponent(pageComponent) {

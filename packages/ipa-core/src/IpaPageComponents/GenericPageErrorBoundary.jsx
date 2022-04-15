@@ -2,7 +2,7 @@ import React from "react";
 
 function withGenericPageErrorBoundary(WrappedComponent) {
 
-    return class ErrorBoundary extends React.Component {
+    return class GenericPageErrorBoundary extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -21,19 +21,15 @@ function withGenericPageErrorBoundary(WrappedComponent) {
 
         render() {
             return this.state.hasError ?
-                <div className='page'>
-                    <div className="generic-page-body">
-                        <div className="inv-error-boundary-container">
-                            <span>
-                                <i className="fas fa-exclamation-circle point-icon point-error"></i>
-                                Something went wrong
-                            </span>
-                        </div>
-                    </div>
+                <div className="inv-error-boundary-container">
+                    <span>
+                        <i className="fas fa-exclamation-circle point-icon point-error"></i>
+                        Something went wrong
+                    </span>
                 </div>
              : <WrappedComponent {...this.props} />;
         }
     }
 }
 
-export default withErrorBoundary;
+export default withGenericPageErrorBoundary;
