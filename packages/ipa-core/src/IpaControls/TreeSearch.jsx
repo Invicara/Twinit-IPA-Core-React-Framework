@@ -42,7 +42,7 @@ export const TreeSearch = ({ currentValue = {}, onChange, touched, onFetch, disp
             setReloading(true)
             refreshTree().then(({nodeIndex}) => {
                 setReloading(false)
-                onFetch(getFilteringNodes(nodeIndex))
+                onFetch(undefined, getFilteringNodes(nodeIndex))
             })
         }
 
@@ -275,7 +275,7 @@ export const TreeSearch = ({ currentValue = {}, onChange, touched, onFetch, disp
         const newNodeIndex = selectNode(nodeIndex, nodeName, selected);
         setNodeIndex(newNodeIndex)
         onChange(getFilteringNodes(newNodeIndex))
-        onFetch(getFilteringNodes(newNodeIndex))
+        onFetch(undefined, getFilteringNodes(newNodeIndex))
         setFetchedOnce(true);
     };
 

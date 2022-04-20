@@ -73,7 +73,7 @@ class EnhancedFetchControl extends React.Component {
                 <Control 
                     {...selector}  
                     onChange={handleChange} 
-                    onFetch={(value) => this.handleFetch(selector.id, value)} 
+                    onFetch={(event, value) => this.handleFetch(selector.id, value)} 
                     currentValue={selector.currentValue}
                     reloadToken={this.props.reloadToken}
                 />

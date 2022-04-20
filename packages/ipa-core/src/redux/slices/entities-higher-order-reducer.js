@@ -163,7 +163,6 @@ export const entitiesSliceFactory = (identifier = '') => {
     }
 
     const fetchEntities = (script, selector, value, runScriptOptions) => async (dispatch, getState) => {
-        console.log("fetchEntities", runScriptOptions)
         const query = ControlProvider.getQuery(value, selector);
         dispatch(setFetching(true))
         currentFetchPromise = currentFetchPromise.then(() => query ?
