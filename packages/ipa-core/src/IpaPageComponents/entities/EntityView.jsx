@@ -180,7 +180,7 @@ class EntityView extends React.Component {
                             fetching={this.props.fetching}
                             entities={this.props.allEntities}
                             onSelect={this.onTreeSelect}
-                            treeSelectMode={TreeSelectMode.NONE_MEANS_ALL}
+                            treeSelectMode={TreeSelectMode.NONE_MEANS_NONE}
                             onGroupOrFilterChange={this.onGroupOrFilterChange}
                             leafNodeRenderer={leafNodeRenderer}
                             branchNodeRenderer={branchNodeRenderer}

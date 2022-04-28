@@ -33,7 +33,7 @@ const GROUP_SELECT_STYLES = {
 
 const FILTER_SELECT_STYLES = {
     control: styles => ({...styles, width: '100%', margin: '10px 0'}),
-    container: styles => ({...styles, display: 'block', width: '100%'})
+    container: styles => ({...styles, display: 'block', width: '100%', marginBottom: '0px'})
 };
 
 export const TreeSelectMode = {
@@ -104,27 +104,41 @@ class EntitySelectionPanel extends React.Component {
     this.props.onGroupOrFilterChange({groups})
   }
 
-  onSelect = (leaves) => {
-    if (this.props.onSelect) {
+  onSelectLeaves = (leaves) => {
       let selection = []
       if (leaves.length==0 && this.props.treeSelectMode === TreeSelectMode.NONE_MEANS_ALL) {
-        selection = applyFilters(this.props.entities, this.state.filters, (a,p) => {
-          return p=="Entity Name" ? a["Entity Name"] : a.properties[p]
-        })
+          selection = getFilteredEntitiesBy(this.props.entities, this.state.filters);
       }
       else {
-        leaves.forEach(el => {
-          selection.push(this.props.entities.find(e => e._id == el.dataset.nodeId))
-        })
+          leaves.forEach(el => {
+              selection.push(this.props.entities.find(e => e._id == el.dataset.nodeId))
+          })
       }
-      this.props.onSelect(selection)
-    }
-  }  
+      this.onSelectEntities(selection)
+  }
+
+  onSelectEntities = (entities) => {
+      if (this.props.onSelect) {
+          this.props.onSelect(entities);
+      }
+  }
+
+  onSelectIds = (entityIds) => {
+      if (this.props.onSelect) {
+          this.props.onSelect(this.props.entities.filter(e => entityIds.includes(e._id)));
+      }
+  }
+
+  onSelectAll = () => {
+      this.onSelectEntities(getFilteredEntitiesBy(this.props.entities, this.state.filters));
+  }
   
   getAvailableGroupValues = () => {
     const nonGroupableProperties = this.props.nonGroupableProperties || [];
     return this.state.uniquePropNames.filter(p => !nonGroupableProperties.includes(p));
   }
+
+  getSelectedIds = _.memoize((_selectedEntities)=>_.map(_selectedEntities, e => e._id));
 
   render() {
 
@@ -140,37 +154,42 @@ class EntitySelectionPanel extends React.Component {
 
     const countMessage = this.state.numFilteredEntities == this.state.numEntities
         ? `${this.state.numEntities} ${this.state.numEntities == 1 ? this.props.entitySingular : this.props.entityPlural}`
-        : `${this.state.numFilteredEntities} of ${this.state.numEntities} Fetched ${this.state.numEntities == 1 ? this.props.entitySingular : this.props.entityPlural}`
+        : <b>`${this.state.numFilteredEntities}`</b>` of ${this.state.numEntities} Fetched ${this.state.numEntities == 1 ? this.props.entitySingular : this.props.entityPlural}`;
 
-    let selectedIds = _.map(this.props.selectedEntities, e => e._id)
+
     const allSelected = this.state.numFilteredEntities === this.props.selectedEntities.length
 
-    const selected = this.props.selectedGroups !== undefined ? this.props.selectedGroups : this.state.groups
+    const selected = this.props.selectedGroups !== undefined ? this.props.selectedGroups : this.state.groups;
     
     return (
       <div className="entity-tree-panel">
-        <label>Group by:</label>
-        <GroupControl className="entity-group"
-          styles={GROUP_SELECT_STYLES}
-          groups={this.getAvailableGroupValues()}
-          selected={selected}
-          onChange={this.groupsChanged} />
-        <label>Filter by:</label>
-        <FilterControl className="entities-filter"
-         styles={FILTER_SELECT_STYLES}
-         onChange={this.filtersChanged}
-         filters={this.state.filters}
-         availableFilters={this.state.availableFilters}/>
-       <div className="entity-count">{countMessage}</div>
+         <label className="title">Group By</label>
+         <GroupControl className="entity-group"
+                        styles={GROUP_SELECT_STYLES}
+                        groups={this.getAvailableGroupValues()}
+                        selected={selected}
+                        onChange={this.groupsChanged} />
+        <label className="title">Filter By</label>
+        <FilterControl className="entities-filter entities-filter--with-count"
+                       styles={FILTER_SELECT_STYLES}
+                       onChange={this.filtersChanged}
+                       filters={this.state.filters}
+                       availableFilters={this.state.availableFilters}/>
+        <div className="entity-count">
+            <span>{countMessage}</span>
+        </div>
         <FancyTreeControl className="entity-tree"
           name={this.props.name + "_tree"}
           renderLeafNode={this.props.leafNodeRenderer}
           renderBranchNode={this.props.branchNodeRenderer}
-          onSelect={this.onSelect}
-          selectedIds={selectedIds}
+          onSelect={this.onSelectLeaves}
+          onSelectAll={this.onSelectAll}
+          onSelectNone={this.onSelectIds}
+          onSelectIds={this.onSelectIds}
+          selectedIds={this.getSelectedIds(this.props.selectedEntities)}
           allSelected={allSelected}
           treeSelectMode={this.props.treeSelectMode}
-          tree={this.state.tree} />
+          tree={this.state.tree}/>
       </div>
     )
   }

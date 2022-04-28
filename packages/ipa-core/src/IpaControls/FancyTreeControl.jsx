@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect,useState,useCallback,useReducer,useRef} from "react";
 
 import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel";
 import _ from 'lodash'
@@ -6,18 +6,55 @@ import clsx from "clsx";
 
 import './TreeControl.scss'
 
+
+const fancyTreeControlSelectAllReducer = (state, action) => {
+  switch (action.type) {
+    case 'select_all':
+      return {...state, selectAllActivated: true, previouslySelectedIds: action.previouslySelectedIds || []};
+    default:
+      return {...state, selectAllActivated: false, previouslySelectedIds: action.previouslySelectedIds || []};
+  }
+}
+
+const initialSelectAllState = {selectAllActivated: false, previouslySelectedIds: []};
+
 /**
  * @Deprecated, use {@link ./ReactiveTreeControl} instead
  */
 //FIXME 1)This component shouldn't be mutating dom nodes manually. It is dangerous (in a React app) and hard to reason about
 const FancyTreeControl = ({
-                            name, tree, renderBranchNode, renderLeafNode, onSelect, selectedIds = [], singleSelect=false,
+                            name, tree, renderBranchNode, renderLeafNode, onSelect, selectedIds = [], onSelectAll, onSelectNone, onSelectIds, singleSelect=false,
                             allSelected, treeSelectMode, onGroupSelect, selectedGroups, onExpand = _.noop,
                             //TODO Refactor these to just pass down node index
                             selectedNodeNames = [], expandedNodeNames = [], partialNodeNames = []
 }) => {
 
+  const [selectAllState, dispatch] = useReducer(fancyTreeControlSelectAllReducer, initialSelectAllState);
+
+  const treeDOMRef = useRef();
+
+  const onSelectAllAction = useCallback(()=>{
+    dispatch({type: 'select_all', previouslySelectedIds : selectedIds});//set selectAllState before onSelectAll
+    if(onSelectAll){
+      onSelectAll();
+    }
+  },[onSelectAll,selectedIds]);
+
+  const onUndoSelectAllAction = useCallback(()=>{
+    if(onSelectIds){
+      onSelectIds(selectAllState.previouslySelectedIds);
+    }
+    dispatch({type: 'undo'});//clear selectAllState after onSelect
+  },[onSelectIds,selectAllState]);
+
+  const onSelectNoneAction = useCallback(()=>{
+    if(onSelectNone){
+      onSelectNone([]);
+    }
+  },[onSelectNone]);
+
   useEffect(() => {// If all items are selected, ensure the tree displays accordingly. This effect should no longer be necessary nor correct once FIXME number 1) is addressed
+    const treeDOM = treeDOMRef.current;
     if(allSelected){
       if(treeSelectMode === TreeSelectMode.NONE_MEANS_ALL){//And all means none so we deselect everything
         const selectedNodes = treeDOM.querySelectorAll("li.selected")
@@ -34,6 +71,7 @@ const FancyTreeControl = ({
   }, [allSelected, treeSelectMode])
 
   useEffect(() => {// If there are no selected items, ensure the tree displays accordingly. This effect should no longer be necessary nor correct once FIXME number 1) is addressed
+    const treeDOM = treeDOMRef.current;
     if(_.isEmpty(selectedIds) && _.isEmpty(selectedNodeNames)){
       const allSelected = treeDOM.querySelectorAll("li.selected")
       Array.from(allSelected).forEach(s =>
@@ -42,8 +80,13 @@ const FancyTreeControl = ({
     }
   }, [selectedIds]);
 
+  useEffect(() => {
+    establishTreeBranchClasses();
+  }, [selectedIds]);
+
+
   if (!tree) return null
-  let treeDOM
+  //let treeDOM
 
   const expandBranch = (e, nodeName, nodeValue) => {
     let el = e.target
@@ -54,23 +97,8 @@ const FancyTreeControl = ({
     onExpand(nodeName, nodeValue)
   }
 
-  const selectNode = (e, nodeName, nodeValue) => {
-    let el = e.target
-    if (el.classList.contains("branch-expander")) {
-      return
-    }
-    while (el.tagName != "LI")
-      el = el.parentElement
-    e.stopPropagation()
-
-    el.classList.toggle("selected")
-
-    if (el.classList.contains("branch")) {
-      let branchLeaves = Array.from(el.querySelectorAll("li"))
-      if (el.classList.contains("selected")) branchLeaves.forEach(ell => ell.classList.add("selected"))
-      else branchLeaves.forEach(ell => ell.classList.remove("selected"))
-    }
-
+  const establishTreeBranchClasses = () => {
+    const treeDOM = treeDOMRef.current;
     let allBranches = treeDOM.querySelectorAll("li.branch")
     Array.from(allBranches).forEach(br => {
       let branchLeaves = br.querySelectorAll("li.leaf")
@@ -87,10 +115,37 @@ const FancyTreeControl = ({
         br.classList.remove("selected")
         br.classList.add("partial")
       }
-    })
+    });
+  }
+
+  const selectNode = (e, nodeName, nodeValue) => {
+    const treeDOM = treeDOMRef.current;
+    let el = e.target;
+    if (el.classList.contains("branch-expander")) {
+      return;
+    }
+    while (el.tagName != "LI") {
+      el = el.parentElement;
+    }
+    e.stopPropagation();
+
+    //before toggle, gather previously selected
+    const previouslySelectedIds = [...treeDOM.querySelectorAll("li.leaf.selected")].map(li=>li.dataset.nodeId);
+
+    el.classList.toggle("selected");
+
+    if (el.classList.contains("branch")) {
+      let branchLeaves = Array.from(el.querySelectorAll("li"))
+      if (el.classList.contains("selected")) branchLeaves.forEach(ell => ell.classList.add("selected"))
+      else branchLeaves.forEach(ell => ell.classList.remove("selected"))
+    }
+
+    establishTreeBranchClasses();
 
     if (onSelect) {
-      onSelect([...treeDOM.querySelectorAll("li.leaf.selected")], nodeName, nodeValue, _.isArray(nodeValue), el.classList.contains("selected"))
+      const allSelected = treeDOM.querySelectorAll("li.leaf.selected");
+      onSelect([...allSelected], nodeName, nodeValue, _.isArray(nodeValue), el.classList.contains("selected"));
+      dispatch({type: 'nodeSelected', previouslySelectedIds: previouslySelectedIds});
     }
   }
 
@@ -100,7 +155,7 @@ const FancyTreeControl = ({
     if (Array.isArray(nodes)) {
       children = nodes.map((n) => {
         let cn = "leaf"
-        if ((tree.length != selectedIds.length && selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
+        if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
         if (expandedNodeNames.includes(n.name)) cn += " expanded"
         if (partialNodeNames.includes(n.name)) cn += " partial"
         return (
@@ -134,7 +189,12 @@ const FancyTreeControl = ({
   }
 
   return (
-    <div className={"fancy-tree"} ref={el=>treeDOM=el}>
+    <div className={"fancy-tree"} ref={treeDOMRef}/*ref={el=>treeDOM=el}*/>
+      {onSelectAll ? <div className="fancy-tree__count">
+        <span>{`Refined: ${selectedIds.length}`}</span>
+        {!allSelected ? <span className="fancy-tree__count--action" onClick={onSelectAllAction}>Select All</span> : (onSelectNoneAction ? <span className="fancy-tree__count--action" onClick={onSelectNoneAction}>Deselect All</span> : undefined) }
+        {selectAllState.selectAllActivated && selectAllState.previouslySelectedIds.length>0 ? <span className="fancy-tree__count--action" onClick={onUndoSelectAllAction}>Undo</span> : undefined }
+      </div> : undefined}
       <ul>
         {getNodes(tree, 1)}
       </ul>
