@@ -170,14 +170,13 @@ export const entitiesSliceFactory = (identifier = '') => {
             console.error("Fetch failed",errorResult);
         }
 
-        const getNextFetchPromise = () => {
+        const getNextFetchPromise = () =>
             query ?
-                //this might return rejected promise, and chaining with .then is not possible without error handler resetting the return
                 ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query}, runScriptOptions)
-                : new Promise(res => res([]))
-        };
+                : new Promise(res => res([]));
         currentFetchPromise = currentFetchPromise.then(
             () => getNextFetchPromise(),
+            //ABOVE might return rejected promise, and chaining another .then is not possible without error handler resetting the promise status
             (errorResult) => { interceptFetchError(errorResult); return getNextFetchPromise();}
         )
         let entities = await currentFetchPromise;
