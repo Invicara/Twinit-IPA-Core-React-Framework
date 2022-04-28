@@ -74,8 +74,11 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback){
       console.error(`executeScript "${scriptName}" not found on loadedScripts `)
     } else {
       let libraries = { PlatformApi, UiUtils }
-      let result = loadedScripts[scriptName](operand, libraries, ctx, callback)
-      if (result && result instanceof Promise) result = await result
+      let result = loadedScripts[scriptName](operand, libraries, ctx, callback);
+      if (result && result instanceof Promise) {
+          result = await result;
+      }
+      console.log(scriptName+" loadedScript result:", result);
       return result
     }
   } else {

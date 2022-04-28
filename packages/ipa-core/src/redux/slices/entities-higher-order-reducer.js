@@ -164,10 +164,21 @@ export const entitiesSliceFactory = (identifier = '') => {
 
     const fetchEntities = (script, selector, value, runScriptOptions) => async (dispatch, getState) => {
         const query = ControlProvider.getQuery(value, selector);
-        dispatch(setFetching(true))
-        currentFetchPromise = currentFetchPromise.then(() => query ?
-            ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query}, runScriptOptions)
-            : new Promise(res => res([]))
+        dispatch(setFetching(true));
+
+        const interceptFetchError = function(errorResult){
+            console.error("Fetch failed",errorResult);
+        }
+
+        const getNextFetchPromise = () => {
+            query ?
+                //this might return rejected promise, and chaining with .then is not possible without error handler resetting the return
+                ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query}, runScriptOptions)
+                : new Promise(res => res([]))
+        };
+        currentFetchPromise = currentFetchPromise.then(
+            () => getNextFetchPromise(),
+            (errorResult) => { interceptFetchError(errorResult); return getNextFetchPromise();}
         )
         let entities = await currentFetchPromise;
         const sorted = _.sortBy(entities, a => a["Entity Name"]);
