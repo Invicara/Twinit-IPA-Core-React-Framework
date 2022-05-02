@@ -72,12 +72,13 @@ export const SquareInSquareCheckbox = withStyles({
 
 export const useChecked = (inputItems, checkCallback, allCheckCallback) => {
     const [items, setItems] = useState([]);
-    //const previousItems = usePrevious(inputItems);
+    const previousItems = usePrevious(inputItems);
 
     useEffect(() => {//if items get added or removed, update. This behavior is simplified for current use cases
+        if (inputItems.length !== _.get(previousItems, 'length', 0)) 
         setItems(inputItems.map(instance => ({
             ...instance,
-            checked: (instance.checked || false)
+            checked: instance.checked
         })))
     }, [inputItems]);
 
