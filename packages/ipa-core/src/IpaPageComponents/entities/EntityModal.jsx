@@ -353,7 +353,7 @@ class EntityModal extends React.Component {
         newEntity['Entity Name'] = value
       } else if (propInfo.type === 'date' || propInfo.type === 'datetime') {
         const epoch = !!value ? value.getTime() : null
-        const localeString = !!value ? new Date(value).toLocaleDateString() : null
+        const localeString = !!value ? new Date(value).toLocaleDateString() : ""
   
         newEntity.properties[att].epoch = epoch;
         newEntity.properties[att].val = localeString;
