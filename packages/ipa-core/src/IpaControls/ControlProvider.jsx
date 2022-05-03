@@ -6,7 +6,7 @@ import {ScriptedLinkedSelects} from "./EnhancedScriptedLinkedSelects";
 import {CreatableScriptedSelects} from "./CreatableScriptedSelects";
 import {queryFromFilter} from "./private/filter";
 import _ from "lodash";
-import {parseName, parseNode} from "./private/tree";
+import {parseNodeName, parseNode} from "./private/tree";
 
 const controlsMap = {
     '<<TEXT_SEARCH>>': TextSearch,
@@ -57,18 +57,25 @@ const getTreeSelectQuery = (selector, filteringNodes) => {
                 .map(node => !node.isLeaf?
                     ({
                         "$and": [
-                            { [`properties.${selector.treeLevels[node.level].property}.val`]: parseName(node.name).displayName },
+                            { [`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeName(node.name).displayName },
                             ...asOptional(getQueryNodesFor(node.children), "$or")
                         ]
                     }) :
                     ({
-                        [`properties.${selector.treeLevels[node.level].property}.val`]: parseName(node.name).displayName
+                        [`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeName(node.name).displayName
                     })
                 )
         }
     }
 
-    return !_.isEmpty(filteringNodes) && getQueryNodesFor(_.keys(_.pickBy(_.mapValues(filteringNodes,parseNode), node => node.level === 0)));
+    let isNotEmpty = !_.isEmpty(filteringNodes);
+
+    let parsedNodes = _.mapValues(filteringNodes,parseNode);
+    let parsedNodesKeys = _.keys(parsedNodes)
+
+    let query = getQueryNodesFor(parsedNodesKeys);
+
+    return isNotEmpty && query;
 }
 
 //It makes sense that the responsibility of knowing how to build a query be *inside* each query control. Probably they
@@ -84,7 +91,7 @@ const queryBuilders = {
 };
 
 export const ControlProvider = {
-    getControlComponent: ({query}) => controlsMap[query],
+    getControlComponent: (selector) => controlsMap[selector?.query],
 
     getQuery: (value, selector) => {
         const queryBuilder = queryBuilders[selector.query];

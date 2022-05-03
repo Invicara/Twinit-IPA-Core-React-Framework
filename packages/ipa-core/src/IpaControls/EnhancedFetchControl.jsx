@@ -48,11 +48,16 @@ class EnhancedFetchControl extends React.Component {
     handleFetch = (selectorId, value) => {
         let selector = this.state.selectorsMap[selectorId]
         let newValue = value || selector.currentValue
-        this.setSelectorsMap({
+        if(_.isEmpty(newValue)) {
+            newValue = null;
+        }
+        let newSelector = {...selector, currentValue: newValue, touched: false}
+        let newSelectors = {
             ...this.resetSelectorsMap(this.props.selectors),
-            [selector.id]: {...selector, currentValue: newValue, touched: false}
-        });
-        this.props.doFetch(selector, newValue);
+            [selector.id]: newSelector
+        }
+        this.setSelectorsMap(newSelectors);
+        this.props.doFetch(newSelector, newValue);
     }
 
     renderControl = (selector, position) => {

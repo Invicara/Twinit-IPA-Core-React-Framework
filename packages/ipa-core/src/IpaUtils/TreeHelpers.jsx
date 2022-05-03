@@ -32,8 +32,10 @@ export const withoutPropagation = (whatToDo) => e => {
 
 export const propagateNodeStatusDown = (property) => (nodeIndex, nodeId, newNodeStatus) => {
     const selectedNode = nodeIndex[nodeId];
-    selectedNode[property] = newNodeStatus;
-    selectedNode.children.forEach(childName => propagateNodeStatusDown(property)(nodeIndex, childName, newNodeStatus))
+    if(selectedNode) {
+        selectedNode[property] = newNodeStatus;
+        selectedNode.children.forEach(childName => propagateNodeStatusDown(property)(nodeIndex, childName, newNodeStatus))
+    }
 }
 
 export const propagateNodeStatusUp = (property) => (nodeIndex, nodeId) => {

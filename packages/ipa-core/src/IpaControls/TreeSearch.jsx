@@ -4,114 +4,129 @@ import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import {produce} from "immer";
 import _, { set } from "lodash";
+import {uid} from 'uid';
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
-import {parseName, parseNode, stringifyName} from "./private/tree";
+import {parseNodeName, parseNode, stringifyNode} from "./private/tree";
+import ReactiveTreeControl from "./ReactiveTreeControl";
 
-const treeControlLeafNodeRenderer = (group) => <div>{parseName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
+const treeControlLeafNodeRenderer = (group) => {
+    return <div>{parseNodeName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
+}
 
-const treeControlBranchNodeRenderer = (groupName, nodeValue) => {
-    const childCount = _.isArray(nodeValue) ? nodeValue.reduce((a, b) => a + (b['count'] || 0), 0) : undefined;
-
+const treeControlBranchNodeRenderer = (group) => {
+    const childCount = group.count;
+    
     return (
         <span>            
-            {parseName(groupName).displayName}
+            {parseNodeName(group.name).displayName}
             {!!childCount && <span className="count" style={{fontSize: "0.8em"}}>{childCount}</span>}
           </span>
     )
 };
 
-export const TreeSearch = ({ currentValue = {}, onChange, touched, onFetch, display, additionalOptions, isFetching, treeLevels, reloadToken }) => {
-    //The actual deeply nested tree object
-    const [tree, setTree] = useState({})
+export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, reloadToken }) => {
 
     //A flat array containing all the nodes and their relevant information
     const [nodeIndex, setNodeIndex] = useState({});
 
-    const initialFilteringNodeIndex = _.mapValues(currentValue,parseNode);
 
     const [reloading, setReloading] = useState(false);
-    const [fetchedOnce, setFetchedOnce] = useState(false);
 
     useEffect(() => {
         refreshTree()
     }, [treeLevels])
 
     useEffect(() => {
-        if(fetchedOnce) {
-
-            setReloading(true)
-            refreshTree().then(({nodeIndex}) => {
-                setReloading(false)
-                onFetch(undefined, getFilteringNodes(nodeIndex))
-            })
-        }
+        setReloading(true)
+        refreshTree().then((nodeIndex) => {
+            setReloading(false)
+            onFetch(undefined, getFilteringNodes(nodeIndex))
+        })
 
     }, [reloadToken])
 
 
     async function getTree() {
         const level = 0;
+        const parentNames = undefined;
         const parents = undefined;
 
-        const levelNodes = await getLevelNodes(level, parents);
+        const levelNodes = await getLevelNodes(level, parentNames);
 
-        const firstLevelPromise = getTreeLeafGroup(levelNodes, level, parents);
-        const newNodeIndexPromise = buildNodeIndex(levelNodes, level, parents, currentValue);
-        let [firstLevel, newNodeIndex] = await Promise.all([firstLevelPromise, newNodeIndexPromise]);
-
+        
+        let newNodeIndex = await buildNodeIndex(levelNodes, level, parents, parentNames, currentValue);
 
         //Load expanded nodes' children
-        let newState = {nodeIndex: newNodeIndex, tree: firstLevel};
-        for(const nodeName of _.keys(newNodeIndex)) {
-            newState = await loadChildrenDeep(nodeName, newState.nodeIndex, newState.tree, currentValue);
+        for(const nodeKey of _.keys(newNodeIndex)) {
+            newNodeIndex = await loadChildrenDeep(nodeKey, newNodeIndex, currentValue);
         }
-        return newState;
-
-        // return {nodeIndex: newNodeIndex, tree: firstLevel};
+        return newNodeIndex;
     };
 
     async function refreshTree() {
-        let state = await getTree();
-        // state.nodeIndex = selectAndExpandNodes(state.nodeIndex, selectedNodes)
-        setTree(state.tree);
-        setNodeIndex(state.nodeIndex);
-        return state;
+        let newNodeIndex = await getTree();
+        setNodeIndex(newNodeIndex);
+        return newNodeIndex;
     }
 
-    const getPreviousValues = (parents) =>_.zipObject(treeLevels.map(tl => tl.property), parents.map(name => parseName(name).displayName))
+    const getPreviousValues = (parentNames) => {
 
-    const isLast = (level) => level + 1 === treeLevels.length;
+        let keys = treeLevels.map(tl => tl.property);
+        let values = parentNames.map(name => parseNodeName(name)?.displayName);
 
-    async function getChildrenKeys(nodeLevel, nodeName, nodeParents) {
+
+        return _.zipObject(keys, values)
+    }
+
+    const isLast = (level) => level === treeLevels.length-1;
+
+    async function fetchChildren(nodeLevel, node, nodeParentNames) {
         const isLeaf = isLast(nodeLevel);
 
         if(isLeaf) {
             return []
         }
-       return (await getLevelNodes(nodeLevel+1, [...nodeParents, nodeName]))
-        .map(child => child.name)
+
+        return (await getLevelNodes(nodeLevel+1, [...nodeParentNames, node.name]))
     } 
 
-    const buildNodeIndex = async (levelNodes, level, parents = [], currentValue) => {
+    async function getChildrenNames(nodeLevel, node, nodeParentNames) {
+        return (await fetchChildren(nodeLevel, node, nodeParentNames))
+        .map(child => child.name)
+    }
+
+    
+
+    const buildNodeIndex = async (levelNodes, level, parents = [], parentNames = [], currentValue) => {
         let newNodeIndexPromises = levelNodes.map( async node => {
+
+            const nodeFromProps = _.values(currentValue).find(n => n.id === node.id);
+
+            const id = node.id;
             const name = node.name;
+            const count = node.childCount;
             const isLeaf = isLast(level);
-            const children = await getChildrenKeys(level, node.name, parents);
+            const childrenNames = await getChildrenNames(level, node, parentNames);
+            const children = [...childrenNames]
             const defaultSelectedStatus = _.get(
                 nodeIndex, 
                 `${_.last(parents)}.selectedStatus`
             ) === TreeNodeStatus.ON ? TreeNodeStatus.ON : TreeNodeStatus.OFF
 
 
-            const expanded = currentValue?.[name]?.expanded || false;
-            const selectedStatus = currentValue?.[name]?.selectedStatus || defaultSelectedStatus;
+            const expanded = nodeFromProps?.expanded || false;
+            const selectedStatus = nodeFromProps?.selectedStatus || defaultSelectedStatus;
 
 
             return {
+                id,
                 name,
+                count,
                 level,
                 parents,
+                parentNames,
                 children,
+                childrenNames,
                 isLeaf,
                 expanded,
                 selectedStatus
@@ -120,186 +135,165 @@ export const TreeSearch = ({ currentValue = {}, onChange, touched, onFetch, disp
 
         let newNodeIndex = {}
 
-        const newNodeIndexArray = await Promise.all(newNodeIndexPromises)
-        newNodeIndexArray.forEach(newNode => newNodeIndex[newNode.name] = newNode);
+        const newNodeIndexArray = await Promise.all(newNodeIndexPromises);
+
+        newNodeIndexArray.forEach(newNode => newNodeIndex[newNode.id] = newNode);
 
         return newNodeIndex;
     }
 
+    
 
-    //unselects all nodes by setting selectedStatus properties from all nodes in nodeIndex to OFF
-    const clearNodeSelection = () => {
-        const newNodeIndex = produce(nodeIndex, nodeIndex => {
-            Object.keys(nodeIndex).forEach((key) => {
-                nodeIndex[key].selectedStatus = TreeNodeStatus.OFF
-            })
+    const NODES = [
+        {
+            "name": "Curtain Walls",
+            "childCount": 21
+        },
+        {
+            "name": "Door - External",
+            "childCount": 6
+        },
+        {
+            "name": "Door - Internal",
+            "childCount": 23
+        },
+        {
+            "name": "Elevator",
+            "childCount": 1
+        },
+        {
+            "name": "Furniture",
+            "childCount": 10
+        },
+        {
+            "name": "Joinery - Cabinet",
+            "childCount": 21
+        },
+        {
+            "name": "Joinery - Feature",
+            "childCount": 2
+        },
+        {
+            "name": "Mechanical and Plumbing Equipment",
+            "childCount": 2
+        },
+        {
+            "name": "Window - External",
+            "childCount": 67
+        },
+        {
+            "name": "Window - Internal",
+            "childCount": 3
+        }
+    ]
+
+    async function getLevelNodes(level, parentNames = []) {
+
+        let input = getPreviousValues(parentNames);
+
+        const rawNodes = await ScriptHelper.executeScript(treeLevels[level].script,
+            parentNames ? {input} : undefined)
+
+        const levelNodes = rawNodes.map((node, position) => {
+            
+            if(node.name) {
+                return {...node, id: uid(), name: stringifyNode({displayName: node.name, level, position})}
+            } else {
+                return {id: uid(), name: stringifyNode({displayName: node, level, position}), childCount: 0}
+            }
         });
-        setNodeIndex(newNodeIndex);
-    }
-
-    async function getLevelNodes(level, parents = []) {
-        const levelNodes = (await ScriptHelper.executeScript(treeLevels[level].script,
-            parents ? {input: getPreviousValues(parents) } : undefined)
-        ).map((node, i) => (node.name ?
-                {...node, name: stringifyName(node.name, level, i) } : { name: stringifyName(node, level, i), childCount: 0}
-        ));
-
         return levelNodes;
     } 
 
-    async function getTreeLeafGroup(levelNodes, level, parents = []) {
-        if(!levelNodes) {
-            levelNodes = await getLevelNodes(level, parents);
-        }
-        return isLast(level) ?
-            levelNodes.map((node) => ({name: node.name, isLeaf: true, level, parents, count: node.childCount})) :
-            levelNodes.reduce((accum, node) =>
-                ({
-                    ...accum,
-                    [node.name]: [{name: stringifyName("Loading...", "X", "X"), count: node.childCount}]
-                }), {}
-        );
-    }
-
-    async function loadChildren(nodeName, nodeIndex, tree, currentValue) {
-        const expandingNode = nodeIndex[nodeName];
-        const level = expandingNode.level + 1;
-        const parents = [...expandingNode.parents, nodeName];
-        const levelNodes = await getLevelNodes(level, parents)
-        const leafGroup = await getTreeLeafGroup(
-            levelNodes, 
-            level, 
-            parents
-        );
-        let nodeIndicesToAdd = await buildNodeIndex(levelNodes, level, parents, currentValue)
-        let newNodeIndex = {...nodeIndex, ...nodeIndicesToAdd};
-        let newTree = produce(tree, tree => {
-            _.get(tree, expandingNode.parents.join('.'), tree)[nodeName] = leafGroup
-        })
-
-        return {nodeIndex: newNodeIndex, tree: newTree};
-    }
-
-    //Loads all deeply nested children of node if they need to be displayed
-    async function loadChildrenDeep(nodeName, nodeIndex, tree, currentValue) {
-        let node = nodeIndex[nodeName];
-        
-        if(!node || _.isEmpty(node.children) || node.isLeaf || !node.expanded) {
-            return {nodeIndex, tree};
-        } else {
-            // newState: {tree, newIndex};
-            let newState = await loadChildren(nodeName, nodeIndex, tree, currentValue);
-            let updatedNode = newState.nodeIndex[nodeName];
-            for (const child of updatedNode.children) {
-                newState = await loadChildrenDeep(child.name, newState.nodeIndex, newState.tree, currentValue);
-            }
-            return newState;
-        }
-
-
-    }
-
-    function expandNode(nodeIndex, nodeName, expanded) {
-        let expandedNode = nodeIndex[nodeName]
-        let newNode = {...expandedNode, expanded}
-        let newNodeIndex = {...nodeIndex, [nodeName]: newNode};
+    async function loadChildren(nodeKey, nodeIndex, currentValue) {
+        let nodeIndicesToAdd = await getChildren(nodeKey, nodeIndex, currentValue)
+        let node = {...nodeIndex[nodeKey], children: _.keys(nodeIndicesToAdd)}
+        let newNodeIndex = {...nodeIndex, ...nodeIndicesToAdd, [nodeKey]: node};
 
         return newNodeIndex;
     }
 
-    const handleExpand = async (nodeName, unexpandedNodeValues) => {
-        let expandedNode = nodeIndex[nodeName]
-        let newNodeIndex = expandNode(nodeIndex, nodeName, !expandedNode.expanded);
-
-        const childrenNotLoaded = Array.isArray(unexpandedNodeValues) && !unexpandedNodeValues[0].isLeaf;
-        if(childrenNotLoaded){
-            let newState = await loadChildren(nodeName, newNodeIndex, tree, currentValue);
-            newNodeIndex = newState.nodeIndex;
-            setTree(newState.tree);
-        } 
-        setNodeIndex(newNodeIndex);
+    async function getChildren(nodeKey, nodeIndex, currentValue) {
+        const expandingNode = nodeIndex[nodeKey];
+        const level = expandingNode.level+1;
+        const parentNames = [...expandingNode.parentNames, expandingNode.name];
+        const parents = [...expandingNode.parents, expandingNode.id];
+        const levelNodes = await getLevelNodes(level, parentNames)
+        let nodeIndicesToAdd = await buildNodeIndex(levelNodes, level, parents, parentNames, currentValue)
+        return nodeIndicesToAdd;
     }
 
-    const propagateSelectStatusDown = (nodeIndex, nodeName, selected) => {
-        const selectedNode = nodeIndex[nodeName];
+    async function getChildrenAndParent(nodeKey, nodeIndex, currentValue) {
+        let nodeIndicesToAdd = await getChildren(nodeKey, nodeIndex, currentValue);
+        let node = {...nodeIndex[nodeKey], children: _.keys(nodeIndicesToAdd)};
+        return {...nodeIndicesToAdd, [nodeKey]: node};
+    }
+
+    //Loads all deeply nested children of node if they need to be displayed
+    async function loadChildrenDeep(nodeKey, nodeIndex, currentValue) {
+        let node = nodeIndex[nodeKey];
+        
+        if(!node || _.isEmpty(node.children) || node.isLeaf || !node.expanded) {
+            return nodeIndex;
+        } else {
+            let newNodeIndex = await loadChildren(nodeKey, nodeIndex, currentValue);
+            let updatedNode = newState.nodeIndex[nodeKey];
+            for (const child of updatedNode.children) {
+                newNodeIndex = await loadChildrenDeep(child.name, newNodeIndex, currentValue);
+            }
+            return newNodeIndex;
+        }
+    }
+
+
+    const propagateSelectStatusDown = (nodeIndex, nodeKey, selected) => {
+        const selectedNode = nodeIndex[nodeKey];
         if(!selectedNode) {
             return []
         }
-    
+
         selectedNode.selectedStatus = selected ? TreeNodeStatus.ON : TreeNodeStatus.OFF;
         let selectedNodeChildren = selectedNode.children.map(childName => propagateSelectStatusDown(nodeIndex, childName, selected))
 
         return [selectedNode, ..._.flatten(selectedNodeChildren)];
     }
 
-    const propagateSelectStatusUp = (nodeIndex, nodeName) => {
-        const selectedNode = nodeIndex[nodeName];
-        if(!selectedNode) {
-            return []
-        }
-        return selectedNode.parents.slice().reverse().map(parentName => recalculateSelectedStatus(nodeIndex, parentName))
-    }
-
-    const recalculateSelectedStatus = (nodeIndex, nodeName) => {
-        const currentNode = {...nodeIndex[nodeName]};
-        const children = currentNode.children.map(childName => nodeIndex[childName]);
-        if(children.every(childNode => childNode.selectedStatus === TreeNodeStatus.ON)){
-            currentNode.selectedStatus = TreeNodeStatus.ON
-        } else if (children.every(childNode => childNode.selectedStatus === TreeNodeStatus.OFF)){
-            currentNode.selectedStatus = TreeNodeStatus.OFF
-        } else {
-            currentNode.selectedStatus = TreeNodeStatus.PARTIAL
-        }
-
-        return currentNode;
-    };
-
-    function selectNode(nodeIndex, nodeName, selected) {
-
-        let newNodeIndex = {...nodeIndex};
-
-        let downNodes = propagateSelectStatusDown(nodeIndex, nodeName, selected);
-        let upNodes = propagateSelectStatusUp(nodeIndex, nodeName);
-        const allNodesToChange = [...downNodes, ...upNodes];
-
-
-        allNodesToChange.forEach(node => {
-            newNodeIndex[node.name].selectedStatus = node.selectedStatus;
-        })
-
-        return newNodeIndex;
-    }
-
-
-    const handleSelect = async (leaves, nodeName, nodeValue, isParent, selected) => {
-        const newNodeIndex = selectNode(nodeIndex, nodeName, selected);
-        setNodeIndex(newNodeIndex)
-        onChange(getFilteringNodes(newNodeIndex))
-        onFetch(undefined, getFilteringNodes(newNodeIndex))
-        setFetchedOnce(true);
-    };
-
     function getFilteringNodes(aNodeIndex) {
-        return _.pickBy(aNodeIndex, node => [TreeNodeStatus.ON, TreeNodeStatus.PARTIAL].includes(node.selectedStatus))
+        return _.pickBy(aNodeIndex, node => [TreeNodeStatus.ON].includes(node.selectedStatus))
     }
 
-    const getSelectedNodeNames = () =>  _.keys(_.pickBy(nodeIndex, node => node.selectedStatus === TreeNodeStatus.ON))
 
-    const getPartialNodeNames = () =>  _.keys(_.pickBy(nodeIndex, node => node.selectedStatus === TreeNodeStatus.PARTIAL))
+    async function handleNodeIndexChange(nodeIndex) {
 
-    const getExpandedNodeNames = () =>  _.keys(_.pickBy(nodeIndex, node => node.expanded))
+        const childrenPromises = _.values(nodeIndex).map((node) => {
+            let childrenNotLoaded = _.isEqual(node.children, node.childrenNames);
+            if(node.expanded && childrenNotLoaded) {
+                return getChildrenAndParent(node.id, nodeIndex, currentValue)
+            } else {
+                return Promise.resolve({});
+            }
+        })
+        
+        let childrenToAdd = {}
+        _.merge(childrenToAdd, ...(await Promise.all(childrenPromises)));
 
+        const newNodeIndex = {...nodeIndex, ...childrenToAdd}
+        
+        let selectedNodes = getFilteringNodes(newNodeIndex)
+        selectedNodes = !_.isEmpty(selectedNodes) ? selectedNodes : null;
 
-    return !reloading && !_.isEmpty(tree) ? <FancyTreeControl className="entity-tree"
+        if(!_.isEqual(currentValue, selectedNodes)) {
+            let selectedNodesWithNameAsKey = {}
+            _.values(selectedNodes).forEach(node => selectedNodesWithNameAsKey[node.name] = node)
+            onFetch(undefined, selectedNodesWithNameAsKey);
+        }
+        setNodeIndex(newNodeIndex)
+    }
+
+    return !reloading && !_.isEmpty(nodeIndex) ? <ReactiveTreeControl className="entity-tree"
              renderLeafNode={treeControlLeafNodeRenderer}
              renderBranchNode={treeControlBranchNodeRenderer}
-             onSelect={handleSelect}
-             selectedNodeNames={getSelectedNodeNames()}
-             partialNodeNames={getPartialNodeNames()}
-             expandedNodeNames={getExpandedNodeNames()}
-             allSelected={false}
-             treeSelectMode={TreeSelectMode.NONE_MEANS_NONE}
-             tree={tree}
-             onExpand={handleExpand}
+             nodeIndex={nodeIndex}
+             onNodeIndexChange={handleNodeIndexChange}
     /> : 'Loading tree...'
 };

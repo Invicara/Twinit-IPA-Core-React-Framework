@@ -13,11 +13,12 @@ import './TreeControl.scss'
 
 const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = defaultBranchRenderer, renderLeafNode = defaultLeafRenderer}) => {
 
-    const getNodeClasses = (node, baseClasses = '') => clsx(baseClasses,
+    const getNodeClasses = (node, baseClasses = '') => {
+        return clsx(baseClasses,
         _.get(node,'selectedStatus', TreeNodeStatus.OFF) === TreeNodeStatus.ON && "selected",
         _.get(node,'selectedStatus', TreeNodeStatus.OFF) === TreeNodeStatus.PARTIAL && "partial",
         _.get(node,'expanded', false) && "expanded",
-    )
+    )}
 
     const expandBranch = (node) => onNodeIndexChange(produce(nodeIndex, nodeIndex => {
         nodeIndex[node.id].expanded = !nodeIndex[node.id].expanded
@@ -52,14 +53,19 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         </li>
 
 
-    const renderNodes = (treeNodes) => treeNodes.map(node =>
-        node.isLeaf ? renderLeaf(node) : renderBranch(node)
-    )
+    const renderNodes = (treeNodes) => treeNodes.map(node => {
+
+        if(!node) {
+            return <p>No node to render</p>
+        }
+
+        return node.isLeaf ? renderLeaf(node) : renderBranch(node)
+    })
 
     return (
         <div className={"fancy-tree"}>
             <ul>
-                {!_.isEmpty(nodeIndex) ? renderNodes(_.values(nodeIndex).filter(node => node.level === 1)) : null}
+                {!_.isEmpty(nodeIndex) ? renderNodes(_.values(nodeIndex).filter(node => node.level === 0)) : null}
             </ul>
         </div>
     )
