@@ -82,8 +82,25 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback){
       return result
     }
   } else {
-    //execute DSL script existing code
-    return await _execScript(scriptName, operand, scriptResVar, ctx || _expressionExecCtx);
+      //execute DSL script existing code
+      let dslScriptOutput;
+      //domi 2022/May/03
+      const c = {...(ctx || _expressionExecCtx),
+          //reset previous script local variables (copied from scripRunner)
+          _lV : {},
+          //clear current script operand (copied from scripRunner)
+          _csOP : {},
+          //reset array of previous script promises
+          //if one promise ($wait script) will fail in the script, all other queued promises will be rejected straight away
+          //which is not good for scripts that loads all the project's collections
+          _pSPs: []
+      };
+      try {
+          dslScriptOutput = await _execScript(scriptName, operand, scriptResVar, c);
+      } catch(e){
+          console.error(`executeScript "${scriptName}" rejected`,e);
+      }
+      return dslScriptOutput;
   }
 }
 
