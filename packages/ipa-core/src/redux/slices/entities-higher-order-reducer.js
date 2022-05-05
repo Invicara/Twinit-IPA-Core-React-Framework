@@ -166,7 +166,7 @@ export const entitiesSliceFactory = (identifier = '') => {
 
         const getNextFetchPromise = () =>
             query ?
-                ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query}, runScriptOptions)
+                ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query})
                 : new Promise(res => res([]));
         currentFetchPromise = currentFetchPromise.then(
             () => getNextFetchPromise(),
