@@ -44,6 +44,12 @@ div:not(.ipa-select__value-container).css-1hwfws3 {
   border: none;
   border-radius: 40px;
 
+  .overflow-scroll {
+    overflow-y: auto;
+  }
+
+
+
   .content {
     border-radius: 40px;
   }
