@@ -15,7 +15,7 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly}) =
     const getControl = (col, file) =>
          col.control ? col.control(
              file.fileAttributes[col.name],
-             (value) => onFileChange([...files.filter(f => f.checked), file], col.name, value), file
+             (value) => onFileChange(file.checked ? [...files.filter(f => f.checked), file] : [file], col.name, value), file
          ) : 'loading...';
 
     return <div className="file-table-container">
