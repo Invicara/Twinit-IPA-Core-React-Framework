@@ -38,6 +38,7 @@ const runScript = (...args) => {
     const plainArgs = JSON.stringify(scriptArgs);
     const cachedPromise = getCached(plainArgs);
     if(cachedPromise && !ignoreCachedResult) {
+        console.log(scriptArgs[0]+" cachedPromise result:", cachedPromise);
         return cachedPromise;
     } else {
         const scriptResultPromise = ScriptHelper.executeScript(...scriptArgs);
