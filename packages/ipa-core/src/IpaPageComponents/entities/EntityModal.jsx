@@ -130,7 +130,7 @@ class EntityModal extends React.Component {
   }
 
   getBulkEntityProperties = entities => {
-    if (entities.length === 0) {
+    if (this.props.action.name !== "Create" && entities.length === 0) {
       throw new Error('No entity to edit')
     }
 
@@ -347,7 +347,9 @@ class EntityModal extends React.Component {
       if (propInfo && propInfo.type === 'tags' && value === undefined)
         value = []
 
-      newEntity.properties[att].hasMultipleValues = false
+      if(newEntity?.properties?.[att]) {
+        newEntity.properties[att].hasMultipleValues = false
+      }
 
       if (att === 'name') {
         newEntity['Entity Name'] = value
@@ -529,7 +531,23 @@ class EntityModal extends React.Component {
   }
 
   startCreate = async () => {
-
+    try {
+      await this.prepareEntityAndDoAction(true);
+    } catch (err) {
+      let formErrorMessage =
+        'Unexpected error while preparing the entities for saving, please try again later'
+      
+      switch(err.message) {
+        case "MISSING_REQUIRED_PROPERTIES":
+          formErrorMessage = 'Required properties are missing values!'
+          break;
+        default:
+          formErrorMessage = err.message
+          break;
+      }
+      const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
+      this.setState({formError})
+    }
   }
 
   startDelete = async () => {
@@ -554,7 +572,6 @@ class EntityModal extends React.Component {
 
   onConfirm = async () => {
     this.setState({ working: true, error: null, formError: null })
-    console.log("onConfirm action", this.props.action)
     switch(this.props.action.name) {
       case "Edit":
         await this.startEdit();
