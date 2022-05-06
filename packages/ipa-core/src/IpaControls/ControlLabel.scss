@@ -1,4 +1,11 @@
 .control-label {
     margin: 10px;
     font-weight: bold;
+
+    
+}
+
+.control-label.required:after {
+    content: " * ";
+    color: var(--app-accent-color);
 }

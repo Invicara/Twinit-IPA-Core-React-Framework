@@ -381,12 +381,12 @@ class EntityModal extends React.Component {
     else {
       if (this.props.action.component.requiredProperties) {
         let propNames = Object.keys(entity.properties)
-        let reqProps = this.props.action.component.requiredProperties
 
         for (let i = 0; i < propNames.length; i++) {
+          let prop = entity.properties[propNames[i]];
           if (
-            reqProps.includes(entity.properties[propNames[i]].dName) &&
-            !entity.properties[propNames[i]].val
+            this.propIsRequired(prop.dName) &&
+            !prop.val
           ) {
             pass = false
             break

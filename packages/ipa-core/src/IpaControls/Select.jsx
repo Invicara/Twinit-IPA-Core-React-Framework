@@ -25,7 +25,7 @@ const Select = props => {
   return (
     <div className='ipa-select'>
       {props.labelProps && (
-        <ControlLabel {...props.labelProps}/>
+        <ControlLabel {...props.labelProps} required={props.required}/>
       )}
       <Component
         styles={{
