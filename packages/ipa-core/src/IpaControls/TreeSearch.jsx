@@ -8,6 +8,7 @@ import {uid} from 'uid';
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
 import {parseNodeName, parseNode, stringifyNode} from "./private/tree";
 import ReactiveTreeControl from "./ReactiveTreeControl";
+import './TreeSearch.scss';
 
 const treeControlLeafNodeRenderer = (group) => {
     return <div>{parseNodeName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
@@ -24,7 +25,7 @@ const treeControlBranchNodeRenderer = (group) => {
     )
 };
 
-export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, reloadToken }) => {
+export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, reloadToken }) => {
 
     //A flat array containing all the nodes and their relevant information
     const [nodeIndex, setNodeIndex] = useState({});
@@ -142,51 +143,6 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, reloadToken
         return newNodeIndex;
     }
 
-    
-
-    const NODES = [
-        {
-            "name": "Curtain Walls",
-            "childCount": 21
-        },
-        {
-            "name": "Door - External",
-            "childCount": 6
-        },
-        {
-            "name": "Door - Internal",
-            "childCount": 23
-        },
-        {
-            "name": "Elevator",
-            "childCount": 1
-        },
-        {
-            "name": "Furniture",
-            "childCount": 10
-        },
-        {
-            "name": "Joinery - Cabinet",
-            "childCount": 21
-        },
-        {
-            "name": "Joinery - Feature",
-            "childCount": 2
-        },
-        {
-            "name": "Mechanical and Plumbing Equipment",
-            "childCount": 2
-        },
-        {
-            "name": "Window - External",
-            "childCount": 67
-        },
-        {
-            "name": "Window - Internal",
-            "childCount": 3
-        }
-    ]
-
     async function getLevelNodes(level, parentNames = []) {
 
         let input = getPreviousValues(parentNames);
@@ -290,10 +246,18 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, reloadToken
         setNodeIndex(newNodeIndex)
     }
 
-    return !reloading && !_.isEmpty(nodeIndex) ? <ReactiveTreeControl className="entity-tree"
-             renderLeafNode={treeControlLeafNodeRenderer}
-             renderBranchNode={treeControlBranchNodeRenderer}
-             nodeIndex={nodeIndex}
-             onNodeIndexChange={handleNodeIndexChange}
-    /> : 'Loading tree...'
+    return <div className="tree-search">
+        {display && <h1 className='title'>{display}</h1>}
+        {
+            !reloading && !_.isEmpty(nodeIndex) ? <ReactiveTreeControl className="entity-tree"
+                renderLeafNode={treeControlLeafNodeRenderer}
+                renderBranchNode={treeControlBranchNodeRenderer}
+                nodeIndex={nodeIndex}
+                onNodeIndexChange={handleNodeIndexChange}
+            /> : 'Loading tree...'
+        }
+    </div>
+    
+    
+    
 };
