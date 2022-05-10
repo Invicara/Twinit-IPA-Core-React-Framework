@@ -139,8 +139,8 @@ class EntitySelectionPanel extends React.Component {
     }
 
     const countMessage = this.state.numFilteredEntities == this.state.numEntities
-        ? `${this.state.numEntities} ${this.state.numEntities == 1 ? this.props.entitySingular : this.props.entityPlural}`
-        : `${this.state.numFilteredEntities} of ${this.state.numEntities} Fetched ${this.state.numEntities == 1 ? this.props.entitySingular : this.props.entityPlural}`
+        ? <span>{this.state.numEntities} {this.state.numEntities == 1 ? this.props.entitySingular : this.props.entityPlural}</span>
+        : <span><b>{this.state.numFilteredEntities}</b> of {this.state.numEntities} Fetched {this.state.numEntities == 1 ? this.props.entitySingular : this.props.entityPlural}</span>;
 
     let selectedIds = _.map(this.props.selectedEntities, e => e._id)
     const allSelected = this.state.numFilteredEntities === this.props.selectedEntities.length
