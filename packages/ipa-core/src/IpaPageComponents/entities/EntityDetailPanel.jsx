@@ -53,11 +53,13 @@ class EntityDetailPanel extends React.Component {
   }
 
   render() {
+    let availableDataGroups = this.props.availableDataGroups[this.props.entityType];
     let dataGroups = [...this.state.selectedDataGroups]
     // sort and then remove keys then make sure the type of extended ahas availableData
     // if a config had a typ eof data as selected, but the entity didn;t have that type of extended
-    // the DataStack was showing data the GroupSelector wasn;t wasnt. 
-    dataGroups = dataGroups.sort().map(n => n.substring(4)).filter(n => this.props.dataGroups && this.props.dataGroups[n]) 
+    // the DataStack was showing data the GroupSelector wasn;t wasnt.
+
+    dataGroups = dataGroups.sort().map(n => n.substring(4)).filter(n => availableDataGroups && availableDataGroups[n])
     return (
       <div className="entity-detail-panel">
         <div className="entity-detail-summary">
@@ -70,7 +72,7 @@ class EntityDetailPanel extends React.Component {
           />
           <EntityDataGroupSelector
             config={this.props.config}
-            dataGroups={this.props.dataGroups}
+            dataGroups={availableDataGroups}
             loadingDataGroups={this.props.loadingDataGroups}
             selectedDataGroups={this.state.selectedDataGroups}
             onDataGroupSelect={this.dataGroupSelected}
