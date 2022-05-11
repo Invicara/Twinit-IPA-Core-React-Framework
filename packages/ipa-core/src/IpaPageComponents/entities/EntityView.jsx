@@ -122,7 +122,8 @@ class EntityView extends React.Component {
                     entity={this.props.selectedEntities[0]}
                     config={this.props.handler.config}
                     actions={actions}
-                    dataGroups={this.props.availableDataGroups[this.props.entitySingular]}
+                    availableDataGroups={this.props.availableDataGroups}
+                    entityType={this.props.entitySingular}
                     loadingDataGroups={this.props.loadingAvailableDataGroups}
                     getData={this.props.getEntityExtendedData(this.props.handler.config.data)}
                 />
