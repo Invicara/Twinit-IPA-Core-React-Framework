@@ -19,10 +19,26 @@ $border-grey: #EAEAEA;
     opacity: 0;
     transition: opacity 1s;
     overflow-y: scroll;
-    &::-webkit-scrollbar{
-      display: none;
-    }
     max-height: 100%;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+      
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+      
+    &::-webkit-scrollbar-thumb {
+    background: #DCDCDC;
+            border-radius: 2rem;
+    }
+      
+    &::-webkit-scrollbar-thumb:hover {
+        background: #B8B8B8;
+    }
+
   }
   .drawer-content-open {
     opacity: 1;

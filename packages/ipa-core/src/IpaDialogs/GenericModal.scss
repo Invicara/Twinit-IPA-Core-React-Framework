@@ -45,10 +45,27 @@ div:not(.ipa-select__value-container).css-1hwfws3 {
   border-radius: 40px;
 
   .overflow-scroll {
+    margin: 0 40px;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+      
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+      
+    &::-webkit-scrollbar-thumb {
+    background: #DCDCDC;
+            border-radius: 2rem;
+    }
+      
+    &::-webkit-scrollbar-thumb:hover {
+        background: #B8B8B8;
+    }
   }
-
-
 
   .content {
     border-radius: 40px;
@@ -57,11 +74,11 @@ div:not(.ipa-select__value-container).css-1hwfws3 {
   .bar.bar-dark {
     width: 90%;
     left: 5%;
-    background: white;
+    background: transparent;
     border-bottom: none;
     border-radius: 10px 10px 0 0;
     padding-top: 50px;
-    padding: 3% 0;
+    padding: 3% 5%;
 
     .title {
       display: inline;

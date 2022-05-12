@@ -205,6 +205,24 @@
             width: 100%;
             overflow-y: auto;
 
+            &::-webkit-scrollbar {
+                width: 7px;
+                height: 7px;
+            }
+                
+            &::-webkit-scrollbar-track {
+                background: white;
+            }
+            
+            &::-webkit-scrollbar-thumb {
+                background: #DCDCDC;
+                border-radius: 2rem;
+            }
+            
+            &::-webkit-scrollbar-thumb:hover {
+                background: #B8B8B8;
+            }
+
             .usergroup-members {
                 width: 50%;
                 border-right: 1px solid lightgray;

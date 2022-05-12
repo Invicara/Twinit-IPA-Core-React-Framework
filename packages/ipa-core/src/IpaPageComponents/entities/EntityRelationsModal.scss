@@ -228,8 +228,21 @@ $bar-height: 60px;
     border-bottom-right-radius: 10px;
     display: flex;
     flex-direction: column;
-    &::-webkit-scrollbar{
-      display: none;
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+      
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+      
+    &::-webkit-scrollbar-thumb {
+    background: #DCDCDC;
+            border-radius: 2rem;
+    }
+      
+    &::-webkit-scrollbar-thumb:hover {
+        background: #B8B8B8;
     }
     &.collapsed{
       flex: 0;

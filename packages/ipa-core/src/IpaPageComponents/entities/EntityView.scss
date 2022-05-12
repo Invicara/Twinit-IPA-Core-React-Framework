@@ -23,8 +23,21 @@
       flex: 1;
     }
 
-    &::-webkit-scrollbar{
-      display: none;
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+      
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+      
+    &::-webkit-scrollbar-thumb {
+    background: #DCDCDC;
+            border-radius: 2rem;
+    }
+      
+    &::-webkit-scrollbar-thumb:hover {
+        background: #B8B8B8;
     }
   }
 }
