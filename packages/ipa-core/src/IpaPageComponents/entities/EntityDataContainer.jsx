@@ -16,18 +16,25 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
   const [myInterval, setMyInterval] = useState(null)
   const [reloadToken, setReloadToken] = useState(false)
 
-  const getContainerData = async () => {
+  const getContainerData = async (collapsable, entity, config, getData, dataGroupName) => {
     try {
       setFetching(true)
+
+
+      if(!entity) {
+        throw new Error("No entity data")
+      }
       
       let data = []
       if(config?.isProperties) {
-        data = entity.properties
+        data = entity?.properties
       } else if(!collapsable && dataGroupName) {
         data = await getData(dataGroupName, entity)
       }
       setData(data)
+      setError(undefined)
     } catch(err) {
+      console.error(err);
       setError(err)
     } finally {
       setFetching(false)
@@ -36,8 +43,7 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
 
   useEffect(() => {
     ;(async () => {
-      getContainerData()
-      setFetching(false)
+      await getContainerData(collapsable, entity, config, getData, dataGroupName)
 
       if (config?.refreshInterval) {
         if (config.refreshInterval < config.scriptExpiration)
@@ -45,7 +51,7 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
             'Refresh Interval is less than Script Expiration which will cause cached data to be used instead fetching new data!'
           )
         let myInterval = setInterval(() => {
-          getContainerData()
+          getContainerData(collapsable, entity, config, getData, dataGroupName)
         }, config.refreshInterval * 60000)
         setMyInterval(myInterval)
       }
@@ -54,10 +60,6 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
     return () => {
       if (myInterval) clearInterval(myInterval)
     }
-  }, [])
-
-  useEffect(() => {
-    getContainerData()
   }, [entity, dataGroupName, reloadToken])
 
   const reload = () => {
@@ -71,7 +73,7 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
     setReloadToken(false)
   }
 
-  return [data, fetching, error, reset, reload]
+  return {data, fetching, error, reset, reload}
 }
 
 const EntityDataContainer = props => {
