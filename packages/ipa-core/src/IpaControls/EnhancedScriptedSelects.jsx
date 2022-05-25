@@ -13,9 +13,8 @@ import './EnhancedScriptedSelects.scss'
 export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, horizontal, selectOverrideStyles, onFetch, multi, placeholder, highlightedOptions, isClearable, script, disabled}) => {
     const [selects, setSelects] = useState({});
 
-    const value = (currentValue || {})
-
     useEffect(() => {
+        const value = (currentValue || {})
         const fetchOptions = async () => {
             setSelects({});
             const selectOptions = await ScriptCache.runScript(script);
@@ -23,10 +22,10 @@ export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compa
             loadPlainInitialValueWithScriptedSelectFormat(onChange, value, selectOptions);
         };
         fetchOptions();
-    }, [script]);
+    }, [script, currentValue]);
 
     const handleChange = (selectId, selected) => {
-
+        const value = (currentValue || {});
         let selectedValues;
         if (!selected || (Array.isArray(selected) && !selected.length)) {
             let newValue = {...value, [selectId]: []}
@@ -41,7 +40,7 @@ export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compa
     return _.isEmpty(selects) ? 'Loading controls...\n' :
         <div className={clsx("scripted-selects-control", compact && 'compact', horizontal && 'horizontal')}>
             {_.values(_.mapValues(selects, (options, selectId) => {
-                const selectValue = _.compact(value[selectId])
+                const selectValue = _.compact((currentValue || {})[selectId])
                 let selectOptions = _.compact(asSelectOptions(options))
                 selectOptions = highlightOptions(highlightedOptions, selectOptions)
                 return <Fragment key={selectId}>

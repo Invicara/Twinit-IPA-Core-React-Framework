@@ -54,10 +54,11 @@ class EntitySelectionPanel extends React.Component {
       numEntities: this.props.entities.length,
       //FIXME Remove this props-to-state copy
       filters: this.props.selectedFilters || {},
-      groups: this.props.selectedGroups ?? 
-              sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY)) !== null  ?
+      //domi: added brackets to below, otherwise babel got confused
+      groups: this.props.selectedGroups ??
+          (sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY)) !== null  ?
               [sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY))] :
-               this.props.defaultGroups ?? []
+              (this.props.defaultGroups ?? []))
     }    
   }
 
@@ -66,8 +67,9 @@ class EntitySelectionPanel extends React.Component {
 
     let derivedState = {...state}
     if (state.entities.length>0 && !listEquals(props.entities.map(e => e.id),state.entities.map(e => e.id))) {
-      derivedState.groups = []
-      derivedState.filters = {}
+      //domi: I am commenting this out... when we add a category node, the applied groups and filters get nuked :/
+      //derivedState.groups = []
+      //derivedState.filters = {}
     }
     derivedState.uniquePropNames = getUniquePropNames(props.entities)
     derivedState.availableFilters = getAvailableFilterValues(props.entities, derivedState.uniquePropNames, props.nonFilterableProperties)
@@ -84,19 +86,24 @@ class EntitySelectionPanel extends React.Component {
       if (!_.isEmpty(prevProps.selectedFilters) && _.isEmpty(this.props.selectedFilters)) {
           this.setState({filters: {}})
       }
+      if (!_.isEmpty(prevProps.selectedGroups) && _.isEmpty(this.props.selectedGroups)) {
+          this.setState({groups: []})
+      }
   }
 
-    filtersChanged = (filters) => {
+  filtersChanged = (filters) => {
         this.setState({filters})
         this.props.onGroupOrFilterChange({filters})
-    }
+  }
 
   groupsChanged = (groups) => {
     this.setState({groups})
 
     const projectId = sessionStorage.getItem(PROJECT_ID_KEY);
     if(groups.length){
-      sessionStorage.setItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId, groups.slice(-1).pop());
+      //domi: please note that POP modifies the array
+      const lastGroupKey = (groups.slice(-1)).pop();
+      sessionStorage.setItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId, lastGroupKey);
     }else{
       sessionStorage.removeItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId);
     }

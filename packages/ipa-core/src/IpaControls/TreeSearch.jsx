@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useReducer} from "react";
 import FancyTreeControl from "./FancyTreeControl";
 import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
@@ -25,26 +25,46 @@ const treeControlBranchNodeRenderer = (group) => {
     )
 };
 
-export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, reloadToken }) => {
+const treeSearchReducer = (state, action) => {
+    switch (action.type) {
+        case 'reloading':
+            return {...state, reloading: true, pristine: false};
+        case 'reloaded':
+            return {...state, reloading: false, nodeIndex: action.nodeIndex};
+        default:
+            return {...state, reloading: false, pristine: false, nodeIndex: action.nodeIndex ? action.nodeIndex : state.nodeIndex};
+    }
+}
+
+const initialTreeState = {reloading: false, pristine: true, nodeIndex : {}};
+
+export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken }) => {
 
     //A flat array containing all the nodes and their relevant information
-    const [nodeIndex, setNodeIndex] = useState({});
+    //below moved to reducer
+    //const [nodeIndex, setNodeIndex] = useState({});
+    //const [reloading, setReloading] = useState(false);
 
+    const [treeState, dispatch] = useReducer(treeSearchReducer, initialTreeState);
 
-    const [reloading, setReloading] = useState(false);
+    let countNodesByKey = new Map();
 
     useEffect(() => {
-        refreshTree()
-    }, [treeLevels])
-
-    useEffect(() => {
-        setReloading(true)
-        refreshTree().then((nodeIndex) => {
-            setReloading(false)
-            onFetch(undefined, getFilteringNodes(nodeIndex))
-        })
-
-    }, [reloadToken])
+        dispatch({type: 'reloading'});
+        const initialTree = treeState.pristine && currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
+        try {
+            refreshTree(initialTree).then((nodeIndex) => {
+                //TODO: shouldSkipFetch used in newNavigator, when switching betweeen tabs, is this the best approach?
+                const shouldSkipFetch = !_.isEmpty(initialTree);
+                dispatch({type: 'reloaded',nodeIndex: nodeIndex});
+                if(!shouldSkipFetch) {
+                    onFetch(undefined, getFilteringNodes(nodeIndex), nodeIndex);
+                }
+            })
+        } catch (e) {
+            dispatch({type: 'reloaded'});
+        }
+    }, [treeLevels,reloadToken])
 
 
     async function getTree() {
@@ -53,7 +73,6 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, re
         const parents = undefined;
 
         const levelNodes = await getLevelNodes(level, parentNames);
-
         
         let newNodeIndex = await buildNodeIndex(levelNodes, level, parents, parentNames, currentValue);
 
@@ -64,9 +83,8 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, re
         return newNodeIndex;
     };
 
-    async function refreshTree() {
-        let newNodeIndex = await getTree();
-        setNodeIndex(newNodeIndex);
+    async function refreshTree(initialTree) {
+        let newNodeIndex = _.isEmpty(initialTree) ? await getTree() : initialTree;
         return newNodeIndex;
     }
 
@@ -101,7 +119,13 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, re
     const buildNodeIndex = async (levelNodes, level, parents = [], parentNames = [], currentValue) => {
         let newNodeIndexPromises = levelNodes.map( async node => {
 
-            const nodeFromProps = _.values(currentValue).find(n => n.id === node.id);
+            const nodeFromProps = _.values(currentValue).find(n => {
+                if(!n.id){
+                    //current value might come from a query which might be without an id
+                    return n.name == node.name;
+                }
+                return n.id === node.id
+            });
 
             const id = node.id;
             const name = node.name;
@@ -110,7 +134,7 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, re
             const childrenNames = await getChildrenNames(level, node, parentNames);
             const children = [...childrenNames]
             const defaultSelectedStatus = _.get(
-                nodeIndex, 
+                treeState.nodeIndex,
                 `${_.last(parents)}.selectedStatus`
             ) === TreeNodeStatus.ON ? TreeNodeStatus.ON : TreeNodeStatus.OFF
 
@@ -151,11 +175,25 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, re
             parentNames ? {input} : undefined)
 
         const levelNodes = rawNodes.map((node, position) => {
-            
+
+
+            const displayName = node.name ? node.name : node;
+            const nameKey = stringifyNode({displayName: displayName, level, position});
+
+            // create unique (but repeatable on each re-render) id for the node
+            // to also allow it to work with query navigation
+            let idSuffixPart = countNodesByKey.get(nameKey) || 0;
+            let id = `${nameKey}-${++idSuffixPart}`;
+            countNodesByKey.set(nameKey,idSuffixPart);
+
+            // we cannot use random ids on each render due to navigation issues
+            // we need to wait for a persistent ids
+            //let id = uid();
+
             if(node.name) {
-                return {...node, id: uid(), name: stringifyNode({displayName: node.name, level, position})}
+                return {...node, id: id, name: nameKey}
             } else {
-                return {id: uid(), name: stringifyNode({displayName: node, level, position}), childCount: 0}
+                return {id: id, name: nameKey, childCount: 0}
             }
         });
         return levelNodes;
@@ -193,7 +231,7 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, re
             return nodeIndex;
         } else {
             let newNodeIndex = await loadChildren(nodeKey, nodeIndex, currentValue);
-            let updatedNode = newState.nodeIndex[nodeKey];
+            let updatedNode = nodeIndex[nodeKey];
             for (const child of updatedNode.children) {
                 newNodeIndex = await loadChildrenDeep(child.name, newNodeIndex, currentValue);
             }
@@ -223,38 +261,39 @@ export const TreeSearch = ({ currentValue = {}, onFetch, treeLevels, display, re
 
         const childrenPromises = _.values(nodeIndex).map((node) => {
             let childrenNotLoaded = _.isEqual(node.children, node.childrenNames);
-            if(node.expanded && childrenNotLoaded) {
+            if (node.expanded && childrenNotLoaded) {
                 return getChildrenAndParent(node.id, nodeIndex, currentValue)
             } else {
                 return Promise.resolve({});
             }
         })
-        
+
         let childrenToAdd = {}
         _.merge(childrenToAdd, ...(await Promise.all(childrenPromises)));
 
         const newNodeIndex = {...nodeIndex, ...childrenToAdd}
-        
-        let selectedNodes = getFilteringNodes(newNodeIndex)
+
+        let selectedNodes = getFilteringNodes(newNodeIndex);
         selectedNodes = !_.isEmpty(selectedNodes) ? selectedNodes : null;
 
-        if(!_.isEqual(currentValue, selectedNodes)) {
+        if (!_.isEqual(currentValue, selectedNodes)) {
             let selectedNodesWithNameAsKey = {}
             _.values(selectedNodes).forEach(node => selectedNodesWithNameAsKey[node.name] = node)
-            onFetch(undefined, selectedNodesWithNameAsKey);
+            //TODO: skipFetch if node not selected
+            onFetch(undefined, selectedNodesWithNameAsKey, newNodeIndex);
         }
-        setNodeIndex(newNodeIndex)
+        dispatch({nodeIndex: newNodeIndex});
     }
 
     return <div className="tree-search">
-        {display && <h1 className='title'>{display}</h1>}
+        {display && <label className='title'>{display}</label>}
         {
-            !reloading && !_.isEmpty(nodeIndex) ? <ReactiveTreeControl className="entity-tree"
+            !treeState.reloading && !_.isEmpty(treeState.nodeIndex) ? <ReactiveTreeControl className="entity-tree"
                 renderLeafNode={treeControlLeafNodeRenderer}
                 renderBranchNode={treeControlBranchNodeRenderer}
-                nodeIndex={nodeIndex}
+                nodeIndex={treeState.nodeIndex}
                 onNodeIndexChange={handleNodeIndexChange}
-            /> : 'Loading tree...'
+            /> : <p>Loading tree...</p>
         }
     </div>
     

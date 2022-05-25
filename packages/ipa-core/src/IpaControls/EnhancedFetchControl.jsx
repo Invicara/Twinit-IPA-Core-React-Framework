@@ -1,6 +1,6 @@
 import React from "react";
 import {OrDivider} from "./OrDivider";
-import {listEquals} from "../IpaUtils/compare"
+import _, { set } from "lodash";
 
 import './EnhancedFetchControl.scss'
 import {ControlProvider} from "./ControlProvider";
@@ -8,16 +8,16 @@ import {ControlProvider} from "./ControlProvider";
 class EnhancedFetchControl extends React.Component {
     constructor(props) {
         super(props);
-        this.state = this.getInitialState()
+        this.state = this.getInitialState();
     }
 
-    componentDidUpdate(prevProps){
-        if(!listEquals(prevProps.selectors, this.props.selectors)){
-            this.setState(this.getInitialState())
+    componentDidUpdate(prevProps, prevState){
+        if(!_.isEqual(_.sortBy(prevProps.selectors), _.sortBy(this.props.selectors))){
+            this.setState(this.getInitialState(prevState))
         }
     }
 
-    getInitialState(){
+    getInitialState(previousState){
         return {
             currentSelectorId: -1,
             selectorsMap: this.resetSelectorsMap(this.props.selectors, this.props.initialValue),
@@ -33,7 +33,7 @@ class EnhancedFetchControl extends React.Component {
 
     resetSelectorsMap = (selectors, initialValue) => selectors.reduce((accum, selector, i) => ({
         ...accum,
-        [i]: {...selector, id: i, currentValue: initialValue && initialValue.id == i ? initialValue.value : null, touched: false}
+        [i]: {...selector, id: i, currentValue: initialValue && (initialValue.id == i || initialValue.id == selector.id) ? initialValue.value : null, touched: false}
     }), {});
 
     keyup = (e) => {
@@ -45,13 +45,14 @@ class EnhancedFetchControl extends React.Component {
 
 
     //value is optional, it can be used to provide a value not yet available in the state.
-    handleFetch = (selectorId, value) => {
+    handleFetch = (selectorId, value, state) => {
         let selector = this.state.selectorsMap[selectorId]
         let newValue = value || selector.currentValue
-        if(_.isEmpty(newValue)) {
+        if (_.isEmpty(newValue)) {
             newValue = null;
         }
-        let newSelector = {...selector, currentValue: newValue, touched: false}
+        let newState = state || selector.currentState
+        let newSelector = {...selector, currentValue: newValue, currentState: newState, touched: false}
         let newSelectors = {
             ...this.resetSelectorsMap(this.props.selectors),
             [selector.id]: newSelector
@@ -62,14 +63,13 @@ class EnhancedFetchControl extends React.Component {
 
     renderControl = (selector, position) => {
         const Control = ControlProvider.getControlComponent(selector);
-        const handleChange = newValue => {
+        const handleChange = (newValue) => {
             this.setState({currentSelectorId: selector.id})
             this.setSelectorsMap({
                 ...this.state.selectorsMap,
                 [selector.id]: {...selector, currentValue: newValue, touched: true}
             });
         };
-        
 
         if(!Control) return <div>Unknown control</div>
 
@@ -77,9 +77,10 @@ class EnhancedFetchControl extends React.Component {
                 {position !== 0 && <OrDivider/>}
                 <Control 
                     {...selector}  
-                    onChange={handleChange} 
-                    onFetch={(event, value) => this.handleFetch(selector.id, value)} 
+                    onChange={handleChange}
+                    onFetch={(event, value, state) => this.handleFetch(selector.id, value, state)}
                     currentValue={selector.currentValue}
+                    currentState={selector.currentState}
                     reloadToken={this.props.reloadToken}
                 />
             </div>

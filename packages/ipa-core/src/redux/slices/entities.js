@@ -8,6 +8,8 @@ export const getAllCurrentEntities = selectors.getAllCurrentEntities
 
 export const getAppliedFilters = selectors.getAppliedFilters
 
+export const getAppliedGroups = selectors.getAppliedGroups
+
 export const getFilteredEntities = selectors.getFilteredEntities
 
 export const getIsolatedEntities = selectors.getIsolatedEntities
@@ -22,10 +24,12 @@ export const isSelectingEntities = selectors.isSelectingEntities
 
 export const getCurrentEntityType = selectors.getCurrentEntityType
 
+export const getSnapshot = selectors.getSnapshot
+
 //Action creators
 export const {
     setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setSelectedEntities, setCurrentEntityType, setSelecting,
-    applyFiltering, resetFiltering, addEntity, deleteEntity, updateEntity, clearEntities
+    applyFiltering, resetFiltering, applyGrouping, resetGrouping, resetForFilteringAndGrouping, addEntity, deleteEntity, updateEntity, clearEntities, loadSnapshot, clearForNewEntityType
 } = actionCreators;
 
 //Thunks

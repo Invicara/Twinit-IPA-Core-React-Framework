@@ -210,6 +210,7 @@ const withGenericPage = (PageComponent) => {
         console.error('Attempting to navigate invalid query parameters!');
         return false;
       }
+
       let newPath
       if (!selectionInfo && !this.state.queryParams.query) {
         newPath = this.props.userConfig.handlers[destinationHandler].path;

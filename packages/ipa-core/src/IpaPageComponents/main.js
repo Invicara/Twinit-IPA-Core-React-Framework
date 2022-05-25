@@ -1,3 +1,4 @@
+import withEntityStore from './entities/WithEntityStore'
 import withEntitySearch from './entities/WithEntitySearch'
 import EntitySelectionPanel from './entities/EntitySelectionPanel'
 import {TreeSelectMode} from './entities/EntitySelectionPanel'
@@ -9,6 +10,7 @@ import {EntityListView, sortEntities} from "./entities/EntityListView";
 
 const IpaPageComponents = {
     withEntitySearch,
+    withEntityStore,
     EntitySelectionPanel,
     EntityDataStack,
     EntityDataContainer,

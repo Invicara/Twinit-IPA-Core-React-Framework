@@ -29,7 +29,7 @@ import EntityDetailPanel from "./EntityDetailPanel"
 import {connect} from "react-redux";
 import {
     getAllCurrentEntities,
-    getAppliedFilters,
+    getAppliedFilters, getAppliedGroups,
     getFetchingCurrent,
     getFilteredEntities
 } from "../../redux/slices/entities";
@@ -84,6 +84,12 @@ class EntityView extends React.Component {
       }
       this.props.onEntityChange(actionType, newEntity, result);
       
+    }
+
+    _doFetch = (...args) => {
+        const scriptName = this.props.handler.config.entityData[this.props.entitySingular].script
+        this.setState({displayDetail: false})
+        this.props.getFetcher(scriptName)(...args)
     }
 
     render() {
@@ -151,12 +157,6 @@ class EntityView extends React.Component {
             query.id = "" + handler.config.selectBy.findIndex(sb => query.id == sb.id)
         }
 
-        const scriptName = this.props.handler.config.entityData[entitySingular].script
-        const _doFetch = (...args) => {
-            this.setState({displayDetail: false})
-            this.props.getFetcher(scriptName)(...args)
-        }
-
         const nonGroupableProps = (this.props.handler.config.entitySelectionPanel ? this.props.handler.config.entitySelectionPanel.nonGroupableProperties : []) || [];
         const nonFilterableProps = (this.props.handler.config.entitySelectionPanel ? this.props.handler.config.entitySelectionPanel.nonFilterableProperties : []) || [];
         const defaultGroups = (this.props.handler.config.entitySelectionPanel ? this.props.handler.config.entitySelectionPanel.defaultGroups : []) || [];
@@ -168,7 +168,7 @@ class EntityView extends React.Component {
                         <EnhancedFetchControl
                             initialValue={query}
                             selectors={handler.config.selectBy}
-                            doFetch={_doFetch}
+                            doFetch={this._doFetch}
                         />
                     </div>
                 </StackableDrawer>
@@ -216,7 +216,7 @@ const mapStateToProps = state => ({
     allEntities: getAllCurrentEntities(state),
     fetching: getFetchingCurrent(state),
     currentEntities: getFilteredEntities(state),
-    appliedFilters: getAppliedFilters(state)
+    appliedFilters: getAppliedFilters(state),
 });
 
 export default compose(

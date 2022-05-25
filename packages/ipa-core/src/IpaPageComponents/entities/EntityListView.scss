@@ -59,6 +59,10 @@
       color: #666666;
       letter-spacing: 1;
       word-break: break-word;
+
+      &.checkbox {
+        padding: 0;
+      }
     }
 
     .first{

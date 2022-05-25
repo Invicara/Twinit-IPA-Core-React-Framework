@@ -17,6 +17,8 @@ function withGenericPageErrorBoundary(WrappedComponent) {
 
         componentDidCatch(error, errorInfo) {
             // You can also do more with the error here
+            console.error(error);
+            console.error(errorInfo);
         }
 
         render() {

@@ -1,9 +1,9 @@
 import {createSelector, createSlice} from '@reduxjs/toolkit'
-import ScriptHelper from "../../IpaUtils/ScriptHelper";
+//import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import {setIncludesBy} from "../../IpaUtils/compare";
 import _ from "lodash";
-import {parseNode, parseName} from "../../IpaControls/private/tree";
-import {queryFromFilter} from "../../IpaControls/private/filter";
+//import {parseNode, parseName} from "../../IpaControls/private/tree";
+//import {queryFromFilter} from "../../IpaControls/private/filter";
 import {getEntityFromModel, getFilteredEntitiesBy} from "../../IpaUtils/entities";
 import ScriptCache from "../../IpaUtils/script-cache";
 import {ControlProvider} from "../../IpaControls/ControlProvider";
@@ -13,6 +13,7 @@ let initialState = {//TODO if operations on these entities get too slow, use dir
     currentEntityType: null,
     fetchingCurrent: 0,
     appliedFilters: {},
+    appliedGroups: [],
     selectingEntities: false,
     viewerSyncOn: false,
     allCurrent: [],
@@ -48,6 +49,17 @@ export const entitiesSliceFactory = (identifier = '') => {
             resetFiltering: (state) => {
                 state.appliedFilters = initialState.appliedFilters
             },
+            applyGrouping: (state, {payload: groups}) => {
+                state.appliedGroups = groups
+            },
+            resetGrouping: (state) => {
+                state.appliedGroups = initialState.appliedGroups
+            },
+            resetForFilteringAndGrouping: (state, {payload: {groups, filters}}) => {
+                state.appliedFilters = filters ? filters : state.appliedFilters
+                state.appliedGroups = groups ? groups : state.appliedGroups
+                state.selectedIds = _.isEmpty(state.selectedIds) ? state.selectedIds : []
+            },
             setFetching: (state, {payload: fetching}) => {
                 if(fetching){
                     state.fetchingCurrent++;
@@ -81,9 +93,29 @@ export const entitiesSliceFactory = (identifier = '') => {
             clearEntities: (state) => {
                 state.allCurrent = [];
                 state.appliedFilters = {}
+                state.appliedGroups = []
                 state.selectedIds = [];
                 state.isolatedIds = []
             },
+            clearForNewEntityType: (state,{payload: type}) => {
+                state.allCurrent = [];
+                state.appliedFilters = {}
+                state.appliedGroups = []
+                state.selectedIds = [];
+                state.isolatedIds = [];
+                state.currentEntityType = type
+            },
+            loadSnapshot : (state,{payload: snapshot}) => {
+                state.allCurrent = snapshot.allCurrent;
+                state.appliedFilters = snapshot.appliedFilters;
+                state.appliedGroups = snapshot.appliedGroups;
+                state.selectedIds = snapshot.selectedIds;
+                state.isolatedIds = snapshot.isolatedIds;
+                state.currentEntityType = snapshot.currentEntityType;
+                state.fetchingCurrent = snapshot.fetchingCurrent;
+                state.selectingEntities = snapshot.selectingEntities;
+                state.viewerSyncOn = snapshot.viewerSyncOn;//TODO: ?? this could be a global value?
+            }
         },
     });
 
@@ -94,11 +126,14 @@ export const entitiesSliceFactory = (identifier = '') => {
     //Action creators
     const {
         setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setSelectedEntities, setCurrentEntityType, setSelecting,
-        applyFiltering, resetFiltering, addEntity, deleteEntity, updateEntity, clearEntities
+        applyFiltering, resetFiltering, applyGrouping, resetGrouping, resetForFilteringAndGrouping,
+        addEntity, deleteEntity, updateEntity, clearEntities, loadSnapshot, clearForNewEntityType
     } = actionCreators
 
     //Private selectors
     const getEntitiesSlice = store => store[sliceName]
+
+    const getSnapshot = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice || {});
 
     const getIsolatedEntitiesIds = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.isolatedIds || [])
 
@@ -110,6 +145,8 @@ export const entitiesSliceFactory = (identifier = '') => {
     const getAllCurrentEntities = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.allCurrent)
 
     const getAppliedFilters = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.appliedFilters)
+
+    const getAppliedGroups = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.appliedGroups)
 
     const getFilteredEntities = createSelector([getAllCurrentEntities, getAppliedFilters], (currentEntities, appliedFilters) =>
         _.isEmpty(getAppliedFilters) ? currentEntities : getFilteredEntitiesBy(currentEntities, appliedFilters)
@@ -128,8 +165,8 @@ export const entitiesSliceFactory = (identifier = '') => {
     const getCurrentEntityType = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.currentEntityType)
 
     const selectors = {
-        getAllCurrentEntities, getAppliedFilters,getFilteredEntities, getIsolatedEntities, getSelectedEntities,
-        getFetchingCurrent, isViewerSyncOn, isSelectingEntities, getCurrentEntityType
+        getAllCurrentEntities, getAppliedFilters, getAppliedGroups, getFilteredEntities, getIsolatedEntities, getSelectedEntities,
+        getFetchingCurrent, isViewerSyncOn, isSelectingEntities, getCurrentEntityType, getSnapshot
     }
 
     //Thunks

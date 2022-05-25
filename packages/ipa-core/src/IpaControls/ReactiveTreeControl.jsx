@@ -64,9 +64,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
 
     return (
         <div className={"fancy-tree"}>
-            <ul>
-                {!_.isEmpty(nodeIndex) ? renderNodes(_.values(nodeIndex).filter(node => node.level === 0)) : null}
-            </ul>
+            {!_.isEmpty(nodeIndex) ? <ul>{renderNodes(_.values(nodeIndex).filter(node => node.level === 0))}</ul> : null}
         </div>
     )
 }

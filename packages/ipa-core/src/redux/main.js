@@ -11,7 +11,8 @@ import {
     selectEntitiesFromModels,
     setEntities,
     setIsolatedEntities,
-    setViewerSyncOn
+    setViewerSyncOn,
+    getSnapshot
 } from "./slices/entities";
 
 import * as modal from './slices/modal'
@@ -46,7 +47,8 @@ const redux = {
         isSelectingEntities,
         setEntities,
         setIsolatedEntities,
-        setViewerSyncOn
+        setViewerSyncOn,
+        getSnapshot
     },
     EntitiesPluggableSearch: {
         getAllCurrentSearchedEntities,
