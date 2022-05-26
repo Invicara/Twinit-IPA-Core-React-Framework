@@ -31,6 +31,16 @@ const treeSearchReducer = (state, action) => {
             return {...state, reloading: true, pristine: false};
         case 'reloaded':
             return {...state, reloading: false, nodeIndex: action.nodeIndex};
+        case 'update_node':
+            let nodeToUpdate = state.nodeIndex.find(action.id)
+            if (nodeToUpdate === undefined) return state;
+            return {
+                ...state, 
+                nodeIndex: {
+                    ...state.nodeIndex, 
+                    [action.id]: {...nodeToUpdate, ...action.node}
+                }
+            }
         default:
             return {...state, reloading: false, pristine: false, nodeIndex: action.nodeIndex ? action.nodeIndex : state.nodeIndex};
     }
@@ -65,6 +75,24 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
             dispatch({type: 'reloaded'});
         }
     }, [treeLevels,reloadToken])
+
+
+    useEffect(() => {
+        if(_.isEmpty(currentValue)) {
+            resetNodeIndex()
+        }
+    }, [currentValue])
+
+
+    function resetNodeIndex() {
+        let nodeIndex = {
+            ...treeState.nodeIndex,
+        }
+        _.values(nodeIndex).forEach((node) => {
+            nodeIndex[node.id] = {...node, selectedStatus: TreeNodeStatus.OFF};
+        })
+        dispatch({nodeIndex});
+    }
 
 
     async function getTree() {
