@@ -82,7 +82,7 @@ const FancyTreeControl = ({
 
   useEffect(() => {
     establishTreeBranchClasses();
-  }, [selectedIds]);
+  }, [selectedIds,selectedGroups]);
 
 
   if (!tree) return null
