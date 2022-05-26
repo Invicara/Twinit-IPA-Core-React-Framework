@@ -187,6 +187,7 @@ class EntitySelectionPanel extends React.Component {
         </div>
         <FancyTreeControl className="entity-tree"
           name={this.props.name + "_tree"}
+          selectedGroups={this.state.groups}
           renderLeafNode={this.props.leafNodeRenderer}
           renderBranchNode={this.props.branchNodeRenderer}
           onSelect={this.onSelectLeaves}
