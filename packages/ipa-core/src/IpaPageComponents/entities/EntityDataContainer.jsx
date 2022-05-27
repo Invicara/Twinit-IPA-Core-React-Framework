@@ -16,20 +16,19 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
   const [myInterval, setMyInterval] = useState(null)
   const [reloadToken, setReloadToken] = useState(false)
 
-  const getContainerData = async (collapsable, entity, config, getData, dataGroupName) => {
+  const getContainerData = async (_collapsable, _entity, _config, _getData, _dataGroupName) => {
     try {
-      setFetching(true)
+      setFetching(true);
 
-
-      if(!entity) {
+      if(!_entity) {
         throw new Error("No entity data")
       }
       
       let data = []
-      if(config?.isProperties) {
-        data = entity?.properties
-      } else if(!collapsable && dataGroupName) {
-        data = await getData(dataGroupName, entity)
+      if(_config?.isProperties) {
+        data = _entity?.properties
+      } else if(!_collapsable && _dataGroupName) {
+        data = await getData(_dataGroupName, _entity)
       }
       setData(data)
       setError(undefined)
@@ -73,7 +72,7 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
     setReloadToken(false)
   }
 
-  return {data, fetching, error, reset, reload}
+  return [data, fetching, error, reset, reload]
 }
 
 const EntityDataContainer = props => {
