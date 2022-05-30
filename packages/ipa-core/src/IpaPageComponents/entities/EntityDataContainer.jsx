@@ -28,7 +28,7 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
       if(_config?.isProperties) {
         data = _entity?.properties
       } else if(!_collapsable && _dataGroupName) {
-        data = await getData(_dataGroupName, _entity)
+        data = await _getData(_dataGroupName, _entity)
       }
       setData(data)
       setError(undefined)
