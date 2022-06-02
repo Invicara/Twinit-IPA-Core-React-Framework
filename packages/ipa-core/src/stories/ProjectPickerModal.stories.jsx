@@ -1,20 +1,10 @@
 import React from 'react';
-import { withReactContext } from 'storybook-react-context';
+import PropTypes from 'prop-types';
 import ProjectPickerModal from "../IpaDialogs/ProjectPickerModal";
-import AppProvider, {AppContext, withAppContext} from "../AppProvider";
+import {IfefModal} from "@invicara/react-ifef";
 
 export default {
   title: 'Dialogs/ProjectPickerModal',
-  decorators: [
-    withReactContext({
-      Context: AppContext,
-      initialState: {
-        ifefPlatform:{},
-        ifefKeyboardHeight:0,
-        ifefShowModal: _.noop()
-      },
-    }),
-  ],
   component: ProjectPickerModal,
   parameters: {
     // More on Story layout: https://storybook.js.org/docs/react/configure/story-layout
@@ -23,13 +13,36 @@ export default {
 };
 
 const Template = (args) => {
-  return <ProjectPickerModal {...args}/>
-  //const context = {ifefPlatform:{}};
-  //return <AppContext.Provider value={context} ifefPlatform={{}}><AppContext.Consumer>
-  //  {(contextProps) => <ProjectPickerModal appContextProps={context} {...args} {...contextProps}/>}
-  //</AppContext.Consumer></AppContext.Provider>;
+  const IfefProvider = createLegacyContextSupport({ ifefPlatform: PropTypes.object })
+  const context = {ifefPlatform:{}};
+  IfefModal.context = context;
+  return <IfefProvider context={context}>
+      <ProjectPickerModal appContextProps={context} {...args}/>}
+  </IfefProvider>;
 };
 
 
 export const Default = Template.bind({});
 Default.args = {};
+
+/**
+ * Legacy context support thanks to:
+ * this post : https://gazedash.com/all/how-to-support-legacy-react-context/
+ * this post was only missing info about `childContextTypes` which I got from here:
+ * https://reactjs.org/docs/legacy-context.html
+ */
+export const createLegacyContextSupport = (contextTypes) => {
+  class LegacyContextSupport extends React.Component {
+    getChildContext() {
+      return this.props.context;
+    }
+
+    render() {
+      return this.props.children;
+    }
+  }
+
+  LegacyContextSupport.contextTypes = contextTypes;
+  LegacyContextSupport.childContextTypes = contextTypes;
+  return LegacyContextSupport;
+}
