@@ -216,14 +216,16 @@ class AppProvider extends React.Component {
     localStorage.ipadt_selectedItems = JSON.stringify(newSelecteds);
     this.setState({selectedItems: newSelecteds});
   }
+  getPageArray = () => window.location.href.split('?')[0].split('/');
 
   getCurrentHandler() {
     let config = this.state.userConfig;
-    const getPageArray = () => window.location.href.split('?')[0].split('/')
-    let pageArray = getPageArray();
-    let page = pageArray.pop();
+    let _pageArray = this.getPageArray();
+    //location will be:  pathPrefix ? (pathPrefix + handler.path) : (handler.path || '/' + handlerName)
+    //where handlerName comes from page.handler - but it will not be used it handler.path is specified
+    let page = _pageArray.pop();
     if (page === "")
-      page = pageArray.pop();
+      page = _pageArray.pop();
     let handler = null;
     let pageNames = config.pages ? Object.keys(config.pages) : Object.keys(config.groupedPages);
     let pagesConfig = config.pages || config.groupedPages;
@@ -267,7 +269,8 @@ class AppProvider extends React.Component {
     //this might be necessary for pages that appear in action handlers
     //but not the page list
     if (!handler) {
-      const lastButOnePathElement = getPageArray()[getPageArray().length - 2]; //For detail components where the last element is the pathParam
+      const requestPathAsArray = this.getPageArray();
+      const lastButOnePathElement = requestPathAsArray[requestPathAsArray.length - 2]; //For detail components where the last element is the pathParam
       const allHandlers = Object.values(config.handlers);
       return allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
     }
@@ -671,23 +674,23 @@ async function calculateRoutes(config, appContextProps, ipaConfig) {
    *
    * pageComponents must be in the ./app/ipaCore/pageComponents folder
    */
-  function asIpaPage(rawPageComponent) {
-    return withAppContext(withGenericPageErrorBoundary(withGenericPage(rawPageComponent)))
+  function asIpaPage(rawPageComponent, optionalProps) {
+    return withAppContext(withGenericPageErrorBoundary(withGenericPage(rawPageComponent, optionalProps)))
   }
 
-  function getPageComponent(pageComponent) {
+  function getPageComponent(pageComponent, optionalProps) {
 
     let component
     try {
       component = require('../../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
-      component = asIpaPage(component)
+      component = asIpaPage(component, optionalProps)
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
 
       component = InternalPages[pageComponent] ? InternalPages[pageComponent] : null
 
       if (component) {
-        component = asIpaPage(component)
+        component = asIpaPage(component, optionalProps)
         console.log(pageComponent + ' loaded from framework')
       }
       else {
@@ -709,28 +712,68 @@ async function calculateRoutes(config, appContextProps, ipaConfig) {
       return
     }
 
-    let component = getPageComponent(handler.pageComponent);
-    if (!component) return
+    const handlerPath = (handler.path || '/' + handlerName);
 
     let item = {
-      path: pathPrefix ? pathPrefix + handler.path : (handler.path || '/' + handlerName),
+      path: pathPrefix ? pathPrefix + handlerPath : handlerPath,
       title: handler.title || 'no title',
       icon: (handler.icon || ''),
       name: handlerName,
-      exact: true,
+      exact: true
     };
 
-    pRoutes.push(<Route path={item.path} key={item.path} component={component} exact={item.exact}/>);
+    let detailItem = undefined;
+    let detailComponent = undefined;
     if(handler.detailPage){
-      const component = getPageComponent(handler.detailPage.component);
-      pRoutes.push(<Route path={`${handler.path}/${handler.detailPage.pathParam}`} key={handler.detailPage.pathParam} component={component} exact={item.exact}/>);
+      const detailComponentPath = `${item.path}/${handler.detailPage.pathParam}`;
+      detailItem = {
+        path: detailComponentPath,
+        nested: handler.detailPage.nested,
+        nestedPath: handler.detailPage.pathParam,
+        title: handler.detailPage.title || item.title,
+        icon: handler.detailPage || item.icon,
+        name: handlerName,
+        exact: item.exact,
+      };
+      //if our route is nested, parent cannot be exact
+      if(handler.detailPage.nested){
+        item.exact = false;
+      }
     }
+
+    let component = getPageComponent(handler.pageComponent, {masterPage : item, detailPage: detailItem});
+    if (!component) return
+
+    if(handler.detailPage){
+      detailComponent = getPageComponent(handler.detailPage.component,  {masterPage : item});
+      if (detailComponent) {
+        detailItem.nestedRoute = buildRoute(detailItem,detailComponent);
+      }
+    }
+
+    if(handler.detailPage && handler.detailPage.nested){
+      //nested routes will only work with react-roure v6 and <Outlet/>, this is why we render only master at the moment
+      //pRoutes.push(buildRoute(item,component,detailItem,detailComponent));
+      pRoutes.push(buildRoute(item,component));
+    } else if (handler.detailPage){
+      pRoutes.push(buildRoute(item,component));
+      detailComponent && pRoutes.push(buildRoute(detailItem,detailComponent));//we will use this route in master component
+    } else {
+      pRoutes.push(buildRoute(item,component));
+    }
+
     if (addPage) {
       pList.push(item);
       if(pageGroup){
         pGroups.find(g => g.groupName == pageGroup).items.push(item);
       }
     }
+  }
+
+  function buildRoute(masterItem, masterComponent, detailItem, detailComponent){
+    return <Route path={masterItem.path} key={masterItem.path} component={masterComponent} exact={masterItem.exact}>
+      {(detailItem && detailComponent) ? <Route path={detailItem.path} key={detailItem.nestedPath} component={detailComponent} exact={detailItem.exact}/> : null}
+    </Route>
   }
 
   function addGroup(groupName, icon){

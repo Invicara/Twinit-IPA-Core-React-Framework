@@ -7,13 +7,16 @@ import files from './slices/files'
 import dashboardUI from './slices/dashboardUI'
 import entityUI from './slices/entityUI'
 import modal from './slices/modal'
+import {
+    NAMED_USER_ITEM_FEATURE_KEY, namedUserItemReducer
+} from './slices/named-user-item.slice'
 
 import {combineReducers} from "redux"
 
 import {configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
 
 const frameworkReducers = {
-  entitiesGeneral, entitiesPluggableSearch, entityRelations, entityUI, userConfig, user, files, dashboardUI, modal,
+  entitiesGeneral, entitiesPluggableSearch, entityRelations, entityUI, userConfig, user, files, dashboardUI, modal, [NAMED_USER_ITEM_FEATURE_KEY] : namedUserItemReducer
 }
 
 let appReducers = {}

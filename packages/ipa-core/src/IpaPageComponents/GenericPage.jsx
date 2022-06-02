@@ -19,19 +19,20 @@ import React from 'react';
 import qs from 'qs';
 import _ from 'lodash'
 import { Redirect } from 'react-router-dom'
-
 import * as PropTypes from "prop-types";
 import {PopoverMenuView} from "../IpaLayouts/PopoverMenuView";
-
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import produce from "immer";
 import {connect} from "react-redux";
+import {Box, Container, Toolbar} from '@material-ui/core';
 
 import './GenericPage.scss'
+import GenericMatButton from "../IpaControls/GenericMatButton";
+import {withAppContext} from "../AppProvider";
 
 const URL_LENGTH_WARNING = 80000
 
-const withGenericPage = (PageComponent) => {
+const withGenericPage = (PageComponent, optionalProps = {}) => {
 
   class GenericPage extends React.Component {
 
@@ -86,7 +87,7 @@ const withGenericPage = (PageComponent) => {
         if (handler.config && !handler.config.selectBy && handler.config.type && this.props.userConfig.entitySelectConfig) {
             if (!Array.isArray(handler.config.type) && this.props.userConfig.entitySelectConfig[handler.config.type.singular]) {
 
-              //if the page is expecting only one selectBy config              
+              //if the page is expecting only one selectBy config
               handler.config = {...handler.config, selectBy: this.props.userConfig.entitySelectConfig[handler.config.type.singular]}
 
             }
@@ -110,7 +111,7 @@ const withGenericPage = (PageComponent) => {
 
           }
           else {
-            //if the page is expecting multiple data configs filter to the ones it expects            
+            //if the page is expecting multiple data configs filter to the ones it expects
             handler.config = {...handler.config,
                               data: _.fromPairs(
                                 handler.config.type.filter(t => !!this.props.userConfig.entityDataConfig[t.singular])
@@ -326,25 +327,54 @@ const withGenericPage = (PageComponent) => {
 
     }
 
+    toolbar = () => {
+      return this.state.handler.toolbar && <Container maxWidth="xl">
+        <Toolbar disableGutters>
+
+          {/*breadcrumbs to the left*/}
+          <Box sx={{ flexGrow: 1 }}>
+            {this.state.handler.toolbar.breadcrumbButtons && (this.state.handler.toolbar.breadcrumbButtons.map((b) => (
+                <GenericMatButton {...b.props}>{b.text}</GenericMatButton>
+            )))}
+          </Box>
+          {/*actions to the right to the left*/}
+          <Box sx={{ flexGrow: 0 }}>
+            {this.state.handler.toolbar.actionButtons && (this.state.handler.toolbar.actionButtons.map((b) => (
+                <GenericMatButton {...b.props}>{b.text}</GenericMatButton>
+            )))}
+            {this.state.handler.toolbar.pagination && this.state.handler.pagination.toolbar.hasPrevious && <GenericMatButton>Prev</GenericMatButton>}
+            {this.state.handler.toolbar.pagination && this.state.handler.pagination.toolbar.hasNext && <GenericMatButton>Next</GenericMatButton>}
+          </Box>
+
+        </Toolbar>
+      </Container>
+
+    }
+
+    body = () => this.state.isLoading ? (
+        <div style={{padding: '40px'}}>
+          <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
+        </div>
+    ) : (<React.Fragment>
+      {this.toolbar()}
+      <PageComponent {...optionalProps} {...this.props}
+                     onLoadComplete={this.onLoadComplete}
+                     handler={this.state.handler}
+                     onNavigate={this.onNavigate}
+                     setQueryParams={this.setQueryParams}
+                     queryParams={this.state.queryParams}
+      />
+    </React.Fragment>)
+
+    isNestedDetailPage = () => (optionalProps && optionalProps.detailPage && optionalProps.detailPage.nested);
+
+    withPageLayout = (body) => <div className='page'>
+      <div className="generic-page-body">
+        {body}
+      </div></div>
+
     render() {
-
-      return (
-        <div className='page'>
-            <div className="generic-page-body">
-            {this.state.isPageLoading &&
-              <div style={{padding: '40px'}}>
-                <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
-              </div>}
-
-            {!this.state.isLoading && <PageComponent {...this.props}
-                                          onLoadComplete={this.onLoadComplete}
-                                          handler={this.state.handler}
-                                          onNavigate={this.onNavigate}
-                                          setQueryParams={this.setQueryParams}
-                                          queryParams={this.state.queryParams}
-                                      />}
-          </div>
-      </div>)
+      return this.isNestedDetailPage() ? this.body() : this.withPageLayout(this.body())
     }
 
   };

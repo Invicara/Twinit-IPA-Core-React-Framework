@@ -32,6 +32,11 @@ import {
     setSelectedSearchedEntities
 } from "./slices/entities-pluggable-search";
 import {getEntitySelectConfig, setUserConfig} from "./slices/user-config";
+import {
+    fetchAllNamedUserItems,
+    namedUserItemActions, selectNamedUserItemById,
+    selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus
+} from "./slices/named-user-item.slice";
 
 const redux = {
     Entities: {
@@ -70,6 +75,13 @@ const redux = {
     },
     Modals: {
         ...modal.actions
+    },
+    NamedUserItems: {
+        fetchAllNamedUserItems,
+        selectNamedUserItemEntities,
+        selectNamedUserItemsLoadingStatus,
+        selectNamedUserItemById,
+        ...namedUserItemActions,
     }
 }
 
