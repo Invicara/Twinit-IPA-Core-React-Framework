@@ -15,7 +15,7 @@ export default {
 const Template = (args) => {
   const IfefProvider = createLegacyContextSupport({ ifefPlatform: PropTypes.object })
   const context = {ifefPlatform:{}};
-  IfefModal.context = context;
+  //IfefModal.context = context;
   return <IfefProvider context={context}>
       <ProjectPickerModal appContextProps={context} {...args}/>}
   </IfefProvider>;
@@ -31,7 +31,7 @@ Default.args = {};
  * this post was only missing info about `childContextTypes` which I got from here:
  * https://reactjs.org/docs/legacy-context.html
  */
-export const createLegacyContextSupport = (contextTypes) => {
+const createLegacyContextSupport = (contextTypes) => {
   class LegacyContextSupport extends React.Component {
     getChildContext() {
       return this.props.context;
