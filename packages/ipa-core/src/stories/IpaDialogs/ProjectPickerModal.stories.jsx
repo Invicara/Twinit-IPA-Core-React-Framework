@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ProjectPickerModal from "../IpaDialogs/ProjectPickerModal";
+import ProjectPickerModal from "../../IpaDialogs/ProjectPickerModal";
 import {IfefModal} from "@invicara/react-ifef";
 
 export default {
@@ -15,7 +15,6 @@ export default {
 const Template = (args) => {
   const IfefProvider = createLegacyContextSupport({ ifefPlatform: PropTypes.object })
   const context = {ifefPlatform:{}};
-  //IfefModal.context = context;
   return <IfefProvider context={context}>
       <ProjectPickerModal appContextProps={context} {...args}/>}
   </IfefProvider>;

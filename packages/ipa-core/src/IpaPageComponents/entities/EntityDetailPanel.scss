@@ -66,25 +66,6 @@
 
 }
 
-.entity-actions-panel {
-  i {
-    width: 40px;
-    height: 40px;
-    padding: 10px;
-    text-align: center;
-    background-color: var(--app-accent-color);
-    color: white;
-    border-radius: 10px;
-    font-size: 20px;
-    margin: 3px;
-    cursor: pointer;
-  }
-
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
 .entity-data-container {
   margin-bottom: 30px;
 

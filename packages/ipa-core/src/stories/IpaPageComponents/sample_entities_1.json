@@ -1,0 +1,452 @@
+[
+  {
+    "Asset Name": "AC Unit",
+    "revitElementIds": {
+      "_pageSize": 0,
+      "_list": [],
+      "_offset": 0,
+      "_total": 0
+    },
+    "_id": "6273e2f51a4717694a278b17",
+    "_metadata": {
+      "_updatedById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_createdAt": 1651761909161,
+      "_createdById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_updatedAt": 1651762049955
+    },
+    "properties": {
+      "dtCategory": {
+        "val": "AC Units",
+        "dName": "dtCategory",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "BA Name": {
+        "val": "",
+        "dName": "BA Name",
+        "type": "text"
+      },
+      "Room Number": {
+        "val": "",
+        "dName": "Room Number",
+        "type": "text"
+      },
+      "dtType": {
+        "val": "Cassette",
+        "dName": "dtType",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "Image Url": {
+        "val": "",
+        "dName": "Image Url",
+        "type": "text"
+      },
+      "Mark": {
+        "val": "",
+        "dName": "Mark",
+        "type": "text"
+      },
+      "Revit Family": {
+        "val": "",
+        "dName": "Revit Family",
+        "type": "text"
+      },
+      "Date": {
+        "val": "",
+        "dName": "Date",
+        "type": "date"
+      },
+      "Revit Type": {
+        "val": "",
+        "dName": "Revit Type",
+        "type": "text"
+      },
+      "Matterport Url": {
+        "val": "",
+        "dName": "Matterport Url",
+        "type": "text"
+      },
+      "Manufacturer": {
+        "val": "",
+        "dName": "Manufacturer",
+        "type": "text"
+      },
+      "Model": {
+        "val": "",
+        "dName": "Model",
+        "type": "text"
+      },
+      "Containing Floor": {
+        "val": "",
+        "dName": "Containing Floor",
+        "type": "text"
+      }
+    },
+    "Entity Name": "AC Unit",
+    "modelViewerIds": []
+  },
+  {
+    "Asset Name": "Asset Test",
+    "revitElementIds": {
+      "_pageSize": 0,
+      "_list": [],
+      "_offset": 0,
+      "_total": 0
+    },
+    "_id": "6273afe91a4717694a2789fb",
+    "_metadata": {
+      "_updatedById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_createdAt": 1651748841118,
+      "_createdById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_updatedAt": 1651748841118
+    },
+    "properties": {
+      "dtCategory": {
+        "val": "AC Units",
+        "dName": "dtCategory",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "BA Name": {
+        "val": "",
+        "dName": "BA Name",
+        "type": "text"
+      },
+      "Room Number": {
+        "val": "",
+        "dName": "Room Number",
+        "type": "text"
+      },
+      "dtType": {
+        "val": "Cassette",
+        "dName": "dtType",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "Image Url": {
+        "val": "dsad",
+        "dName": "Image Url",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "Mark": {
+        "val": "dsads",
+        "dName": "Mark",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "Revit Family": {
+        "val": "dsad",
+        "dName": "Revit Family",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "Date": {
+        "val": "02/05/2022",
+        "dName": "Date",
+        "epoch": 1651446000000,
+        "type": "date",
+        "hasMultipleValues": false
+      },
+      "Revit Type": {
+        "val": "dsad",
+        "dName": "Revit Type",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "Matterport Url": {
+        "val": "dsads",
+        "dName": "Matterport Url",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "Manufacturer": {
+        "val": "",
+        "dName": "Manufacturer",
+        "type": "text"
+      },
+      "Model": {
+        "val": "",
+        "dName": "Model",
+        "type": "text"
+      },
+      "Containing Floor": {
+        "val": "dsdsad",
+        "dName": "Containing Floor",
+        "type": "text",
+        "hasMultipleValues": false
+      }
+    },
+    "Entity Name": "Asset Test",
+    "modelViewerIds": []
+  },
+  {
+    "Asset Name": "Test Asset",
+    "revitElementIds": {
+      "_pageSize": 0,
+      "_list": [],
+      "_offset": 0,
+      "_total": 0
+    },
+    "_id": "62750930d830af5de4a915f7",
+    "_metadata": {
+      "_updatedById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_createdAt": 1651837232672,
+      "_createdById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_updatedAt": 1651837232672
+    },
+    "properties": {
+      "dtCategory": {
+        "val": "AC Units",
+        "dName": "dtCategory",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "BA Name": {
+        "val": "",
+        "dName": "BA Name",
+        "type": "text"
+      },
+      "Room Number": {
+        "val": "",
+        "dName": "Room Number",
+        "type": "text"
+      },
+      "dtType": {
+        "val": "Cassette",
+        "dName": "dtType",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "Image Url": {
+        "val": "",
+        "dName": "Image Url",
+        "type": "text"
+      },
+      "Mark": {
+        "val": "",
+        "dName": "Mark",
+        "type": "text"
+      },
+      "Revit Family": {
+        "val": "",
+        "dName": "Revit Family",
+        "type": "text"
+      },
+      "Date": {
+        "val": "01/05/2022",
+        "dName": "Date",
+        "epoch": 1651359600000,
+        "type": "date",
+        "hasMultipleValues": false
+      },
+      "Revit Type": {
+        "val": "Test",
+        "dName": "Revit Type",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "Matterport Url": {
+        "val": "",
+        "dName": "Matterport Url",
+        "type": "text"
+      },
+      "Manufacturer": {
+        "val": "",
+        "dName": "Manufacturer",
+        "type": "text"
+      },
+      "Model": {
+        "val": "",
+        "dName": "Model",
+        "type": "text"
+      },
+      "Containing Floor": {
+        "val": "",
+        "dName": "Containing Floor",
+        "type": "text"
+      }
+    },
+    "Entity Name": "Test Asset",
+    "modelViewerIds": []
+  },
+  {
+    "Asset Name": "dsads",
+    "revitElementIds": {
+      "_pageSize": 0,
+      "_list": [],
+      "_offset": 0,
+      "_total": 0
+    },
+    "_id": "6274ef61d830af5de4a915f4",
+    "_metadata": {
+      "_updatedById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_createdAt": 1651830625498,
+      "_createdById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_updatedAt": 1651830625498
+    },
+    "properties": {
+      "dtCategory": {
+        "val": "AC Units",
+        "dName": "dtCategory",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "BA Name": {
+        "val": "dsadsad",
+        "dName": "BA Name",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "Room Number": {
+        "val": "dsad",
+        "dName": "Room Number",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "dtType": {
+        "val": "Cassette",
+        "dName": "dtType",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "Image Url": {
+        "val": "",
+        "dName": "Image Url",
+        "type": "text"
+      },
+      "Mark": {
+        "val": "dsadsa",
+        "dName": "Mark",
+        "type": "text",
+        "hasMultipleValues": false
+      },
+      "Revit Family": {
+        "val": "",
+        "dName": "Revit Family",
+        "type": "text"
+      },
+      "Date": {
+        "val": "",
+        "dName": "Date",
+        "type": "date"
+      },
+      "Revit Type": {
+        "val": "",
+        "dName": "Revit Type",
+        "type": "text"
+      },
+      "Matterport Url": {
+        "val": "",
+        "dName": "Matterport Url",
+        "type": "text"
+      },
+      "Manufacturer": {
+        "val": "",
+        "dName": "Manufacturer",
+        "type": "text"
+      },
+      "Model": {
+        "val": "",
+        "dName": "Model",
+        "type": "text"
+      },
+      "Containing Floor": {
+        "val": "dsads",
+        "dName": "Containing Floor",
+        "type": "text",
+        "hasMultipleValues": false
+      }
+    },
+    "Entity Name": "dsads",
+    "modelViewerIds": []
+  },
+  {
+    "Asset Name": "fdsfdsf",
+    "revitElementIds": {
+      "_pageSize": 0,
+      "_list": [],
+      "_offset": 0,
+      "_total": 0
+    },
+    "_id": "6274f73cd830af5de4a915f6",
+    "_metadata": {
+      "_updatedById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_createdAt": 1651832636800,
+      "_createdById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_updatedAt": 1651832636800
+    },
+    "properties": {
+      "dtCategory": {
+        "val": "AC Units",
+        "dName": "dtCategory",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "BA Name": {
+        "val": "",
+        "dName": "BA Name",
+        "type": "text"
+      },
+      "Room Number": {
+        "val": "",
+        "dName": "Room Number",
+        "type": "text"
+      },
+      "dtType": {
+        "val": "Cassette",
+        "dName": "dtType",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "Image Url": {
+        "val": "",
+        "dName": "Image Url",
+        "type": "text"
+      },
+      "Mark": {
+        "val": "",
+        "dName": "Mark",
+        "type": "text"
+      },
+      "Revit Family": {
+        "val": "",
+        "dName": "Revit Family",
+        "type": "text"
+      },
+      "Date": {
+        "val": "",
+        "dName": "Date",
+        "type": "date"
+      },
+      "Revit Type": {
+        "val": "",
+        "dName": "Revit Type",
+        "type": "text"
+      },
+      "Matterport Url": {
+        "val": "",
+        "dName": "Matterport Url",
+        "type": "text"
+      },
+      "Manufacturer": {
+        "val": "",
+        "dName": "Manufacturer",
+        "type": "text"
+      },
+      "Model": {
+        "val": "",
+        "dName": "Model",
+        "type": "text"
+      },
+      "Containing Floor": {
+        "val": "",
+        "dName": "Containing Floor",
+        "type": "text"
+      }
+    },
+    "Entity Name": "fdsfdsf",
+    "modelViewerIds": []
+  }
+]
