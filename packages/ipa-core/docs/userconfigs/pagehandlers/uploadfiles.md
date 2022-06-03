@@ -12,7 +12,7 @@ sidebar_position: 1400
 |[`preprocessFiles`](#preprocessFiles%3A-(optional))|A script that lets you post-process the results of the upload. It can be used to do things, such as relating the uploaded files to other entities, such as assets.|
 |[`processUploadFile`](#processUploadFile%3A-(optional))|A script that allows you to modify the file’s name after the user has selected attributes in the upload table but before the file is uploaded.|
 |[`postProcessFiles`](#postProcessFiles%3A-(optional))|A script that runs after the user has selected files from disk but before the file appears in the upload table.|
-|[`downloadReport`](#downloadReport%3A-(optional))|A script that downloads an XLSX report of the uploaded files and their attributes if the user clicks the **Report** button.|
+|[`downloadReport`](#downloadReport%3A-(optional))|A script that inv-icon-svgdownloads an XLSX report of the uploaded files and their attributes if the user clicks the **Report** button.|
 |[`uploadContainer`](#uploadContainer%3A-(optional))|Provides the ability to set a file container to which to upload files.|
 
 ---

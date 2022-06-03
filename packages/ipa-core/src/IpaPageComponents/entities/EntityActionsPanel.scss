@@ -1,0 +1,28 @@
+.entity-actions-panel {
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .inv-icon-svg {
+    width: 42px;
+    height: 42px;
+    display: inline-block;
+    background-size: 40px;
+    background-position: -1px;
+    background-repeat: no-repeat;
+  }
+
+  i {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    text-align: center;
+    background-color: var(--app-accent-color);
+    color: white;
+    border-radius: 10px;
+    font-size: 20px;
+    margin: 3px;
+    cursor: pointer;
+  }
+}
