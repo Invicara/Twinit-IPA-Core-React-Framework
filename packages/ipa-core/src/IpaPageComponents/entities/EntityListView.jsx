@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useMemo, useEffect, useCallback} from "react";
 import clsx from "clsx";
 import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
@@ -6,56 +6,30 @@ import _ from 'lodash'
 import './EntityListView.scss'
 import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
 import {isValidUrl} from '../../IpaUtils/helpers'
-
-
-export const sortEntities = (entitySingular, onSortChange) =>{
-    const ASCENDING_ORDER = 'asc';
-    const DESCENDING_ORDER = 'desc';
-    const ENTITY_LIST_SORT_PREFERENCE = 'entityListSortPreference';
-
-    const key = ENTITY_LIST_SORT_PREFERENCE + entitySingular;
-    const sessionPreference = sessionStorage.getItem(key);
-    const sortPreference = sessionPreference ? JSON.parse(sessionPreference) : {property: 'Entity Name', valueAccessor: 'Entity Name', order: ASCENDING_ORDER};      
-
-    const [currentSort, setSort] = useState(sortPreference);
-    
-    const sortEntitiesBy = (colAccessor) => {
-        let order = currentSort.property == colAccessor ? currentSort.order == ASCENDING_ORDER ? DESCENDING_ORDER : ASCENDING_ORDER : ASCENDING_ORDER;
-        //TODO: we might need a better condition than to check if the column accessor has a . in it. This condition will hold for all properties however.
-        const sortValue = {valueAccessor: !colAccessor.includes('.') || colAccessor.includes('.val') ? colAccessor : colAccessor + '.val', property: colAccessor, order: order};
-        setSort(sortValue);
-        sessionStorage.setItem(key, JSON.stringify(sortValue));
-    }
-
-    useEffect(()=>{
-        onSortChange && onSortChange(currentSort);
-    },[currentSort])
-
-    return {sortEntitiesBy, currentSort}
-}
+import useSortEntities from "./sortEntities";
 
 export const EntityListView = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity'}) => {
 
 
-    let checkableEntities = entities.map((entity) => {
+    let checkableEntities = useMemo(()=>entities.map((entity) => {
         let checked = !_.isEmpty(selectedEntities) && 
             selectedEntities.findIndex((selectedEntity) => entity._id === selectedEntity._id) !== -1;
         return {...entity, checked}
-    })
+    }),[entities,selectedEntities]);
 
-    const isAllChecked = checkableEntities.every(e => e.checked)
-
-    const checkCallback = (entity) => {
+    const checkCallback = useCallback((entity) => {
         let newEntities = checkableEntities.map((e) => {
             return e._id === entity._id ? {...e, checked: !entity.checked} : e;
         })
         onChange?.(newEntities);
-    }
+    },[entities,selectedEntities]);
 
-    const allCheckCallback = () => {
+    const isAllChecked = checkableEntities.every(e => e.checked)
+
+    const allCheckCallback = useCallback(() => {
         let newEntities = entities.map(e => ({...e, checked: !isAllChecked}));
         onChange?.(newEntities)
-    }
+    },[entities,selectedEntities]);
 
 
     //If the selectedEntities props is used, we assume a controlled behaviour, uncontrolled otherwise
@@ -72,10 +46,19 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         handleAllCheck = checkedObject.handleAllCheck;
         entityInstances = checkedObject.items;
     }
-    const {sortEntitiesBy, currentSort: currentSort} = sortEntities(entitySingular, onSortChange);
+    const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
 
+    const handleColumnClick = useCallback((col) => sortEntitiesBy(col.accessor),[sortEntitiesBy]);
+
+    const buildHeader = useCallback((col) => {
+        return <div key={col.name} onClick={handleColumnClick} className='header-column'>
+            {col.name} {col.accessor == currentSort.property &&
+            <i className={currentSort.order == 'asc' ? "fas fa-angle-double-up" : "fas fa-angle-double-down"}></i>
+        }
+        </div>
+    },[sortEntitiesBy,currentSort]);
     
-    const buildCell = instance => (col, i) => {
+    const buildCell = useCallback((instance) => (col, i) => {
         const value = _.get(instance, col.accessor);
         let dispValue = value && typeof value === 'string' ? value : value ? value.val : null
         dispValue = isValidUrl(dispValue) ? <a href={dispValue} target="_blank">{dispValue}</a> : dispValue
@@ -88,12 +71,12 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
                     {...(first && {onClick: () => onDetail(instance)})}>
             {dispValue}
         </div>
-    };    
+    },[onDetail]);
 
-    let entityType = {
+    const entityType = useMemo(()=> {return {
         singular: entitySingular,
         plural: entityPlural
-    }
+    }},[entitySingular,entityPlural]);
 
     return <div className={`entity-list-view-root ${config.className}`}>
         {actions && <div className='actions-panel'>
@@ -111,14 +94,7 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
             {config.multiselect && <div className='header-column checkbox'>
                 <RoundCheckbox checked={allChecked} onChange={handleAllCheck}/>
             </div>}
-            {config.columns.map(col => {
-                const handleColumnClick = () => sortEntitiesBy(col.accessor)
-                return <div key={col.name} onClick={handleColumnClick} className='header-column'>
-                    {col.name} {col.accessor == currentSort.property && 
-                        <i className={currentSort.order == 'asc' ? "fas fa-angle-double-up" : "fas fa-angle-double-down"}></i>
-                    }
-                </div>
-            })}
+            {config.columns.map(col => buildHeader(col))}
         </div>
         {_.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order).map(instance => {
             const handleChange = () => handleCheck(instance)
@@ -131,3 +107,6 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         }
     </div>
 }
+
+
+

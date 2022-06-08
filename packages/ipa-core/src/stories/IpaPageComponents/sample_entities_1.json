@@ -448,5 +448,92 @@
     },
     "Entity Name": "fdsfdsf",
     "modelViewerIds": []
+  },
+  {
+    "Asset Name": "fdsfdsf-2",
+    "revitElementIds": {
+      "_pageSize": 0,
+      "_list": [],
+      "_offset": 0,
+      "_total": 0
+    },
+    "_id": "5274f73cd830af5de4a915f6",
+    "_metadata": {
+      "_updatedById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_createdAt": 1651832636800,
+      "_createdById": "75a550d8-df2e-4fc6-9093-fae59a3da504",
+      "_updatedAt": 1651832636800
+    },
+    "properties": {
+      "dtCategory": {
+        "val": "AC Units",
+        "dName": "dtCategory",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "BA Name": {
+        "val": "",
+        "dName": "BA Name",
+        "type": "text"
+      },
+      "Room Number": {
+        "val": "",
+        "dName": "Room Number",
+        "type": "text"
+      },
+      "dtType": {
+        "val": "Cassette",
+        "dName": "dtType",
+        "type": "<<HIERARCHY>>",
+        "hasMultipleValues": false
+      },
+      "Image Url": {
+        "val": "",
+        "dName": "Image Url",
+        "type": "text"
+      },
+      "Mark": {
+        "val": "",
+        "dName": "Mark",
+        "type": "text"
+      },
+      "Revit Family": {
+        "val": "",
+        "dName": "Revit Family",
+        "type": "text"
+      },
+      "Date": {
+        "val": "",
+        "dName": "Date",
+        "type": "date"
+      },
+      "Revit Type": {
+        "val": "",
+        "dName": "Revit Type",
+        "type": "text"
+      },
+      "Matterport Url": {
+        "val": "",
+        "dName": "Matterport Url",
+        "type": "text"
+      },
+      "Manufacturer": {
+        "val": "",
+        "dName": "Manufacturer",
+        "type": "text"
+      },
+      "Model": {
+        "val": "",
+        "dName": "Model",
+        "type": "text"
+      },
+      "Containing Floor": {
+        "val": "",
+        "dName": "Containing Floor",
+        "type": "text"
+      }
+    },
+    "Entity Name": "fdsfdsf-2",
+    "modelViewerIds": []
   }
 ]
