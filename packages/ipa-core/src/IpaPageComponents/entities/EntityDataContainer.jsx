@@ -83,7 +83,7 @@ const EntityDataContainer = props => {
       : true
   )
 
-  const [data, fetching, error, reset, reload] = useEntityData(
+  const {data, fetching, error, reset, reload} = useEntityData(
     props.collapsable,
     props.entity,
     props.config,
