@@ -24,6 +24,7 @@ import postcss from 'rollup-plugin-postcss';
 import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
 import image from '@rollup/plugin-image';
+import pkg from './package.json'
 
 export default {
   input: 'src/main.js',
@@ -64,6 +65,24 @@ export default {
       ]
     })
   ],
+  //https://stackoverflow.com/questions/44844088/how-to-set-as-external-all-node-modules-in-rollup
+  external: [...Object.keys(pkg.dependencies), /^node:/].filter(
+      // Bundle modules that do not properly support ES
+      (dep) => !["@sendgrid/mail", "http-errors"].includes(dep),
+  ),
+
+  // Suppress warnings in 3rd party libraries
+  onwarn(warning, warn) {
+    if (
+        !(
+            warning.id?.includes("node_modules") ||
+            warning.message?.startsWith("Unknown CLI flags: env.")
+        )
+    ) {
+      warn(warning);
+    }
+  },
+  /*
   external: [
     'lodash', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
@@ -79,4 +98,5 @@ export default {
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path'
   ]
+  */
 };

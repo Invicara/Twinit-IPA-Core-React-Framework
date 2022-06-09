@@ -24,6 +24,7 @@ import postcss from 'rollup-plugin-postcss';
 import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
 import image from '@rollup/plugin-image';
+import pkg from './package.json'
 
 //We use a function and not a variable bc multi-module bundle can have trouble with shared plugin instances as per https://github.com/rollup/rollupjs.org/issues/69#issuecomment-306062235
 const getPlugins = () => [
@@ -56,9 +57,11 @@ const getPlugins = () => [
         ]
     })]
 
-const external = ['lodash', 'bootstrap', 'classnames',
+const external = [...Object.keys(pkg.dependencies), /^node:/];
+/*
+const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
-    '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles',
+    '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles', '@material-ui/icons',
     '@nivo/bar', '@nivo/pie', '@nivo/line',
     'file-saver', 'immer', 'interactjs', 'json-schema-faker', 'jszip',
     'mime-types', 'moment', 'prop-types', 'qs', 'object-assign',
@@ -69,8 +72,8 @@ const external = ['lodash', 'bootstrap', 'classnames',
     '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path', 'json5',
-
 ]
+*/
 
 export default {
     input: {
@@ -93,5 +96,21 @@ export default {
         cleaner({targets: ['./dist']}),
         ...getPlugins()
     ],
-    external
+    //https://stackoverflow.com/questions/44844088/how-to-set-as-external-all-node-modules-in-rollup
+    external: external.filter(
+        // Bundle modules that do not properly support ES
+        (dep) => !["@sendgrid/mail", "http-errors"].includes(dep),
+    ),
+
+    // Suppress warnings in 3rd party libraries
+    onwarn(warning, warn) {
+        if (
+            !(
+                warning.id?.includes("node_modules") ||
+                warning.message?.startsWith("Unknown CLI flags: env.")
+            )
+        ) {
+            warn(warning);
+        }
+    },
 };
