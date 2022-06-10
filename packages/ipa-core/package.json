@@ -1,6 +1,6 @@
 {
 	"name": "@invicara/ipa-core",
-	"version": "2.1.37",
+	"version": "2.1.39",
 	"description": "Invicara platform application frontend and scripting framework.",
 	"author": "Scott Mollon <scott.mollon@invicara.com>",
 	"repository": {
@@ -120,7 +120,6 @@
 	"scripts": {
 		"build": "rollup -c rollup.config.js",
 		"build-dev": "rollup -c rollup.dev.config.js",
-		"test": "jest",
-		"testa": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+		"test": "jest"
 	}
 }
