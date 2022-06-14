@@ -3,7 +3,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import withStyles from "@material-ui/core/styles/withStyles";
+import {withStyles} from "@material-ui/core";
 import './RadioButtons.scss'
 
 const RadioButtons = ({options, value, onChange, labelPlacement='end'}) => {

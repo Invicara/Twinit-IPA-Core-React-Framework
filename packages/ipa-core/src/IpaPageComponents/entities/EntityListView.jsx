@@ -78,7 +78,7 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         plural: entityPlural
     }},[entitySingular,entityPlural]);
 
-    return <div className={`entity-list-view-root ${config.className}`}>
+    return <div className={`entity-list-view-root entity-table ${config.className}`}>
         {actions && <div className='actions-panel'>
             <EntityActionsPanel
                 actions={actions}

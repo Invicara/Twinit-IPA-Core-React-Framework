@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import _ from 'lodash'
 import clsx from 'clsx'
 import Switch from '@material-ui/core/Switch';
-import { withStyles } from "@material-ui/styles";
+import { withStyles } from "@material-ui/core";
 import Select from 'react-select'
 
 import { IafItemSvc, IafPermission, IafFileSvc } from '@invicara/platform-api'

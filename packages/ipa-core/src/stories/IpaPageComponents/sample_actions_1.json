@@ -4,6 +4,7 @@
     "icon": "inv-icon-svg inv-icon-nav",
     "type": "navigate",
     "showOnTable": true,
+    "showOnRowCell": true,
     "navigateTo": "navigator"
   },
   "Spaces": {

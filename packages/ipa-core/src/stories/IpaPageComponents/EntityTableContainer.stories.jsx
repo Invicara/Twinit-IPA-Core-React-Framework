@@ -1,16 +1,17 @@
 import React from 'react';
 import { Provider } from 'react-redux'
+import { useArgs } from '@storybook/client-api';
 import PropTypes from 'prop-types';
 import {EntityListView} from "../../IpaPageComponents/entities/EntityListView";
 import "./EntityListView.stories.scss";
 import entitiesArray from "./sample_entities_1.json";
 import actionsObj from "./sample_actions_1.json";
 import store from "../../redux/store";
-import {EntityListViewTableContainer} from "../../IpaPageComponents/entities/EntityListViewTableContainer";
+import {EntityTableContainer} from "../../IpaPageComponents/entities/EntityTableContainer";
 
 export default {
-  title: 'Components/EntityListViewTableContainer',
-  component: EntityListViewTableContainer,
+  title: 'Components/EntityTableContainer',
+  component: EntityTableContainer,
   parameters: {
     layout: 'fullscreen',
   },
@@ -20,7 +21,15 @@ export default {
 };
 
 const Template = (args) => {
-  return <EntityListViewTableContainer {...args}/>;
+
+  const [{ selectedEntities }, updateArgs] = useArgs();
+  const handleOnChange = (newEntities) => {
+    console.log("onChange clicked with args: ",newEntities.filter(e=>e.checked));
+    updateArgs({ ...args, selectedEntities: newEntities.filter(e=>e.checked) })
+  };
+
+  const props = {...args, onChange: handleOnChange};
+  return <EntityTableContainer {...props} />;
 };
 
 export const Default = Template.bind({});
@@ -43,6 +52,8 @@ Default.args = {
     "className": "entity-list-view-default",
     "multiselect": true,
     "numRows" : 5,
+    "lastColumnSticky" : true,
+    "width": "350px",
     "columns": [
       {
         "name": "Name",
@@ -61,7 +72,7 @@ Default.args = {
   entities: entitiesArray,
   actions: actionsObj,
   onDetail: (...args) => console.log("onDetail clicked with args: ",args),
-  onChange: (...args) => console.log("onChange clicked with args: ",args),
+  //onChange: (...args) => console.log("onChange clicked with args: ",args),
   onSortChange: (...args) => console.log("onSortChange clicked with args: ",args),
-  selectedEntities: []
+  selectedEntities: [entitiesArray[0]]
 };

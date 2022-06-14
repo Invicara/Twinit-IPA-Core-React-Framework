@@ -7,6 +7,7 @@ import actionsObj from "./sample_actions_1.json";
 import store from "../../redux/store";
 import IafDocViewer from "@invicara/iaf-doc-viewer";
 
+/*
 export default {
   title: 'Components/iaf-doc-viewer',
   component: IafDocViewer,
@@ -28,3 +29,5 @@ export const Default = Template.bind({});
 Default.args = {
   docIds: [0]
 };
+
+ */

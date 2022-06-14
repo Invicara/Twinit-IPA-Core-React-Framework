@@ -1,0 +1,168 @@
+.entity-table-root {
+  // min-width: 50vw;
+  min-width: 280px; /*not to scroll pagination row*/
+
+  .entity-table {
+    border-spacing: 0;
+    border-collapse: separate; /*important for sticky column bordering*/
+  }
+
+  @mixin checkbox-styles {
+
+    &.checkbox {
+      //padding: 0;
+      max-width: 48px;
+      justify-content: center;
+    }
+  }
+
+  @mixin div-checkbox-styles {
+
+    &.checkbox {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .actions-panel{
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .entity-list-view-count{
+    margin: 10px 0;
+  }
+
+  div.header-row {
+    /* only div - these styles should NOT apply to table elements thead, th or th */
+    height: 50px;
+    display: flex;
+  }
+
+  .header-row {
+    background-color: #F2F2F2;
+    border-bottom: 3px solid #eaeaea;
+    user-select: text;
+
+    div.header-column {
+      /* only div - these styles should NOT apply to table elements thead, th or th */
+      height: 100%;
+      align-items: center;
+      display: flex;
+      flex: 1;
+
+      @include div-checkbox-styles;
+    }
+
+    .header-column {
+
+      &:not(.checkbox) {
+        padding: 10px;
+        color: #666666;
+        font-weight: 500;
+        letter-spacing: 1;
+        border-left: 1px solid #eaeaea;
+        border-right: 1px solid #eaeaea;
+        cursor:pointer;
+
+        i {
+          margin-left: 20px;
+        }
+
+        .MuiTableSortLabel-root {
+          display: flex; /*this is to force sorting arrow to the right*/
+        }
+      }
+
+      @include checkbox-styles;
+
+      &.sticky {
+        position: sticky;
+        left: 0;
+        background-color: #F2F2F2;
+        z-index: 1;
+
+        &.first {
+          border-right: 1px solid #ddd;
+        }
+
+      }
+
+      &.sticky-end {
+        right: 1px; /*to offset border*/
+        border-left: 1px solid #ddd;
+      }
+
+    }
+
+    :first-child{
+      border-left: none;
+    }
+
+    :last-child{
+      border-right: none;
+    }
+
+  }
+
+  div.content-row {
+    /* only div - these styles should NOT apply to table elements thead, th or th */
+    display: flex;
+  }
+
+  .content-row {
+    border-bottom: 3px solid #eaeaea;
+    user-select: text;
+
+    div.content-column {
+      height: 100%;
+      align-items: center;
+      display: flex;
+      flex: 1;
+    }
+
+    .content-column {
+
+      background-color: white;
+
+      &:not(.checkbox) {
+
+        padding: 10px;
+        color: #666666;
+        letter-spacing: 1;
+        word-break: break-word;
+
+        &.first {
+          color: var(--app-accent-color);
+          cursor: pointer;
+          font-weight: 500;
+
+
+          min-width: 150px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+        }
+      }
+
+      @include checkbox-styles;
+
+      &.sticky {
+        position: sticky;
+        left: 0;
+        background-color: white;
+        z-index: 1;
+
+        &.first {
+          border-right: 1px solid #ddd;
+        }
+      }
+
+      &.sticky-end {
+        right: 1px; /*to offset the broder*/
+        border-left: 1px solid #ddd;
+      }
+
+    }
+  }
+}

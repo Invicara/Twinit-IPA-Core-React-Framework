@@ -87,7 +87,7 @@
     "modelViewerIds": []
   },
   {
-    "Asset Name": "Asset Test",
+    "Asset Name": "Asset Test That is Very Long",
     "revitElementIds": {
       "_pageSize": 0,
       "_list": [],
@@ -178,7 +178,7 @@
         "hasMultipleValues": false
       }
     },
-    "Entity Name": "Asset Test",
+    "Entity Name": "Asset Test That is very Long",
     "modelViewerIds": []
   },
   {

@@ -1,9 +1,9 @@
-import React, {useState, useMemo, useEffect, useCallback} from "react";
+import React, {useState, useMemo, useEffect, useCallback, useRef} from "react";
 import clsx from "clsx";
 import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
 
-import './EntityListView.scss'
+import './EntityTable.scss'
 import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
 import {isValidUrl} from '../../IpaUtils/helpers'
 import {
@@ -17,9 +17,10 @@ import {
     Typography
 } from "@material-ui/core";
 import useSortEntities from "./sortEntities";
-import {EntityListViewTableHead} from "./EntityListViewTableHead";
+import {EntityTableHead} from "./EntityTableHead";
 //import { visuallyHidden } from '@material-ui/utils';
 import PropTypes from 'prop-types';
+import produce from "immer";
 
 const visuallyHidden = {
     border: 0,
@@ -33,7 +34,7 @@ const visuallyHidden = {
     width: '1px',
 }
 
-const EntityListTableToolbar = (props) => {
+const EntityTableToolbar = (props) => {
     const { numSelected, entityPlural, entitySingular } = props;
 
     return (
@@ -49,13 +50,31 @@ const EntityListTableToolbar = (props) => {
     );
 };
 
-EntityListTableToolbar.propTypes = {
+EntityTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
     entityPlural: PropTypes.string.isRequired,
     entitySingular: PropTypes.string.isRequired,
 };
 
-export const EntityListViewTableContainer = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity'}) => {
+const EntityTableActionsCell = (props) => {
+    const { actions, entity, entityType, context } = props;
+
+    const rowCellActions = useMemo(()=>Object.entries(actions).filter(([key,a])=>a.showOnRowCell),[actions]);
+
+    return (
+        <EntityActionsPanel
+            actions={rowCellActions}
+            entity={entity}
+            type={entityType}
+            context={context}
+        />
+    );
+};
+
+
+export const EntityTableContainer = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity'}) => {
+
+    const tableRef = useRef();
 
     let checkableEntities = useMemo(()=>entities.map((entity) => {
         let checked = !_.isEmpty(selectedEntities) &&
@@ -70,7 +89,7 @@ export const EntityListViewTableContainer = ({config, entities, onDetail, action
         onChange?.(newEntities);
     },[entities,selectedEntities]);
 
-    const isAllChecked = checkableEntities.every(e => e.checked)
+    const isAllChecked = checkableEntities.every(e => e.checked);
 
     const allCheckCallback = useCallback(() => {
         let newEntities = entities.map(e => ({...e, checked: !isAllChecked}));
@@ -93,39 +112,75 @@ export const EntityListViewTableContainer = ({config, entities, onDetail, action
     }
     const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
 
+    const entityType = useMemo(()=> {return {
+        singular: entitySingular,
+        plural: entityPlural
+    }},[entitySingular,entityPlural]);
+
+    const columns = useMemo(()=>produce(config.columns, (columns) => {
+        const showOnRowCellActions = Object.entries(actions).filter(([key,a])=>a.showOnRowCell);
+        if(showOnRowCellActions){
+           columns.push({
+               "name": "_row_actions",
+               //"accessor" : "",
+               "type": "actions"
+           });
+        }
+    }),[config]);
+
     const buildTableCell = useCallback((instance) => (col, i) => {
         const value = _.get(instance, col.accessor);
         let dispValue = value && typeof value === 'string' ? value : value ? value.val : null
         dispValue = isValidUrl(dispValue) ? <a href={dispValue} target="_blank">{dispValue}</a> : dispValue
 
         const first = i === 0;
+        const lastColumn = i === columns.length-1;
 
         return <TableCell className={clsx({
                 'content-column': true,
                 ' first': first,
-                ' sticky': first
+                ' sticky': first,
+                ' sticky sticky-end': lastColumn && config.lastColumnSticky
             })}
-            {...(first && {onClick: () => onDetail(instance)})}
+            {...(first && {onClick: () => onDetail?.(instance)})}
             component="td"
             id={i}
             scope="row"
             padding="none"
         >
-                {dispValue}
+            {col.type=="actions" ? <EntityTableActionsCell
+                actions={actions}
+                entity={[instance]}
+                entityType={entityType}
+                context={context}
+            /> : <span>{dispValue}</span>}
         </TableCell>;
-    },[onDetail]);
+    },[onDetail, entityType, context, actions]);
 
-    const entityType = useMemo(()=> {return {
-        singular: entitySingular,
-        plural: entityPlural
-    }},[entitySingular,entityPlural]);
+    const calculateStickyColumnPositions = () => {
+        console.log("recalculating left positions");
+        const selectedNodes = tableRef.current.querySelectorAll("thead tr th.sticky:not(.sticky-end), tbody tr td.sticky:not(.sticky-end)");
+        Array.from(selectedNodes).forEach(s => {
+                const left = s.getBoundingClientRect().x;
+                s.style.left = left + "px";
+            }
+        )
+    }
+
+    useEffect(() => {
+        //apply left style to sticky columns
+        window.addEventListener('resize',calculateStickyColumnPositions)
+        return () => {
+            window.removeEventListener('resize', calculateStickyColumnPositions)
+        }
+    },[]);
 
     const [dense, setDense] = useState(false);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(config.numRows || 200);
 
     const handleChangePage = (event, newPage) => {
-        //setPage(newPage);
+        setPage(newPage);
     };
 
     const handleChangeRowsPerPage = (event) => {
@@ -142,28 +197,35 @@ export const EntityListViewTableContainer = ({config, entities, onDetail, action
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - entities.length) : 0;
 
 
-    return <div className={`entity-list-view-root ${config.className}`}>
+    const actionableEntities = useMemo(()=>entityInstances.filter(inst => inst.checked),[entityInstances]);
+
+
+    return <div className={`entity-table-root ${config.className}`}>
         {actions && <div className='actions-panel'>
             <EntityActionsPanel
                 actions={actions}
-                entity={entityInstances.filter(inst => inst.checked)}
+                entity={actionableEntities}
                 type={entityType}
                 context={context}
             />
         </div>}
-        <div className='entity-list-view-count-toolbar'>
-            <EntityListTableToolbar numSelected={entities.length} entitySingular={entitySingular} entityPlural={entityPlural}></EntityListTableToolbar>
+        <div className='entity-table__count-toolbar'>
+            <EntityTableToolbar numSelected={entities.length} entitySingular={entitySingular} entityPlural={entityPlural}></EntityTableToolbar>
         </div>
         <TableContainer>
             <Table
-                sx={{ minWidth: 750 }}
+                ref={tableRef}
+                sx={{ minWidth: 280}}
                 aria-labelledby="tableTitle"
                 size={dense ? 'small' : 'medium'}
+                className={'entity-table' }
             >
-                <EntityListViewTableHead
+                <EntityTableHead
                     allChecked={allChecked}
                     handleAllCheck={handleAllCheck}
-                    config={config}
+                    lastColumnSticky={config.lastColumnSticky}
+                    multiselect={config.multiselect}
+                    columns={columns}
                     currentSort={currentSort}
                     sortEntitiesBy={sortEntitiesBy}
                 />
@@ -184,10 +246,10 @@ export const EntityListViewTableContainer = ({config, entities, onDetail, action
                                     selected={isItemSelected}
                                     className="content-row"
                                 >
-                                    {config.multiselect && <TableCell padding="checkbox" className="sticky">
+                                    {config.multiselect && <TableCell padding="checkbox" className="content-column checkbox sticky">
                                         <RoundCheckbox checked={instance.checked} onChange={handleChange}/>
                                     </TableCell>}
-                                    {config.columns.map(buildTableCell(instance))}
+                                    {columns.map(buildTableCell(instance, config))}
                                 </TableRow>
                             );
                         })
@@ -198,7 +260,7 @@ export const EntityListViewTableContainer = ({config, entities, onDetail, action
                                 height: (dense ? 33 : 53) * emptyRows,
                             }}
                         >
-                            <TableCell colSpan={1+config.columns.length} />
+                            <TableCell colSpan={1+columns.length} />
                         </TableRow>
                     )}
                 </TableBody>
@@ -212,6 +274,7 @@ export const EntityListViewTableContainer = ({config, entities, onDetail, action
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage=""
         />
     </div>
 }

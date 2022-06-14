@@ -21,27 +21,30 @@ const visuallyHidden = {
     width: '1px',
 }
 
-export const EntityListViewTableHead = ( {allChecked, handleAllCheck, config, currentSort, sortEntitiesBy }) => {
+export const EntityTableHead = ({allChecked, handleAllCheck, columns, multiselect, lastColumnSticky, currentSort, sortEntitiesBy }) => {
 
     const handleColumnClick = (col) => _.noop();
 
     const toggleSort = (col) => () => sortEntitiesBy(col.accessor);
 
-    const cells = useMemo(()=>config.columns.map((col,i) => {
+    const cells = useMemo(()=>columns.map((col,i) => {
         const first = i === 0;
+        const lastColumn = i === columns.length-1;
         return <TableCell
         key={col.name}
         onClick={handleColumnClick}
         className='header-column'
         className={clsx({
             'header-column': true,
-            ' sticky': first
+            ' first' : first,
+            ' sticky': first,
+            ' sticky sticky-end': lastColumn && lastColumnSticky
         })}
         //align={col.numeric ? 'right' : 'left'}
         padding={'none'}
         sortDirection={col.accessor == currentSort.property ? currentSort.order : false}
     >
-        <TableSortLabel
+            {col.accessor && <TableSortLabel
             active={col.accessor == currentSort.property}
             direction={col.accessor == currentSort.property ? currentSort.order  : 'asc'}
             onClick={toggleSort(col)}
@@ -50,12 +53,12 @@ export const EntityListViewTableHead = ( {allChecked, handleAllCheck, config, cu
             <Box component="div" sx={{flexGrow: 1}}>
                 {col.name}
             </Box>
-        </TableSortLabel>
-    </TableCell>}),[config,sortEntitiesBy,currentSort]);
+        </TableSortLabel>}
+    </TableCell>}),[lastColumnSticky,sortEntitiesBy,currentSort]);
 
     return <TableHead className='header-row'>
         <TableRow>
-        {config.multiselect && <TableCell padding="checkbox" className='header-column checkbox sticky'>
+        {multiselect && <TableCell padding="checkbox" className='header-column checkbox sticky'>
             <RoundCheckbox checked={allChecked} onChange={handleAllCheck}/>
         </TableCell>}
         {cells}

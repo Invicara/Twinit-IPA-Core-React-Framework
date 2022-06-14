@@ -1,6 +1,6 @@
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import CheckIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import withStyles from "@material-ui/core/styles/withStyles";
+import {withStyles} from "@material-ui/core";
 import produce from "immer";
 import React, {useEffect, useState} from "react";
 import {usePrevious} from "../IpaUtils/usePrevious";

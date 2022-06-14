@@ -5,7 +5,7 @@ import _ from 'lodash'
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 
 import { getEntityActionComponent } from '../../redux/slices/entityUI'
-
+import './EntityActionsPanel.scss';
 import '../../IpaStyles/DbmTooltip.scss'
 import { Tooltip } from "@material-ui/core";
 
