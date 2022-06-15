@@ -102,23 +102,32 @@ const withGenericPage = (PageComponent) => {
             }
         }
 
-        if (handler.config && !handler.config.data && handler.config.type && this.props.userConfig.entityDataConfig) {
-          if (!Array.isArray(handler.config.type) && this.props.userConfig.entityDataConfig[handler.config.type.singular]) {
 
-            //if the page is expecting only one data config
-            handler.config = {...handler.config, data: this.props.userConfig.entityDataConfig[handler.config.type.singular]};
+        const handlerHasConfig = !!handler?.config;
+        const hasDefaultConfig = _.isObject(this.props.userConfig.entityDataConfig)
+        const expectsMultipleDataConfig = Array.isArray(handler?.config?.type);
 
-          }
-          else {
-            //if the page is expecting multiple data configs filter to the ones it expects            
+        if(hasDefaultConfig && handlerHasConfig) {
+          if(expectsMultipleDataConfig) {
             handler.config = {...handler.config,
-                              data: _.fromPairs(
-                                handler.config.type.filter(t => !!this.props.userConfig.entityDataConfig[t.singular])
-                                                    .map(t => [t.singular, this.props.userConfig.entityDataConfig[t.singular]])
-                                                )
-                              }
+              data: _.fromPairs(
+                handler.config.type
+                  .filter(t => !!this.props.userConfig.entityDataConfig[t.singular])
+                  .map(t => {
+                    const handlerData = handler?.config?.data?.[t.singular]
+                    const defaultData = this.props.userConfig.entityDataConfig[t.singular];
+                    let data = handlerData || defaultData;
+                    return [t.singular, data]
+                  })
+              )
+            }
+          } else {
+            const entityType = handler.config.type;
+            const handlerData = handler?.config?.data
+            const defaultData = entityType && this.props.userConfig.entityDataConfig[entityType.singular];
+            handler.config = {...handler.config, data: handlerData || defaultData};
           }
-      }
+        }
 
         let hasActions = !!handler.actionHandlers && !!handler.actionHandlers.length;
 
