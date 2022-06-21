@@ -75,8 +75,8 @@ export default {
   onwarn(warning, warn) {
     if (
         !(
-            warning.id?.includes("node_modules") ||
-            warning.message?.startsWith("Unknown CLI flags: env.")
+            (warning.id && warning.id.includes("node_modules")) ||
+            (warning.message && warning.message.startsWith("Unknown CLI flags: env."))
         )
     ) {
       warn(warning);
