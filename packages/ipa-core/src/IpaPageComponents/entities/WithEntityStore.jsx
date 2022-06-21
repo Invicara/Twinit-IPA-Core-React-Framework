@@ -78,14 +78,13 @@ const withEntityStore = WrappedComponent => {
             // as it's run from the constructor and child components are not connected yet
             let {queryParams} = this.props;
             if (initialEntityType) {
-                const currentEntityType = {singular : initialEntityType.singular, plural: initialEntityType.plural}
                 if(queryParams && queryParams.entityType === initialEntityType.singular && queryParams.filters) {
                     this.props.applyFiltering(queryParams.filters);
                 }
                 if(queryParams && queryParams.entityType === initialEntityType.singular && queryParams.groups) {
                     this.props.applyGrouping(queryParams.groups);
                 }
-                this.props.setCurrentEntityType(currentEntityType);
+                this.props.setCurrentEntityType(initialEntityType);
             }
         }
 
