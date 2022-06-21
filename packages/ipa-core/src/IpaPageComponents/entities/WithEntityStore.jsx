@@ -62,6 +62,7 @@ const withEntityStore = WrappedComponent => {
                 return {
                     [type.singular]: {
                         script: entityData[type.singular].script,
+                        entityFromModelScript: entityData[type.singular].getEntityFromModel,
                         spaceMode: entityData[type.singular].spaceMode,
                         selectors: selectBy,
                         data,
@@ -120,15 +121,17 @@ const withEntityStore = WrappedComponent => {
                 // run a query to select those ids directly and keep the original sender ...
             }
             //if we don't have query, or it should not influence entity type, we assume we are going to use first entity from the handler config
-            return this.allowsMultipleEntityTypes() ? _.values(this.getPerEntityConfig())[0] : this.getCurrentConfig().type;
+            return this.allowsMultipleEntityTypes() ? _.values(this.getPerEntityConfig())[0] : this.getCurrentConfig();
         }
 
         updateEntityType = (args) => {
             const {singular, plural, ...rest} = args;
             const currentEntity = this.props.currentEntityType;
             if(currentEntity.singular!==singular || currentEntity.plural!==plural) {
+                const newEntityConfig = this.allowsMultipleEntityTypes() && _.includes(this.getAllowedEntityTypes(), singular) ? _.values(this.getPerEntityConfig())[singular] : this.getCurrentConfig();
+                const newEntityType = {...args,...newEntityConfig};
                 this.saveStore();
-                this.switchStore(args);
+                this.switchStore(newEntityType);
             }
         }
 
