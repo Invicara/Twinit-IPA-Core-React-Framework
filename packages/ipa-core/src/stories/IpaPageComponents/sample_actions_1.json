@@ -21,6 +21,7 @@
     "icon": "fas fa-link",
     "type": "relate",
     "showOnTable": true,
+    "showOnRowCell": true,
     "getScript": "getEntityRelatedItems",
     "updateScript": "updateRelations",
     "relatedTypes": [
@@ -175,6 +176,7 @@
   "Collections": {
     "allow": true,
     "icon": "icofont-cubes",
+    "showOnRowCell": true,
     "type": "collect",
     "showOnTable": true,
     "script": "addAssetsToCollections",

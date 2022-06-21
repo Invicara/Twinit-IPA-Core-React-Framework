@@ -11,6 +11,12 @@
     background-size: 40px;
     background-position: -1px;
     background-repeat: no-repeat;
+
+    &.inv-icon__masked {
+      width: 20px;
+      height: 20px;
+    }
+
   }
 
   i {
@@ -24,5 +30,18 @@
     font-size: 20px;
     margin: 3px;
     cursor: pointer;
+
+
+    /*this is to style font icons, not svg*/
+    &:not(.inv-icon-svg).inv-icon__masked {
+      width: 20px;
+      height: 20px;
+      font-size: inherit;
+      margin: 0;
+      padding: 3px;
+      background-color: white;
+      color: var(--app-accent-color);
+    }
+
   }
 }

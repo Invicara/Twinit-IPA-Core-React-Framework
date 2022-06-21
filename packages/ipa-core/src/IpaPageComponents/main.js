@@ -7,7 +7,7 @@ import * as EntityDataContainer from './entities/EntityDataContainer'
 import * as EntityDataGroupContainer from './entities/EntityDataGroupContainer'
 import EntityActionsPanel from "./entities/EntityActionsPanel";
 import {EntityListView} from "./entities/EntityListView";
-import useSortEntities, {ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE} from "./entities/sortEntities";
+import useSortEntities, {ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE, usePaginateEntities} from "./entities/sortEntities";
 
 const IpaPageComponents = {
     withEntitySearch,
@@ -19,7 +19,8 @@ const IpaPageComponents = {
     TreeSelectMode,
     EntityActionsPanel, 
     EntityListView,
-    useSortEntities, ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE
+    useSortEntities, ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE,
+    usePaginateEntities
 }
 
 export default IpaPageComponents

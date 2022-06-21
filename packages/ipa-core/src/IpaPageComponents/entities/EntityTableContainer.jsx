@@ -16,11 +16,12 @@ import {
     Toolbar,
     Typography
 } from "@material-ui/core";
-import useSortEntities from "./sortEntities";
+import useSortEntities, {usePaginateEntities} from "./sortEntities";
 import {EntityTableHead} from "./EntityTableHead";
 //import { visuallyHidden } from '@material-ui/utils';
 import PropTypes from 'prop-types';
 import produce from "immer";
+import pagination from "react-table/lib/pagination";
 
 const visuallyHidden = {
     border: 0,
@@ -59,7 +60,10 @@ EntityTableToolbar.propTypes = {
 const EntityTableActionsCell = (props) => {
     const { actions, entity, entityType, context } = props;
 
-    const rowCellActions = useMemo(()=>Object.entries(actions).filter(([key,a])=>a.showOnRowCell),[actions]);
+    const rowCellActions = useMemo(()=>Object.entries(actions).filter(([key,a])=>a.showOnRowCell).reduce(function(acc, [key,val], i) {
+        acc[key] = val;
+        return acc;
+    }, {}),[actions]);
 
     return (
         <EntityActionsPanel
@@ -72,7 +76,8 @@ const EntityTableActionsCell = (props) => {
 };
 
 
-export const EntityTableContainer = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity'}) => {
+export const EntityTableContainer = ({config, actions, context, entities, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity',
+                                         onDetail, onChange, onSortChange, onPageChange, onRowsPerPageChange}) => {
 
     const tableRef = useRef();
 
@@ -118,15 +123,26 @@ export const EntityTableContainer = ({config, entities, onDetail, actions, conte
     }},[entitySingular,entityPlural]);
 
     const columns = useMemo(()=>produce(config.columns, (columns) => {
-        const showOnRowCellActions = Object.entries(actions).filter(([key,a])=>a.showOnRowCell);
-        if(showOnRowCellActions){
+        const rowCellActions = Object.entries(actions).filter(([key,a])=>a.showOnRowCell);
+        if(rowCellActions.length>0){
            columns.push({
                "name": "_row_actions",
                //"accessor" : "",
                "type": "actions"
            });
         }
-    }),[config]);
+    }),[config.columns, actions]);
+
+    const rowCellActions = useMemo(()=> {
+        const rowActionsMap = Object
+            .entries(actions)
+            .filter(([key,a])=>a.showOnRowCell)
+            .reduce((map, arrayOfKeyValue) => ({...map, [arrayOfKeyValue[0]]: {...arrayOfKeyValue[1]}}),{});
+        return produce(rowActionsMap,(map) => {
+            Object.entries(map).forEach(([key,a])=>{a.icon = a.icon+' inv-icon__masked'});
+        });
+    },[actions]);
+
 
     const buildTableCell = useCallback((instance) => (col, i) => {
         const value = _.get(instance, col.accessor);
@@ -136,8 +152,9 @@ export const EntityTableContainer = ({config, entities, onDetail, actions, conte
         const first = i === 0;
         const lastColumn = i === columns.length-1;
 
-        return <TableCell className={clsx({
+        return <TableCell  className={clsx({
                 'content-column': true,
+                'entity-actions-cell' : col.type=="actions",
                 ' first': first,
                 ' sticky': first,
                 ' sticky sticky-end': lastColumn && config.lastColumnSticky
@@ -147,54 +164,91 @@ export const EntityTableContainer = ({config, entities, onDetail, actions, conte
             id={i}
             scope="row"
             padding="none"
+            key={i+1}
         >
+            <div className="text-nowrap text-truncate">
             {col.type=="actions" ? <EntityTableActionsCell
-                actions={actions}
+                actions={rowCellActions}
                 entity={[instance]}
                 entityType={entityType}
                 context={context}
             /> : <span>{dispValue}</span>}
+            </div>
         </TableCell>;
     },[onDetail, entityType, context, actions]);
 
-    const calculateStickyColumnPositions = () => {
-        console.log("recalculating left positions");
-        const selectedNodes = tableRef.current.querySelectorAll("thead tr th.sticky:not(.sticky-end), tbody tr td.sticky:not(.sticky-end)");
-        Array.from(selectedNodes).forEach(s => {
-                const left = s.getBoundingClientRect().x;
-                s.style.left = left + "px";
-            }
-        )
+
+    const initialPagination = {
+        offset : 0,
+        pageSize: config.numRows || 200,
+        total: entities.length
     }
 
+    const  {paginateTableBy, page, rowsPerPage, count} = usePaginateEntities(initialPagination, onPageChange, onRowsPerPageChange);
+
+
+    const generateStickyColumnRecalculationFn = (wait) => {
+        const sumPreviousSiblingsWidth = (elem) => {
+            let sum = elem.getBoundingClientRect().width;
+            if(elem.previousElementSibling){
+                sum += sumPreviousSiblingsWidth(elem.previousElementSibling);
+            }
+            return sum;
+        }
+        const calculateStickyColumnPositions = () => {
+            if (!tableRef.current) {
+                return;
+            }
+            console.log("recalculating left positions");
+            const selectedNodes = tableRef.current.querySelectorAll("thead tr th.sticky:not(.sticky-end), tbody tr td.sticky:not(.sticky-end)");
+            Array.from(selectedNodes).forEach(s => {
+                let left = 0;
+                if(s.previousElementSibling){
+                    left = sumPreviousSiblingsWidth(s.previousElementSibling);
+                }
+                s.style.left = left + "px";
+            });
+        }
+        return _.debounce(calculateStickyColumnPositions, wait || 100);
+    };
+
     useEffect(() => {
-        //apply left style to sticky columns
-        window.addEventListener('resize',calculateStickyColumnPositions)
+        //apply left style to sticky columns on CELLS RENDER (including pagination and sorting updates)
+        //update sticky positions instantly
+        const updateStickyCells = generateStickyColumnRecalculationFn(0);
+        updateStickyCells();
         return () => {
-            window.removeEventListener('resize', calculateStickyColumnPositions)
+            updateStickyCells.cancel();
+        }
+    },[page,rowsPerPage,count, currentSort]);
+
+    useEffect(() => {
+        //apply left style to sticky columns on RESIZE EVENT
+        //on resize use longer debounce
+        const onEachResize = generateStickyColumnRecalculationFn(1000);
+        window.addEventListener('resize',onEachResize)
+        return () => {
+            window.removeEventListener('resize', onEachResize);
+            onEachResize.cancel();
         }
     },[]);
 
-    const [dense, setDense] = useState(false);
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(config.numRows || 200);
-
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+        paginateTableBy({offset: newPage*rowsPerPage});
     };
 
     const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        paginateTableBy({pageSize: parseInt(event.target.value, 10)});
     };
 
-    const handleChangeDense = (event) => {
+    const [dense, setDense] = useState(false);
+    //const handleChangeDense = (event) => {
         //setDense(event.target.checked);
-    };
+    //};
 
     // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - entities.length) : 0;
+    const emptyRows = rowsPerPage - count % rowsPerPage;
+    const isLastPage = Math.ceil(count/rowsPerPage) - 1 == page;
 
 
     const actionableEntities = useMemo(()=>entityInstances.filter(inst => inst.checked),[entityInstances]);
@@ -246,7 +300,7 @@ export const EntityTableContainer = ({config, entities, onDetail, actions, conte
                                     selected={isItemSelected}
                                     className="content-row"
                                 >
-                                    {config.multiselect && <TableCell padding="checkbox" className="content-column checkbox sticky">
+                                    {config.multiselect && <TableCell padding="checkbox" className="content-column checkbox sticky" key={0}>
                                         <RoundCheckbox checked={instance.checked} onChange={handleChange}/>
                                     </TableCell>}
                                     {columns.map(buildTableCell(instance, config))}
@@ -254,10 +308,10 @@ export const EntityTableContainer = ({config, entities, onDetail, actions, conte
                             );
                         })
                     }
-                    {emptyRows > 0 && (
+                    {isLastPage > 0 && page > 0 && (
                         <TableRow
                             style={{
-                                height: (dense ? 33 : 53) * emptyRows,
+                                height: (dense ? 31 : 41) * emptyRows,
                             }}
                         >
                             <TableCell colSpan={1+columns.length} />

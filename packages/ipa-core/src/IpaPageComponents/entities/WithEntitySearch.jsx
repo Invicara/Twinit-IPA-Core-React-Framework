@@ -48,13 +48,14 @@ const withEntitySearch = WrappedComponent => {
             let availableDataGroups = {}
             this.setState({loadingAvailableDataGroups: true})
             Object.entries(this.props.getPerEntityConfig()).forEach(([entityType, config]) => {
-                Object.entries(config.data).forEach(([dataGroupName, dataGroup]) => {
-
-                    if (dataGroup.isProperties) {
-                        availableDataGroups[entityType] = availableDataGroups[entityType] || {}
-                        availableDataGroups[entityType][dataGroupName] = true
-                    }
-                })
+                if(config.data){
+                    Object.entries(config.data).forEach(([dataGroupName, dataGroup]) => {
+                        if (dataGroup.isProperties) {
+                            availableDataGroups[entityType] = availableDataGroups[entityType] || {}
+                            availableDataGroups[entityType][dataGroupName] = true
+                        }
+                    })
+                }
             })
             this.setState({availableDataGroups})
 
