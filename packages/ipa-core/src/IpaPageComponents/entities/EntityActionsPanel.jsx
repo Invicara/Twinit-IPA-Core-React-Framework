@@ -34,12 +34,25 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
     // populate the specific action with info needed by the action component
     action.name = actionName
+    action.onClick = actions.onClick;
     action.doEntityAction = actions.doEntityAction
     action.onSuccess = actions.onSuccess
     action.onError = actions.onError
     action.onCancel = actions.onCancel
 
-    if (action.component) {
+
+    if(action.standalone) {
+      let result = await action.onClick(entity);
+      if (result.success) {
+        if (action.onSuccess) {
+          action.onSuccess(action.type, newEntity, result)
+        }
+      }
+      else {
+        if (action.onError) action.onError(action.type, entity, result)
+      }
+    }
+    else if (action.component) {
       // if there's a component then create it and let it handle the execution
       let factory = getEntityActionComponent(action.component.name)
       if (!factory) {
@@ -75,7 +88,8 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
   if (actions) {
     Object.keys(actions).forEach(actionName => {
-      let action = actions[actionName]
+      let action = actions[actionName];
+
       if (action.allow)
         icons.push(
           <Tooltip key={"icon-"+actionName} title={actionName}>

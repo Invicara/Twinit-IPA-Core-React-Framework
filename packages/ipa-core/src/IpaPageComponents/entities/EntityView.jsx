@@ -39,10 +39,12 @@ import {branchNodeRenderer, leafNodeRenderer} from "../../IpaUtils/TreeRendererH
 import {getFilteredEntitiesBy} from "../../IpaUtils/entities";
 
 import './EntityView.scss'
+import {EntityTableContainer} from "./EntityTableContainer";
 
 
 const tableComponents = {
     'EntityListView': EntityListView,
+    'EntityTableContainer': EntityTableContainer,
 };
 
 class EntityView extends React.Component {
@@ -152,7 +154,7 @@ class EntityView extends React.Component {
         }
 
         // make sure query id is numeric
-        let query = Object.assign({}, this.props.queryParams.query)
+        let query = Object.assign({}, this.props.queryParams && this.props.queryParams.query ? this.props.queryParams.query : {})
         if (query.id && _.isNaN(parseInt(query.id))) {
             query.id = "" + handler.config.selectBy.findIndex(sb => query.id == sb.id)
         }

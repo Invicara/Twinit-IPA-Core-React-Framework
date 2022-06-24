@@ -1,93 +1,111 @@
-import React from "@types/react";
+import React from "react";
+import {ASCENDING_ORDER, DESCENDING_ORDER} from "../entities/sortEntities";
+import produce from "immer";
+import {EntityTableContainer} from "../entities/EntityTableContainer";
 
-const DocumentViewerTable = ({actions, entity, type, context, getEntityActionComponent, iconRenderer}) => {
+const withDocumentsAsTable = ({tableConfig, documents, actions, documentsDataIdAccessor}) => {
 
-    return <TableComponent
-        config={handler.config.tableView.component}
+    const convertedColumns = tableConfig.columns.map(c=>{
+        if(typeof c ==='string'){
+            return {
+                name : c,
+                valueAccessor: c
+            }
+        }
+        return c;
+    });
+
+    const tableViewConfig = {
+        //properties from config that existing table components were already using
+        name: "EntityTableContainer",
+        className: "entity-list-view-default",
+        multiselect: true,
+        lastColumnSticky : true,
+        columns: convertedColumns,
+        //documents config that needs to be converted, so existing code can be reused
+        initialSort : {
+            property: convertedColumns.find(c=>c.name==tableConfig.sort.currentColumn).name || 'Entity Name',
+            valueAccessor: convertedColumns.find(c=>c.name==tableConfig.sort.currentColumn).valueAccessor || 'Entity Name',
+            order: tableConfig.isDescending ? DESCENDING_ORDER : ASCENDING_ORDER
+        },
+        //not yet implemented
+        lockedColumns : tableConfig.lockedColumns,
+        onColumnsChange : tableConfig.onColumnsChange,
+    };
+
+    //convert actions to bulk actions
+    const convertedActions = actions.filter(a=>a.bulk).map(a=>{
+        let convertedAction = {};
+        convertedAction.name = a.name;
+        convertedAction.key = a.key;
+        convertedAction.showOnTable = !a.bulk.hidden;
+        let props = {};
+        if(a.bulk.props){
+            props = {...props,...a.bulk.props};
+        }
+        const ActionIconRenderer = a.bulk.component;
+        convertedAction.iconRenderer = <ActionIconRenderer {...props}></ActionIconRenderer>;
+        convertedAction.disabled = a.bulk.disabled;
+        convertedAction.hidden = a.bulk.hidden;
+        if(a.single){
+            convertedAction.showOnRowCell = !a.single.hidden;
+        }
+        return convertedAction;
+    }).reduce((acc,a)=>({...acc,[a.key] : a}));
+
+    const convertedRowActions = actions.filter(a=>a.single).map(a=>{
+        let convertedAction = {};
+        convertedAction.name = a.name;
+        convertedAction.key = a.key;
+        convertedAction.showOnTable = !a.single.hidden;
+        let props = {};
+        if(a.bulk.props){
+            props = {...props,...a.bulk.props};
+        }
+        const ActionIconRenderer = a.bulk.component;
+        convertedAction.iconRenderer = <ActionIconRenderer {...props}></ActionIconRenderer>;
+        convertedAction.disabled = a.bulk.disabled;
+        convertedAction.hidden = a.bulk.hidden;
+        return convertedAction;
+    }).reduce((acc,a)=>({...acc,[a.key] : a}));
+
+    const convertedRowActionsPerEntity = {};
+
+    documents.forEach(d=>{
+        if(!d.actions){
+            return;
+        }
+        const actions = d.actions;
+        actions.map(a=>{
+            let convertedAction = {};
+            convertedAction.name = a.name;
+            convertedAction.key = a.key;
+            convertedAction.showOnRowCell = !a.hidden;
+            let props = {};
+            if(a.props){
+                props = {...props,...a.props};
+            }
+            const ActionIconRenderer = a.bulk.component;
+            convertedAction.iconRenderer = <ActionIconRenderer {...props}></ActionIconRenderer>;
+            convertedAction.disabled = a.bulk.disabled;
+            convertedAction.hidden = a.bulk.hidden;
+            return convertedAction;
+        }).reduce((acc,a)=>({...acc,[a.key] : a}));
+    });
+
+
+    //TODO: versions
+
+
+    return <EntityTableContainer
+        config={tableViewConfig}
         onDetail={this.openDetail}
-        entities={this.tableEntities()}
-        actions={tableActions}
-        context={this.context}
-        entityPlural={this.props.entityPlural}
-        entitySingular={this.props.entitySingular}
+        entities={documents}
+        actions={convertedActions}
+        context={{}}
+        entityPlural={'Documents'}
+        entitySingular={'Document'}
 
     />
 
 }
-
-{
-    documents: [
-        {// object representing a document and all the configuration data useful to the presentational component
-            documentData: <object>, //contains the document data as fetched by the api
-                currentVersion: <file_version_id>,
-                    setCurrentVersion: (file_id, version) => void,
-                    actions: [ //"per document" actions config: overrides top level actions config
-                    {
-                        key: "DOWNLOAD", //is used to reconcile the action behaviour between row actions and bulk actions
-                        name: "Download",
-                        component?: <React node>, //(optional) "per document" row icon component with a tooltip attached
-                        props?: <object>, //(optional) props sent to the optional component, will override default props
-                        onClick?: (document) => void, //(optional) "per document" event handler
-                        disabled?: false, //(optional) "per document" disabled state
-                        hidden?: false, //(optional) "per document" hidden state
-                        },
-                    {
-                        key: "VIEW", //is used to reconcile the action behaviour between row actions and bulk actions
-                        name: "View",
-                        component?: <React node>, //(optional) "per document" row icon component with a tooltip attached
-                        props?: <object>, //(optional) props sent to the optional component, will override default props
-                        onClick?: (document) => void, //(optional) "per document" event handler
-                        disabled?: true, //(optional) "per document" disabled state
-                        hidden?: false, //(optional) "per document" hidden state
-                        },
-                        ]
-                        },
-                        //... more documents
-                        ],
-                        actions: [ //top level actions config: define the behaviour of bulk actions and row actions (unless overridden by the "per document" actions config)
-                    {
-                        key: "DOWNLOAD", //is used to reconcile the action behaviour between row actions and bulk actions
-                        name: "Download",
-                        onClick: (documents) => void, //event handler for bulk action and row action (unless overriden by "per document" action config)
-                        bulk: {
-                        component?: <React node>//(optional) bulk action button component, override default button from presentational component,
-                        props?: <object>, //(optional) props sent to the optional component, will override default props
-                        disabled?: false, //(optional) disabled state for bulk action, defaults to false
-                        hidden?: false, //(optional) hidden state for bulk action, defaults to false
-                        },
-                        single: {
-                        component?: <React node>//(optional) row icon component with a tooltip attached for all rows (unless overriden by "per document" action config), defaults to icon from presentational component
-                        props?: <object>, //(optional) props sent to the optional component, will override default props
-                        disabled?: false, //(optional) disabled state for row action, defaults to false
-                        hidden?: false //(optional) hidden state for row action, defaults to false
-                        }
-                        },
-                    {
-                        key: "VIEW", //is used to reconcile the action behaviour between row actions and bulk actions
-                        name: "View",
-                        onClick: (documents) => void, //event handler for bulk action and row action (unless overriden by "per document" action config)
-                        bulk: {
-                        component?: <React node>//(optional) bulk action button component, override default button from presentational component,
-                        props?: <object>, //(optional) props sent to the optional component, will override default props
-                        disabled?: false, //(optional) disabled state for bulk action, defaults to false
-                        hidden?: false, //(optional) hidden state for bulk action, defaults to false
-                        },
-                        single: {
-                        component?: <React node>//(optional) row icon component with a tooltip attached for all rows (unless overriden by "per document" action config), defaults to icon from presentational component
-                        props?: <object>, //(optional) props sent to the optional component, will override default props
-                        disabled?: false, //(optional) disabled state for row action, defaults to false
-                        hidden?: false //(optional) hidden state for row action, defaults to false
-                        }
-                        },
-                        ]
-                        tableConfig: {
-                        lockedColumns: ["version", "name"], //order insensitive
-                        columns?: ["version", "name", "filetype"], //determines which columns should be displayed (order sensitive), defaults to ["version", "name"]
-                        onColumnsChange: (columns) => void, //callback triggered when user confirmed order change in presentational component
-                        sort?: { //If not defined, the presentational component handles the sorting logic
-                        currentColumn: "name", //The currently sorted column, if null, no sorting is allowed
-                        onSort?: (columnKey: string) => void //(optional) Called by the presentational component to defined additional instructions on sort,
-                        isDescending?: false, //defaults to false
-                    }
-                    }
-                        }
