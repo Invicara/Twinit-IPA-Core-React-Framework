@@ -9,7 +9,7 @@
     "quickrelease": "lerna version --exact",
     "changed": "lerna changed",
     "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes",
-    "postinstall": "ppid=$(ps -p ${1:-$$} -o ppid=;); ppid=$(echo ${ppid}|tr -d '[[:space:]]'); if [ -z ${npm_config_tmp} ]; then npm_config_tmp=/tmp; fi; rm -rf \"${npm_config_tmp}\"/npm-${ppid}*"
+    "preinstall": "rm -rf /var/lib/jenkins/workspace/vicaraPlatformApplication_master/packages/ipa-core/node_modules"
   },
   "devDependencies": {
     "@rollup/plugin-image": "^2.0.6",
