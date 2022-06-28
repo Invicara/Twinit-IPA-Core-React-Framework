@@ -9,7 +9,7 @@
     "quickrelease": "lerna version --exact",
     "changed": "lerna changed",
     "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes",
-    "preinstall": "rm -rf /var/lib/jenkins/workspace/vicaraPlatformApplication_master/packages/ipa-core/node_modules"
+    "preinstall": "rm -rf /tmp/101.0.4951.41/chromedriver"
   },
   "devDependencies": {
     "@rollup/plugin-image": "^2.0.6",
