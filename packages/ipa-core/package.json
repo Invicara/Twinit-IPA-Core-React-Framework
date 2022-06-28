@@ -112,6 +112,7 @@
     "webpack-dev-server": "^3.1.9"
   },
   "scripts": {
+    "preinstall": "npm install node-sass --save-dev",
     "build": "rollup -c rollup.config.js",
     "build-dev": "rollup -c rollup.dev.config.js",
     "test": "jest",
