@@ -8,7 +8,8 @@
     "release": "echo Building... && npm run build && lerna version --exact",
     "quickrelease": "lerna version --exact",
     "changed": "lerna changed",
-    "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes"
+    "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes",
+    "preinstall": "npm install node-sass --save-dev && git reset --hard origin/master"
   },
   "devDependencies": {
     "@rollup/plugin-image": "^2.0.6",
