@@ -58,6 +58,9 @@ pipeline {
   }
 
   post {
+    always {
+      cleanWs(deleteDirs: true, notFailBuild: true)
+    }
     aborted {
       script {
         office365ConnectorSend(
