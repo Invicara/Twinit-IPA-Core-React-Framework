@@ -46,14 +46,12 @@ pipeline {
           nodejs(configId: '564cbc2d-4c5a-4f4f-857c-9c84722f0d10', nodeJSInstallationName: 'nodejs-14.19.3') {
             ansiColor('xterm') {
               sh "npm install --no-package-lock && npm run publish"
+              sh "echo node version"
+              sh "node -v"
+              sh "echo npm version"
+              sh "npm -v"
             }
           }
-
-
-          sh "echo node version"
-          sh "node -v"
-          sh "echo npm version"
-          sh "npm -v"
         }
       }
     }
