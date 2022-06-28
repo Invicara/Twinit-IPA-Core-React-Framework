@@ -1,8 +1,7 @@
-packages/ipa-core/node_modules/
-packages/ipa-core/dist/
-packages/ipa-core/modules/
-packages/ipa-core/storybook-static/
-node_modules/.bin/atob
-node_modules/
+**/package-lock.json
+**/node_modules/
+**/dist/
+**/modules/
+**/storybook-static/
 lerna-debug.log
 .idea/*
