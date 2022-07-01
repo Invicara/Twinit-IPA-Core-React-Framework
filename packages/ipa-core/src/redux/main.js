@@ -33,7 +33,7 @@ import {
 } from "./slices/entities-pluggable-search";
 import {getEntitySelectConfig, setUserConfig} from "./slices/user-config";
 import {
-    fetchAllNamedUserItems,
+    fetchAllNamedUserItems, fetchNamedUserItemItems,
     namedUserItemActions, selectNamedUserItemById,
     selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus
 } from "./slices/named-user-item.slice";
@@ -78,6 +78,7 @@ const redux = {
     },
     NamedUserItems: {
         fetchAllNamedUserItems,
+        fetchNamedUserItemItems,
         selectNamedUserItemEntities,
         selectNamedUserItemsLoadingStatus,
         selectNamedUserItemById,

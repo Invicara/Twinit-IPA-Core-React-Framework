@@ -5,9 +5,7 @@
     "type": "navigate",
     "showOnTable": true,
     "showOnRowCell": true,
-    "navigateTo": "docViewer",
-    "newTab" : true,
-    "component": NewTabOpenerWithDocIds
+    "navigateTo": "navigator"
   },
   "Spaces": {
     "allow": true,

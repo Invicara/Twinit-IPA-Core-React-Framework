@@ -19,7 +19,7 @@ import React from "react"
 import * as PropTypes from "prop-types"
 import _ from 'lodash'
 
-import {StackableDrawer} from "../../IpaControls/StackableDrawer";
+import {StackableDrawer} from "../../IpaDialogs/StackableDrawer";
 import EnhancedFetchControl from "../../IpaControls/EnhancedFetchControl";
 import {applyFilters} from "../../IpaControls/FilterControl"
 

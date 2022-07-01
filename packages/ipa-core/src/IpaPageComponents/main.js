@@ -8,11 +8,13 @@ import * as EntityDataGroupContainer from './entities/EntityDataGroupContainer'
 import EntityActionsPanel from "./entities/EntityActionsPanel";
 import {EntityListView} from "./entities/EntityListView";
 import {EntityTableContainer} from "./entities/EntityTableContainer";
+import {JSONEditor} from "./omapi/JSONEditor";
 import useSortEntities, {ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE, usePaginateEntities} from "./entities/sortEntities";
 
 const IpaPageComponents = {
-    withEntitySearch,
-    withEntityStore,
+    //higher order components
+    withEntityStore, withEntitySearch,
+    //components
     EntitySelectionPanel,
     EntityDataStack,
     EntityDataContainer,
@@ -21,8 +23,13 @@ const IpaPageComponents = {
     EntityActionsPanel, 
     EntityListView,
     EntityTableContainer,
-    useSortEntities, ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE,
-    usePaginateEntities
+    JSONEditor,
+    //custom hooks
+    useSortEntities, usePaginateEntities,
+    //static strings
+    ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE,
+
+
 }
 
 export default IpaPageComponents
