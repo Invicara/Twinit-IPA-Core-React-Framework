@@ -37,9 +37,10 @@ export const RelatePanel = ({selectedEntityType, selectedEntities, checkedEntiti
             />}
         </div>
         <div className={'add-button-container'}>
-            <GenericMatButton disabled={checkedEntities.every(e => !e.checked) || _.isEmpty(selectedEntities)}
-                              customClasses="add-button" onClick={() => relate(selectedEntities)}>
-                Add
+            <GenericMatButton
+                disabled={checkedEntities.every(e => !e.checked) || _.isEmpty(selectedEntities)}
+                customClasses="add-button" onClick={() => relate(selectedEntities)}>
+                    Add
             </GenericMatButton>
         </div></>
 }
