@@ -62,7 +62,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       let origEntity = action.showOnTable && !Array.isArray(entity) ? [{...entity}] : entity;
 
       let result = await action.doEntityAction(action.name, {new: newEntity, original: origEntity}, type);
-      if (result.success) {
+      if (result?.success) {
         if (action.onSuccess) {
           action.onSuccess(action.type, newEntity, result)
         }

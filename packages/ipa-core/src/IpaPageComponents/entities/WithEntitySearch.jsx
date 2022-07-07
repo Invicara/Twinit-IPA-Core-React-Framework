@@ -234,12 +234,15 @@ const withEntitySearch = WrappedComponent => {
         }
 
         doEntityAction = async (action, entityInfo, type) => {
-            if (!Object.keys(this.getCurrentConfig().actions).includes(action)) {
+            const entityConfig = this.props.getPerEntityConfig()[this.props.entitySingular]
+            const actions = entityConfig.actions;
+
+            if (!Object.keys(actions).includes(action)) {
                 console.error("Unconfigured action: '" + action + "' : No action taken!");
                 return undefined;
-            } else if (this.getCurrentConfig().actions[action].type === 'navigate') {
+            } else if (actions[action].type === 'navigate') {
                 let selectionInfo = {};
-                let navConfig = this.getCurrentConfig().actions[action]
+                let navConfig = actions[action]
 
                 if (navConfig.script) {
                     // if there's a pre-processing script then execute it
@@ -295,7 +298,7 @@ const withEntitySearch = WrappedComponent => {
 
                     selectionInfo['queryParams'] = {...this.state.queryParamsPerEntityType[this.props.entitySingular], selector : undefined};
                     selectionInfo['entityType'] = ((typeof type === 'string' ? type : type?.singular) || this.props.entitySingular);
-                    selectionInfo['script'] = this.props.getPerEntityConfig()[this.props.entitySingular].script;
+                    selectionInfo['script'] = entityConfig.script;
                     // entityInfo.original contains the checked table items...
                     if (_.isArray(entityInfo.original) && entityInfo.original.length > 0)
                         selectionInfo['selectedEntities'] = entityInfo.original.map(e => e._id)
@@ -308,11 +311,11 @@ const withEntitySearch = WrappedComponent => {
 
                 return {success: true};
 
-            } else if (this.getCurrentConfig().actions[action].type === 'fileDownload') {
+            } else if (actions[action].type === 'fileDownload') {
                 FileHelpers.downloadDocuments(Array.isArray(entityInfo.original) ? entityInfo.original : [entityInfo.original]);
                 return {success: true};
             } else {
-                let scriptName = this.getCurrentConfig().actions[action].script;
+                let scriptName = actions[action].script;
                 let result = await ScriptHelper.executeScript(scriptName, {entityInfo: entityInfo});
                 return result;
             }

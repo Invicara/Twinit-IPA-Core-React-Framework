@@ -434,7 +434,7 @@ class EntityModal extends React.Component {
     )
     this.setState({ working: false })
 
-    if (result.success) {
+    if (result?.success) {
       let mergedEntity = this.mergeEntityWithActionResult(
         this.props.action.name,
         newEntity,

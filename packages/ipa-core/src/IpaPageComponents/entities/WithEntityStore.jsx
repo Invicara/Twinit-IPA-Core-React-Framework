@@ -45,14 +45,17 @@ const withEntityStore = WrappedComponent => {
         //keeping this method name to avoid too much refactoring :)
         getPerEntityConfig = () => this._getPerEntityConfig(this.getCurrentConfig());
         _getPerEntityConfig =  _.memoize((currentConfig) => {
-            const {entityData, type, selectBy, data} = currentConfig;
+            const {entityData, type, selectBy, data, tableView, actions} = currentConfig;
             if (this.allowsMultipleEntityTypes()) {
                 const consolidatedConfig = _.mergeWith({...entityData}, {...selectBy}, (entityData, selectors, key) => ({
+                    ...currentConfig,
                     script: entityData.script,
                     entityFromModelScript: entityData.getEntityFromModel,
                     spaceMode: entityData.spaceMode,
                     selectors,
-                    data: data[key]
+                    data: data[key],
+                    tableView: tableView[key],
+                    actions: actions[key]
                 }));
                 let result = _.mapValues(consolidatedConfig, (entityConfig, entityName) =>
                     ({...entityConfig, ...type.find(t => t.singular === entityName)})
@@ -61,11 +64,14 @@ const withEntityStore = WrappedComponent => {
             } else {
                 return {
                     [type.singular]: {
+                        ...currentConfig,
                         script: entityData[type.singular].script,
                         entityFromModelScript: entityData[type.singular].getEntityFromModel,
                         spaceMode: entityData[type.singular].spaceMode,
                         selectors: selectBy,
                         data,
+                        actions,
+                        tableView,
                         singular: type.singular,
                         plural: type.plural
                     }
