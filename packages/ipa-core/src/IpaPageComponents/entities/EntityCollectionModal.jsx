@@ -145,7 +145,7 @@ export default class EntityCollectionModal extends React.Component {
         
         let result = await this.props.action.doEntityAction(this.props.action.name, entityAndCollInfo)
         
-        if (result.success) {
+        if (result?.success) {
           this.context.ifefShowModal(false);
           if (!!this.props.action.onSuccess) this.props.action.onSuccess(this.props.action.type, result.entity ? result.entity : this.props.entity, result);
         } else {
