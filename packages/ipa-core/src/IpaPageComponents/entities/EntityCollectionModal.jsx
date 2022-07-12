@@ -17,7 +17,6 @@
 
 import React from 'react';
 import _ from "lodash";
-import Select from 'react-select';
 import * as PropTypes from "prop-types";
 
 
