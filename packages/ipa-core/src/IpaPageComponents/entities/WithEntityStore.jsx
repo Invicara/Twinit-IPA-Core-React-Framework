@@ -53,9 +53,9 @@ const withEntityStore = WrappedComponent => {
                     entityFromModelScript: entityData.getEntityFromModel,
                     spaceMode: entityData.spaceMode,
                     selectors,
-                    data: data[key],
-                    tableView: tableView[key],
-                    actions: actions[key]
+                    data: data?.[key],
+                    tableView: tableView?.[key],
+                    actions: actions?.[key]
                 }));
                 let result = _.mapValues(consolidatedConfig, (entityConfig, entityName) =>
                     ({...entityConfig, ...type.find(t => t.singular === entityName)})
