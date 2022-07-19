@@ -47,6 +47,18 @@ const PROJECT_ID_KEY = 'ipaSelectedProjectId';
 class EntitySelectionPanel extends React.Component {
   constructor(props) {
     super(props)
+
+    let groups = [];
+    let lastSelectedGroupFromLocalStotage = getLastSelectedGroups(this.props)
+
+    if(!_.isEmpty(this.props.selectedGroups)) {
+      groups = this.props.selectedGroups
+    } else if(lastSelectedGroupFromLocalStotage !== null) {
+      groups = lastSelectedGroupFromLocalStotage
+    } else if(this.props.defaultGroups) {
+      groups = this.props.defaultGroups
+    }
+
     this.state = {
       entities: [],
       tree: {},
@@ -55,15 +67,12 @@ class EntitySelectionPanel extends React.Component {
       //FIXME Remove this props-to-state copy
       filters: this.props.selectedFilters || {},
       //domi: added brackets to below, otherwise babel got confused
-      groups: this.props.selectedGroups ??
-          (sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY)) !== null  ?
-              [sessionStorage.getItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY))] :
-              (this.props.defaultGroups ?? []))
+      groups
     }    
   }
 
-    //FIXME Remove this props-to-state copy
-    static getDerivedStateFromProps(props, state) {
+  //FIXME Remove this props-to-state copy
+  static getDerivedStateFromProps(props, state) {
 
     let derivedState = {...state}
     if (state.entities.length>0 && !listEquals(props.entities.map(e => e.id),state.entities.map(e => e.id))) {
@@ -97,16 +106,14 @@ class EntitySelectionPanel extends React.Component {
   }
 
   groupsChanged = (groups) => {
-    this.setState({groups})
+
+    if(_.isEmpty(groups)) {
+      groups = [...this.props.defaultGroups];
+    }
 
     const projectId = sessionStorage.getItem(PROJECT_ID_KEY);
-    if(groups.length){
-      //domi: please note that POP modifies the array
-      const lastGroupKey = (groups.slice(-1)).pop();
-      sessionStorage.setItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId, lastGroupKey);
-    }else{
-      sessionStorage.removeItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId);
-    }
+    
+    sessionStorage.setItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId, [groups]);
     
     this.props.onGroupOrFilterChange({groups})
   }
@@ -166,15 +173,15 @@ class EntitySelectionPanel extends React.Component {
 
     const allSelected = this.state.numFilteredEntities === this.props.selectedEntities.length
 
-    const selected = this.props.selectedGroups !== undefined ? this.props.selectedGroups : this.state.groups;
-    
+    const selectedGroups = getSelectedGroups(this.props)
+
     return (
       <div className="entity-tree-panel">
          <label className="title">Group By</label>
          <GroupControl className="entity-group"
                         styles={GROUP_SELECT_STYLES}
                         groups={this.getAvailableGroupValues()}
-                        selected={selected}
+                        selected={selectedGroups}
                         onChange={this.groupsChanged} />
         <label className="title">Filter By</label>
         <FilterControl className="entities-filter entities-filter--with-count"
@@ -187,7 +194,7 @@ class EntitySelectionPanel extends React.Component {
         </div>
         <FancyTreeControl className="entity-tree"
           name={this.props.name + "_tree"}
-          selectedGroups={this.state.groups}
+          selectedGroups={selectedGroups}
           renderLeafNode={this.props.leafNodeRenderer}
           renderBranchNode={this.props.branchNodeRenderer}
           onSelect={this.onSelectLeaves}
@@ -231,12 +238,42 @@ const getAvailableFilterValues = (entities, uniquePropNames, nonFilterableProps)
   return availableFilters
 }
 
+const getLastSelectedGroups = (props) => {
+  let stringifiedGroups = sessionStorage.getItem(
+    LAST_SELECTED_GROUP_KEY + props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY)
+  )
+
+  let groups = []
+
+  if(stringifiedGroups) {
+    groups = stringifiedGroups.split(',');
+  }
+
+  return groups;
+}
+
+const getSelectedGroups = (props) => {
+  let groups = [];
+  let lastSelectedGroupFromLocalStotage = getLastSelectedGroups(props)
+
+  if(!_.isEmpty(props.selectedGroups)) {
+    groups = props.selectedGroups
+  } else if(lastSelectedGroupFromLocalStotage !== null) {
+    groups = lastSelectedGroupFromLocalStotage
+  } else if(props.defaultGroups) {
+    groups = props.defaultGroups
+  }
+  
+  return groups;
+}
+
 const makeTree = (props, state) => {
     let filteredEntities = getFilteredEntitiesBy(props.entities, state.filters)
     let numFilteredEntities = filteredEntities.length
     let tree = {}
-    if (state.groups && state.groups.length)
-        tree = nestedGroup(filteredEntities, state.groups, (a, p) => a.properties[p] ? a.properties[p].val : null)
+    let groups = getSelectedGroups(props);
+    if (groups && groups.length)
+        tree = nestedGroup(filteredEntities, groups, (a, p) => a.properties[p] ? a.properties[p].val : null)
     else
         tree = filteredEntities
     return {tree, numFilteredEntities}
