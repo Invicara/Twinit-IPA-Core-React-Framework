@@ -48,12 +48,7 @@ const treeSearchReducer = (state, action) => {
 
 const initialTreeState = {reloading: false, pristine: true, nodeIndex : {}};
 
-export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken }) => {
-
-    //A flat array containing all the nodes and their relevant information
-    //below moved to reducer
-    //const [nodeIndex, setNodeIndex] = useState({});
-    //const [reloading, setReloading] = useState(false);
+export const TreeSearch = ({ currentValue = {}, currentState, onFetch, shouldSkipFetch, treeLevels, display, reloadToken }) => {
 
     const [treeState, dispatch] = useReducer(treeSearchReducer, initialTreeState);
 
@@ -61,15 +56,14 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
 
     useEffect(() => {
         dispatch({type: 'reloading'});
-        const initialTree = treeState.pristine && currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
+        // I removed the use of an initialTree as it prevented the proper reloading of the tree on reloadToken change.
+        // const initialTree = treeState.pristine && currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
         try {
-            refreshTree(initialTree).then((nodeIndex) => {
-                //TODO: shouldSkipFetch used in newNavigator, when switching betweeen tabs, is this the best approach?
-                const shouldSkipFetch = !_.isEmpty(initialTree);
+            // refreshTree(initialTree).then((nodeIndex) => {
+            refreshTree().then((nodeIndex) => {
                 dispatch({type: 'reloaded',nodeIndex: nodeIndex});
-                if(!shouldSkipFetch) {
-                    onFetch(undefined, getFilteringNodes(nodeIndex), nodeIndex);
-                }
+                //onFetching, we fetch the current value in queryParams
+                onFetch(undefined, currentValue, nodeIndex);
             })
         } catch (e) {
             dispatch({type: 'reloaded'});

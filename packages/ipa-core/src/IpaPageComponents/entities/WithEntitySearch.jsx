@@ -37,7 +37,8 @@ const withEntitySearch = WrappedComponent => {
             const entityType = queryParamsPartial.entityType || this.props.entitySingular;
             const current = this.state.queryParamsPerEntityType[entityType] || {};
             const merged = {...current, ...queryParamsPartial};
-            this.setState({queryParamsPerEntityType : {...this.state.queryParamsPerEntityType, [entityType] : merged}}, callback || _.noop);
+            let queryParamsPerEntityType = {...this.state.queryParamsPerEntityType, [entityType] : merged}
+            this.setState({queryParamsPerEntityType}, callback || _.noop);
             //no need to send that up to state, as selectionInfo.queryParams will have all the info
             //this.props.setQueryParams(queryParamsPartial);
         }

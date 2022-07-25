@@ -96,7 +96,7 @@ class FilterControl extends React.Component {
   }
 
   componentDidUpdate(prevProps){
-    if(!_.isEmpty(prevProps.filters) && _.isEmpty(this.props.filters)){
+    if(!_.isEqual(prevProps.filters, this.props.filters)){
       this.onFilterChange(this.props.filters)
     }
   }

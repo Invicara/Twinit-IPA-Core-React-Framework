@@ -45,7 +45,7 @@ const withEntityStore = WrappedComponent => {
         //keeping this method name to avoid too much refactoring :)
         getPerEntityConfig = () => this._getPerEntityConfig(this.getCurrentConfig());
         _getPerEntityConfig =  _.memoize((currentConfig) => {
-            const {entityData, type, selectBy, data, tableView, actions} = currentConfig;
+            const {entityData, entitySelectionPanel, type, selectBy, data, tableView, actions} = currentConfig;
             if (this.allowsMultipleEntityTypes()) {
                 const consolidatedConfig = _.mergeWith({...entityData}, {...selectBy}, (entityData, selectors, key) => ({
                     ...currentConfig,
@@ -53,6 +53,7 @@ const withEntityStore = WrappedComponent => {
                     entityFromModelScript: entityData.getEntityFromModel,
                     spaceMode: entityData.spaceMode,
                     selectors,
+                    entitySelectionPanel: entitySelectionPanel?.[key],
                     data: data?.[key],
                     tableView: tableView?.[key],
                     actions: actions?.[key]
