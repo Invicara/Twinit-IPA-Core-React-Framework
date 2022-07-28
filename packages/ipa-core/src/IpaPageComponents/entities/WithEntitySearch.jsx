@@ -330,7 +330,6 @@ const withEntitySearch = WrappedComponent => {
                 console.error(reason);
                 return Promise.reject();
             }
-            console.log("getFetcher", runScriptOptions)
             await this.props.fetchEntities(script, selector, value, runScriptOptions);
             //in case of initial query triggered by this page, this callback will still use old query
             if(onInitialFetchComplete)onInitialFetchComplete();
