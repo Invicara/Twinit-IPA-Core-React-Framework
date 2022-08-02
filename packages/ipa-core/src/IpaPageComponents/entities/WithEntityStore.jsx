@@ -53,6 +53,7 @@ const withEntityStore = WrappedComponent => {
                     entityFromModelScript: entityData.getEntityFromModel,
                     spaceMode: entityData.spaceMode,
                     selectors,
+                    entitySelectionPanel: entitySelectionPanel?.[key],
                     data: data?.[key],
                     tableView: tableView?.[key],
                     actions: actions?.[key]

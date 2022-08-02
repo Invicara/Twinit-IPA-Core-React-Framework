@@ -1,25 +1,20 @@
-import React, {useEffect, useState, useReducer} from "react";
-import FancyTreeControl from "./FancyTreeControl";
-import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel";
+import React, {useEffect, useReducer} from "react";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
-import {produce} from "immer";
-import _, { set } from "lodash";
-import {uid} from 'uid';
+import _ from "lodash";
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
-import {parseNodeName, parseNode, stringifyNode} from "./private/tree";
+import {parseNodeNameWithParent, stringifyNodeWithParent} from "./private/tree";
 import ReactiveTreeControl from "./ReactiveTreeControl";
 import './TreeSearch.scss';
 
 const treeControlLeafNodeRenderer = (group) => {
-    return <div>{parseNodeName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
+    return <div>{parseNodeNameWithParent(group.name).childNodeInfo.displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
 }
 
 const treeControlBranchNodeRenderer = (group) => {
     const childCount = group.count;
-    
     return (
         <span>            
-            {parseNodeName(group.name).displayName}
+            {parseNodeNameWithParent(group.name).childNodeInfo.displayName}
             {!!childCount && <span className="count" style={{fontSize: "0.8em"}}>{childCount}</span>}
           </span>
     )
@@ -48,28 +43,21 @@ const treeSearchReducer = (state, action) => {
 
 const initialTreeState = {reloading: false, pristine: true, nodeIndex : {}};
 
-export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken }) => {
-
-    //A flat array containing all the nodes and their relevant information
-    //below moved to reducer
-    //const [nodeIndex, setNodeIndex] = useState({});
-    //const [reloading, setReloading] = useState(false);
+export const TreeSearch = ({ currentValue = {}, currentState, onFetch, shouldSkipFetch, treeLevels, display, reloadToken }) => {
 
     const [treeState, dispatch] = useReducer(treeSearchReducer, initialTreeState);
 
-    let countNodesByKey = new Map();
-
     useEffect(() => {
         dispatch({type: 'reloading'});
-        const initialTree = treeState.pristine && currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
+        // cesar:
+        // I removed the use of an initialTree as it prevented the proper reloading of the tree on reloadToken change.
+        // const initialTree = treeState.pristine && currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
         try {
-            refreshTree(initialTree).then((nodeIndex) => {
-                //TODO: shouldSkipFetch used in newNavigator, when switching betweeen tabs, is this the best approach?
-                const shouldSkipFetch = !_.isEmpty(initialTree);
+            // refreshTree(initialTree).then((nodeIndex) => {
+            refreshTree().then((nodeIndex) => {
                 dispatch({type: 'reloaded',nodeIndex: nodeIndex});
-                if(!shouldSkipFetch) {
-                    onFetch(undefined, getFilteringNodes(nodeIndex), nodeIndex);
-                }
+                //onFetching, we fetch entities described in the currentValue in queryParams
+                onFetch(undefined, currentValue, nodeIndex);
             })
         } catch (e) {
             dispatch({type: 'reloaded'});
@@ -119,9 +107,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
     const getPreviousValues = (parentNames) => {
 
         let keys = treeLevels.map(tl => tl.property);
-        let values = parentNames.map(name => parseNodeName(name)?.displayName);
-
-
+        let values = parentNames.map(name => parseNodeNameWithParent(name)?.childNodeInfo?.displayName);
         return _.zipObject(keys, values)
     }
 
@@ -197,31 +183,43 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
 
     async function getLevelNodes(level, parentNames = []) {
 
+
         let input = getPreviousValues(parentNames);
 
-        const rawNodes = await ScriptHelper.executeScript(treeLevels[level].script,
-            parentNames ? {input} : undefined)
+        let rawNodes = await ScriptHelper.executeScript(
+            treeLevels[level].script,
+            parentNames ? {input} : undefined
+        )
+
+        /**
+         *  This assumes a tree no deeper than two levels. Ultimately, we need to get persistent ids from the platform for each node, 
+         *  or to improve the stringifying/parsing functions.
+         */
+
+        const parentBaseName = level !== 0 ? parentNames[parentNames.length - 1] : undefined
+        
+        // const parentInfo = {displayName: input.Level, level:}
 
         const levelNodes = rawNodes.map((node, position) => {
 
 
-            const displayName = node.name ? node.name : node;
-            const nameKey = stringifyNode({displayName: displayName, level, position});
-
-            // create unique (but repeatable on each re-render) id for the node
-            // to also allow it to work with query navigation
-            let idSuffixPart = countNodesByKey.get(nameKey) || 0;
-            let id = `${nameKey}-${++idSuffixPart}`;
-            countNodesByKey.set(nameKey,idSuffixPart);
+            const displayName = node.name || node;
+            const nameKey = stringifyNodeWithParent(parentBaseName, {displayName: displayName, level, position});
+            
+            // // create unique (but repeatable on each re-render) id for the node
+            // // to also allow it to work with query navigation
+            // let idSuffixPart = (countNodesByKey.get(nameKey) || 0) + 1;
+            // let id = `${nameKey}-${idSuffixPart}`;
+            // countNodesByKey.set(nameKey,idSuffixPart);
 
             // we cannot use random ids on each render due to navigation issues
             // we need to wait for a persistent ids
             //let id = uid();
 
             if(node.name) {
-                return {...node, id: id, name: nameKey}
+                return {...node, id: nameKey, name: nameKey}
             } else {
-                return {id: id, name: nameKey, childCount: 0}
+                return {id: nameKey, name: nameKey, childCount: 0}
             }
         });
         return levelNodes;
@@ -287,8 +285,12 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
 
     async function handleNodeIndexChange(nodeIndex) {
 
+        const childrenLoaded = (childrenIds, nodeIndex) => {
+            return childrenIds.every(childrenId => _.keys(nodeIndex).includes(childrenId))
+        }
+
         const childrenPromises = _.values(nodeIndex).map((node) => {
-            let childrenNotLoaded = _.isEqual(node.children, node.childrenNames);
+            let childrenNotLoaded = !childrenLoaded(node.children, nodeIndex);
             if (node.expanded && childrenNotLoaded) {
                 return getChildrenAndParent(node.id, nodeIndex, currentValue)
             } else {

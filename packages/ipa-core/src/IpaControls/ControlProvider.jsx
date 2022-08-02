@@ -6,7 +6,7 @@ import {ScriptedLinkedSelects} from "./EnhancedScriptedLinkedSelects";
 import {CreatableScriptedSelects} from "./CreatableScriptedSelects";
 import {queryFromFilter} from "./private/filter";
 import _ from "lodash";
-import {parseNodeName, parseNode} from "./private/tree";
+import {parseNode, parseNodeNameWithParent} from "./private/tree";
 
 const controlsMap = {
     '<<TEXT_SEARCH>>': TextSearch,
@@ -57,12 +57,12 @@ const getTreeSelectQuery = (selector, filteringNodes) => {
                 .map(node => !node.isLeaf?
                     ({
                         "$and": [
-                            { [`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeName(node.name).displayName },
+                            { [`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeNameWithParent(node.name).childNodeInfo.displayName },
                             ...asOptional(getQueryNodesFor(node.children), "$or")
                         ]
                     }) :
                     ({
-                        [`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeName(node.name).displayName
+                        [`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeNameWithParent(node.name).childNodeInfo.displayName
                     })
                 )
         }

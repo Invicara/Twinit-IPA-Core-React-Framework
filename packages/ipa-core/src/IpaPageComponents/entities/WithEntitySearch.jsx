@@ -37,7 +37,8 @@ const withEntitySearch = WrappedComponent => {
             const entityType = queryParamsPartial.entityType || this.props.entitySingular;
             const current = this.state.queryParamsPerEntityType[entityType] || {};
             const merged = {...current, ...queryParamsPartial};
-            this.setState({queryParamsPerEntityType : {...this.state.queryParamsPerEntityType, [entityType] : merged}}, callback || _.noop);
+            let queryParamsPerEntityType = {...this.state.queryParamsPerEntityType, [entityType] : merged}
+            this.setState({queryParamsPerEntityType}, callback || _.noop);
             //no need to send that up to state, as selectionInfo.queryParams will have all the info
             //this.props.setQueryParams(queryParamsPartial);
         }
@@ -329,7 +330,6 @@ const withEntitySearch = WrappedComponent => {
                 console.error(reason);
                 return Promise.reject();
             }
-            console.log("getFetcher", runScriptOptions)
             await this.props.fetchEntities(script, selector, value, runScriptOptions);
             //in case of initial query triggered by this page, this callback will still use old query
             if(onInitialFetchComplete)onInitialFetchComplete();
