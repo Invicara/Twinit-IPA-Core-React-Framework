@@ -1,4 +1,4 @@
-import React, {useEffect, useReducer} from "react";
+import React, {useEffect, useReducer, useRef} from "react";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import _ from "lodash";
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
@@ -23,7 +23,7 @@ const treeControlBranchNodeRenderer = (group) => {
 const treeSearchReducer = (state, action) => {
     switch (action.type) {
         case 'reloading':
-            return {...state, reloading: true, pristine: false};
+            return {...state, reloading: true};
         case 'reloaded':
             return {...state, reloading: false, nodeIndex: action.nodeIndex};
         case 'update_node':
@@ -37,32 +37,34 @@ const treeSearchReducer = (state, action) => {
                 }
             }
         default:
-            return {...state, reloading: false, pristine: false, nodeIndex: action.nodeIndex ? action.nodeIndex : state.nodeIndex};
+            return {...state, reloading: false, nodeIndex: action.nodeIndex ? action.nodeIndex : state.nodeIndex};
     }
 }
 
-const initialTreeState = {reloading: false, pristine: true, nodeIndex : {}};
+const initialTreeState = {reloading: false, nodeIndex : {}};
 
-export const TreeSearch = ({ currentValue = {}, currentState, onFetch, shouldSkipFetch, treeLevels, display, reloadToken }) => {
+export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken }) => {
 
     const [treeState, dispatch] = useReducer(treeSearchReducer, initialTreeState);
 
+    //we will keep track of those dependencies, to determine if it's first render in an effect
+    const reloadTokenLatest = useRef(reloadToken);
+    const treeLevelsLatest = useRef(treeLevels);
+
     useEffect(() => {
         dispatch({type: 'reloading'});
-        // cesar:
-        // I removed the use of an initialTree as it prevented the proper reloading of the tree on reloadToken change.
-        // const initialTree = treeState.pristine && currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
-        try {
-            // refreshTree(initialTree).then((nodeIndex) => {
-            refreshTree().then((nodeIndex) => {
-                dispatch({type: 'reloaded',nodeIndex: nodeIndex});
-                //onFetching, we fetch entities described in the currentValue in queryParams
-                onFetch(undefined, currentValue, nodeIndex);
-            })
-        } catch (e) {
-            dispatch({type: 'reloaded'});
+        //if it's initial render, we must know of the fact, as the tree might render from memory instead of doing a fetch
+        //use case: switching between entity tabs
+        const initialRefresh = reloadTokenLatest.current == reloadToken /*&& treeLevelsLatest.current == treeLevels*/;
+        const preLoadedTree = currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
+        if(initialRefresh && !_.isEmpty(preLoadedTree)){
+            console.log("Rendering pre-loaded tree");
+            dispatch({type: 'reloaded',nodeIndex: preLoadedTree});
+        } else {
+            console.log("Will fetch tree data");
+            fetchTree();
         }
-    }, [treeLevels,reloadToken])
+    }, [treeLevels,reloadToken]);
 
 
     useEffect(() => {
@@ -84,6 +86,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, shouldSki
 
 
     async function getTree() {
+
         const level = 0;
         const parentNames = undefined;
         const parents = undefined;
@@ -99,9 +102,23 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, shouldSki
         return newNodeIndex;
     };
 
-    async function refreshTree(initialTree) {
-        let newNodeIndex = _.isEmpty(initialTree) ? await getTree() : initialTree;
+    async function refreshTree() {
+        let newNodeIndex = await getTree();
         return newNodeIndex;
+    }
+
+    async function fetchTree() {
+        reloadTokenLatest.current = reloadToken;
+        treeLevelsLatest.current = treeLevels;
+        try {
+            refreshTree().then((nodeIndex) => {
+                dispatch({type: 'reloaded',nodeIndex: nodeIndex});
+                //onFetching, we fetch entities described in the currentValue in queryParams
+                onFetch(undefined, currentValue, nodeIndex);
+            })
+        } catch (e) {
+            dispatch({type: 'reloaded'});
+        }
     }
 
     const getPreviousValues = (parentNames) => {
