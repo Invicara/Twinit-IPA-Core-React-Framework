@@ -76,11 +76,18 @@ const getFormattedDateFromTimestamp = (ts, type) => {
 }
 
 class FilterControl extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filters: Object.assign({}, this.props.filters),
+      completeFilters: Object.assign({}, this.props.filters),
+      key: getRandomString("filter-")
+    }
+  }
 
-  state = {
-    filters: Object.assign({}, this.props.filters),
-    completeFilters: Object.assign({}, this.props.filters),
-    key: getRandomString("filter-")
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let derivedState = {...prevState, filters: Object.assign({}, nextProps.filters),completeFilters: Object.assign({}, nextProps.filters)};
+    return derivedState;
   }
 
   onFilterChange = (filters) => {
