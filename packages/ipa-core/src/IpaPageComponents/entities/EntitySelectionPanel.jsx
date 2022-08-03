@@ -149,16 +149,19 @@ class EntitySelectionPanel extends React.Component {
       <div className="entity-tree-panel">
          <label className="title">Group By</label>
          <GroupControl className="entity-group"
+                        entitySingular={this.props.entitySingular}
                         styles={GROUP_SELECT_STYLES}
                         groups={this.getAvailableGroupValues()}
                         selected={selectedGroups}
                         onChange={this.groupsChanged} />
         <label className="title">Filter By</label>
         <FilterControl className="entities-filter entities-filter--with-count"
+                       entitySingular={this.props.entitySingular}
                        styles={FILTER_SELECT_STYLES}
-                       onChange={this.filtersChanged}
                        filters={selectedFilters}
-                       availableFilters={this.state.availableFilters}/>
+                       availableFilters={this.state.availableFilters}
+                       onChange={this.filtersChanged}
+                       />
         <div className="entity-count">
             <span>{countMessage}</span>
         </div>

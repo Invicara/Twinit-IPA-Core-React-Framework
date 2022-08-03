@@ -55,13 +55,11 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
         dispatch({type: 'reloading'});
         //if it's initial render, we must know of the fact, as the tree might render from memory instead of doing a fetch
         //use case: switching between entity tabs
-        const initialRefresh = reloadTokenLatest.current == reloadToken /*&& treeLevelsLatest.current == treeLevels*/;
-        const preLoadedTree = currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
+        const initialRefresh = reloadTokenLatest.current == reloadToken && treeLevelsLatest.current == treeLevels;
+        const preLoadedTree = currentState && !_.isEmpty(currentState) ? {...currentState} : {...treeState.nodeIndex};
         if(initialRefresh && !_.isEmpty(preLoadedTree)){
-            console.log("Rendering pre-loaded tree");
             dispatch({type: 'reloaded',nodeIndex: preLoadedTree});
         } else {
-            console.log("Will fetch tree data");
             fetchTree();
         }
     }, [treeLevels,reloadToken]);
