@@ -43,7 +43,7 @@ const treeSearchReducer = (state, action) => {
 
 const initialTreeState = {reloading: false, nodeIndex : {}};
 
-export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken }) => {
+export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken, fetchAfterTreeLoad = false}) => {
 
     const [treeState, dispatch] = useReducer(treeSearchReducer, initialTreeState);
 
@@ -59,9 +59,8 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
         const preLoadedTree = currentState && !_.isEmpty(currentState) ? {...currentState} : {...treeState.nodeIndex};
         if(initialRefresh && !_.isEmpty(preLoadedTree)){
             dispatch({type: 'reloaded',nodeIndex: preLoadedTree});
-        } else {
-            fetchTree();
         }
+        fetchTree();
     }, [treeLevels,reloadToken]);
 
 
@@ -111,8 +110,13 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
         try {
             refreshTree().then((nodeIndex) => {
                 dispatch({type: 'reloaded',nodeIndex: nodeIndex});
-                //onFetching, we fetch entities described in the currentValue in queryParams
-                onFetch(undefined, currentValue, nodeIndex);
+                //if currentValue is empty, means nothing is selected on the tree == don't do FETCH, as it will overwrite redux state done by other components
+                //deselecting is handled by a different call to 'onFetch' inside handleNodeIndexChange()
+                //if the tree is part of the withEntitySearch component (==redux entity store) initial fetch is handled by onLoadComplete()
+                //if the tree is not part of the withEntitySearch, please use 'fetchAfterTreeLoad' flag to activate initial fetch
+                if(fetchAfterTreeLoad) {
+                    onFetch(undefined, currentValue, nodeIndex);
+                }
             })
         } catch (e) {
             dispatch({type: 'reloaded'});
@@ -338,7 +342,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
                 renderBranchNode={treeControlBranchNodeRenderer}
                 nodeIndex={treeState.nodeIndex}
                 onNodeIndexChange={handleNodeIndexChange}
-            /> : <p>Loading tree...</p>
+            /> : <p className="tree-search__loading">Loading tree...</p>
         }
     </div>
     

@@ -4,6 +4,7 @@ import EntitySelectionPanel from './entities/EntitySelectionPanel'
 import {TreeSelectMode} from './entities/EntitySelectionPanel'
 import EntityDataStack from './entities/EntityDataStack'
 import * as EntityDataContainer from './entities/EntityDataContainer'
+import {useEntityData} from './entities/EntityDataContainer'
 import * as EntityDataGroupContainer from './entities/EntityDataGroupContainer'
 import EntityActionsPanel from "./entities/EntityActionsPanel";
 import {EntityListView} from "./entities/EntityListView";
@@ -16,6 +17,7 @@ const IpaPageComponents = {
     EntityDataStack,
     EntityDataContainer,
     EntityDataGroupContainer,
+    useEntityData,
     TreeSelectMode,
     EntityActionsPanel, 
     EntityListView,

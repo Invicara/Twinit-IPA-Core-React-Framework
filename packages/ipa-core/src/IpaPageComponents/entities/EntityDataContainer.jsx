@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
@@ -13,13 +13,13 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
   const [fetching, setFetching] = useState(false)
   const [error, setError] = useState(null)
   const [data, setData] = useState(null)
-  const [myInterval, setMyInterval] = useState(null)
   const [reloadToken, setReloadToken] = useState(false)
+  const myIntervals = useRef([])
 
   const getContainerData = async (collapsable, entity, config, getData, dataGroupName) => {
+    reset();
     try {
       setFetching(true)
-
 
       if(!entity) {
         throw new Error("No entity data")
@@ -42,23 +42,23 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
   }
 
   useEffect(() => {
-    ;(async () => {
-      await getContainerData(collapsable, entity, config, getData, dataGroupName)
 
-      if (config?.refreshInterval) {
-        if (config.refreshInterval < config.scriptExpiration)
-          console.warn(
-            'Refresh Interval is less than Script Expiration which will cause cached data to be used instead fetching new data!'
-          )
-        let myInterval = setInterval(() => {
-          getContainerData(collapsable, entity, config, getData, dataGroupName)
-        }, config.refreshInterval * 60000)
-        setMyInterval(myInterval)
+    const initialDataFetchPromise = getContainerData(collapsable, entity, config, getData, dataGroupName);
+
+    let interval = undefined;
+    if (config?.refreshInterval) {
+      if (config.refreshInterval < config.scriptExpiration) {
+        console.warn('Refresh Interval is less than Script Expiration which will cause cached data to be used instead fetching new data!')
       }
-    })()
+      interval = setInterval(() => {
+        const intervalDataFetchPromise = getContainerData(collapsable, entity, config, getData, dataGroupName);
+      }, config.refreshInterval * 60000)
+
+      myIntervals.current.push(interval);
+    }
 
     return () => {
-      if (myInterval) clearInterval(myInterval)
+      if (interval) clearInterval(interval)
     }
   }, [entity, dataGroupName, reloadToken])
 
@@ -67,10 +67,11 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
   }
 
   const reset = () => {
+    myIntervals.current.forEach(interval=>clearInterval(interval));
     setFetching(false)
     setData(null)
-    setMyInterval(null)
-    setReloadToken(false)
+    setError(null)
+    //setReloadToken(false)
   }
 
   return {data, fetching, error, reset, reload}
@@ -131,6 +132,7 @@ const EntityDataContainer = props => {
   )
 }
 
+/*
 const mapStateToProps = state => ({})
 
 const mapDispatchToProps = {
@@ -140,3 +142,6 @@ const mapDispatchToProps = {
 export default compose(connect(mapStateToProps, mapDispatchToProps))(
   EntityDataContainer
 )
+*/
+
+export default EntityDataContainer

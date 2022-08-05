@@ -224,7 +224,7 @@ const getSelectedGroups = (props) => {
 }
 
 const getSelectedFilters = (props) => {
-  let filters = [];
+  let filters = {};
 
   if(!_.isEmpty(props.selectedFilters)) {
     filters = props.selectedFilters
