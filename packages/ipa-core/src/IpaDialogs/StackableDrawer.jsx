@@ -45,11 +45,11 @@ export const StackableDrawer = ({level = 1, iconKey, children, onOpen=_.noop, on
 
   return <div ref={drawer} className={clsx('drawer',anchor=='right' && 'drawer-anchor-right')} style={{width: stableWidth}} >
     {iconKey && <div style={{top: `${20 + toggleHeight * (level - 1)}px`}}
-         className={clsx({'drawer-toggle': true, 'drawer-toggle-open': open})} onClick={toggleOpen}>
-           {tooltip ? <div className="dbm-tooltip">
-              <i className={clsx('fas',open && anchor=='right' ? "fa-arrow-right" : iconKey)}/>
-                <span className="dbm-tooltiptext">{tooltip}</span>
-            </div> : <i className={`fas ${iconKey}`}/>}
+                     className={clsx({'drawer-toggle': true, 'drawer-toggle-open': open})} onClick={toggleOpen}>
+      {tooltip ? <div className="dbm-tooltip">
+        <i className={clsx('fas',open && anchor=='right' ? "fa-arrow-right" : iconKey)}/>
+        <span className="dbm-tooltiptext">{tooltip}</span>
+      </div> : <i className={`fas ${iconKey}`}/>}
     </div>}
     <div className={clsx({'drawer-content': true, 'drawer-content-open': open})}>
       <div style={{minWidth: contentMinWidth, transitionDelay: '1s'}}>{children}</div>

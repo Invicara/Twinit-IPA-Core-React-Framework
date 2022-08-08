@@ -66,41 +66,41 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       if(this.props.location.search !== prevProps.location.search){
         this.onNavigated();
       }
-     //if user switches project while on the page reload page
+      //if user switches project while on the page reload page
       if (!this.state.isPageLoading && !!this.state.project && (this.state.project._id !== this.props.selectedItems.selectedProject._id))
-          this.props.history.push('/');
+        this.props.history.push('/');
 
       //if user switches userCOnfig while on the page reload page
       if (!this.state.isPageLoading && !!this.state.userConfig && (this.state.userConfig._id !== this.props.userConfig._id))
-          this.props.history.push('/');
+        this.props.history.push('/');
     }
 
     async _loadPageData() {
 
       this.setState({isLoading: true, isPageLoading: true});
-      
+
       let { handlers } = this.props.userConfig;
       let handler = await produce(this.props.actions.getCurrentHandler(), async handler => {
 
         //put selectBy info on handler if configured at the userConfig level and not the page level
         //and if selectBy config is not provided on the handler already, this allows to override selectBys at a page level
         if (handler.config && !handler.config.selectBy && handler.config.type && this.props.userConfig.entitySelectConfig) {
-            if (!Array.isArray(handler.config.type) && this.props.userConfig.entitySelectConfig[handler.config.type.singular]) {
+          if (!Array.isArray(handler.config.type) && this.props.userConfig.entitySelectConfig[handler.config.type.singular]) {
 
-              //if the page is expecting only one selectBy config
-              handler.config = {...handler.config, selectBy: this.props.userConfig.entitySelectConfig[handler.config.type.singular]}
+            //if the page is expecting only one selectBy config
+            handler.config = {...handler.config, selectBy: this.props.userConfig.entitySelectConfig[handler.config.type.singular]}
 
+          }
+          else {
+            //if the page is expecting multiple selectByConfigs filter to the ones it expects
+            handler.config = {...handler.config,
+              selectBy: _.fromPairs(
+                  handler.config.type.filter(t => !!this.props.userConfig.entitySelectConfig[t.singular])
+                      .map(t => [t.singular, this.props.userConfig.entitySelectConfig[t.singular]])
+              )
             }
-            else {
-              //if the page is expecting multiple selectByConfigs filter to the ones it expects
-              handler.config = {...handler.config,
-                                selectBy: _.fromPairs(
-                                  handler.config.type.filter(t => !!this.props.userConfig.entitySelectConfig[t.singular])
-                                      .map(t => [t.singular, this.props.userConfig.entitySelectConfig[t.singular]])
-                                  )
-                }
 
-            }
+          }
         }
 
         const handlerHasConfig = !!handler?.config;
@@ -112,14 +112,14 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
             handler.config = {...handler.config,
               data: _.fromPairs(
-                handler.config.type
-                  .filter(t => !!this.props.userConfig.entityDataConfig[t.singular])
-                  .map(t => {
-                    const handlerData = handler?.config?.data?.[t.singular]
-                    const defaultData = this.props.userConfig.entityDataConfig[t.singular];
-                    let data = handlerData || defaultData;
-                    return [t.singular, data]
-                  })
+                  handler.config.type
+                      .filter(t => !!this.props.userConfig.entityDataConfig[t.singular])
+                      .map(t => {
+                        const handlerData = handler?.config?.data?.[t.singular]
+                        const defaultData = this.props.userConfig.entityDataConfig[t.singular];
+                        let data = handlerData || defaultData;
+                        return [t.singular, data]
+                      })
               )
             }
           } else {
@@ -133,13 +133,13 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         let hasActions = !!handler.actionHandlers && !!handler.actionHandlers.length;
 
         if (hasActions) {
-            let actions = [];
+          let actions = [];
 
-            handler.actionHandlers.forEach((action) => {
-                actions.push({title: handlers[action].actionTitle, onClick: (e) => this.handleAction(action)});
-            });
+          handler.actionHandlers.forEach((action) => {
+            actions.push({title: handlers[action].actionTitle, onClick: (e) => this.handleAction(action)});
+          });
 
-            this.context.ifefUpdatePopover(<PopoverMenuView actions={actions}/>);
+          this.context.ifefUpdatePopover(<PopoverMenuView actions={actions}/>);
 
         } else {
           this.context.ifefUpdatePopover(null);
@@ -171,10 +171,10 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
     }
 
     handleAction(handler) {
-        this.context.ifefShowPopover(false);
-        const {match, history, userConfig} = this.props;
+      this.context.ifefShowPopover(false);
+      const {match, history, userConfig} = this.props;
 
-        history.push(`${match.path}${userConfig.handlers[handler].path}`);
+      history.push(`${match.path}${userConfig.handlers[handler].path}`);
     }
 
     onLoadComplete() {
@@ -261,43 +261,43 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       if (this.props.location.search) {
         let rawParams = this.props.location.search.split('?')[1];
         // using decoder to parse boolean and int https://github.com/ljharb/qs/issues/91#issuecomment-437926409
-        // qs will also limit specifying indices in an array to a maximum index of 20. Any array members with an 
-        // index of greater than 20 will instead be converted to an object with the index as the key. 
+        // qs will also limit specifying indices in an array to a maximum index of 20. Any array members with an
+        // index of greater than 20 will instead be converted to an object with the index as the key.
         // This is needed to handle cases when someone sent, for example, a[999999999] and it will take significant time to iterate over this huge array.
-        // This limit can be overridden by passing an arrayLimit option: We are going to use an arraylimit of 100 to cover almost every case, 
+        // This limit can be overridden by passing an arrayLimit option: We are going to use an arraylimit of 100 to cover almost every case,
         // if we are still finding more bugs on this parse, we will need to implement another solution for these arrays
 
         let queryParams = qs.parse(rawParams, { arrayLimit: 100,
-              decoder(str, decoder, charset) {
-                    const strWithoutPlus = str.replace(/\+/g, ' ');
-                    if (charset === 'iso-8859-1') {
-                      // unescape never throws, no try...catch needed:
-                      return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
-                    }
-        
-                    if (/^(\d+|\d*\.\d+)$/.test(str)) {
-                      return parseFloat(str)
-                    }
-        
-                    const keywords = {
-                      true: true,
-                      false: false,
-                      null: null,
-                      undefined,
-                    }
-                    if (str in keywords) {
-                      return keywords[str]
-                    }
-        
-                    // utf-8
-                    try {
-                      return decodeURIComponent(strWithoutPlus);
-                    } catch (e) {
-                      return strWithoutPlus;
-                    }
-                  }
+          decoder(str, decoder, charset) {
+            const strWithoutPlus = str.replace(/\+/g, ' ');
+            if (charset === 'iso-8859-1') {
+              // unescape never throws, no try...catch needed:
+              return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
+            }
+
+            if (/^(\d+|\d*\.\d+)$/.test(str)) {
+              return parseFloat(str)
+            }
+
+            const keywords = {
+              true: true,
+              false: false,
+              null: null,
+              undefined,
+            }
+            if (str in keywords) {
+              return keywords[str]
+            }
+
+            // utf-8
+            try {
+              return decodeURIComponent(strWithoutPlus);
+            } catch (e) {
+              return strWithoutPlus;
+            }
+          }
         })
-        
+
         //if the query contains no id and a value which is a string, turn the value into an array
         //in this case its a list of ids to fetch
         if (queryParams.query && !queryParams.query.id && queryParams.query.id !== 0 && queryParams.query.value) {
@@ -305,13 +305,13 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
             queryParams.query.value = queryParams.query.value.split(',');
           }
         }
-        
+
         if (queryParams.selectedEntities) {
           if (typeof(queryParams.selectedEntities)=="string") {
             queryParams.selectedEntities = queryParams.selectedEntities.split(',');
           }
         }
-        
+
         if (!this.isSelectionInfoValid(queryParams)) {
           console.error('Navigation occurred with invalid query parameters!');
           this.setState({queryParams: {}});
@@ -326,7 +326,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
           delete queryParams.query.type
         }
-        
+
 
         console.log("on nav qp", queryParams)
 

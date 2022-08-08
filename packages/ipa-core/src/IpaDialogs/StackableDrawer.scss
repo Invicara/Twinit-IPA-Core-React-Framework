@@ -1,42 +1,41 @@
 $border-grey: #EAEAEA;
 
-.drawer{
-    display: flex;
-    position: relative;
-    transition: width 1s, min-width 1s;
+.drawer {
+  display: flex;
+  position: relative;
+  transition: width 1s, min-width 1s;
+  height: 100%;
+
+  .handle{
+    width: 2px;
     height: 100%;
-  
-    .handle{
-      width: 2px;
-      height: 100%;
-      cursor: col-resize;
-    }
-  
+    cursor: col-resize;
   }
-  
-  .drawer-content{
+
+  .drawer-content {
     flex-grow: 1;
     opacity: 0;
     transition: opacity 1s;
-    overflow-y: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
     max-height: 100%;
 
     &::-webkit-scrollbar {
       width: 7px;
       height: 7px;
     }
-      
+
     &::-webkit-scrollbar-track {
-        background: white;
+      background: white;
     }
-      
+
     &::-webkit-scrollbar-thumb {
-    background: #DCDCDC;
-            border-radius: 2rem;
+      background: #DCDCDC;
+      border-radius: 2rem;
     }
-      
+
     &::-webkit-scrollbar-thumb:hover {
-        background: #B8B8B8;
+      background: #B8B8B8;
     }
 
   }
@@ -72,15 +71,36 @@ $border-grey: #EAEAEA;
       flex-direction: column;
       justify-content: center;
       transform: scale(0.75);
-      
+
       .dbm-tooltiptext{
-            bottom: 0px;
-            left: 299%;
-            transform: scale(0.75);
+        bottom: 0px;
+        left: 299%;
+        transform: scale(0.75);
       }
     }
   }
   .drawer-toggle-open {
     transform: translate(0, 0);
     border-radius: 23px 0 0 23px;
+    opacity: 0.8;
   }
+
+  &.drawer-anchor-right {
+    margin-left: auto;
+
+    .drawer-toggle {
+      right: auto;
+      left: 0;
+      transform: translate(-100%,0);
+      border-radius: 23px 0 0 23px;
+      opacity: 1;
+    }
+
+    .drawer-toggle-open {
+      transform: translate(0,0);     //this will make the toggle to flip
+      border-radius: 0 23px 23px 0;  //this will make the toggle to flip
+      opacity: 0.8;
+    }
+  }
+}
+

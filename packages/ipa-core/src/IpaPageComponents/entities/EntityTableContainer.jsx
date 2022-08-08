@@ -7,7 +7,7 @@ import './EntityTable.scss'
 import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
 import {isValidUrl} from '../../IpaUtils/helpers'
 import {
-    Box, Table, TableBody,
+    Box, InputLabel, Table, TableBody,
     TableCell,
     TableContainer,
     TableHead, TablePagination,
@@ -75,8 +75,42 @@ const EntityTableActionsCell = (props) => {
     );
 };
 
+const EntityTableVersionsCell = ({ actions, entity, versions, accessors, entityType, context, onSelectedVersionChanged }) => {
 
-export const EntityTableContainer = ({config, actions, context, entities, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity',
+    const {currentVersionAccessor = "_tipVersion"} = accessors || {};
+
+    const rowCellActions = useMemo(()=>Object.entries(actions).filter(([key,a])=>a.showOnRowCell).reduce(function(acc, [key,val], i) {
+        acc[key] = val;
+        return acc;
+    }, {}),[actions]);
+
+    const handleChange = (event) => {
+        onSelectedVersionChanged(event.target.value,entity,versions);
+    }
+
+    return (
+        <>
+        <InputLabel id="demo-simple-select-standard-label">Version</InputLabel>
+        <Select
+            labelId="demo-simple-select-standard-label"
+            id="demo-simple-select-standard"
+            value={age}
+            onChange={handleChange}
+            label="Age"
+        >
+            <MenuItem value="">
+                <em>None</em>
+            </MenuItem>
+            <MenuItem value={10}>Ten</MenuItem>
+            <MenuItem value={20}>Twenty</MenuItem>
+            <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+        </>
+    );
+};
+
+
+export const EntityTableContainer = ({config, actions, rowActions, context, entities, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity', initialSort,
                                          onDetail, onChange, onSortChange, onPageChange, onRowsPerPageChange}) => {
 
     const tableRef = useRef();
@@ -115,7 +149,7 @@ export const EntityTableContainer = ({config, actions, context, entities, select
         handleAllCheck = checkedObject.handleAllCheck;
         entityInstances = checkedObject.items;
     }
-    const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
+    const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange, initialSort);
 
     const entityType = useMemo(()=> {return {
         singular: entitySingular,

@@ -5,9 +5,7 @@ import produce from "immer";
 import React, {useEffect, useState} from "react";
 import {usePrevious} from "../IpaUtils/usePrevious";
 import _ from "lodash";
-import {CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBoxRounded} from "@material-ui/icons";
-import CheckedCircle from '@material-ui/icons/CheckCircle';
-import UncheckedCircle from '@material-ui/icons/RadioButtonUnchecked';
+import {CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBoxRounded, CheckCircle as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from "@material-ui/icons";
 
 const iconStyle = {fontSize: 18};
 

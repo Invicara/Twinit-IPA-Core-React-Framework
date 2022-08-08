@@ -4,7 +4,7 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
-import {IafItemSvc} from "@invicara/platform-api";
+import {IafItemSvc, IafScriptEngine} from "@invicara/platform-api";
 export const NAMED_USER_ITEM_FEATURE_KEY = 'namedUserItem';
 export const namedUserItemAdapter = createEntityAdapter({
   //IDs are stored in a customized field ("_id")
@@ -29,28 +29,36 @@ export const namedUserItemAdapter = createEntityAdapter({
  * }, [dispatch]);
  * ```
  */
-export const fetchNamedUserItem = createAsyncThunk(
+export const fetchNamedUserItemItems = createAsyncThunk(
   'namedUserItem/fetchStatus',
-  async (_, thunkAPI) => {
-    //TODO: implement this
-    return Promise.resolve([]);
+  async (args, thunkAPI) => {
+      const {userItemId, userItemVersionId, ctx} = args
+
+      return IafScriptEngine.getItems({
+          query: {},
+          _userItemId: userItemId,
+          options: {
+              "page": {
+                  "_pageSize": 5,
+                  "_offset":0,
+                  "getPageInfo": true
+              },
+              //userItemVersionId: model_rel_coll_prev._userItemVersionId
+          }
+      }, ctx);
   }
 );
+/*
 export const fetchNamedUserItems = createAsyncThunk(
     'namedUserItems/fetchStatus',
     async (args, thunkAPI) => {
-      /**
-       * @param {criteria: NamedUserItemCriteria, ctx: Ctx, options: NamedUserItemCriteriaOptions} - args
-       * @returns {Promise<Page<NamedUserItem>>}
-       *
-       * @see https://twinit.dev/docs/apis/javascript/types#nameduseritemcriteria
-       *
-       */
-          //TODO: for the moment we fetch all user types
-      const criteria = {query: {}};
+      const criteria = {query: {
+                  "_itemClass": {"$in": ["NamedUserCollection","NamedFileCollection"]}
+              }};
       return IafItemSvc.getNamedUserItems(criteria, args.ctx, args.options);
     }
 );
+*/
 export const fetchAllNamedUserItems = createAsyncThunk(
     'allNamedUserItems/fetchStatus',
     async (args, thunkAPI) => {
@@ -58,15 +66,14 @@ export const fetchAllNamedUserItems = createAsyncThunk(
        * @param {criteria: NamedUserItemCriteria, ctx: Ctx, options: NamedUserItemCriteriaOptions} - args
        * @returns {Promise<Array<NamedUserItem>>}
        */
-      //TODO: for the moment we fetch all user types
-      const criteria = args.criteria || {query: {}};
-      const ctx = args.ctx || {};
+      //always filter _itemClass
+      const criteria = {query : {"_itemClass": {"$in": ["NamedUserCollection","NamedFileCollection"]}}};
+      const ctx = {...args.ctx} || {};
       const options = args.options;
       return IafItemSvc.getAllNamedUserItems(criteria, ctx, options);
     }
 );
 export const initialNamedUserItemState = namedUserItemAdapter.getInitialState({
-  //TODO: do we need to have separate loading/error statuses per thunk?
   loadingStatus: 'not loaded',
   error: null,
 });
@@ -81,21 +88,24 @@ export const namedUserItemSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchNamedUserItem.pending, (state) => {
+      .addCase(fetchNamedUserItemItems.pending, (state) => {
         state.loadingStatus = 'loading';
       })
       .addCase(fetchAllNamedUserItems.pending, (state) => {
         state.loadingStatus = 'loading';
       })
-      .addCase(fetchNamedUserItem.fulfilled, (state, action) => {
-        namedUserItemAdapter.addOne(state, action.payload);
+
+      .addCase(fetchNamedUserItemItems.fulfilled, (state, action) => {
+
+        namedUserItemAdapter.updateOne(state, action.payload);
         state.loadingStatus = 'loaded';
       })
       .addCase(fetchAllNamedUserItems.fulfilled, (state, action) => {
         namedUserItemAdapter.setAll(state, action.payload);
         state.loadingStatus = 'loaded';
       })
-      .addCase(fetchNamedUserItem.rejected, (state, action) => {
+
+      .addCase(fetchNamedUserItemItems.rejected, (state, action) => {
         state.loadingStatus = 'error';
         state.error = action.error.message;
       })
