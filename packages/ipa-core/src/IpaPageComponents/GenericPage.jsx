@@ -54,7 +54,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       this.onNavigated = this.onNavigated.bind(this);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
 
       this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
       this._loadPageData();
@@ -66,6 +66,12 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       if(this.props.location.search !== prevProps.location.search){
         this.onNavigated();
       }
+
+      //patch: set project in case it has changed without this component being re-mounted
+      if(this.state.project && (this.state.project._id !== this.props.selectedItems.selectedProject._id)){
+        this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
+      }
+
       //if user switches project while on the page reload page
       if (!this.state.isPageLoading && !!this.state.project && (this.state.project._id !== this.props.selectedItems.selectedProject._id))
         this.props.history.push('/');
