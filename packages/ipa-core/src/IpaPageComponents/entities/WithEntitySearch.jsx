@@ -172,7 +172,7 @@ const withEntitySearch = WrappedComponent => {
                     queryParams.selectedEntities
                     //this check is important not to mess with store
                     && queryParams.entityType === this.props.entitySingular) {
-                    let fetcher = this.getFetcher(currentEntityConfig.script, queryParams.senderEntityType)
+                    let fetcher = this.getFetcher(queryEntityConfig.script, queryParams.senderEntityType)
                     fetcher({query: "<<ID_SEARCH>>"}, queryParams.selectedEntities, true)
                 }
                 // otherwise warn the developer if something strange happened... (possibly a user configuraiton issue?)
