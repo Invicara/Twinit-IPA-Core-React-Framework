@@ -9,28 +9,32 @@ import clsx from 'clsx'
 import _, { rest } from 'lodash'
 import EntityDataGroupContainer from './EntityDataGroupContainer'
 
-export const useEntityData = (collapsable, entity, config, getData, dataGroupName) => {
+export const useEntityData = (collapsable, collapsed, entity, config, getData, dataGroupName) => {
   const [fetching, setFetching] = useState(false)
   const [error, setError] = useState(null)
   const [data, setData] = useState(null)
   const [reloadToken, setReloadToken] = useState(false)
   const myIntervals = useRef([])
 
+  const isDataVisible = !collapsable || !collapsed 
+
   const getContainerData = async (collapsable, entity, config, getData, dataGroupName) => {
     reset();
     try {
-      setFetching(true)
 
       if(!entity) {
         throw new Error("No entity data")
       }
       
+      const isDataVisible = !collapsable || !collapsed
       let data = []
       if(config?.isProperties) {
         data = entity?.properties
-      } else if(!collapsable && dataGroupName) {
+      } else if(isDataVisible && dataGroupName) {
+        setFetching(true)
         data = await getData(dataGroupName, entity)
       }
+
       setData(data)
       setError(undefined)
     } catch(err) {
@@ -41,26 +45,40 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
     }
   }
 
-  useEffect(() => {
+  
 
-    const initialDataFetchPromise = getContainerData(collapsable, entity, config, getData, dataGroupName);
+  const initiateFirstFetching = () => {
+    if(isDataVisible) { //We load the data only if it is visible
+      getContainerData(collapsable, entity, config, getData, dataGroupName);
+    }
+  }
 
+  const startFetchingLoop = () => {
     let interval = undefined;
-    if (config?.refreshInterval) {
+    if (config?.refreshInterval && isDataVisible) {
       if (config.refreshInterval < config.scriptExpiration) {
         console.warn('Refresh Interval is less than Script Expiration which will cause cached data to be used instead fetching new data!')
       }
       interval = setInterval(() => {
-        const intervalDataFetchPromise = getContainerData(collapsable, entity, config, getData, dataGroupName);
+        getContainerData(collapsable, entity, config, getData, dataGroupName);
       }, config.refreshInterval * 60000)
 
       myIntervals.current.push(interval);
     }
 
+    return interval
+  }
+
+  useEffect(() => {
+
+    initiateFirstFetching();
+    
+    const loop = startFetchingLoop();
+    
     return () => {
-      if (interval) clearInterval(interval)
+      if (loop) clearInterval(loop)
     }
-  }, [entity, dataGroupName, reloadToken])
+  }, [entity, dataGroupName, reloadToken, collapsed])
 
   const reload = () => {
     setReloadToken(!reloadToken)
@@ -86,10 +104,11 @@ const EntityDataContainer = props => {
 
   const {data, fetching, error, reset, reload} = useEntityData(
     props.collapsable,
+    collapsed,
     props.entity,
     props.config,
     props.getData,
-    props.dataGroupName
+    props.dataGroupName,
   )
 
   const toggleCollapsed = async () => {
