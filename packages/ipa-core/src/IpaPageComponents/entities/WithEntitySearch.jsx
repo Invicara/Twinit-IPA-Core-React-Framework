@@ -14,23 +14,12 @@ const withEntitySearch = WrappedComponent => {
             let queryParamsPerEntityType = this.initQueryParamsValues(props,props.currentEntityType.singular);
             this.state = {
                 isPageLoading: true,
-                availableDataGroups: {},
+                availableDataGroups: this.props.initialAvailableDataGroups,
                 //groups: _.get(this, 'props.queryParams.groups'),
-                extendedData : this.deriveExtendedDataFromProps(props.handler),
                 //when entity changes, we will switch between "queries", kind of
                 queryParamsPerEntityType
             };
         }
-
-        getCurrentConfig = () => this.props.handler.config;
-
-        //Checks if this handler/page supports multiple entity types (like assets and spaces)
-        allowsMultipleEntityTypes = () => Array.isArray(this.getCurrentConfig().type);
-
-        getAllowedEntityTypes = () => this.allowsMultipleEntityTypes() ?
-            this.getCurrentConfig().type.map(entityType => entityType.singular) :
-            [this.getCurrentConfig().type.singular];
-
 
         //don't use GenericPage setQueryParams directly, it will mix partial queries from different entities
         setQueryParams = (queryParamsPartial, callback) => {
@@ -43,62 +32,23 @@ const withEntitySearch = WrappedComponent => {
             //this.props.setQueryParams(queryParamsPartial);
         }
 
+        onDataGroupAvailable = (entityType, dataGroupName, val) => {
+            let availableDataGroups = Object.assign({}, this.state.availableDataGroups)
+            availableDataGroups[entityType] = availableDataGroups[entityType] || {}
+            availableDataGroups[entityType][dataGroupName] = val
+            this.setState({availableDataGroups})
+        }
+
+        onDataGroupsLoaded = () => {
+            this.setState({loadingAvailableDataGroups: false})
+        }
+
         setAvailableDataGroups = (entity, propertiesOnly) => {
 
-            // First pass through mark any "property groups" as available
-            let availableDataGroups = {}
-            this.setState({loadingAvailableDataGroups: true})
-            Object.entries(this.props.getPerEntityConfig()).forEach(([entityType, config]) => {
-                if(config.data){
-                    Object.entries(config.data).forEach(([dataGroupName, dataGroup]) => {
-                        if (dataGroup.isProperties) {
-                            availableDataGroups[entityType] = availableDataGroups[entityType] || {}
-                            availableDataGroups[entityType][dataGroupName] = true
-                        }
-                    })
-                }
-            })
-            this.setState({availableDataGroups})
+            //reset all available groups
+            this.setState({availableDataGroups: _.cloneDeep(this.props.initialAvailableDataGroups), loadingAvailableDataGroups : true})
 
-            if (!propertiesOnly) {
-                // Second pass through run the scripts for each extended data and see if they have data
-                const _setAvailable = (entityType, dataGroupName, val) => {
-                  
-                    let isAvailable
-                    if (!val)
-                      isAvailable = false
-                    else if (Array.isArray(val) && val.length > 0)
-                      isAvailable = true
-                    else if (Object.keys(val).length > 0)
-                      isAvailable = true
-                    else
-                      isAvailable = false
-                  
-                    let availableDataGroups = Object.assign({}, this.state.availableDataGroups)
-                    availableDataGroups[entityType] = availableDataGroups[entityType] || {}
-                    availableDataGroups[entityType][dataGroupName] = isAvailable
-                    this.setState({availableDataGroups})
-                }
-                let scriptPromises = []
-                Object.entries(this.props.getPerEntityConfig()).forEach(([entityType, config]) => {
-                    Object.entries(config.data).forEach(([dataGroupName, dataGroup]) => {
-                        if (dataGroup.script && entity) {
-                            scriptPromises.push(ScriptCache.runScript(dataGroup.script, {entityInfo: entity}, {scriptExpiration: dataGroup.scriptExpiration})
-                                .then(extendedData => {
-                                    _setAvailable(entityType, dataGroupName, extendedData)
-                                })
-                                .catch(error => {
-                                    _setAvailable(entityType, dataGroupName, false)
-                                }))
-                        }
-                    })
-                })
-                Promise.all(scriptPromises).finally(() => {
-                  this.setState({loadingAvailableDataGroups: false})
-                })
-            } else {
-                this.setState({loadingAvailableDataGroups: false})
-            }
+            this.props.findAvailableDataGroups(entity, propertiesOnly, entity ? this.props.currentEntityType.singular : undefined, this.onDataGroupAvailable, this.onDataGroupsLoaded)
         };
 
 
@@ -128,7 +78,7 @@ const withEntitySearch = WrappedComponent => {
 
         initQueryParamsValues = (props, initialEntitySingular) => {
             const queries = {};
-            this.getAllowedEntityTypes().forEach((et)=>{
+            this.props.allowedEntityTypes.forEach((et)=>{
                 queries[et] = {};
             });
             let {queryParams} = props;
@@ -141,11 +91,11 @@ const withEntitySearch = WrappedComponent => {
         initialFetchFromQuery = async () => {
             let {queryParams} = this.props
             if (queryParams!==undefined) {
-                const queryEntityConfig = this.props.getPerEntityConfig()[queryParams.entityType]
+                const queryEntityConfig = this.props.perEntityConfig[queryParams.entityType]
                 // if we have a query and it's for an available entity type at this page and the query was originated at
                 // a page dealing with the same entity type it is meant to retrieve, then we can run the passed in query,
                 // fetching the entities using the selectors
-                if (queryParams.query && _.includes(this.getAllowedEntityTypes(), queryParams.entityType) &&
+                if (queryParams.query && _.includes(this.props.allowedEntityTypes, queryParams.entityType) &&
                     queryParams.entityType === queryParams.senderEntityType
                     //this check is important not to mess with store
                     && queryParams.entityType === this.props.entitySingular) {
@@ -167,7 +117,7 @@ const withEntitySearch = WrappedComponent => {
                 // else if we have selected entities for an available entity type at this page but they come from a page
                 // dealing with another type of entities, that means we can't use the query from the source page so we
                 // run a query to select those ids directly and keep the original sender ...
-                else if (_.includes(this.getAllowedEntityTypes(), queryParams.entityType) &&
+                else if (_.includes(this.props.allowedEntityTypes, queryParams.entityType) &&
                     queryParams.entityType !== queryParams.senderEntityType &&
                     queryParams.selectedEntities
                     //this check is important not to mess with store
@@ -177,9 +127,9 @@ const withEntitySearch = WrappedComponent => {
                 }
                 // otherwise warn the developer if something strange happened... (possibly a user configuraiton issue?)
                 //TODO add a config validator on load
-                else if (queryParams.entityType && !_.includes(this.getAllowedEntityTypes(), queryParams.entityType)) {
+                else if (queryParams.entityType && !_.includes(this.props.allowedEntityTypes, queryParams.entityType)) {
                     console.warn("Incompatible entity type provided in query params got:", queryParams.entityType,
-                        "but expected one of ", this.getAllowedEntityTypes())
+                        "but expected one of ", this.props.allowedEntityTypes)
                 } else {
                     console.warn("Incompatible entity type provided in query params got:", queryParams.entityType,
                         "but expected ", this.props.entitySingular)
@@ -209,21 +159,6 @@ const withEntitySearch = WrappedComponent => {
             }
         }
 
-
-        deriveExtendedDataFromProps = (handler) => {
-            let extendedData = {};
-            //check for extended data on entities
-            if (handler.config.data) {
-                let dataTypes = Object.keys(handler.config.data);
-                if (!!dataTypes.length) {
-                    //gets an object of all the extended datatypes
-                    let consolidatedExtendedData = _.values(handler.config.data).reduce((acc, current) => ({...acc, ...current}));
-                    extendedData = handler.config.type ? consolidatedExtendedData : handler.config.data;
-                }
-            }
-            return extendedData;
-        }
-
         onEntityChange = (changeType, entity, result) => {          
           if (Array.isArray(entity)) {
             entity.forEach((ent) => {
@@ -235,7 +170,7 @@ const withEntitySearch = WrappedComponent => {
         }
 
         doEntityAction = async (action, entityInfo, type) => {
-            const entityConfig = this.props.getPerEntityConfig()[this.props.entitySingular]
+            const entityConfig = this.props.perEntityConfig[this.props.entitySingular]
             const actions = entityConfig.actions;
 
             if (!Object.keys(actions).includes(action)) {
@@ -342,21 +277,6 @@ const withEntitySearch = WrappedComponent => {
             this.setQueryParams(fetchedQuery);
         }
 
-
-
-        getEntityExtendedData = (extendedDataConfig) => {
-            if (!extendedDataConfig) {
-                console.error("Unconfigured extended data");
-                return () => undefined;
-            }
-            return async (dataType, entityInfo) => {
-                let scriptName = extendedDataConfig[dataType].script;
-                let scriptExpiration = extendedDataConfig[dataType].scriptExpiration;
-                let result = await ScriptCache.runScript(scriptName, {entityInfo: entityInfo}, {scriptExpiration: scriptExpiration});
-                return result;
-            }
-        };
-
         onGroupOrFilterChange = (changes) => {
             this.setQueryParams(changes)
             this.props.resetForFilteringAndGrouping({
@@ -367,13 +287,13 @@ const withEntitySearch = WrappedComponent => {
 
         render() {
             const wrappedProps = {...this.props, ...this.state,
+                extendedData : this.props.extendedDataConfig,
                 queryParams : this.state.queryParamsPerEntityType[this.props.entitySingular],
                 setQueryParams : this.setQueryParams
             }
             return <WrappedComponent onEntityChange={this.onEntityChange}
                                      doEntityAction={this.doEntityAction}
-                                     getEntityExtendedData={this.getEntityExtendedData}
-                                     getPerEntityConfig={this.props.getPerEntityConfig}
+                                     getEntityExtendedData={this.props.getEntityExtendedDataFetcher}
                                      entitiesSelected={this.props.setSelectedEntities}
                                      getFetcher={this.getFetcher}
                                      setAvailableDataGroups={this.setAvailableDataGroups}
