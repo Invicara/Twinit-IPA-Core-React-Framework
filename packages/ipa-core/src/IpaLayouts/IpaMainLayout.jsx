@@ -3,7 +3,8 @@ import {HashRouter, Switch} from 'react-router-dom';
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
 
 
-import AppProvider, {AppContext} from "../AppProvider";
+import AppProvider from "../AppProvider";
+import {AppContext} from "../appContext";
 
 import {LocalFilePlugins} from '@invicara/script-ui';
 import {DataPlugins} from '@invicara/script-data';

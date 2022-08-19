@@ -41,15 +41,7 @@ import { addEntityComponents } from './redux/slices/entityUI'
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
 import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
-
-export const AppContext = React.createContext();
-
-
-// props -- component props passed by parent
-// contextProps -- Provider props
-export const withAppContext = (Component) => (props) => (<AppContext.Consumer>
-  {(contextProps) => <Component {...props} {...contextProps}/>}
-</AppContext.Consumer>);
+import {AppContext, withAppContext} from "./appContext";
 
 class AppProvider extends React.Component {
   constructor(props) {

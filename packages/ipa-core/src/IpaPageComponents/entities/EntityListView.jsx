@@ -48,10 +48,10 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
     }
     const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
 
-    const handleColumnClick = useCallback((col) => sortEntitiesBy(col.accessor),[sortEntitiesBy]);
+    const handleColumnClick = useCallback((col) => () => sortEntitiesBy(col.accessor),[sortEntitiesBy]);
 
     const buildHeader = useCallback((col) => {
-        return <div key={col.name} onClick={handleColumnClick} className='header-column'>
+        return <div key={col.name} onClick={handleColumnClick(col)} className='header-column'>
             {col.name} {col.accessor == currentSort.property &&
             <i className={currentSort.order == 'asc' ? "fas fa-angle-double-up" : "fas fa-angle-double-down"}></i>
         }

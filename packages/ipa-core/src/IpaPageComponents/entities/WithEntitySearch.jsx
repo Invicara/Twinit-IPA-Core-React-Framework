@@ -14,7 +14,6 @@ const withEntitySearch = WrappedComponent => {
             let queryParamsPerEntityType = this.initQueryParamsValues(props,props.currentEntityType.singular);
             this.state = {
                 isPageLoading: true,
-                availableDataGroups: this.props.initialAvailableDataGroups,
                 //groups: _.get(this, 'props.queryParams.groups'),
                 //when entity changes, we will switch between "queries", kind of
                 queryParamsPerEntityType
@@ -32,43 +31,12 @@ const withEntitySearch = WrappedComponent => {
             //this.props.setQueryParams(queryParamsPartial);
         }
 
-        onDataGroupAvailable = (entityType, dataGroupName, val) => {
-            let availableDataGroups = Object.assign({}, this.state.availableDataGroups)
-            availableDataGroups[entityType] = availableDataGroups[entityType] || {}
-            availableDataGroups[entityType][dataGroupName] = val
-            this.setState({availableDataGroups})
-        }
-
-        onDataGroupsLoaded = () => {
-            this.setState({loadingAvailableDataGroups: false})
-        }
-
-        setAvailableDataGroups = (entity, propertiesOnly) => {
-
-            //reset all available groups
-            this.setState({availableDataGroups: _.cloneDeep(this.props.initialAvailableDataGroups), loadingAvailableDataGroups : true})
-
-            this.props.findAvailableDataGroups(entity, propertiesOnly, entity ? this.props.currentEntityType.singular : undefined, this.onDataGroupAvailable, this.onDataGroupsLoaded)
-        };
-
-
         async componentDidMount() {
-            this.selectedEntitiesEffect();
             //run on load complete every time isPageLoading updates
             this.setState({isPageLoading: false}, this.onLoadComplete);
         }
 
-        componentDidUpdate(prevProps, prevState, snapshot) {
-            if(prevProps.selectedEntities !== this.props.selectedEntities) {
-                this.selectedEntitiesEffect()
-            }
-        }
-
-        selectedEntitiesEffect(){
-            if (this.props.selectedEntities) {
-                this.setAvailableDataGroups(this.props.selectedEntities[0], false)
-            }
-        }
+        componentDidUpdate(prevProps, prevState, snapshot) {}
 
         onLoadComplete = async () => {
             if (this.props.onLoadComplete) this.props.onLoadComplete();
@@ -131,8 +99,7 @@ const withEntitySearch = WrappedComponent => {
                     console.warn("Incompatible entity type provided in query params got:", queryParams.entityType,
                         "but expected one of ", this.props.allowedEntityTypes)
                 } else {
-                    console.warn("Incompatible entity type provided in query params got:", queryParams.entityType,
-                        "but expected ", this.props.entitySingular)
+                    !_.isEmpty(queryParams) && console.warn("Ignoring query:", queryParams, "for entity: ", this.props.entitySingular)
                 }
             }
         }
@@ -296,7 +263,6 @@ const withEntitySearch = WrappedComponent => {
                                      getEntityExtendedData={this.props.getEntityExtendedDataFetcher}
                                      entitiesSelected={this.props.setSelectedEntities}
                                      getFetcher={this.getFetcher}
-                                     setAvailableDataGroups={this.setAvailableDataGroups}
                                      updateEntityType={this.updateEntityType}
                                      onGroupOrFilterChange={this.onGroupOrFilterChange}
                                      {...wrappedProps}/>

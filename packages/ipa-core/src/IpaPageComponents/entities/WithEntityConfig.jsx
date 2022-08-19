@@ -1,14 +1,14 @@
 import React from "react";
 import _ from "lodash";
 import ScriptCache from "../../IpaUtils/script-cache";
+import {AppContext} from "../../appContext";
+import {withAppContext} from "../../appContext";
+import {GenericPageContext} from "../genericPageContext";
 
 const withEntityConfig = WrappedComponent => {
     const EntityConfigHOC =  class extends React.Component {
         constructor(props) {
             super(props);
-            this.state = {
-                initialAvailableDataGroups: this.initAvailableDataGroups()
-            }
         }
 
         //Checks if this handler/page supports multiple entity types (like assets and spaces)
@@ -87,9 +87,9 @@ const withEntityConfig = WrappedComponent => {
 
         });
 
-        initAvailableDataGroups = () => {
+        initAvailableDataGroups = (currentConfig) => {
             let availableDataGroups = {}
-            Object.entries(this._getExtendedDataConfig(this.props.handler.config)).forEach(([entityType, config]) => {
+            Object.entries(this._getPerEntityConfig(currentConfig)).forEach(([entityType, config]) => {
                 if(config.data){
                     Object.entries(config.data).forEach(([dataGroupName, dataGroup]) => {
                         if (dataGroup.isProperties) {
@@ -147,27 +147,31 @@ const withEntityConfig = WrappedComponent => {
                 })
         }
 
-        getWrappedComponent = (wrappedProps) => <WrappedComponent
-            {...wrappedProps}/>
-
-        render() {
-
-            const config = this.props.handler.config;
+        getWrappedComponent = (handler) => {
+            const config = handler.config;
 
             const wrappedProps = {...this.props, ...this.state,
+                initialAvailableDataGroups: this.initAvailableDataGroups(config),
                 perEntityConfig : this._getPerEntityConfig(config),
+                //TODO: why extendedDataConfig merges keys from all entities? surely this one day will overwrite something right?
                 extendedDataConfig: this._getExtendedDataConfig(config),
                 allowsMultipleEntityTypes: this._getAllowedEntityTypes(config),
                 allowedEntityTypes: this._getAllowedEntityTypes(config),
                 findAvailableDataGroups : this.findAvailableDataGroups(this._getPerEntityConfig(config)),
                 getEntityExtendedDataFetcher: this.getEntityExtendedDataFetcher,
+                //the below prop is kept to be compliant with old code, please use "perEntityConfig" instead
                 getPerEntityConfig: this.getPerEntityConfig(config)
             }
-            return this.getWrappedComponent(wrappedProps)
+            return <WrappedComponent {...wrappedProps}/>}
+
+        render() {
+            return <GenericPageContext.Consumer>
+                {genericPageContext => this.getWrappedComponent(genericPageContext.handler)}
+            </GenericPageContext.Consumer>;
         }
     }
 
-    return EntityConfigHOC
+    return withAppContext(EntityConfigHOC)
 };
 
 

@@ -28,7 +28,7 @@ import {Box, Container, Toolbar} from '@material-ui/core';
 
 import './GenericPage.scss'
 import GenericMatButton from "../IpaControls/GenericMatButton";
-import {withAppContext} from "../AppProvider";
+import {GenericPageContext} from "./genericPageContext";
 
 const URL_LENGTH_WARNING = 80000
 
@@ -388,8 +388,14 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         {body}
       </div></div>
 
-    render() {
+    renderGenericPage = () => {
       return this.isNestedDetailPage() ? this.body() : this.withPageLayout(this.body())
+    }
+
+    render() {
+      //looks like handler is "calculated" only when component mounts and never changes
+      const genericPageContext = {handler: this.state.handler};
+      return <GenericPageContext.Provider value={genericPageContext}>{this.renderGenericPage()}</GenericPageContext.Provider>
     }
 
   };

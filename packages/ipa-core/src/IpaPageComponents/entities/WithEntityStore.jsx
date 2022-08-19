@@ -24,7 +24,7 @@ import {
 import {connect} from "react-redux";
 import withEntityConfig from "./WithEntityConfig";
 
-const withEntityStore = WrappedComponent => {
+const withEntityStore = (WrappedComponent) => {
     const EntityStoreHOC =  class extends React.Component {
         constructor(props) {
             super(props);
@@ -51,6 +51,10 @@ const withEntityStore = WrappedComponent => {
         }
 
         componentDidMount() {
+            if(this.props.currentEntityType){
+                //store is already populated, nothing here to do
+                return;
+            }
             // hello, we have connected to an empty redux store
             // entity type must be set on state to make up for the empty store
             const initialEntityType = this.deriveInitialEntityType(this.props.queryParams, this.props.handler);
@@ -59,11 +63,11 @@ const withEntityStore = WrappedComponent => {
         }
 
         componentWillUnmount() {
-            this.saveStore();
+            //this.saveStore();
             //TODO Once filters are moved to store, refactor the queryParam logic so that it can identify when URL applied
             // filters and entity match the current ones in the store and this cleaning (and the later refetching) of the entities
             // can be removed for being unnecessary and only done when needed
-            this.props.resetEntities();
+            //this.props.resetEntities();
         }
 
         deriveInitialEntityType = (queryParams) => {
