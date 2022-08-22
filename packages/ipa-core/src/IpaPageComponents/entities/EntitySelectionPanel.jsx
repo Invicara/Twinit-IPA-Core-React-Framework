@@ -62,8 +62,6 @@ class EntitySelectionPanel extends React.Component {
     let stringifiedGroups = sessionStorage.getItem(
       LAST_SELECTED_GROUP_KEY + entitySingular + sessionStorage.getItem(PROJECT_ID_KEY)
     )
-
-    console.log("STRINGIFIED_GROUPS", stringifiedGroups);
   
     let groups;
   
@@ -94,7 +92,6 @@ class EntitySelectionPanel extends React.Component {
 
   saveGroups(props) {
     let groupsToSave = props.selectedGroups;
-    alert('saving groups', groupsToSave);
 
     const projectId = sessionStorage.getItem(PROJECT_ID_KEY);
     
