@@ -65,7 +65,7 @@ const ScriptedChart = ({script, scriptArgs, chart, chartConfig, onClick, scripte
     //if other chart data is returned then we get the data from chartData.data
     //and we pass along everything but the data to the chart component as otherData
     //if chartData.data is provided we do not translate the data so it needs to be in the correct form
-    let data = !chartData?.data && ci.translate ? ci.translate(chartData) : chartData?.data ? chartData.data : chartData
+    let data = !chartData?.data && ci.translate ? ci.translate(chartData) : (chartData?.data ? chartData.data : chartData)
     let otherData = chartData?.data ? _.omit(chartData, ['data']) : {}
     
     component = <Chart data={data} {...otherData} style={{border: "dashed gray 1px"}} {...CHART_GLOBALS} {...ci.defaultConfig} {...chartConfig} />

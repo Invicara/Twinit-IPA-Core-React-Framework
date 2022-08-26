@@ -137,6 +137,7 @@ const withEntitySearch = WrappedComponent => {
         }
 
         doEntityAction = async (action, entityInfo, type) => {
+            //current active entity
             const entityConfig = this.props.perEntityConfig[this.props.entitySingular]
             const actions = entityConfig.actions;
 
@@ -198,7 +199,7 @@ const withEntitySearch = WrappedComponent => {
                        senderEntityType: this.getCurrentConfig().type.singular
                     })
                     */
-
+                    selectionInfo['senderEntityType'] = this.props.entitySingular;
                     selectionInfo['queryParams'] = {...this.state.queryParamsPerEntityType[this.props.entitySingular], selector : undefined};
                     selectionInfo['entityType'] = ((typeof type === 'string' ? type : type?.singular) || this.props.entitySingular);
                     selectionInfo['script'] = entityConfig.script;
