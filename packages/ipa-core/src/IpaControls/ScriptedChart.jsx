@@ -3,6 +3,7 @@ import _ from 'lodash'
 import {ResponsivePie} from "@nivo/pie"
 import {ResponsiveBar} from "@nivo/bar"
 import {ResponsiveLine} from "@nivo/line"
+import TwoAxisLineChart from './TwoAxisLineChart'
 
 import {getChartExtensions} from "./ChartExtensions"
 
@@ -37,6 +38,7 @@ const CHARTS = {
   "Donut": {component: ResponsivePie, defaultConfig: {innerRadius: 0.75}, translate: standard},
   "Bar": {component: ResponsiveBar, translate: standard},
   "Line": {component: ResponsiveLine, translate: line},
+  "TwoAxisLine": {component: TwoAxisLineChart}
 }
 
 const ScriptedChart = ({script, scriptArgs, chart, chartConfig, onClick, scriptedData, style}) => {
