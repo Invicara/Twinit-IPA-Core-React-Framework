@@ -71,7 +71,6 @@ const TwoAxisLineChart = ({data, line1, line2}) => {
           let slicePoints = slice.points.filter((sp) => {
             return sp.serieId === line1.displayInTooltip || sp.serieId === line2.displayInTooltip
           })
-          console.log(slicePoints)
           return (
             <div
               style={{
@@ -86,7 +85,7 @@ const TwoAxisLineChart = ({data, line1, line2}) => {
                 <div key={point.id}>
                   <div
                     style={{
-                      color: line1.color,
+                      color: line1.colors[0],
                       padding: "3px 0"
                     }}
                   >
@@ -94,7 +93,7 @@ const TwoAxisLineChart = ({data, line1, line2}) => {
                   </div>
                   <div
                     style={{
-                      color: line2.color,
+                      color: line2.colors[0],
                       padding: "3px 0"
                     }}
                   >
