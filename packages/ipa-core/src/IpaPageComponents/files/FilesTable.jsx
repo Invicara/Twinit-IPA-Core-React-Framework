@@ -9,12 +9,12 @@ export const getValue = value =>
 
 export const FileTable = ({files:inputFiles, columns, onFileChange, readonly}) => {
     const {allChecked, handleCheck, handleAllCheck, items: files} = useChecked(inputFiles, file => file.name);
-
+   
     const isReady = isReadyFor(columns);
 
-    const getControl = (col, file) =>
+    const getControl = (col, file) => 
          col.control ? col.control(
-             file.fileAttributes[col.name],
+             file.fileAttributes[col.name] ,
              (value) => onFileChange(file.checked ? [...files.filter(f => f.checked), file] : [file], col.name, value), file
          ) : 'loading...';
 
@@ -34,7 +34,7 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly}) =
             </tr>
             </thead>
             <tbody>
-            {_.isEmpty(inputFiles)? 'Loading files...' : inputFiles.map((file,i) => <tr key={i} className="file-table-body">
+            {_.isEmpty(inputFiles)? 'Loading files...' : files.map((file,i) => <tr key={i} className="file-table-body">
                 <td>
                     <RoundCheckbox checked={_.get(files[i],'checked', false)} onChange={() => handleCheck(files[i])}/>
                 </td>
