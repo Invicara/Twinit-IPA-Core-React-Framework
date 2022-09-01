@@ -19,11 +19,16 @@ export const fileSelectStyles = {
 
 export const Star = () => <span className="required-mark">*</span>
 
+const changeHandler = (e, onChange) => {
+    const newValue = !e ? e = {value : undefined} : e
+    onChange(newValue.value)
+}
+
 export const FileTableSelect = ({options = [], onChange, value}) => <Select
     styles={fileSelectStyles}
     isMulti={false}
     value={value && asSelectOption(value)}
-    onChange={({value}) => onChange(value)}
+    onChange={(e) => changeHandler(e, onChange)}
     options={asSelectOptions(options)}
     className="select-element"
     closeMenuOnSelect={true}
@@ -31,6 +36,7 @@ export const FileTableSelect = ({options = [], onChange, value}) => <Select
     isDisabled={false}
     menuPlacement="auto"
     menuPosition="fixed"
+    isClearable={true}
 />
 
 //This component has a delayed onChange to avoid hitting the store too often

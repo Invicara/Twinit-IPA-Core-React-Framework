@@ -36,6 +36,7 @@ import _ from 'lodash'
 
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import './UploadFilesWizard.scss'
+import { CropLandscapeOutlined } from "@material-ui/icons";
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
                                addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig}) => {
