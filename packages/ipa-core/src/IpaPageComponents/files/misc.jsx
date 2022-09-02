@@ -19,16 +19,11 @@ export const fileSelectStyles = {
 
 export const Star = () => <span className="required-mark">*</span>
 
-const changeHandler = (e, onChange) => {
-    const newValue = !e ? e = {value : undefined} : e
-    onChange(newValue.value)
-}
-
 export const FileTableSelect = ({options = [], onChange, value}) => <Select
     styles={fileSelectStyles}
     isMulti={false}
     value={value && asSelectOption(value)}
-    onChange={(e) => changeHandler(e, onChange)}
+    onChange={(e) => onChange(e?.value)}
     options={asSelectOptions(options)}
     className="select-element"
     closeMenuOnSelect={true}
