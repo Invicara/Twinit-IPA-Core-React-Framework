@@ -36,7 +36,7 @@ export default function withPageNavigation(Component) {
              *    selectedEntities: [<array of entity ids>]
              * }
              *
-             * Note: query, group and filter are handled by the GenericPage itself (this class).
+             * Note: query, group and filter are handled by the GenericPage itself.
              *       Call setQueryParams method from the child page.
              *       The queryParams can be overridden by providing queryParams in selectionInfo
              *
@@ -86,7 +86,7 @@ export default function withPageNavigation(Component) {
               console.warn('url length is very large and navigation may not work!');
         
 
-            if(options.newTab === true) {
+            if(options?.newTab === true) {
                 window.open(`${endPointConfig.baseRoot}/#${newPath}`, '_blank')?.focus()
             } else {
                 props.history.push(newPath);
