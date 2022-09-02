@@ -14,7 +14,7 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly}) =
 
     const getControl = (col, file) => 
          col.control ? col.control(
-             file.fileAttributes[col.name] ,
+             file.fileAttributes[col.name],
              (value) => onFileChange(file.checked ? [...files.filter(f => f.checked), file] : [file], col.name, value), file
          ) : 'loading...';
 
@@ -43,8 +43,8 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly}) =
                     <TickCheckbox checked={isReady(file)} onChange={() => {}}/>
                 </td>
                 <td>{file.version}</td>
-                {columns.map(col => <td key={col.name}>{readonly ? getValue(file.fileAttributes[col.name]) : getControl(col, file)}</td>)}
-            </tr>)}
+                {columns.map(col =><td key={col.name}>{readonly ? getValue(file.fileAttributes[col.name]) : getControl(col, file)}</td>)}
+                </tr>)}
             </tbody>
         </table>
     </div>

@@ -94,7 +94,7 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
                     options={selectOptions}
                     placeholder={placeholder}
                     closeMenuOnSelect={!select.multi}
-                    isClearable={isClearable}
+                    isClearable
                     required={select.required}
                     isDisabled={_.isEmpty(select.options) || disabled}
                     menuPlacement="auto"
