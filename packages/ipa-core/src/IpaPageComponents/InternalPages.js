@@ -17,7 +17,6 @@ const InternalPages = {
     'users/UserGroupView': UserGroupView,
     'datasources/DatasourcesView': DatasourcesView,
     'omapi/OMAPIView': OMAPIView
-
 }
 
 export default InternalPages

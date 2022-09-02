@@ -130,12 +130,19 @@ class DashboardView extends React.Component {
     getComponent = async (config) => {
         let Component = null
         let componentInfo = null
-        //if (config.component) Component = DASHBOARD_COMPONENTS[config.component]
-        if (config.component) Component = this.props.getDashboardComponent(config.component)
-        else if (config.componentScript) {
-          componentInfo = await ScriptHelper.executeScript(config.componentScript, {reactorInfo: this.state.reactorInfo})
-          if (componentInfo && componentInfo.component) Component = this.props.getDashboardComponent(componentInfo.component)
-        }
+        if (_.isString(config.component)) {
+          if (config.component) Component = this.props.getDashboardComponent(config.component)
+          else if (config.componentScript) {
+              componentInfo = await ScriptHelper.executeScript(config.componentScript, {reactorInfo: this.state.reactorInfo})
+              if (componentInfo && componentInfo.component) Component = this.props.getDashboardComponent(componentInfo.component)
+          }
+        } else {
+            if (config.component) Component = this.props.getDashboardComponent(config.component.name)
+            if (config.script) {
+                componentInfo = await ScriptHelper.executeScript(config.script, { reactorInfo: this.state.reactorInfo })
+                if (componentInfo && componentInfo.component) Component = this.props.getDashboardComponent(componentInfo.component)
+            }
+        } 
         
         if (!Component) {
             return (
@@ -161,7 +168,14 @@ class DashboardView extends React.Component {
           reactorInfo: config.reactee ? this.state.reactorInfo : null
         }
 
-        return <Component {...config} {...reactiveOptions} {...componentInfo} dashboard={this}/>
+        console.log("DashboardView getComponent config", config);
+        console.log("DashboardView getComponent Component", Component);
+
+        if(!_.isString(config.component)){
+          return <Component config={config.component} data={componentInfo} {...reactiveOptions} dashboard={this}/>
+        } else {
+          return <Component {...config} {...reactiveOptions} {...componentInfo} dashboard={this}/>
+        }
     }
 
     doAction = (action) => {

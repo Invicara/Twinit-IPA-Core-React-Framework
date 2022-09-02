@@ -7,6 +7,7 @@ import CompactButtonBar from "../../IpaControls/CompactButtonBar"
 import Image from "../../IpaControls/Image"
 import CrossEntitySearch from "../../IpaControls/CrossEntitySearch";
 import GenericIframe from "../../IpaControls/GenericIframe";
+import ScriptedAlertTable from '../../IpaControls/ScriptedAlertTable'
 
 const DASHBOARD_COMPONENTS = {
   "ChartTestPage": ChartTestPage,
@@ -15,7 +16,8 @@ const DASHBOARD_COMPONENTS = {
   "CompactButtonBar": CompactButtonBar,
   "CrossEntitySearch": CrossEntitySearch,
   "Image": Image,
-  "Iframe": GenericIframe
+  "Iframe": GenericIframe,
+  "ScriptedAlertTable": ScriptedAlertTable
 }
 
 let applicatonDashboardComponents = {}
