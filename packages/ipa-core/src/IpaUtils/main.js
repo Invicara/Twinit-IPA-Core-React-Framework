@@ -24,7 +24,7 @@ import {
     defaultBranchRenderer,
     defaultLeafRenderer,
     propagateNodeStatusDown,
-    propagateNodeStatusUp, recalculateNodeStatus, TreeNodeStatus,
+    propagateNodeStatusUp, recalculateNodeStatus, TreeNodeStatus, TreeNodeActionName,
     withoutPropagation
 } from "./TreeHelpers";
 import {usePrevious} from "./usePrevious";
@@ -67,7 +67,7 @@ const IpaUtils = {
     usePrevious,
     getFilteredEntitiesBy,
     getEntityFromModel,
-    TreeNodeStatus
+    TreeNodeStatus, TreeNodeActionName
 }
 
 export default IpaUtils
