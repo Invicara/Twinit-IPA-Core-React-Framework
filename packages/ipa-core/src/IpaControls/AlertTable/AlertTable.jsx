@@ -40,15 +40,16 @@ const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate) => 
           console.log("button onClick alert", alert);
           console.log("button onClick navigationConfig", navigationConfig);
           if(alert.Source !== null) {
-            const entityType = {singular: alert.Source.entityType, plural: alert.Source.entityType+'s'}
+            const entityType = alert.Source.entityType
             const selectedEntities = alert.Source.entities.map(e => e._id);
 
             let query = {
               entityType,
-              selectedEntities
+              selectedEntities,
+              senderEntityType: entityType,
             }
             console.log("button onClick query", query);
-            onNavigate(navigationConfig[entityType.singular], query)
+            onNavigate(navigationConfig[entityType], query)
           }
           
           }}

@@ -70,6 +70,7 @@ export default function withPageNavigation(Component) {
             if (selectionInfo && selectionInfo.selectedEntities && selectionInfo.selectedEntities.length>0) {
                 query.selectedEntities = selectionInfo.selectedEntities.join(',');
                 query.entityType = selectionInfo.entityType
+                query.senderEntityType = selectionInfo.senderEntityType
                 query.script = selectionInfo.script
             } else if (query.selectedEntities && Array.isArray(query.selectedEntities) && query.selectedEntities.length > 0) {
                 query.selectedEntities = query.selectedEntities.join(',');

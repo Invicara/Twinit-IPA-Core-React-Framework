@@ -14,9 +14,20 @@ const withEntityConfig = WrappedComponent => {
         //Checks if this handler/page supports multiple entity types (like assets and spaces)
         _allowsMultipleEntityTypes = _.memoize((currentConfig) => Array.isArray( currentConfig.type));
 
-        _getAllowedEntityTypes = _.memoize((currentConfig)  => this._allowsMultipleEntityTypes(currentConfig) ?
-            currentConfig.type.map(entityType => entityType.singular) :
-            [currentConfig.singular]);
+        _getAllowedEntityTypes = _.memoize((currentConfig)  => {
+            const allowsMultipleEntityTypes = this._allowsMultipleEntityTypes(currentConfig)
+            if(allowsMultipleEntityTypes) {
+                return currentConfig.type.map(entityType => entityType.singular)
+            }
+
+            //In some instances, the entityType is an object in a type property
+            if(currentConfig.type?.singular) {
+                return [currentConfig.type?.singular]
+            }
+
+            //Otherwise we assume the entityType is in directly in the config as the singular property.
+            return  [currentConfig.singular]
+        });
 
         //keeping this method name to avoid too much refactoring :)
         getPerEntityConfig =  _.memoize((currentConfig) => () => this._getPerEntityConfig(currentConfig) );
