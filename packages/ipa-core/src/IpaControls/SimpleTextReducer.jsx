@@ -1,25 +1,19 @@
-import React, {useState, useEffect} from "react"
+import React from "react"
 import { Tooltip } from "@material-ui/core"
 
 const SimpleTextReducer = ({text, limit}) => { 
-    const [newText, setNewText] = useState(text)
-    const [underLimit, setUnderLimit] = useState(false)
 
-    useEffect(() => {
-        if (text.length > limit) {
-             setNewText(text.substring(0, limit) + "...")
-          } else {
-            setUnderLimit(true)
-            return newText
-          }
-    }, [])
+    let newText
+    if (text.length > limit) {
+        newText = text.substring(0, limit) + "..."
+        } 
 
     return (
         <div>
-            {underLimit ? <i>{newText}</i> : 
-            <Tooltip title={text}>
+            {newText ? <Tooltip title={text}>
                 <i style={{cursor: 'pointer'}}>{newText}</i>
-            </Tooltip>}
+            </Tooltip> :
+            <i>{text}</i>}
         </div>
 )}
 
