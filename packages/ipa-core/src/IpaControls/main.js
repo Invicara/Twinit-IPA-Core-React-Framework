@@ -34,6 +34,7 @@ import ScriptedChart from "./ScriptedChart";
 import SimpleMultiSelect from "./SimpleMultiSelect";
 import SimpleSelect from "./SimpleSelect";
 import SimpleTextThrobber from "./SimpleTextThrobber";
+import SimpleTextReducer from './SimpleTextReducer';
 import {TextSearch} from "./TextSearch";
 import TreeControl from "./TreeControl";
 import {TreeSearch} from "./TreeSearch";
@@ -88,6 +89,7 @@ const IpaControls = {
     ReactiveTreeControl,
     ScriptedChart,
     SimpleMultiSelect,
+    SimpleTextReducer,
     SimpleSelect,
     SimpleTable,
     SimpleTabbedTable,
