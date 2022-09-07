@@ -47,6 +47,7 @@ const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate) => 
               entityType,
               selectedEntities,
               senderEntityType: entityType,
+              query: {value: selectedEntities}
             }
             console.log("button onClick query", query);
             onNavigate(navigationConfig[entityType], query)
@@ -54,7 +55,7 @@ const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate) => 
           
           }}
       >
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        <i className="fa fa-arrow-right" aria-hidden="true"></i>
       </button>
     </Tooltip>, 
     className: "alert-table__row-action"
@@ -87,7 +88,7 @@ const AlertTable = (props) => {
               onChange: (e) => setFilterInput(e.target.value)
             }}
           />
-          <button className="alert-table__filter-button"><i class="fa fa-sliders"></i></button>
+          <button className="alert-table__filter-button"><i className="fa fa-sliders"></i></button>
         </div>
         <Table
           className="alert-table__table"
