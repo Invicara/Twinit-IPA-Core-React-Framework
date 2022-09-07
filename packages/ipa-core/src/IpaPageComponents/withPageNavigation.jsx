@@ -9,8 +9,6 @@ import { optionHandlers } from 'codemirror';
 export const URL_LENGTH_WARNING = 80000
 export function isSelectionInfoValid(selectionInfo) {
 
-    console.log("isSelectionInfoValid", selectionInfo)
-
     if (selectionInfo && !selectionInfo.entityType) {
       console.error('Attempting to pass query parameters with no entity type!');
       return false;
@@ -24,8 +22,6 @@ export default function withPageNavigation(Component) {
     function WrappedComponent(props) {
 
         function onNavigate(destinationHandler, selectionInfo, options) {
-
-            console.log("onNavigate args", destinationHandler, selectionInfo);
     
             /*
              * handler: the name of a handler to navigate to
@@ -60,7 +56,6 @@ export default function withPageNavigation(Component) {
                 query = _.cloneDeep(selectionInfo.queryParams)
             }
 
-            console.log("onNavigate query", query)
             if(selectionInfo) {
                 query.entityType = selectionInfo.entityType
             }
@@ -69,20 +64,16 @@ export default function withPageNavigation(Component) {
                 query.query.value = Array.isArray(query.query.value) ? query.query.value.join(',') : query.query.value
             if (selectionInfo && selectionInfo.selectedEntities && selectionInfo.selectedEntities.length>0) {
                 query.selectedEntities = selectionInfo.selectedEntities.join(',');
-                query.entityType = selectionInfo.entityType
-                query.senderEntityType = selectionInfo.senderEntityType
-                query.script = selectionInfo.script
+                query = {...selectionInfo, selectedEntities: selectionInfo.selectedEntities.join(',')}
             } else if (query.selectedEntities && Array.isArray(query.selectedEntities) && query.selectedEntities.length > 0) {
                 query.selectedEntities = query.selectedEntities.join(',');
             }
             if (query.groups && query.groups.length) {
                 query.groups = query.groups.join(',')
             }
-            console.log("onNavigate query2", query)
 
             const newPath = props.userConfig.handlers[destinationHandler].path + '?' + qs.stringify(query);
         
-            console.log("onNavigate newPath", newPath)
             if (newPath.length > URL_LENGTH_WARNING)
               console.warn('url length is very large and navigation may not work!');
         
@@ -94,8 +85,6 @@ export default function withPageNavigation(Component) {
             }
 
         }
-
-        console.log("withPageNavigation WrappedComponent render")
 
         return <Component onNavigate={onNavigate} {...props}/>
     }
