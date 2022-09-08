@@ -42,8 +42,10 @@ import {Overlay} from "./Overlay";
 import SplitButton from "./SplitButton";
 import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useChecked} from "./Checkboxes";
 import RadioButtons from './RadioButtons'
+import AlertIndicator from './AlertIndicator'
 
 const IpaControls = {
+    AlertIndicator,
     AdvancedSearch,
     BigButtonBar,
     ChartStack,
