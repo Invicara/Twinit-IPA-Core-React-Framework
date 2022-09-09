@@ -50,6 +50,10 @@
                 background-color: #E9E9E9;
             }
 
+            &.alert-table__filter-button--disabled {
+                background-color: transparent;
+            }
+
             i {
                 padding: 0;
             }
