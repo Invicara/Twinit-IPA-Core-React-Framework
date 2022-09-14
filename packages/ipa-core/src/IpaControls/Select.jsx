@@ -12,6 +12,13 @@ import {any, array, bool, func, object, shape, string} from 'prop-types'
 
 const Select = props => {
 
+  const optionStyle = (styles, { data }) => {
+    return {
+      ...styles,
+      color: data.highlight ? 'var(--app-accent-color)' : styles.color
+    }
+  };
+
   let selectProps = {
     styles: {
       control: selectStyles,
@@ -32,13 +39,6 @@ const Select = props => {
     menuPlacement: props.menuPlacement,
     menuPosition: props.menuPosition
   }
-
-  let optionStyle = (styles, { data }) => {
-    return {
-      ...styles,
-      color: data.highlight ? 'var(--app-accent-color)' : styles.color
-    }
-  };
 
   let SelectComponent = null;
   if(props.creatable && CreatableSelect) {

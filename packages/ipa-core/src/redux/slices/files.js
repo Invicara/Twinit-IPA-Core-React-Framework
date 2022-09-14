@@ -25,12 +25,12 @@ const buildFile = (blob, overrideName, initialAttributes = {}, attributeKeys = [
     addFileBlob(blob)
     const fileAttributes = _.fromPairs(attributeKeys.map(attrKey => {
         if(typeof attrKey === 'string'){
-            return [attrKey, initialAttributes[attrKey]]
+            return [attrKey, _.isEmpty(initialAttributes[attrKey]) ? '' : initialAttributes[attrKey]]
         } else if(Array.isArray(attrKey)){
             const complexValue = _.toPairs(initialAttributes)
                 .filter(([attrName, attrValue]) => _.includes(attrKey, attrName))
                 .map(([attrName, attrValue]) => attrValue)
-            return [attrKey, _.isEmpty(complexValue) ? undefined : complexValue];
+            return [attrKey, _.isEmpty(complexValue) ? attrKey.map(()=>'') : complexValue];
         } else {
             throw new Error('Invalid attribute key, must be either a string or an array of strings:', attrKey)
         }
