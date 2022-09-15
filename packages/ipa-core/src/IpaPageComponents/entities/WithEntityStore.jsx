@@ -51,13 +51,21 @@ const withEntityStore = (WrappedComponent) => {
         }
 
         componentDidMount() {
+            const initialEntityType = this.deriveInitialEntityType(this.props.queryParams, this.props.handler);
             if(this.props.currentEntityType){
-                //store is already populated, nothing here to do
+                //store is already populated, check if we need to change entity
+                let {queryParams} = this.props;
+                const storeSwitchRequired = queryParams
+                    && queryParams.entityType !== this.props.currentEntityType.singular
+                    && initialEntityType.entityType !== this.props.currentEntityType.singular;
+                if(storeSwitchRequired){
+                    //change store (yes for all components using this HOC)
+                    this.switchStore(initialEntityType);
+                }
                 return;
             }
             // hello, we have connected to an empty redux store
             // entity type must be set on state to make up for the empty store
-            const initialEntityType = this.deriveInitialEntityType(this.props.queryParams, this.props.handler);
             //re-render the component with entity type
             this.initStoreValues(initialEntityType);
         }
