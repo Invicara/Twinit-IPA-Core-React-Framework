@@ -83,12 +83,13 @@ const AlertTable = (props) => {
         <div className='alert-table__filter'>
           <label className='alert-table__filter-label'>Filter By: </label>
           <BaseTextInput className="alert-table__filter-input" inputProps={{
+              disabled: true,
               type: "text",
               value: filterInput,
               onChange: (e) => setFilterInput(e.target.value)
             }}
           />
-          <button className="alert-table__filter-button"><i className="fa fa-sliders"></i></button>
+          <button disabled={true} className={`alert-table__filter-button alert-table__filter-button--disabled `}><i className="fa fa-sliders"></i></button>
         </div>
         <Table
           className="alert-table__table"
