@@ -4,9 +4,12 @@ import { config } from 'react-transition-group'
 import GenericMatButton from '../../IpaControls/GenericMatButton'
 import SimpleSelect from '../../IpaControls/SimpleSelect';
 import FileHelpers from '../../IpaUtils/FileHelpers';
+import IafDocViewer from '@invicara/iaf-doc-viewer';
 
 
 const DocumentTable = props => {
+
+  console.log("DocumentTable IafDocViewer", IafDocViewer )
 
   let initialSelectedDocuments = new Array(props.documents.length).fill(false);
 
@@ -51,11 +54,16 @@ const DocumentTable = props => {
     return getSelectedDocuments(selectedIndeces).map(d => d.documentData);
   }
 
+  function getSelectedDocumentsIds(selectedIndeces) {
+    return getSelectedDocuments(selectedIndeces).map(d => d.documentData._fileId);
+  }
+
   
   
   
   return <div className="document-table">
     Document Table
+    <IafDocViewer docIds={getSelectedDocumentsIds(selectedDocumentsIndeces)}/>
     {props.actions
       .filter(action => action.bulk.hidden !== true)
       .map(action => {
