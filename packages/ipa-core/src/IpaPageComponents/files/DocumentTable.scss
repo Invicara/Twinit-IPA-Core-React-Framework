@@ -1,33 +1,92 @@
 .document-table {
     overflow-y: scroll;
+    color: #5D5D5D;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    .document-table__count {
+        font-weight: 400;
+        font-size: 14px;
+        color: #000000; 
+        margin-top: -28px;
+        margin-bottom: 8px;
+    }
     .document-table__actions {
         display: flex;
-
+        justify-content: center;
+        
         &.document-table__actions--bulk {
-            margin-bottom: 16px;
+            justify-content: end;
+        }
+        .document-table__action {
+            margin: 8px 4px 8px 4px;
+            padding: 8px;
+            border-radius: 8px;
+        }
+        .document-table__action_enabled {
+            background-color: var(--app-accent-color);
+            color: #FFFFFF; cursor: pointer;
+            a { color: #FFFFFF; text-decoration: none; 
+                }
+            
+        }
+        .document-table__action_disabled{
+            background-color: #F3F3F3;
+            color: #DCDCDC;
+            a { color: #DCDCDC; display: inline-block;  
+                pointer-events: none;
+                text-decoration: none;}
         }
     }
-
     .document-table__row--header {
-        border-bottom: solid 1px lightgray;
-        margin-bottom: 4px;
+        font-weight: 700;
+        background-color: #EBEBEB;
     }
 
     .document-table__col {
-        padding: 8px;
+        border: solid 1px #999999;
+        padding-left: 6px;
+        padding-right: 6px;
     }
 
     .document-table__col--select, 
     .document-table__col--actions, 
     .document-table__col--version {
-        vertical-align: middle;
+        //padding-left: 0;
+        padding-right: 0;
+        text-align: center;
     }
 
-
-
+    .document-table__action-button{
+        background-color: white;
+        color: var(--app-accent-color);
+        border-radius: 10px;
+        font-size: 20px;
+    }
     .document-table__version-select {
         min-width: 100px;
     }
-
+    .document-table__col--filename,
+    .document-table__col--header{
+        div {
+            display: flex;
+            justify-content: space-between;
+        }      
+        .document-table__filter {
+            color: #EBEBEB;
+        }  
+        .document-table__filter:hover {
+            color: #D9D9D9;
+            cursor: pointer;
+        }    
+        .document-table__filter_active {
+            color: #5D5D5D;
+            cursor: pointer;
+        }  
+        .document-table__reorder_button {
+            color: var(--app-accent-color);
+            cursor: pointer;
+        }
+    }
 
 }

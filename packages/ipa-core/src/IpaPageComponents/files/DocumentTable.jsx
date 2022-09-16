@@ -1,19 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SimpleSelect from '../../IpaControls/SimpleSelect';
-import { Checkbox } from '@material-ui/core';
-import GenericMatButton from '../../IpaControls/GenericMatButton'
-import ActionButton from '../../IpaControls/ActionButton';
+import {PinkCheckbox} from "../../IpaControls/Checkboxes";
+import { Tooltip } from "@material-ui/core";
 import './DocumentTable.scss'
-import _ from 'lodash'
+import _, { filter } from 'lodash'
+import * as modal from '../../redux/slices/modal'
+import { useStore } from "react-redux";
+import ReorderColumnsModal from './ReorderColumnsModal'
 
 const DocumentTable = props => {
-
     const initialSelectedDocuments = []
     const [selectedDocumentsIds, setSelectedDocumentsIds] = useState(initialSelectedDocuments);
+    const [sort, setSort] = useState(props.tableConfig.sort)
+    const [documents, setDocuments] = useState(props.documents)
     const [view, setView] = useState(false);
   
     function getDocActions(docIndex) {
-      let doc = props.documents[docIndex];
+      let doc = documents[docIndex];
   
       let actionsConfig = {};
   
@@ -37,11 +40,37 @@ const DocumentTable = props => {
     }
   
     function getSelectedDocuments(selectedIndeces) {
-      return props.documents.filter((d) => selectedIndeces.includes(d.documentData._fileId));
+      return documents.filter((d) => selectedIndeces.includes(d.documentData._fileId));
     }
+
+    const reduxStore = useStore();
+    const OpenReorderModal =  (columns, onColumnsChange)=>{
+      reduxStore.dispatch(modal.actions.setModal({
+        component: ReorderColumnsModal, 
+        props: {columns, onColumnsChange}, 
+        open: true
+      }))
+    }
+    const sortBy =  (name, isDescending) => {
+      console.log('sort by', name)
+      setSort({currentColumn: name, isDescending:!isDescending})
+      
+    }
+    const allSelected = selectedDocumentsIds.length === documents.length; 
     
-    const allSelected = selectedDocumentsIds.length === props.documents.length; 
-    
+    useEffect(() => {
+      console.log('sort', sort)
+      if(sort){
+        let newDocuments =  _.sortBy(documents, a => {
+          if(_.includes(sort.currentColumn, 'properties.')) return a.documentData[`${sort.currentColumn}.val`]
+            else return a.documentData[sort.currentColumn]
+        })
+      if(sort && sort.isDescending) newDocuments = _.reverse(newDocuments)
+      console.log('newDocuments', newDocuments)
+       setDocuments(newDocuments)
+      }
+    }, [sort])
+
     return <div className="document-table">
       <div className='document-table__actions document-table__actions--bulk'>
         {props.actions
@@ -57,44 +86,64 @@ const DocumentTable = props => {
             if(action.bulk.component) {
                 return <action.bulk.component {...defaultProps} {...action.bulk.props}/>;
             }
-            return <ActionButton {...defaultProps}/>
+            return <div className={`document-table__action document-table__action${selectedDocumentsIds.length > 0 ? '_enabled' : '_disabled' }`} >
+                      <a onClick={defaultProps.onClick}>
+                            <i className={defaultProps.icon}/>
+                        <span>{defaultProps.title}</span>
+                    </a>
+                </div>
             })
         }
       </div>
-      {props.documents.length > 0 ?
+      {documents.length > 0 ? <div className={`document-table__count`} >Showing {documents.length} files</div> : null}
+      {documents.length > 0 ?
         <table className="document-table__table">
           <tr className="document-table__row document-table__row--header">
             <th className="document-table__col document-table__col--header document-table__col--select">
-              <Checkbox 
+              <PinkCheckbox 
                 onChange={() => {
                   if(allSelected) {
                     setSelectedDocumentsIds(initialSelectedDocuments)
                   } else {
-                    setSelectedDocumentsIds(props.documents.map((d) => d.documentData._fileId ));
+                    setSelectedDocumentsIds(documents.map((d) => d.documentData._fileId ));
                   }
                 }}
                 checked={allSelected}
               />
-            </th>
-            <th className="document-table__col document-table__col--filename">
-              Filename
             </th>
             <th className="document-table__col document-table__col--header document-table__col document-table__col--actions">
             </th>
             <th className="document-table__col document-table__col--header">
               Version
             </th>
-            {props.tableConfig.columns.map(column => {
-            return <th className="document-table__col document-table__col--header">{column.name}</th>
+            <th className="document-table__col document-table__col--filename">
+              <div>Filename
+                  <span className={`document-table__filter${sort ? sort.currentColumn === 'name' ? '_active': '' : ''}`}>
+                    <i onClick= {()=>sortBy('name', sort ? sort.isDescending : true)} 
+                      className={`fas ${sort ? sort.isDescending ? 'fa-sort-amount-up': 'fa-sort-amount-down' : 'fa-sort-amount-down'}`}></i>
+                  </span>
+              </div>
+            </th>
+            {props.tableConfig.columns.filter(col => col.active)
+            .map((column, index, array) => {
+              return <th className="document-table__col document-table__col--header"><div>
+                      {column.name}
+                        <span className={`document-table__filter${sort ? sort.currentColumn === column.accessor ? '_active': '' : ''}`}>
+                          <i onClick= {()=>sortBy(column.accessor, sort ? sort.isDescending : true)} 
+                            className={`fas ${sort ? sort.isDescending ? 'fa-sort-amount-up': 'fa-sort-amount-down' : 'fa-sort-amount-down'}`}></i>
+                        </span>
+                      {array.length === index + 1 ? <span className='document-table__reorder_button'><i onClick= {() => OpenReorderModal(props.tableConfig.columns, props.tableConfig.onColumnsChange)} className={"fas fa-columns"}></i></span> : null}
+                      </div></th> 
             })}
+            
           </tr>
-          {props.documents.map((doc, index) => {
+          {documents.map((doc, index) => {
             const fileId = doc.documentData._fileId;
             const selectedDocIndex = selectedDocumentsIds.findIndex((id) => id === fileId);
             let checked = selectedDocIndex != -1;
             return <tr className="document-table__row">
               <td className="document-table__col document-table__col--select">
-                <Checkbox 
+                <PinkCheckbox 
                   onChange={() => {
                     let newSelectedDocuments = [...selectedDocumentsIds]
                     if(checked) {
@@ -107,11 +156,8 @@ const DocumentTable = props => {
                   checked={checked} 
                 />
               </td>
-              <td className="document-table__col document-table__col--name">
-               {doc.documentData.name}
-              </td>
               <td className="document-table__col document-table__col--actions">
-                <div className=' document-table__actions document-table__actions--row'>
+                <div className='document-table__actions document-table__actions--row'>
                     {_.values(getDocActions(index)).map(action => {
                         
                     if(action.hidden === true) return null
@@ -126,7 +172,11 @@ const DocumentTable = props => {
                     if(action.component) {
                         return <action.component {...defaultProps} {...action.props}/>;
                     }
-                    return <ActionButton {...defaultProps}/>
+                    return <span className={`document-table__action-button`}>
+                                <Tooltip title={defaultProps.title}>
+                                    <i className={defaultProps.icon} onClick={defaultProps.onClick}/>
+                                </Tooltip>
+                            </span>
                     })}
                 </div>
               </td>
@@ -147,16 +197,20 @@ const DocumentTable = props => {
                   }}
                 />
               </td>
+              <td className="document-table__col document-table__col--name">
+               {doc.documentData.name}
+              </td>
               {props.tableConfig.columns.map(column => {
-              let value = _.get(doc.documentData, column.accessor, "");
-              if(value === null) {
-                value = ""
-              }
-              if(_.isObject(value)) {
-                value = value.val
-              }
-              return <td className="document-table__col">{value}</td>
-              })}
+              if(column.active)
+                {let value = _.get(doc.documentData, column.accessor, "");
+                if(value === null) {
+                  value = ""
+                }
+                if(_.isObject(value)) {
+                  value = value.val
+                }
+                return <td className="document-table__col">{value}</td>
+                }})}
             </tr>
           })}
         </table> :
