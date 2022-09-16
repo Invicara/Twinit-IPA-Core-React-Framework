@@ -75,6 +75,9 @@ const DocumentTable = props => {
                 checked={allSelected}
               />
             </th>
+            <th className="document-table__col document-table__col--filename">
+              Filename
+            </th>
             <th className="document-table__col document-table__col--header document-table__col document-table__col--actions">
             </th>
             <th className="document-table__col document-table__col--header">
@@ -102,6 +105,9 @@ const DocumentTable = props => {
                   }}
                   checked={checked} 
                 />
+              </td>
+              <td className="document-table__col document-table__col--name">
+               {doc.documentData.name}
               </td>
               <td className="document-table__col document-table__col--actions">
                 <div className=' document-table__actions document-table__actions--row'>
