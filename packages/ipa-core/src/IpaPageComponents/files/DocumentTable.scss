@@ -10,6 +10,7 @@
         color: #000000; 
         margin-top: -28px;
         margin-bottom: 8px;
+        z-index: 0;
     }
     .document-table__actions {
         display: flex;
@@ -17,6 +18,7 @@
         
         &.document-table__actions--bulk {
             justify-content: end;
+            z-index: 1;
         }
         .document-table__action {
             margin: 8px 4px 8px 4px;
@@ -24,18 +26,15 @@
             border-radius: 8px;
         }
         .document-table__action_enabled {
-            background-color: var(--app-accent-color);
-            color: #FFFFFF; cursor: pointer;
-            a { color: #FFFFFF; text-decoration: none; 
-                }
-            
+            background-color: 
+            var(--app-accent-color);
+            color: #FFFFFF; 
+            cursor: pointer;
         }
         .document-table__action_disabled{
             background-color: #F3F3F3;
             color: #DCDCDC;
-            a { color: #DCDCDC; display: inline-block;  
-                pointer-events: none;
-                text-decoration: none;}
+            pointer-events: none;
         }
     }
     .document-table__row--header {

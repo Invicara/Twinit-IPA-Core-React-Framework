@@ -78,26 +78,28 @@ let ScriptedDocumentTable = props => {
     disableVersions: props.config.includeVersions !== true
   }))
 
-  let actions = [{
-    key: 'OPEN',
-    name: 'Open in Files',
-    icon: 'fas fa-file-alt',
-    onClick: documents => {
-      
-    },
-    bulk: {
-      disabled: !props.config.canView
-    },
-    single: {
-      hidden: true,
-      disabled: !props.config.canView
-    }
+  let actions = [
+    {
+      key: 'OPEN',
+      name: 'Open in Files',
+      icon: 'fas fa-file-alt',
+      onClick: documents => {
+        
+      },
+      bulk: {
+        disabled: !props.config.canView
+      },
+      single: {
+        hidden: true,
+        disabled: !props.config.canView
+      }
     },
     {
       key: 'VIEW',
       name: 'View',
       icon: 'fas fa-eye',
       onClick: documents => {
+        console.log("ScriptedDocumentTable action VIEW", documents)
         const docIds = documents.map(d => {
           const _fileId = d.documentData._fileId
           const _fileVersionId = d.currentVersion
@@ -121,6 +123,7 @@ let ScriptedDocumentTable = props => {
       name: 'Download',
       icon: 'fas fa-download',
       onClick: documents => {
+        console.log("ScriptedDocumentTable action DOWNLOAD", documents)
         let documentsData = documents.map(d => d.documentData)
         FileHelpers.downloadDocuments(documentsData)
       },

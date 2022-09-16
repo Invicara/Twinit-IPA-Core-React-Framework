@@ -13,7 +13,6 @@ const DocumentTable = props => {
     const [selectedDocumentsIds, setSelectedDocumentsIds] = useState(initialSelectedDocuments);
     const [sort, setSort] = useState(props.tableConfig.sort)
     const [documents, setDocuments] = useState(props.documents)
-    const [view, setView] = useState(false);
   
     function getDocActions(docIndex) {
       let doc = documents[docIndex];
@@ -76,6 +75,7 @@ const DocumentTable = props => {
         {props.actions
             .filter(action => action.bulk.hidden !== true)
             .map(action => {
+            console.log("DocumentTable render action", action)
             let defaultProps = {
                 disabled: action.bulk.disabled,
                 title: action.name,
