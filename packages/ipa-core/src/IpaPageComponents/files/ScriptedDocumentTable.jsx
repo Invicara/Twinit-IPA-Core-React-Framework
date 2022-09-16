@@ -77,7 +77,7 @@ let ScriptedDocumentTable = props => {
     {
       key: "DOWNLOAD", //is used to identify which button this action corresponds to in the presentational component
       name: "Download",
-      icon: "fas fa-edit",
+      icon: "icofont-upload-alt",
       onClick: (documents) => {
         console.log("DOWNLOAD documents", documents)
         let documentsData = documents.map(d => d.documentData);
@@ -102,7 +102,7 @@ let ScriptedDocumentTable = props => {
     {
       key: "VIEW", //is used to identify which button this action corresponds to in the presentational component
       name: "View",
-      icon: "inv-icon-svg inv-icon-nav",
+      icon: "fas fa-file-export",
       onClick: (documents) => {
         console.log("VIEW action documents", documents);
         const docIds = documents.map(d => {
