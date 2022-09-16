@@ -64,6 +64,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
     componentDidUpdate(prevProps) {
       //if the search changes the component doesn't get re-mounted, but still we need to react to the change in navigation
       if(this.props.location.search !== prevProps.location.search){
+        console.log("cdu onNavigated")
         this.onNavigated();
       }
 
@@ -238,6 +239,11 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         if (selectionInfo.queryParams) {
           query = Object.assign(query, selectionInfo.queryParams)
         }
+
+        if(selectionInfo) {
+          query.entityType = selectionInfo.entityType
+        }
+
         //if query has an array which represents the total entities to be fetched (not highlighted) turn it into a string
         //if its not an array leave as is as then it represents settings for a fetch control
         if (query.query && query.query.value && !query.query.id && query.query.id !== 0)
@@ -263,6 +269,8 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
     }
 
     onNavigated() {
+
+      console.log("GenericPage onNavigated")
 
       if (this.props.location.search) {
         let rawParams = this.props.location.search.split('?')[1];
@@ -337,8 +345,9 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         console.log("on nav qp", queryParams)
 
         this.setState({queryParams});
+      } else {
+        this.setState({queryParams: {}});
       }
-      else this.setState({queryParams: {}});
 
     }
 
@@ -389,6 +398,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       </div></div>
 
     render() {
+      console.log("GenericPage render", this.props, this.state)
       return this.isNestedDetailPage() ? this.body() : this.withPageLayout(this.body())
     }
 
