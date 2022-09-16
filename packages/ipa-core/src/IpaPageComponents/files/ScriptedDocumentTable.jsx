@@ -11,9 +11,9 @@ const DocumentTable = props => {
 
   console.log("DocumentTable IafDocViewer", IafDocViewer )
 
-  let initialSelectedDocuments = new Array(props.documents.length).fill(false);
-
-  const [selectedDocumentsIndeces, setSelectedDocumentsIndeces] = useState(initialSelectedDocuments);
+  const initialSelectedDocuments = []
+  const [selectedDocumentsIds, setSelectedDocumentsIds] = useState(initialSelectedDocuments);
+  const [view, setView] = useState(false);
 
   function getDocActions(docIndex) {
     let doc = props.documents[docIndex];
@@ -40,37 +40,39 @@ const DocumentTable = props => {
   }
 
   function getSelectedDocuments(selectedIndeces) {
-    const selectedDocuments = []
-    _.forEach(selectedIndeces, (value, key) => {
-      if(value) {
-        selectedDocuments.push(props.documents[key])
-      }
-    })
-
-    return selectedDocuments;
+    return props.documents.filter((d) => selectedIndeces.includes(d.documentData._fileId));
   }
 
   function getSelectedDocumentsData(selectedIndeces) {
     return getSelectedDocuments(selectedIndeces).map(d => d.documentData);
   }
 
-  function getSelectedDocumentsIds(selectedIndeces) {
-    return getSelectedDocuments(selectedIndeces).map(d => d.documentData._fileId);
-  }
+
+  console.log("selectedDocumentsIds", selectedDocumentsIds)
 
   
-  
+  const allSelected = selectedDocumentsIds.length === props.documents.length; 
+  const noneSelected = _.isEmpty(selectedDocumentsIds);
+
+  const docIds = getSelectedDocuments(selectedDocumentsIds).map(d => ({
+    _fileId: d.documentData._fileId,
+    _fileVersionId: d.currentVersion
+  }));
+
   
   return <div className="document-table">
     Document Table
-    <IafDocViewer docIds={getSelectedDocumentsIds(selectedDocumentsIndeces)}/>
+    {view &&
+      <IafDocViewer docIds={docIds}/>
+    }
+    <button onClick={() => setView(!view)}>Viewer</button>
     {props.actions
       .filter(action => action.bulk.hidden !== true)
       .map(action => {
         let defaultProps = {
           disabled: action.bulk.disabled,
           children: action.name,
-          onClick: () => action.onClick(getSelectedDocumentsData(selectedDocumentsIndeces))
+          onClick: () => action.onClick(getSelectedDocumentsData(selectedDocumentsIds))
         }
         if(action.bulk.component) {
           return <action.bulk.component {...defaultProps} {...action.bulk.props}/>;
@@ -84,14 +86,13 @@ const DocumentTable = props => {
           <th className="document-table__header-col document-table__col document-table__col--select">
             <Checkbox 
               onChange={() => {
-                let checked = !selectedDocumentsIndeces.every((check) => check === true)
-                if(checked) {
-                  setSelectedDocumentsIndeces([...initialSelectedDocuments].fill(true));
+                if(allSelected) {
+                  setSelectedDocumentsIds(initialSelectedDocuments)
                 } else {
-                  setSelectedDocumentsIndeces(initialSelectedDocuments)
+                  setSelectedDocumentsIds(getSelectedDocumentsIds);
                 }
               }}
-              checked={selectedDocumentsIndeces.every((check) => check === true)}
+              checked={allSelected}
             />
           </th>
           <th className="document-table__header-col document-table__col document-table__col--actions">
@@ -104,20 +105,22 @@ const DocumentTable = props => {
           })}
         </tr>
         {props.documents.map((doc, index) => {
+          const fileId = doc.documentData._fileId;
+          const selectedDocIndex = selectedDocumentsIds.findIndex((id) => id === fileId);
+          let checked = selectedDocIndex != -1;
           return <tr className="document-table__row">
             <td className="document-table__col document-table__col--select">
               <Checkbox 
                 onChange={() => {
-                  let checked = !selectedDocumentsIndeces[index]
-                  let newSelectedDocuments = [...selectedDocumentsIndeces]
+                  let newSelectedDocuments = [...selectedDocumentsIds]
                   if(checked) {
-                    newSelectedDocuments[index] = true
+                    newSelectedDocuments.splice(selectedDocIndex, 1);
                   } else {
-                    newSelectedDocuments[index] = false
+                    newSelectedDocuments.push(fileId);
                   }
-                  setSelectedDocumentsIndeces(newSelectedDocuments)
+                  setSelectedDocumentsIds(newSelectedDocuments)
                 }}
-                checked={selectedDocumentsIndeces[index]} 
+                checked={checked} 
               />
             </td>
             <td className="document-table__col document-table__col--actions">
@@ -166,9 +169,11 @@ const DocumentTable = props => {
 
 const ScriptedDocumentTable = props => {
 
-  const getInitialVersions = (documents) => {
+  const getInitialVersions = (documents = []) => {
 
     let initialSelectedVersions = {}
+
+    console.log("ScriptedDocumentTable getInitialVersions documents", documents)
 
     documents.forEach((document) => {
       let firstVersion = document.versions?.[document.versions.length-1]?._fileVersionId;
