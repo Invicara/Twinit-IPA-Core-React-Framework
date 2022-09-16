@@ -1,0 +1,32 @@
+.document-table {
+    .document-table__actions {
+        display: flex;
+
+        &.document-table__actions--bulk {
+            margin-bottom: 16px;
+        }
+    }
+
+    .document-table__row--header {
+        border-bottom: solid 1px lightgray;
+        margin-bottom: 4px;
+    }
+
+    .document-table__col {
+        padding: 8px;
+    }
+
+    .document-table__col--select, 
+    .document-table__col--actions, 
+    .document-table__col--version {
+        vertical-align: middle;
+    }
+
+
+
+    .document-table__version-select {
+        min-width: 100px;
+    }
+
+
+}
