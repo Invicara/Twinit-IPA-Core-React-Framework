@@ -4,6 +4,7 @@ import { Checkbox } from '@material-ui/core';
 import GenericMatButton from '../../IpaControls/GenericMatButton'
 import ActionButton from '../../IpaControls/ActionButton';
 import './DocumentTable.scss'
+import _ from 'lodash'
 
 const DocumentTable = props => {
 
