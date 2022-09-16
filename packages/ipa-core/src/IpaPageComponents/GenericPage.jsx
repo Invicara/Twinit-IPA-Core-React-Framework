@@ -238,6 +238,11 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         if (selectionInfo.queryParams) {
           query = Object.assign(query, selectionInfo.queryParams)
         }
+
+        if(selectionInfo) {
+          query.entityType = selectionInfo.entityType
+        }
+
         //if query has an array which represents the total entities to be fetched (not highlighted) turn it into a string
         //if its not an array leave as is as then it represents settings for a fetch control
         if (query.query && query.query.value && !query.query.id && query.query.id !== 0)
@@ -317,7 +322,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
             queryParams.selectedEntities = queryParams.selectedEntities.split(',');
           }
         }
-
+        
         if (!this.isSelectionInfoValid(queryParams)) {
           console.error('Navigation occurred with invalid query parameters!');
           this.setState({queryParams: {}});
@@ -332,13 +337,11 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
           delete queryParams.query.type
         }
-
-
-        console.log("on nav qp", queryParams)
-
+        
         this.setState({queryParams});
+      } else {
+        this.setState({queryParams: {}});
       }
-      else this.setState({queryParams: {}});
 
     }
 

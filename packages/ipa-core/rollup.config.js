@@ -74,7 +74,8 @@ const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react-inspector', 'react-select','react-select/creatable', 'react-table',
     '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
-    'app-root-path', 'json5',
+    'app-root-path', 'json5','@invicara/iaf-doc-viewer',
+
 ]
 */
 
