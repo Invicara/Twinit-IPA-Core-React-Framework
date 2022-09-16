@@ -18,7 +18,7 @@
 import React from "react";
 import Select from 'react-select'
 
-const SimpleSelect = ({title, options, handleChange, placeholder, className, value}) => {
+const SimpleSelect = ({title, options, handleChange, placeholder, className, value, clearable = true, disabled}) => {
   return (
       <div className={className}>
           {title && <span className="simple-select-title">{title}</span>}
@@ -30,7 +30,8 @@ const SimpleSelect = ({title, options, handleChange, placeholder, className, val
             className="simple-select-element"
             closeMenuOnSelect={true}                        
             placeholder={placeholder}
-            isClearable={true}
+            isClearable={clearable}
+            isDisabled={disabled}
         /> 
       </div>      
   )
