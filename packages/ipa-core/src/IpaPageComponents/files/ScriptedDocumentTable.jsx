@@ -5,6 +5,7 @@ import GenericMatButton from '../../IpaControls/GenericMatButton'
 import SimpleSelect from '../../IpaControls/SimpleSelect';
 import FileHelpers from '../../IpaUtils/FileHelpers';
 import IafDocViewer from '@invicara/iaf-doc-viewer';
+import withPageNavigation from '../withPageNavigation';
 
 
 const DocumentTable = props => {
@@ -59,6 +60,8 @@ const DocumentTable = props => {
     _fileVersionId: d.currentVersion
   }));
 
+  console.log("docIds", docIds);
+
   
   return <div className="document-table">
     Document Table
@@ -72,7 +75,7 @@ const DocumentTable = props => {
         let defaultProps = {
           disabled: action.bulk.disabled,
           children: action.name,
-          onClick: () => action.onClick(getSelectedDocumentsData(selectedDocumentsIds))
+          onClick: () => action.onClick(getSelectedDocuments(selectedDocumentsIds))
         }
         if(action.bulk.component) {
           return <action.bulk.component {...defaultProps} {...action.bulk.props}/>;
@@ -167,7 +170,9 @@ const DocumentTable = props => {
   </div>
 }
 
-const ScriptedDocumentTable = props => {
+let ScriptedDocumentTable = props => {
+
+  console.log("ScriptedDocumentTable props", props);
 
   const getInitialVersions = (documents = []) => {
 
@@ -238,7 +243,8 @@ const ScriptedDocumentTable = props => {
       key: "DOWNLOAD", //is used to identify which button this action corresponds to in the presentational component
       name: "Download",
       onClick: (documents) => {
-        FileHelpers.downloadDocuments(documents)
+        let documentsData = documents.map(d => d.documentData);
+        FileHelpers.downloadDocuments(documentsData)
       }, //event handler for bulk action and row action (unless overriden by "per document" action config)
       bulk: {
         component: GenericMatButton,//(optional) bulk action button component, override default button from presentational component
@@ -259,7 +265,20 @@ const ScriptedDocumentTable = props => {
     {
       key: "VIEW", //is used to identify which button this action corresponds to in the presentational component
       name: "View",
-      onClick: (documents) => {}, //event handler for bulk action and row action (unless overriden by "per document" action config)
+      onClick: (documents) => {
+        console.log("VIEW action documents", documents);
+        const docIds = documents.map(d => {
+          const _fileId = d.documentData._fileId;
+          const _fileVersionId = d.currentVersion;
+          return {_fileId, _fileVersionId}
+        })
+        let query = {
+          entityType: "file",
+          queryParams: {docIds}
+        }
+        console.log("VIEW action query", query)
+        props.onNavigate("documentviewer", query, {newTab: true})
+      }, //event handler for bulk action and row action (unless overriden by "per document" action config)
       bulk: {
         // component: <GenericMatButton/>,//(optional) bulk action button component, override default button from presentational component
         disabled: !props.config.canView, //(optional) disabled state for bulk action, defaults to false 
@@ -287,8 +306,12 @@ const ScriptedDocumentTable = props => {
   return <DocumentTable documents={documents} actions={actions} tableConfig={tableConfig} />
 }
 
+ScriptedDocumentTable = withPageNavigation(ScriptedDocumentTable); 
+
 export const ScriptedDocumentTableFactory = {
-  create: ({ config, data }) => {
+  create: (...args) => {
+    console.log("ScriptedDocumentTableFactory create args", args);
+    const { config, data } = args[0]
     return <ScriptedDocumentTable config={config} data={data} />
   }
 }

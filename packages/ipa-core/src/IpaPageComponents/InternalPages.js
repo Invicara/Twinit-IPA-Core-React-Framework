@@ -8,9 +8,11 @@ import UserGroupView from './users/UserGroupView'
 import DatasourcesView from './datasources/DatasourcesView'
 import OMAPIView from './omapi/OMAPIView'
 import EmptyComponent from "./mock/EmptyComponent";
+import DocumentView from './entities/DocumentView'
 
 const InternalPages = {
     'entities/EntityView': EntityView,
+    'entities/DocumentView': DocumentView,
     'dashboards/DashboardView': DashboardView,
     'files/UploadFilesWizard': UploadFilesWizard,
     'solutionMgmt/ScriptRunnerView': ScriptRunnerView,

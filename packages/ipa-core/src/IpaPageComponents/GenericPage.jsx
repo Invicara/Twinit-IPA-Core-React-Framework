@@ -68,6 +68,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
     componentDidUpdate(prevProps) {
       //if the search changes the component doesn't get re-mounted, but still we need to react to the change in navigation
       if(this.props.location.search !== prevProps.location.search){
+        console.log("cdu onNavigated")
         this.onNavigated();
       }
 
