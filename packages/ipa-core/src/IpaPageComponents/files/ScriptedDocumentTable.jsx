@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
-import GenericMatButton from '../../IpaControls/GenericMatButton'
 import FileHelpers from '../../IpaUtils/FileHelpers'
 import withPageNavigation from '../withPageNavigation'
 import DocumentTable from './DocumentTable'
+import { useEffect } from 'react'
 
 let ScriptedDocumentTable = props => {
 
   const getInitialVersions = (documents = []) => {
     let initialSelectedVersions = {}
-
 
     documents.forEach(document => {
       let firstVersion =
@@ -24,6 +23,14 @@ let ScriptedDocumentTable = props => {
   )
   const [sorting, setSorting] = useState(props.config.defaultSort)
   const [columns, setColumns] = useState(props.config.columns)
+  
+  useEffect(() => {
+    let UserConfigColumns = JSON.parse(localStorage.getItem('DocumentViewerUserConfigColumns'))
+    if (UserConfigColumns) {
+        setColumns(UserConfigColumns)
+    }
+  }, [])
+  
 
   const transformFileAttributesToProperties = document => {
     if (document.properties) {
@@ -71,26 +78,25 @@ let ScriptedDocumentTable = props => {
     disableVersions: props.config.includeVersions !== true
   }))
 
-  let actions = [
-    {
-      key: 'DOWNLOAD',
-      name: 'Download',
-      icon: 'icofont-upload-alt',
-      onClick: documents => {
-        let documentsData = documents.map(d => d.documentData)
-        FileHelpers.downloadDocuments(documentsData)
-      },
-      bulk: {
-        disabled: !props.config.canDownload
-      },
-      single: {
-        disabled: !props.config.canDownload
-      }
+  let actions = [{
+    key: 'OPEN',
+    name: 'Open in Files',
+    icon: 'fas fa-file-alt',
+    onClick: documents => {
+      
+    },
+    bulk: {
+      disabled: !props.config.canView
+    },
+    single: {
+      hidden: true,
+      disabled: !props.config.canView
+    }
     },
     {
       key: 'VIEW',
       name: 'View',
-      icon: 'fas fa-file-export',
+      icon: 'fas fa-eye',
       onClick: documents => {
         const docIds = documents.map(d => {
           const _fileId = d.documentData._fileId
@@ -109,19 +115,51 @@ let ScriptedDocumentTable = props => {
       single: {
         disabled: !props.config.canView
       }
+    },
+    {
+      key: 'DOWNLOAD',
+      name: 'Download',
+      icon: 'fas fa-download',
+      onClick: documents => {
+        let documentsData = documents.map(d => d.documentData)
+        FileHelpers.downloadDocuments(documentsData)
+      },
+      bulk: {
+        disabled: !props.config.canDownload
+      },
+      single: {
+        disabled: !props.config.canDownload
+      }
     }
+    // {
+    //   key: 'REORDER',
+    //   name: 'Reorder Columns',
+    //   icon: 'fas fa-columns',
+    //   onClick: () => {
+    //     OpenReorderModal(columns, tableConfig.onColumnsChange)
+    //   },
+    //   bulk: {
+    //     disabled: false
+    //   },
+    //   single: {
+    //     hidden: true,
+    //     disabled: true
+    //   }
+    // }
   ]
 
   let tableConfig = {
     columns, //determines which columns should be displayed (order sensitive), defaults to ["version", "name"]
     // lockedColumns: props?.config?.lockedColumns, //order insensitive
-    // onColumnsChange: (columns) => {}, //callback triggered when user confirmed order change in presentational component
-    sort: {
-      //If not defined, the presentational component handles the sorting logic
-      currentColumn: sorting?.column, //The currently sorted column, if null, no sorting is allowed
-      onSort: setSorting, //(optional) Called by the presentational component to defined additional instructions on sort,
-      isDescending: !sorting?.descending //defaults to false
-    }
+    onColumnsChange: (newColumns) => {
+      setColumns(newColumns)
+    }, //callback triggered when user confirmed order change in presentational component
+    // sort: {                                          
+    //   //If not defined, the presentational component handles the sorting logic
+    //   currentColumn: sorting?.column, //The currently sorted column, if null, no sorting is allowed
+    //   onSort: setSorting, //(optional) Called by the presentational component to defined additional instructions on sort,
+    //   isDescending: !sorting?.descending //defaults to false
+    // }
   }
 
   return (
