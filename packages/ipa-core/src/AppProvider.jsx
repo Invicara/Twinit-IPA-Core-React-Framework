@@ -508,7 +508,6 @@ class AppProvider extends React.Component {
     }
     
     console.log(config, routes)
-    console.log("TEST CHANGE 2")
     routes = await routes
 
     //clear routes immediately so that the UI rmeoves the last project's routes

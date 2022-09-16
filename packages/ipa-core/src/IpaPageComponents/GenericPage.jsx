@@ -64,7 +64,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
     componentDidUpdate(prevProps) {
       //if the search changes the component doesn't get re-mounted, but still we need to react to the change in navigation
       if(this.props.location.search !== prevProps.location.search){
-        console.log("cdu onNavigated")
         this.onNavigated();
       }
 
@@ -270,8 +269,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
     onNavigated() {
 
-      console.log("GenericPage onNavigated")
-
       if (this.props.location.search) {
         let rawParams = this.props.location.search.split('?')[1];
         // using decoder to parse boolean and int https://github.com/ljharb/qs/issues/91#issuecomment-437926409
@@ -325,7 +322,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
             queryParams.selectedEntities = queryParams.selectedEntities.split(',');
           }
         }
-
+        
         if (!this.isSelectionInfoValid(queryParams)) {
           console.error('Navigation occurred with invalid query parameters!');
           this.setState({queryParams: {}});
@@ -340,10 +337,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
           delete queryParams.query.type
         }
-
-
-        console.log("on nav qp", queryParams)
-
+        
         this.setState({queryParams});
       } else {
         this.setState({queryParams: {}});
@@ -398,7 +392,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       </div></div>
 
     render() {
-      console.log("GenericPage render", this.props, this.state)
       return this.isNestedDetailPage() ? this.body() : this.withPageLayout(this.body())
     }
 
