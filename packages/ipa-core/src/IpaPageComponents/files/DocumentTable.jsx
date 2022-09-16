@@ -112,9 +112,7 @@ const DocumentTable = props => {
               <td className="document-table__col document-table__col--actions">
                 <div className=' document-table__actions document-table__actions--row'>
                     {_.values(getDocActions(index)).map(action => {
-                    
-                    console.log("action", action);
-    
+                        
                     if(action.hidden === true) return null
     
                     let defaultProps = {

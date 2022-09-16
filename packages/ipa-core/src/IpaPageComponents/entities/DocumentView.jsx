@@ -38,8 +38,6 @@ import withEntitySearch from "./WithEntitySearch";
 
     const docIds = props.docIds || props.queryParams.docIds || [];
 
-    console.log("DocumentViewer props", props)
-
     let pageContent;
     if (props.fetching) {
         pageContent = <span className="info-message">Retrieving data</span>
