@@ -43,6 +43,9 @@ import withEntitySearch from "./WithEntitySearch";
     let pageContent;
     if (props.fetching) {
         pageContent = <span className="info-message">Retrieving data</span>
+    }
+    else if (props.handler.config.canView !== true) {
+        pageContent = <span className="info-message">You don't have permission to view this file.</span>
     } else if (!_.isEmpty(docIds)) {
         pageContent = <IafDocViewer
             docIds={docIds}
