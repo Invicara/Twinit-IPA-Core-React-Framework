@@ -3,15 +3,16 @@ import React, { useState } from 'react'
 import { config } from 'react-transition-group'
 import GenericMatButton from '../../IpaControls/GenericMatButton'
 import SimpleSelect from '../../IpaControls/SimpleSelect';
+import FileHelpers from '../../IpaUtils/FileHelpers';
 
 
 const DocumentTable = props => {
 
   let initialSelectedDocuments = new Array(props.documents.length).fill(false);
 
-  const [selectedDocuments, setSelectedDocuments] = useState(initialSelectedDocuments);
+  const [selectedDocumentsIndeces, setSelectedDocumentsIndeces] = useState(initialSelectedDocuments);
 
-  const getDocActions = (docIndex) => {
+  function getDocActions(docIndex) {
     let doc = props.documents[docIndex];
 
     let actionsConfig = {};
@@ -27,23 +28,46 @@ const DocumentTable = props => {
       let commonActionConfig = !!action.single
 
       if(!actionIsAlreadyDefinedOnDoc && commonActionConfig) {
-        const {key, name, single} = action;
-        actionsConfig[action.key] = {key, name, ...single};
+        const {key, name, onClick, single} = action;
+        actionsConfig[action.key] = {key, name, onClick, ...single};
       }
     })
 
     return actionsConfig
   }
+
+  function getSelectedDocuments(selectedIndeces) {
+    const selectedDocuments = []
+    _.forEach(selectedIndeces, (value, key) => {
+      if(value) {
+        selectedDocuments.push(props.documents[key])
+      }
+    })
+
+    return selectedDocuments;
+  }
+
+  function getSelectedDocumentsData(selectedIndeces) {
+    return getSelectedDocuments(selectedIndeces).map(d => d.documentData);
+  }
+
+  
+  
   
   return <div className="document-table">
     Document Table
     {props.actions
       .filter(action => action.bulk.hidden !== true)
       .map(action => {
-        if(action.bulk.component) {
-          return action.bulk.component;
+        let defaultProps = {
+          disabled: action.bulk.disabled,
+          children: action.name,
+          onClick: () => action.onClick(getSelectedDocumentsData(selectedDocumentsIndeces))
         }
-        return <GenericMatButton disabled={action.bulk.disabled} onClick={action.onClick}>{action.name}</GenericMatButton>
+        if(action.bulk.component) {
+          return <action.bulk.component {...defaultProps} {...action.bulk.props}/>;
+        }
+        return <GenericMatButton {...defaultProps}/>
       })
     }
     {props.documents.length > 0 ?
@@ -52,14 +76,14 @@ const DocumentTable = props => {
           <th className="document-table__header-col document-table__col document-table__col--select">
             <Checkbox 
               onChange={() => {
-                let checked = !selectedDocuments.every((check) => check === true)
+                let checked = !selectedDocumentsIndeces.every((check) => check === true)
                 if(checked) {
-                  setSelectedDocuments([...initialSelectedDocuments].fill(true));
+                  setSelectedDocumentsIndeces([...initialSelectedDocuments].fill(true));
                 } else {
-                  setSelectedDocuments(initialSelectedDocuments)
+                  setSelectedDocumentsIndeces(initialSelectedDocuments)
                 }
               }}
-              checked={selectedDocuments.every((check) => check === true)}
+              checked={selectedDocumentsIndeces.every((check) => check === true)}
             />
           </th>
           <th className="document-table__header-col document-table__col document-table__col--actions">
@@ -76,28 +100,31 @@ const DocumentTable = props => {
             <td className="document-table__col document-table__col--select">
               <Checkbox 
                 onChange={() => {
-                  let checked = !selectedDocuments[index]
-                  console.log("checked", checked);
-                  let newSelectedDocuments = [...selectedDocuments]
+                  let checked = !selectedDocumentsIndeces[index]
+                  let newSelectedDocuments = [...selectedDocumentsIndeces]
                   if(checked) {
                     newSelectedDocuments[index] = true
                   } else {
                     newSelectedDocuments[index] = false
                   }
-                  setSelectedDocuments(newSelectedDocuments)
+                  setSelectedDocumentsIndeces(newSelectedDocuments)
                 }}
-                checked={selectedDocuments[index]} 
+                checked={selectedDocumentsIndeces[index]} 
               />
             </td>
             <td className="document-table__col document-table__col--actions">
               {_.values(getDocActions(index)).map(action => {
                 if(action.hidden === true) return null
 
-                if(action.component) {
-                  return action.component
-                } else {
-                  return <button disabled={action.disabled} onClick={action.onClick}>{action.name}</button>
+                let defaultProps = {
+                  disabled: action.disabled,
+                  children: action.name,
+                  onClick: () => action.onClick([doc.documentData])
                 }
+                if(action.component) {
+                  return <action.component {...defaultProps} {...action.single.props}/>;
+                }
+                return <button {...defaultProps}/>
               })}
             </td>
             <td className="document-table__col">
@@ -109,7 +136,6 @@ const DocumentTable = props => {
                 handleChange={(value) => {
                   let fileId = doc.documentData._fileId;
                   let versionId = doc.documentData.versions.find(v => v.versionNumber === value)._fileVersionId;
-                  console.log("fileId versionId", fileId, versionId);
                   doc.setCurrentVersion(
                     fileId, 
                     versionId
@@ -118,9 +144,7 @@ const DocumentTable = props => {
               />
             </td>
             {_.keys(props.documents[0]?.documentData?.properties).map(key => {
-              console.log("render col doc", doc)
               let value = doc.documentData?.properties?.[key]?.val || "";
-              console.log("render col val", key, value)
               return <td className="document-table__col">{value}</td>
             })}
           </tr>
@@ -139,9 +163,7 @@ const ScriptedDocumentTable = props => {
     let initialSelectedVersions = {}
 
     documents.forEach((document) => {
-      console.log("ScriptedDocumentTable getInitialVersions document", document)
       let firstVersion = document.versions?.[document.versions.length-1]?._fileVersionId;
-      console.log("ScriptedDocumentTable getInitialVersions firstVersion", firstVersion)
       initialSelectedVersions[document._fileId] = firstVersion
     })
 
@@ -188,8 +210,6 @@ const ScriptedDocumentTable = props => {
   }
 
   const documentsData = props.data.map(transformFileAttributesToProperties)
-  console.log('ScriptedDocumentTable props', props)
-  console.log('ScriptedDocumentTable documents', documentsData)
 
   let documents = documentsData.map(data => ({
     documentData: data, //contains the document data as fetched by the api
@@ -204,9 +224,15 @@ const ScriptedDocumentTable = props => {
     {
       key: "DOWNLOAD", //is used to identify which button this action corresponds to in the presentational component
       name: "Download",
-      onClick: (documents) => {}, //event handler for bulk action and row action (unless overriden by "per document" action config)
+      onClick: (documents) => {
+        FileHelpers.downloadDocuments(documents)
+      }, //event handler for bulk action and row action (unless overriden by "per document" action config)
       bulk: {
-        component: <GenericMatButton onClick={(documents) => {}} disabled={!props.config.canDownload}>Download</GenericMatButton>,//(optional) bulk action button component, override default button from presentational component
+        component: GenericMatButton,//(optional) bulk action button component, override default button from presentational component
+        props: {
+          disabled: !props.config.canDownload,
+          children: "Download"
+        }
         // disabled: !props.config.canDownload, //(optional) disabled state for bulk action, defaults to false 
         // hidden: false, //(optional) hidden state for bulk action, defaults to false
         
