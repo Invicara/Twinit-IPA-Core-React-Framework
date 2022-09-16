@@ -84,8 +84,8 @@ const DocumentTable = props => {
             <th className="document-table__col document-table__col--header">
               Version
             </th>
-            {_.entries(props.documents[0]?.documentData?.properties).map(([key, doc]) => {
-              return <th className="document-table__col document-table__col--header">{key}</th>
+            {props.tableConfig.columns.map(column => {
+            return <th className="document-table__col document-table__col--header">{column.name}</th>
             })}
           </tr>
           {props.documents.map((doc, index) => {
@@ -147,9 +147,15 @@ const DocumentTable = props => {
                   }}
                 />
               </td>
-              {_.keys(props.documents[0]?.documentData?.properties).map(key => {
-                let value = doc.documentData?.properties?.[key]?.val || "";
-                return <td className="document-table__col">{value}</td>
+              {props.tableConfig.columns.map(column => {
+              let value = _.get(doc.documentData, column.accessor, "");
+              if(value === null) {
+                value = ""
+              }
+              if(_.isObject(value)) {
+                value = value.val
+              }
+              return <td className="document-table__col">{value}</td>
               })}
             </tr>
           })}
