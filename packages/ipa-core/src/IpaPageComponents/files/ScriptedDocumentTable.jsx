@@ -63,7 +63,7 @@ let ScriptedDocumentTable = props => {
   const documentsData = props.data.map(transformFileAttributesToProperties)
 
   let documents = documentsData.map(data => ({
-    documentData: data, //contains the document data as fetched by the api
+    documentData: data,
     currentVersion: selectedVersions[data._fileId],
     setCurrentVersion: (fileId, versionId) => {
       setSelectedVersions({ ...selectedVersions, [fileId]: versionId })
@@ -72,32 +72,23 @@ let ScriptedDocumentTable = props => {
   }))
 
   let actions = [
-    //top level actions config: define the behaviour of bulk actions and row actions (unless overridden by the "per document" actions config)
     {
-      key: 'DOWNLOAD', //is used to identify which button this action corresponds to in the presentational component
+      key: 'DOWNLOAD',
       name: 'Download',
       icon: 'icofont-upload-alt',
       onClick: documents => {
         let documentsData = documents.map(d => d.documentData)
         FileHelpers.downloadDocuments(documentsData)
-      }, //event handler for bulk action and row action (unless overriden by "per document" action config)
+      },
       bulk: {
-        // component: GenericMatButton,//(optional) bulk action button component, override default button from presentational component
-        // props: {
-        //   disabled: !props.config.canDownload,
-        //   children: "Download"
-        // }
-        disabled: !props.config.canDownload //(optional) disabled state for bulk action, defaults to false
-        // hidden: false, //(optional) hidden state for bulk action, defaults to false
+        disabled: !props.config.canDownload
       },
       single: {
-        // component: //(optional) row icon component with a tooltip attached for all rows (unless overriden by "per document" action config), defaults to icon from presentational component
-        disabled: !props.config.canDownload //(optional) disabled state for row action, defaults to false
-        // hidden: false //(optional) hidden state for row action, defaults to false
+        disabled: !props.config.canDownload
       }
     },
     {
-      key: 'VIEW', //is used to identify which button this action corresponds to in the presentational component
+      key: 'VIEW',
       name: 'View',
       icon: 'fas fa-file-export',
       onClick: documents => {
@@ -111,16 +102,12 @@ let ScriptedDocumentTable = props => {
           queryParams: { docIds }
         }
         props.onNavigate('documentviewer', query, { newTab: true })
-      }, //event handler for bulk action and row action (unless overriden by "per document" action config)
+      },
       bulk: {
-        // component: <GenericMatButton/>,//(optional) bulk action button component, override default button from presentational component
-        disabled: !props.config.canView //(optional) disabled state for bulk action, defaults to false
-        // hidden: false, //(optional) hidden state for bulk action, defaults to false
+        disabled: !props.config.canView
       },
       single: {
-        // component: //(optional) row icon component with a tooltip attached for all rows (unless overriden by "per document" action config), defaults to icon from presentational component
-        disabled: !props.config.canView //(optional) disabled state for row action, defaults to false
-        // hidden: false //(optional) hidden state for row action, defaults to false
+        disabled: !props.config.canView
       }
     }
   ]
