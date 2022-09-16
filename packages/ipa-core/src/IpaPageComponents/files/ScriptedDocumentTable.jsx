@@ -130,7 +130,7 @@ const DocumentTable = props => {
             <td className="document-table__col">
               <SimpleSelect 
                 disabled={doc.disableVersions}
-                isClearable={false}
+                clearable={false}
                 options={doc.documentData.versions.map(v => v.versionNumber)} 
                 value={doc.documentData.versions.find(v => v._fileVersionId === doc.currentVersion).versionNumber}
                 handleChange={(value) => {
