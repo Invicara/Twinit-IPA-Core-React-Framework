@@ -4,8 +4,7 @@ import './Table.scss'
 export default function Table (props) {
   console.log('Table props', props)
 
-  const hasData = props.rows && props.rows.length > 1
-
+  const hasData = props.rows && props.rows.length > 0
   return (
     <table className={props.className}>
       {props.headers && (
@@ -30,7 +29,13 @@ export default function Table (props) {
             ))}
           </tr>
         ))}
-      {!hasData && props.options?.emptyMessage}
+      {!hasData && (
+        <tr>
+          <td colSpan={props.headers?.length} className={`table__empty-message ${props.options?.emptyMessageClassName || ""}`}>
+            {props.options?.emptyMessage}
+          </td>
+        </tr>
+      )}
     </table>
   )
 }
