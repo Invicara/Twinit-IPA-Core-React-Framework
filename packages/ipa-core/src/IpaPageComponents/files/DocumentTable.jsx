@@ -7,6 +7,7 @@ import _, { filter } from 'lodash'
 import * as modal from '../../redux/slices/modal'
 import { useStore } from "react-redux";
 import ReorderColumnsModal from './ReorderColumnsModal'
+import moment from 'moment';
 
 const DocumentTable = props => {
     const initialSelectedDocuments = []
@@ -43,10 +44,10 @@ const DocumentTable = props => {
     }
 
     const reduxStore = useStore();
-    const OpenReorderModal =  (columns, onColumnsChange)=>{
+    const OpenReorderModal =  (columns, onColumnsChange, lockedColumns)=>{
       reduxStore.dispatch(modal.actions.setModal({
         component: ReorderColumnsModal, 
-        props: {columns, onColumnsChange}, 
+        props: {columns, onColumnsChange, lockedColumns}, 
         open: true
       }))
     }
@@ -114,7 +115,11 @@ const DocumentTable = props => {
             <th className="document-table__col document-table__col--header document-table__col document-table__col--actions">
             </th>
             <th className="document-table__col document-table__col--header">
-              Version
+              <div>Version
+                <span className={`document-table_lock`}>
+                    <i className={`fas ${_.includes(props?.tableConfig?.lockedColumns, "Version") ? 'fa-lock' : ''}`}></i>
+                  </span>
+              </div>
             </th>
             <th className="document-table__col document-table__col--filename">
               <div>Filename
@@ -128,16 +133,20 @@ const DocumentTable = props => {
             .map((column, index, array) => {
               return <th className="document-table__col document-table__col--header"><div>
                       {column.name}
+                      <span className={`document-table_lock`}>
+                        <i className={`fas ${_.includes(props?.tableConfig?.lockedColumns, column.name) ? 'fa-lock' : ''}`}></i>
+                      </span>
                         <span className={`document-table__filter${sort ? sort.currentColumn === column.accessor ? '_active': '' : ''}`}>
                           <i onClick= {()=>sortBy(column.accessor, sort ? sort.isDescending : true)} 
                             className={`fas ${sort ? sort.isDescending ? 'fa-sort-amount-up': 'fa-sort-amount-down' : 'fa-sort-amount-down'}`}></i>
                         </span>
-                      {array.length === index + 1 ? <span className='document-table__reorder_button'><i onClick= {() => OpenReorderModal(props.tableConfig.columns, props.tableConfig.onColumnsChange)} className={"fas fa-columns"}></i></span> : null}
+                      {array.length === index + 1 ? <span className='document-table__reorder_button'><i onClick= {() => OpenReorderModal(props.tableConfig.columns, props.tableConfig.onColumnsChange, props?.tableConfig?.lockedColumns)} className={"fas fa-columns"}></i></span> : null}
                       </div></th> 
             })}
             
           </tr>
           {documents.map((doc, index) => {
+            let date = moment(doc.documentData._metadata[props.tableConfig.dateField])       
             const fileId = doc.documentData._fileId;
             const selectedDocIndex = selectedDocumentsIds.findIndex((id) => id === fileId);
             let checked = selectedDocIndex != -1;
@@ -146,7 +155,7 @@ const DocumentTable = props => {
                 <PinkCheckbox 
                   onChange={() => {
                     let newSelectedDocuments = [...selectedDocumentsIds]
-                    if(checked) {
+                   if(checked) {
                       newSelectedDocuments.splice(selectedDocIndex, 1);
                     } else {
                       newSelectedDocuments.push(fileId);
@@ -185,7 +194,9 @@ const DocumentTable = props => {
                   className='document-table__version-select'
                   disabled={doc.disableVersions}
                   clearable={false}
-                  options={doc.documentData.versions.map(v => v.versionNumber)} 
+                  options={doc.documentData.versions.map(v => {
+                    return `${v.versionNumber} (${date.format('DD/MM/YYYY kk:mm:ss a')})`
+                  })} 
                   value={doc.documentData.versions.find(v => v._fileVersionId === doc.currentVersion).versionNumber}
                   handleChange={(value) => {
                     let fileId = doc.documentData._fileId;

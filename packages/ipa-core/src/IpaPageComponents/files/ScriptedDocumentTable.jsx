@@ -3,6 +3,7 @@ import FileHelpers from '../../IpaUtils/FileHelpers'
 import withPageNavigation from '../withPageNavigation'
 import DocumentTable from './DocumentTable'
 import { useEffect } from 'react'
+import qs from 'qs';
 
 let ScriptedDocumentTable = props => {
 
@@ -84,7 +85,22 @@ let ScriptedDocumentTable = props => {
       name: 'Open in Files',
       icon: 'fas fa-file-alt',
       onClick: documents => {
-        
+        const selectedEntities = documents.map(d => {
+          const _fileId = d.documentData._id
+          return _fileId 
+        })
+        // let query = {
+        //   senderEntityType: 'Asset',
+        //   entityType: 'File',
+        //   queryParams: { selectedEntities: selectedEntities }
+        // }
+        let query = {
+          entityType: 'File',
+          selectedEntities: selectedEntities,
+          senderEntityType: 'Asset',
+          query: {value: selectedEntities}
+          }
+          props.onNavigate('files', query, { newTab: true })
       },
       bulk: {
         disabled: !props.config.canView
@@ -153,7 +169,7 @@ let ScriptedDocumentTable = props => {
 
   let tableConfig = {
     columns, //determines which columns should be displayed (order sensitive), defaults to ["version", "name"]
-    // lockedColumns: props?.config?.lockedColumns, //order insensitive
+    lockedColumns: props?.config?.lockedColumns, //order insensitive
     onColumnsChange: (newColumns) => {
       setColumns(newColumns)
     }, //callback triggered when user confirmed order change in presentational component
@@ -163,6 +179,8 @@ let ScriptedDocumentTable = props => {
     //   onSort: setSorting, //(optional) Called by the presentational component to defined additional instructions on sort,
     //   isDescending: !sorting?.descending //defaults to false
     // }
+    dateField: props?.config?.dateField,
+    lockedColumns: props?.config?.lockedColumns
   }
 
   return (

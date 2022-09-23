@@ -85,7 +85,11 @@
         .document-table__reorder_button {
             color: var(--app-accent-color);
             cursor: pointer;
-        }
+        }    
+        .document-table__lock{
+            color: #5D5D5D;
+            cursor: none;
+        }  
     }
 
 }

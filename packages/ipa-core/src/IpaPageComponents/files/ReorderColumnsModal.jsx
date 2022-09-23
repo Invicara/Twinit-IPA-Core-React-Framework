@@ -4,6 +4,7 @@ import ActionButton from "../../IpaControls/ActionButton"
 import './ReorderColumnsModal.scss'
 import * as modal from '../../redux/slices/modal'
 import { useStore } from "react-redux"
+import _ from 'lodash'
 
 const ReorderColumnsModal = (props) => {
     const [columns, setColumns] = useState(props.columns.map(col => { return { ...col, selected: false } }))
@@ -76,6 +77,7 @@ const ReorderColumnsModal = (props) => {
                         <span>Active Columns</span>
                         <ul>
                             {columns ? columns.map((doc, index) => {
+                                if(_.includes(props.lockedColumns, doc.name)) return
                                 if (doc != undefined)
                                     if (doc.active)
                                         return <li key={doc.name} onDragOver={() => onDragOver(index)}>
