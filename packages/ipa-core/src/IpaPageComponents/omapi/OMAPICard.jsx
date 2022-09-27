@@ -136,10 +136,10 @@ export const OMAPICard  = ({path, rootUrl, token}) => {
       let params = ""
       Object.keys(queryParams).forEach((qp) => {
         if (queryParams[qp] && (queryParams[qp] === 0 || queryParams[qp].length))
-        params += qp + '=' + queryParams[qp]
+        params += qp + '=' + encodeURIComponent(queryParams[qp])
       })
       if (params.length)
-        url += '?' + encodeURIComponent(params)
+        url += '?' + params
     }
 
     let options = {
