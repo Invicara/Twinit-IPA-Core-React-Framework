@@ -64,7 +64,7 @@ const withEntitySearch = WrappedComponent => {
                 // a page dealing with the same entity type it is meant to retrieve, then we can run the passed in query,
                 // fetching the entities using the selectors
                 if (queryParams.query && _.includes(this.props.allowedEntityTypes, queryParams.entityType) &&
-                    queryParams.entityType === queryParams.senderEntityType
+                    (!queryParams.senderEntityType || queryParams.entityType === queryParams.senderEntityType)
                     //this check is important not to mess with store
                     && queryParams.entityType === this.props.entitySingular) {
                     // note: id might be an index into the array or a textual id from the user config....
@@ -86,7 +86,7 @@ const withEntitySearch = WrappedComponent => {
                 // dealing with another type of entities, that means we can't use the query from the source page so we
                 // run a query to select those ids directly and keep the original sender ...
                 else if (_.includes(this.props.allowedEntityTypes, queryParams.entityType) &&
-                    queryParams.entityType !== queryParams.senderEntityType &&
+                    (!queryParams.senderEntityType || queryParams.entityType === queryParams.senderEntityType) &&
                     queryParams.selectedEntities
                     //this check is important not to mess with store
                     && queryParams.entityType === this.props.entitySingular) {

@@ -3,7 +3,7 @@ import Table from '../Table/Table'
 import BaseTextInput from "../BaseTextInput";
 import './AlertTable.scss'
 import { Tooltip } from '@material-ui/core';
-import withPageNavigation from '../../IpaPageComponents/withPageNavigation';
+import {withGenericPageContext} from "../../IpaPageComponents/genericPageContext";
 
 const getHeaders = columns => {
   let headers = columns.filter(c => c.active === true).map(c => c.name)
@@ -43,14 +43,15 @@ const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate) => 
             const entityType = alert.Source.entityType
             const selectedEntities = alert.Source.entities.map(e => e._id);
 
-            let query = {
+            let selectionInfo = {
               entityType,
               selectedEntities,
               senderEntityType: entityType,
-              query: {value: selectedEntities}
+              queryParams: {
+                query: {value: selectedEntities}}
             }
-            console.log("button onClick query", query);
-            onNavigate(navigationConfig[entityType], query)
+            console.log("button onClick selectionInfo", selectionInfo);
+            onNavigate(navigationConfig[entityType], selectionInfo)
           }
           
           }}
@@ -102,4 +103,4 @@ const AlertTable = (props) => {
   )
 }
 
-export default withPageNavigation(AlertTable)
+export default withGenericPageContext(AlertTable)

@@ -32,8 +32,8 @@ import {GenericPageContext} from "./genericPageContext";
 import {compose} from "@reduxjs/toolkit";
 import withEntitySearch from "./entities/WithEntitySearch";
 import withEntityAvailableGroups from "./entities/WithEntityAvailableGroups";
-import withPageNavigation from "./withPageNavigation";
 import {getAllCurrentEntities} from "../redux/slices/entities";
+import {AppContext} from "../appContext";
 
 const URL_LENGTH_WARNING = 80000
 
@@ -49,7 +49,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         userConfig: null,
         isLoading: true,
         isPageLoading: true,
-        queryParams: {}
+        queryParams: this.parseQueryParams(props.location.search,this.isSelectionInfoValid)
       };
 
       this._loadPageData = this._loadPageData.bind(this);
@@ -247,10 +247,80 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
     setQueryParams = (partial) => this.setState({queryParams: {...this.state.queryParams, ...partial}})
 
-    onNavigated() {
+    //provide pageComponents with a navigate function to place query criteria in the url to pass to other pages
+    onNavigateOut = (userConfig, genericQueryParams, validator, history) => (destinationHandler, selectionInfo) => {
 
-      if (this.props.location.search) {
-        let rawParams = this.props.location.search.split('?')[1];
+      /*
+       * handler: the name of a handler to navigate to
+       *
+       * selectionInfo:
+       * {
+       *    entityType: 'Asset',
+       *    selectedEntities: [<array of entity ids>]
+       * }
+       *
+       * Note: query, group and filter are handled by the GenericPage itself (this class).
+       *       Call setQueryParams method from the child page.
+       *       The queryParams can be overridden by providing queryParams in selectionInfo
+       *
+       */
+
+      if (!destinationHandler || !Object.keys(userConfig.handlers).includes(destinationHandler)) {
+        console.error('Attempting to navigate without a valid destination handler:', destinationHandler);
+        return false;
+      }
+
+      if (!validator(selectionInfo)) {
+        console.error('Attempting to navigate invalid query parameters!');
+        return false;
+      }
+
+      let newPath
+      if (!selectionInfo && !genericQueryParams.query) {
+        newPath = this.props.userConfig.handlers[destinationHandler].path;
+      }
+      else {
+        let query = Object.assign({}, genericQueryParams)
+
+        //override the pages queryParams if the selectionInfo also provides queryParams
+        if (selectionInfo.queryParams) {
+          query = Object.assign(query, selectionInfo.queryParams)
+        }
+
+        if(selectionInfo) {
+          query.entityType = selectionInfo.entityType
+        }
+
+        //if query has an array which represents the total entities to be fetched (not highlighted) turn it into a string
+        //if its not an array leave as is as then it represents settings for a fetch control
+        if (query.query && query.query.value && !query.query.id && query.query.id !== 0)
+          query.query.value = Array.isArray(query.query.value) ? query.query.value.join(',') : query.query.value
+        if (selectionInfo && selectionInfo.selectedEntities && selectionInfo.selectedEntities.length>0) {
+          query.selectedEntities = selectionInfo.selectedEntities.join(',');
+          query.entityType = selectionInfo.entityType
+          query.script = selectionInfo.script
+        } else if (query.selectedEntities && Array.isArray(query.selectedEntities) && query.selectedEntities.length > 0) {
+          query.selectedEntities = query.selectedEntities.join(',');
+        }
+        if (query.groups && query.groups.length) {
+          query.groups = query.groups.join(',')
+        }
+        newPath = userConfig.handlers[destinationHandler].path + '?' + qs.stringify(query);
+      }
+
+      // console.log('url sizes: ', urlSizeUtf8Chrome, urlSizeUtf16Chrome, urlLengthEdge);
+      if (newPath.length > URL_LENGTH_WARNING)
+        console.warn('url length is very large and navigation may not work!');
+
+      history.push(newPath);
+    }
+
+    parseQueryParams(path, validator) {
+
+      let queryParams = {};
+
+      if (path) {
+        let rawParams = path.split('?')[1];
         // using decoder to parse boolean and int https://github.com/ljharb/qs/issues/91#issuecomment-437926409
         // qs will also limit specifying indices in an array to a maximum index of 20. Any array members with an
         // index of greater than 20 will instead be converted to an object with the index as the key.
@@ -258,7 +328,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         // This limit can be overridden by passing an arrayLimit option: We are going to use an arraylimit of 100 to cover almost every case,
         // if we are still finding more bugs on this parse, we will need to implement another solution for these arrays
 
-        let queryParams = qs.parse(rawParams, { arrayLimit: 100,
+        queryParams = qs.parse(rawParams, { arrayLimit: 100,
           decoder(str, decoder, charset) {
             const strWithoutPlus = str.replace(/\+/g, ' ');
             if (charset === 'iso-8859-1') {
@@ -303,9 +373,9 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
           }
         }
 
-        if (!this.isSelectionInfoValid(queryParams)) {
+        if (!validator(queryParams)) {
           console.error('Navigation occurred with invalid query parameters!');
-          this.setState({queryParams: {}});
+          queryParams = {};
         }
 
         if (queryParams.groups)
@@ -317,13 +387,16 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
           delete queryParams.query.type
         }
+      }
 
+      return queryParams;
+    }
 
-        //console.log("on nav qp", queryParams)
+    onNavigated() {
 
+      const queryParams = this.parseQueryParams(this.props.location.search,this.isSelectionInfoValid)
+      if(!_.isEqual(queryParams, this.state.queryParams)) {
         this.setState({queryParams});
-      } else {
-        this.setState({queryParams: {}});
       }
 
     }
@@ -352,7 +425,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
     }
 
-    body = () => this.state.isLoading ? (
+    body = (genericPageContext) => this.state.isLoading ? (
         <div style={{padding: '40px'}}>
           <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
         </div>
@@ -361,7 +434,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       <PageComponent {...optionalProps} {...this.props}
                      onLoadComplete={this.onLoadComplete}
                      handler={this.state.handler}
-                     onNavigate={this.props.onNavigate}
+                     onNavigate={genericPageContext.onNavigate}
                      setQueryParams={this.setQueryParams}
                      queryParams={this.state.queryParams}
       />
@@ -374,15 +447,20 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         {body}
       </div></div>
 
-    renderGenericPage = () => {
-      return this.isNestedDetailPage() ? this.body() : this.withPageLayout(this.body())
+    renderGenericPage = (genericPageContext) => {
+      return this.isNestedDetailPage() ? this.body(genericPageContext) : this.withPageLayout(this.body(genericPageContext))
     }
 
     render() {
 
+      const onNavigate = this.onNavigateOut(this.props.userConfig,this.state.queryParams,this.isSelectionInfoValid,this.props.history);
+
       //looks like handler is "calculated" only when component mounts and never changes
-      const genericPageContext = {handler: this.state.handler};
-      return <GenericPageContext.Provider value={genericPageContext}>{this.renderGenericPage()}</GenericPageContext.Provider>
+      const genericPageContext = {
+        handler: this.state.handler,
+        onNavigate: onNavigate
+      };
+      return <GenericPageContext.Provider value={genericPageContext}>{this.renderGenericPage(genericPageContext)}</GenericPageContext.Provider>
     }
 
   };
@@ -403,7 +481,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
   }
 
   return compose(
-      withPageNavigation,
       connect(mapStateToProps, mapDispatchToProps),
   )(GenericPage);
 

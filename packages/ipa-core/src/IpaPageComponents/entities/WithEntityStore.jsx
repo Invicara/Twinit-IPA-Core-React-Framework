@@ -85,7 +85,7 @@ const withEntityStore = (WrappedComponent) => {
                 // a page dealing with the same entity type it is meant to retrieve, then we can run the passed in query,
                 // fetching the entities using the selectors
                 if (queryParams.query && _.includes(this.props.allowedEntityTypes, queryParams.entityType) &&
-                    queryParams.entityType === queryParams.senderEntityType) {
+                    (!queryParams.senderEntityType || queryParams.entityType === queryParams.senderEntityType)) {
                     // note: id might be an index into the array or a textual id from the user config....
                     return this.props.perEntityConfig[queryParams.entityType];
                 }
