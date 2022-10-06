@@ -4,6 +4,8 @@ import ScriptCache from "../../IpaUtils/script-cache";
 import {AppContext} from "../../appContext";
 import {withAppContext} from "../../appContext";
 import {GenericPageContext} from "../genericPageContext";
+import produce from "immer";
+import {func} from "prop-types";
 
 const withEntityConfig = WrappedComponent => {
     const EntityConfigHOC =  class extends React.Component {
@@ -32,9 +34,14 @@ const withEntityConfig = WrappedComponent => {
         //keeping this method name to avoid too much refactoring :)
         getPerEntityConfig =  _.memoize((currentConfig) => () => this._getPerEntityConfig(currentConfig) );
         _getPerEntityConfig =  _.memoize((currentConfig) => {
-            const {entityData, entitySelectionPanel, type, selectBy = {/*make sure merge always run*/}, data, tableView, actions} = currentConfig;
+            //console.log("IN ENTITY CONFIG PREP",currentConfig);
             if (this._allowsMultipleEntityTypes(currentConfig)) {
-                const consolidatedConfig = _.mergeWith({...entityData}, {...selectBy}, (entityData, selectors, key) => ({
+                /*
+                DOMI: commenting out as _.mergeWith will not happen if selectBy is undefined or empty, as we want the customizer always to run
+                this is why produce is better option here
+                const consolidatedConfig = _.mergeWith({...entityData}, {...selectBy}, (entityData, selectors, key) => {
+                    console.log("IN ENTITY CONFIG MERGE");
+                    return {
                     ...currentConfig,
                     script: entityData.script,
                     entityFromModelScript: entityData.getEntityFromModel,
@@ -43,34 +50,70 @@ const withEntityConfig = WrappedComponent => {
                     entitySelectionPanel: entitySelectionPanel?.[key],
                     data: data?.[key],
                     tableView: tableView?.[key],
+                    //panels,
                     actions: actions?.[key]
-                }));
+                }});
+                */
+
+
+                const consolidatedConfig = produce(currentConfig,function (currentConfig){
+                    const {entityData = {}, entitySelectionPanel = {}, type, selectBy = {}, data, tableView, actions,  panels = {}} = currentConfig;
+
+                    const allKeys = _.merge(Object.keys(entityData),Object.keys(selectBy));
+                    const result = {};
+                    //console.log("IN ENTITY CONFIG PREP entityData",entityData);
+                    //console.log("IN ENTITY CONFIG PREP allKeys",allKeys);
+
+                    allKeys.forEach((key) =>{
+                        result[key] = {
+                            ...currentConfig,
+                            script: entityData.script,
+                            entityFromModelScript: entityData.getEntityFromModel,
+                            spaceMode: entityData.spaceMode,
+                            selectors: selectBy?.[key] || [],
+                            entitySelectionPanel: entitySelectionPanel?.[key],
+                            data: data?.[key],
+                            tableView: tableView?.[key],
+                            actions: actions?.[key],
+                            panels
+                        }
+                    });
+                    return result;
+                });
+                //console.log("IN ENTITY CONFIG PREP consolidatedConfig",consolidatedConfig);
                 let result = _.mapValues(consolidatedConfig, (entityConfig, entityName) =>
-                    ({...entityConfig, ...type.find(t => t.singular === entityName)})
+                    ({...entityConfig, ...currentConfig.type.find(t => t.singular === entityName)})
                 );
+                //console.log("IN ENTITY CONFIG PREP result",result);
                 return result;
             } else {
-                return {
-                    [type.singular]: {
-                        ...currentConfig,
-                        script: entityData[type.singular].script,
-                        entityFromModelScript: entityData[type.singular].getEntityFromModel,
-                        spaceMode: entityData[type.singular].spaceMode,
-                        selectors: selectBy,
-                        data,
-                        actions,
-                        tableView,
-                        singular: type.singular,
-                        plural: type.plural
-                    }
-                }
+                const result = produce(currentConfig, function (currentConfig){
+                    const {entityData = {}, entitySelectionPanel = {}, type, selectBy = {}, data, tableView, actions,  panels = {}} = currentConfig;
+                    return {
+                        [type.singular]: {
+                            ...currentConfig,
+                            script: entityData[type.singular].script,
+                            entityFromModelScript: entityData[type.singular].getEntityFromModel,
+                            spaceMode: entityData[type.singular].spaceMode,
+                            selectors: selectBy?.[type.singular] || [],
+                            entitySelectionPanel: entitySelectionPanel?.[type.singular],
+                            data,
+                            actions,
+                            tableView,
+                            panels,
+                            singular: type.singular,
+                            plural: type.plural
+                    }}
+                });
+                //console.log("IN ENTITY CONFIG PREP result2",result);
+                return result;
             }
         });
 
 
         getEntityExtendedDataFetcher = (extendedDataConfig) => {
             if (!extendedDataConfig) {
-                console.error("Unconfigured extended data");
+                //console.error("Unconfigured extended data");
                 return () => undefined;
             }
             return async (dataType, entityInfo) => {
