@@ -49,8 +49,8 @@ const withEntityConfig = WrappedComponent => {
                     entitySelectionPanel: entitySelectionPanel?.[key],
                     data: data?.[key],
                     tableView: tableView?.[key],
-                    //panels,
-                    actions: actions?.[key]
+                    actions: actions?.[key],
+                    panels: panels?.[key]
                 }});
                 let result = _.mapValues(consolidatedConfig, (entityConfig, entityName) =>
                     ({...entityConfig, ...currentConfig.type.find(t => t.singular === entityName)})
