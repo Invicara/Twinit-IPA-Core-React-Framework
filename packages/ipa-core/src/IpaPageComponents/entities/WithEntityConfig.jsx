@@ -36,9 +36,8 @@ const withEntityConfig = WrappedComponent => {
         _getPerEntityConfig =  _.memoize((currentConfig) => {
             //console.log("IN ENTITY CONFIG PREP",currentConfig);
             if (this._allowsMultipleEntityTypes(currentConfig)) {
-                /*
-                DOMI: commenting out as _.mergeWith will not happen if selectBy is undefined or empty, as we want the customizer always to run
-                this is why produce is better option here
+                const {entityData = {}, entitySelectionPanel = {}, type, selectBy = {}, data, tableView, actions,  panels = {}} = currentConfig;
+
                 const consolidatedConfig = _.mergeWith({...entityData}, {...selectBy}, (entityData, selectors, key) => {
                     console.log("IN ENTITY CONFIG MERGE");
                     return {
@@ -53,34 +52,6 @@ const withEntityConfig = WrappedComponent => {
                     //panels,
                     actions: actions?.[key]
                 }});
-                */
-
-
-                const consolidatedConfig = produce(currentConfig,function (currentConfig){
-                    const {entityData = {}, entitySelectionPanel = {}, type, selectBy = {}, data, tableView, actions,  panels = {}} = currentConfig;
-
-                    const allKeys = _.merge(Object.keys(entityData),Object.keys(selectBy));
-                    const result = {};
-                    //console.log("IN ENTITY CONFIG PREP entityData",entityData);
-                    //console.log("IN ENTITY CONFIG PREP allKeys",allKeys);
-
-                    allKeys.forEach((key) =>{
-                        result[key] = {
-                            ...currentConfig,
-                            script: entityData.script,
-                            entityFromModelScript: entityData.getEntityFromModel,
-                            spaceMode: entityData.spaceMode,
-                            selectors: selectBy?.[key] || [],
-                            entitySelectionPanel: entitySelectionPanel?.[key],
-                            data: data?.[key],
-                            tableView: tableView?.[key],
-                            actions: actions?.[key],
-                            panels
-                        }
-                    });
-                    return result;
-                });
-                //console.log("IN ENTITY CONFIG PREP consolidatedConfig",consolidatedConfig);
                 let result = _.mapValues(consolidatedConfig, (entityConfig, entityName) =>
                     ({...entityConfig, ...currentConfig.type.find(t => t.singular === entityName)})
                 );
