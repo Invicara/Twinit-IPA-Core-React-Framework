@@ -95,7 +95,7 @@ const AlertTable = (props) => {
           className="alert-table__table"
           headers={getHeaders(props.columns)}
           rows={getRowsFromAlerts(props.alerts, props.columns, props.navigateTo, props.onNavigate)}
-          options={{ emptyMessage: 'No data' }}
+          options={{ emptyMessage: 'No data', emptyMessageClassName: 'alert-table__empty-message' }}
         />
       </div>
     </div>
