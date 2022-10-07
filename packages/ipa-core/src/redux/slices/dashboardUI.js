@@ -7,6 +7,7 @@ import CompactButtonBar from "../../IpaControls/CompactButtonBar"
 import Image from "../../IpaControls/Image"
 import CrossEntitySearch from "../../IpaControls/CrossEntitySearch";
 import GenericIframe from "../../IpaControls/GenericIframe";
+import ScriptedAlertTable from '../../IpaControls/AlertTable/ScriptedAlertTable'
 import ScriptedDocumentTable from "../../IpaPageComponents/files/ScriptedDocumentTable";
 
 const DASHBOARD_COMPONENTS = {
@@ -17,6 +18,7 @@ const DASHBOARD_COMPONENTS = {
   "CrossEntitySearch": CrossEntitySearch,
   "Image": Image,
   "Iframe": GenericIframe,
+  "ScriptedAlertTable": ScriptedAlertTable,
   "ScriptedDocumentTable": ScriptedDocumentTable
 }
 

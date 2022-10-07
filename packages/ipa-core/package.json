@@ -91,7 +91,7 @@
     "@storybook/react": "^6.5.5",
     "@storybook/testing-library": "0.0.11",
     "@svgr/rollup": "^5.5.0",
-    "@testing-library/react": "^13.2.0",
+    "@testing-library/react": "^12.1.4",
     "babel-jest": "^28.1.0",
     "babel-loader": "^8.0.4",
     "clean-webpack-plugin": "^0.1.19",
@@ -101,10 +101,12 @@
     "enzyme-adapter-react-16": "^1.15.6",
     "fast-async": "^6.3.8",
     "file-loader": "^2.0.0",
+    "history": "^4.10.1",
     "html-webpack-plugin": "^3.2.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^28.1.0",
     "jest-environment-jsdom": "^28.1.0",
+    "jest-transform-stub": "^2.0.0",
     "node-sass": "^4.7.2",
     "postcss-assets": "^6.0.0",
     "react-test-renderer": "^17.0.2",
@@ -139,6 +141,15 @@
     "presets": [
       "@babel/preset-env",
       "@babel/preset-react"
+    ]
+  },
+  "xxxjest": {
+    "moduleNameMapper": {
+      "\\.(css|less|scss)$": "identity-obj-proxy"
+    },
+    "transform": {},
+    "extensionsToTreatAsEsm": [
+      ".jsx"
     ]
   }
 }

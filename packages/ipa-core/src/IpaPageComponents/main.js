@@ -1,6 +1,8 @@
 import withEntityStore from './entities/WithEntityStore'
 import withEntitySearch from './entities/WithEntitySearch'
 import withEntityConfig from './entities/WithEntityConfig'
+import withEntityAvailableGroups from './entities/WithEntityAvailableGroups'
+import {GenericPageContext, withGenericPageContext} from './genericPageContext'
 import EntitySelectionPanel from './entities/EntitySelectionPanel'
 import {TreeSelectMode} from './entities/EntitySelectionPanel'
 import EntityDataStack from './entities/EntityDataStack'
@@ -15,7 +17,8 @@ import useSortEntities, {ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PRE
 
 const IpaPageComponents = {
     //higher order components
-    withEntityStore, withEntitySearch, withEntityConfig,
+    withEntityStore, withEntitySearch, withEntityConfig, withEntityAvailableGroups,
+    GenericPageContext, withGenericPageContext,
     //components
     EntitySelectionPanel,
     EntityDataStack,
