@@ -1,0 +1,965 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should load document table correctly 1`] = `
+<div
+  className="document-table"
+>
+  <div
+    className="document-table__actions document-table__actions--bulk"
+  >
+    <span
+      className="action-button"
+    >
+      <i
+        aria-describedby={null}
+        className="icofont-upload-alt"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseLeave={[Function]}
+        onMouseOver={[Function]}
+        onTouchEnd={[Function]}
+        onTouchStart={[Function]}
+        title="Download"
+      />
+    </span>
+    <span
+      className="action-button"
+    >
+      <i
+        aria-describedby={null}
+        className="fas fa-file-export"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseLeave={[Function]}
+        onMouseOver={[Function]}
+        onTouchEnd={[Function]}
+        onTouchStart={[Function]}
+        title="View"
+      />
+    </span>
+  </div>
+  <table
+    className="document-table__table"
+  >
+    <tr
+      className="document-table__row document-table__row--header"
+    >
+      <th
+        className="document-table__col document-table__col--header document-table__col--select"
+      >
+        <span
+          aria-disabled={false}
+          className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-1 MuiCheckbox-root MuiCheckbox-colorSecondary MuiIconButton-colorSecondary"
+          onBlur={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={null}
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <input
+              checked={false}
+              className="PrivateSwitchBase-input-4"
+              data-indeterminate={false}
+              onChange={[Function]}
+              type="checkbox"
+            />
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </span>
+      </th>
+      <th
+        className="document-table__col document-table__col--filename"
+      >
+        Filename
+      </th>
+      <th
+        className="document-table__col document-table__col--header document-table__col document-table__col--actions"
+      />
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Version
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Building
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Contributor
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Document Type
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        dtCategory
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        dtType
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        File Discipline
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        File Type
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Levels and Locations
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Manufacturer
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Originator
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Revision
+      </th>
+      <th
+        className="document-table__col document-table__col--header"
+      >
+        Stage Description
+      </th>
+    </tr>
+    <tr
+      className="document-table__row"
+    >
+      <td
+        className="document-table__col document-table__col--select"
+      >
+        <span
+          aria-disabled={false}
+          className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-1 MuiCheckbox-root MuiCheckbox-colorSecondary MuiIconButton-colorSecondary"
+          onBlur={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={null}
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <input
+              checked={false}
+              className="PrivateSwitchBase-input-4"
+              data-indeterminate={false}
+              onChange={[Function]}
+              type="checkbox"
+            />
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </span>
+      </td>
+      <td
+        className="document-table__col document-table__col--name"
+      >
+        istockphoto-1180542165-612x612.jpeg
+      </td>
+      <td
+        className="document-table__col document-table__col--actions"
+      >
+        <div
+          className=" document-table__actions document-table__actions--row"
+        >
+          <span
+            className="action-button"
+          >
+            <i
+              aria-describedby={null}
+              className="icofont-upload-alt"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              title="Download"
+            />
+          </span>
+          <span
+            className="action-button"
+          >
+            <i
+              aria-describedby={null}
+              className="fas fa-file-export"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              title="View"
+            />
+          </span>
+        </div>
+      </td>
+      <td
+        className="document-table__col document-table__col--version"
+      >
+        <div
+          className="document-table__version-select"
+        >
+          <div
+            className="simple-select-element css-2b097c-container"
+            onKeyDown={[Function]}
+          >
+            <div
+              className=" css-yk16xz-control"
+              onMouseDown={[Function]}
+              onTouchEnd={[Function]}
+            >
+              <div
+                className=" css-g1d714-ValueContainer"
+              >
+                <div
+                  className=" css-1uccc91-singleValue"
+                >
+                  2
+                </div>
+                <div
+                  className="css-b8ldur-Input"
+                >
+                  <div
+                    className=""
+                    style={
+                      Object {
+                        "display": "inline-block",
+                      }
+                    }
+                  >
+                    <input
+                      aria-autocomplete="list"
+                      autoCapitalize="none"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      disabled={false}
+                      id="react-select-2-input"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      spellCheck="false"
+                      style={
+                        Object {
+                          "background": 0,
+                          "border": 0,
+                          "boxSizing": "content-box",
+                          "color": "inherit",
+                          "fontSize": "inherit",
+                          "label": "input",
+                          "opacity": 1,
+                          "outline": 0,
+                          "padding": 0,
+                          "width": "1px",
+                        }
+                      }
+                      tabIndex="0"
+                      type="text"
+                      value=""
+                    />
+                    <div
+                      style={
+                        Object {
+                          "height": 0,
+                          "left": 0,
+                          "overflow": "scroll",
+                          "position": "absolute",
+                          "top": 0,
+                          "visibility": "hidden",
+                          "whiteSpace": "pre",
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className=" css-1hb7zxy-IndicatorsContainer"
+              >
+                <span
+                  className=" css-1okebmr-indicatorSeparator"
+                />
+                <div
+                  aria-hidden="true"
+                  className=" css-tlfecz-indicatorContainer"
+                  onMouseDown={[Function]}
+                  onTouchEnd={[Function]}
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="css-6q0nyr-Svg"
+                    focusable="false"
+                    height={20}
+                    viewBox="0 0 20 20"
+                    width={20}
+                  >
+                    <path
+                      d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Kingspan Group Office
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Invicara
+      </td>
+      <td
+        className="document-table__col"
+      >
+        3D model file
+      </td>
+      <td
+        className="document-table__col"
+      >
+        AC Units
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Condensor
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Civil Engineering
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Image
+      </td>
+      <td
+        className="document-table__col"
+      >
+        01-FIRST FLOOR
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+    </tr>
+    <tr
+      className="document-table__row"
+    >
+      <td
+        className="document-table__col document-table__col--select"
+      >
+        <span
+          aria-disabled={false}
+          className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-1 MuiCheckbox-root MuiCheckbox-colorSecondary MuiIconButton-colorSecondary"
+          onBlur={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={null}
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <input
+              checked={false}
+              className="PrivateSwitchBase-input-4"
+              data-indeterminate={false}
+              onChange={[Function]}
+              type="checkbox"
+            />
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </span>
+      </td>
+      <td
+        className="document-table__col document-table__col--name"
+      >
+        Landscape-Color.jpeg
+      </td>
+      <td
+        className="document-table__col document-table__col--actions"
+      >
+        <div
+          className=" document-table__actions document-table__actions--row"
+        >
+          <span
+            className="action-button"
+          >
+            <i
+              aria-describedby={null}
+              className="icofont-upload-alt"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              title="Download"
+            />
+          </span>
+          <span
+            className="action-button"
+          >
+            <i
+              aria-describedby={null}
+              className="fas fa-file-export"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              title="View"
+            />
+          </span>
+        </div>
+      </td>
+      <td
+        className="document-table__col document-table__col--version"
+      >
+        <div
+          className="document-table__version-select"
+        >
+          <div
+            className="simple-select-element css-2b097c-container"
+            onKeyDown={[Function]}
+          >
+            <div
+              className=" css-yk16xz-control"
+              onMouseDown={[Function]}
+              onTouchEnd={[Function]}
+            >
+              <div
+                className=" css-g1d714-ValueContainer"
+              >
+                <div
+                  className=" css-1uccc91-singleValue"
+                >
+                  1
+                </div>
+                <div
+                  className="css-b8ldur-Input"
+                >
+                  <div
+                    className=""
+                    style={
+                      Object {
+                        "display": "inline-block",
+                      }
+                    }
+                  >
+                    <input
+                      aria-autocomplete="list"
+                      autoCapitalize="none"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      disabled={false}
+                      id="react-select-3-input"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      spellCheck="false"
+                      style={
+                        Object {
+                          "background": 0,
+                          "border": 0,
+                          "boxSizing": "content-box",
+                          "color": "inherit",
+                          "fontSize": "inherit",
+                          "label": "input",
+                          "opacity": 1,
+                          "outline": 0,
+                          "padding": 0,
+                          "width": "1px",
+                        }
+                      }
+                      tabIndex="0"
+                      type="text"
+                      value=""
+                    />
+                    <div
+                      style={
+                        Object {
+                          "height": 0,
+                          "left": 0,
+                          "overflow": "scroll",
+                          "position": "absolute",
+                          "top": 0,
+                          "visibility": "hidden",
+                          "whiteSpace": "pre",
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className=" css-1hb7zxy-IndicatorsContainer"
+              >
+                <span
+                  className=" css-1okebmr-indicatorSeparator"
+                />
+                <div
+                  aria-hidden="true"
+                  className=" css-tlfecz-indicatorContainer"
+                  onMouseDown={[Function]}
+                  onTouchEnd={[Function]}
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="css-6q0nyr-Svg"
+                    focusable="false"
+                    height={20}
+                    viewBox="0 0 20 20"
+                    width={20}
+                  >
+                    <path
+                      d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Kingspan Group Office
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Invicara
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Database
+      </td>
+      <td
+        className="document-table__col"
+      >
+        AC Units
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Condensor
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Civil Engineering
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Image
+      </td>
+      <td
+        className="document-table__col"
+      >
+        01-FIRST FLOOR
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+    </tr>
+    <tr
+      className="document-table__row"
+    >
+      <td
+        className="document-table__col document-table__col--select"
+      >
+        <span
+          aria-disabled={false}
+          className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-1 MuiCheckbox-root MuiCheckbox-colorSecondary MuiIconButton-colorSecondary"
+          onBlur={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={null}
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <input
+              checked={false}
+              className="PrivateSwitchBase-input-4"
+              data-indeterminate={false}
+              onChange={[Function]}
+              type="checkbox"
+            />
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </span>
+      </td>
+      <td
+        className="document-table__col document-table__col--name"
+      >
+        asphalt-highway.jpg
+      </td>
+      <td
+        className="document-table__col document-table__col--actions"
+      >
+        <div
+          className=" document-table__actions document-table__actions--row"
+        >
+          <span
+            className="action-button"
+          >
+            <i
+              aria-describedby={null}
+              className="icofont-upload-alt"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              title="Download"
+            />
+          </span>
+          <span
+            className="action-button"
+          >
+            <i
+              aria-describedby={null}
+              className="fas fa-file-export"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              title="View"
+            />
+          </span>
+        </div>
+      </td>
+      <td
+        className="document-table__col document-table__col--version"
+      >
+        <div
+          className="document-table__version-select"
+        >
+          <div
+            className="simple-select-element css-2b097c-container"
+            onKeyDown={[Function]}
+          >
+            <div
+              className=" css-yk16xz-control"
+              onMouseDown={[Function]}
+              onTouchEnd={[Function]}
+            >
+              <div
+                className=" css-g1d714-ValueContainer"
+              >
+                <div
+                  className=" css-1uccc91-singleValue"
+                >
+                  1
+                </div>
+                <div
+                  className="css-b8ldur-Input"
+                >
+                  <div
+                    className=""
+                    style={
+                      Object {
+                        "display": "inline-block",
+                      }
+                    }
+                  >
+                    <input
+                      aria-autocomplete="list"
+                      autoCapitalize="none"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      disabled={false}
+                      id="react-select-4-input"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      spellCheck="false"
+                      style={
+                        Object {
+                          "background": 0,
+                          "border": 0,
+                          "boxSizing": "content-box",
+                          "color": "inherit",
+                          "fontSize": "inherit",
+                          "label": "input",
+                          "opacity": 1,
+                          "outline": 0,
+                          "padding": 0,
+                          "width": "1px",
+                        }
+                      }
+                      tabIndex="0"
+                      type="text"
+                      value=""
+                    />
+                    <div
+                      style={
+                        Object {
+                          "height": 0,
+                          "left": 0,
+                          "overflow": "scroll",
+                          "position": "absolute",
+                          "top": 0,
+                          "visibility": "hidden",
+                          "whiteSpace": "pre",
+                        }
+                      }
+                    >
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className=" css-1hb7zxy-IndicatorsContainer"
+              >
+                <span
+                  className=" css-1okebmr-indicatorSeparator"
+                />
+                <div
+                  aria-hidden="true"
+                  className=" css-tlfecz-indicatorContainer"
+                  onMouseDown={[Function]}
+                  onTouchEnd={[Function]}
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="css-6q0nyr-Svg"
+                    focusable="false"
+                    height={20}
+                    viewBox="0 0 20 20"
+                    width={20}
+                  >
+                    <path
+                      d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Kingspan Group Office
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Invicara
+      </td>
+      <td
+        className="document-table__col"
+      >
+        2D model file
+      </td>
+      <td
+        className="document-table__col"
+      >
+        AC Units
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Condensor
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Building Survey
+      </td>
+      <td
+        className="document-table__col"
+      >
+        Image
+      </td>
+      <td
+        className="document-table__col"
+      >
+        01-FIRST FLOOR
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+      <td
+        className="document-table__col"
+      >
+        
+      </td>
+    </tr>
+  </table>
+</div>
+`;

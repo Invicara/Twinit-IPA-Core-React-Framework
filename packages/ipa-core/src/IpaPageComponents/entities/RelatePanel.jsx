@@ -17,6 +17,7 @@ export const RelatePanel = ({selectedEntityType, selectedEntities, checkedEntiti
         return searchedEntities.map((e) => ({...e, EntityWarningMessage: getWarningMessage(parentEntities.some(p => p.related.some(r=> r._id === e._id)), e)}))
     }
 
+
     return <>
         <div className={'panel-title'}>Relate</div>
         <div className='tree-container'>

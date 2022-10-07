@@ -21,6 +21,7 @@ export const useEntityData = (collapsable, collapsed, entity, config, getData, d
   const getContainerData = async (collapsable, entity, config, getData, dataGroupName) => {
     reset();
     try {
+      setFetching(true)
 
       if(!entity) {
         throw new Error("No entity data")
