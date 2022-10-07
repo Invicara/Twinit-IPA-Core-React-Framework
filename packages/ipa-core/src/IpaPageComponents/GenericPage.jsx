@@ -248,7 +248,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
     setQueryParams = (partial) => this.setState({queryParams: {...this.state.queryParams, ...partial}})
 
     //provide pageComponents with a navigate function to place query criteria in the url to pass to other pages
-    onNavigateOut = (userConfig, genericQueryParams, validator, history) => (destinationHandler, selectionInfo) => {
+    onNavigateOut = (userConfig, genericQueryParams, validator, history) => (destinationHandler, selectionInfo, options) => {
 
       /*
        * handler: the name of a handler to navigate to
@@ -312,7 +312,11 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       if (newPath.length > URL_LENGTH_WARNING)
         console.warn('url length is very large and navigation may not work!');
 
-      history.push(newPath);
+      if(options.newTab === true) {
+        window.open(`${endPointConfig.baseRoot}/#${newPath}`, '_blank')?.focus()
+      } else {
+        history.push(newPath);
+      }
     }
 
     parseQueryParams(path, validator) {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import FileHelpers from '../../IpaUtils/FileHelpers'
-import withPageNavigation from '../withPageNavigation'
 import DocumentTable from './DocumentTable'
 import { useEffect } from 'react'
+import {withGenericPageContext} from "../genericPageContext";
 
 let ScriptedDocumentTable = props => {
 
@@ -174,7 +174,7 @@ let ScriptedDocumentTable = props => {
   )
 }
 
-ScriptedDocumentTable = withPageNavigation(ScriptedDocumentTable)
+ScriptedDocumentTable = withGenericPageContext(ScriptedDocumentTable)
 
 export const ScriptedDocumentTableFactory = {
   create: (...args) => {
