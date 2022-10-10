@@ -248,7 +248,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
     setQueryParams = (partial) => this.setState({queryParams: {...this.state.queryParams, ...partial}})
 
     //provide pageComponents with a navigate function to place query criteria in the url to pass to other pages
-    onNavigateOut = (userConfig, genericQueryParams, validator, history) => (destinationHandler, selectionInfo, options) => {
+    onNavigateOut = (userConfig, genericQueryParams, validator, history) => (destinationHandler, selectionInfo, options = {}) => {
 
       /*
        * handler: the name of a handler to navigate to
