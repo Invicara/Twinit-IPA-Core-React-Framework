@@ -42,6 +42,8 @@ import {Overlay} from "./Overlay";
 import SplitButton from "./SplitButton";
 import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useChecked} from "./Checkboxes";
 import RadioButtons from './RadioButtons'
+import Table from './Table/Table'
+import Cell from './Table/Cell'
 
 const IpaControls = {
     AdvancedSearch,
@@ -53,6 +55,7 @@ const IpaControls = {
     TickCheckbox,
     useChecked,
     RadioButtons,
+    Cell,
     CompactButtonBar,
     ControlProvider,
     CreatableScriptedSelects,
@@ -94,6 +97,7 @@ const IpaControls = {
     SimpleTextThrobber,
     SplitButton,
     StackableDrawer,
+    Table,
     TextSearch,
     TreeControl,
     TreeSearch,
