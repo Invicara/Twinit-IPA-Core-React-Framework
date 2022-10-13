@@ -4,7 +4,8 @@ import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
 
 import './EntityTable.scss'
-import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
+import {RoundCheckbox, useChecked, TickCheckbox} from "../../IpaControls/Checkboxes";
+import GenericMatButton from "../../IpaControls/GenericMatButton";
 import {isValidUrl} from '../../IpaUtils/helpers'
 import {
     Box, InputLabel, Table, TableBody,
