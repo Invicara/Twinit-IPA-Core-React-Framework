@@ -37,6 +37,7 @@ import {
     namedUserItemActions, selectNamedUserItemById,
     selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus
 } from "./slices/named-user-item.slice";
+import { addEntityComponents } from "./slices/entityUI"
 
 const redux = {
     Entities: {
@@ -83,6 +84,9 @@ const redux = {
         selectNamedUserItemsLoadingStatus,
         selectNamedUserItemById,
         ...namedUserItemActions,
+    }, 
+    EntityUi: {
+        addEntityComponents
     }
 }
 
