@@ -11,6 +11,7 @@ import {
     selectEntitiesFromModels,
     setEntities,
     setIsolatedEntities,
+    setIsolatedEntitiesIds,
     setViewerSyncOn,
     getSnapshot
 } from "./slices/entities";
@@ -53,6 +54,7 @@ const redux = {
         isSelectingEntities,
         setEntities,
         setIsolatedEntities,
+        setIsolatedEntitiesIds,
         setViewerSyncOn,
         getSnapshot
     },

@@ -28,11 +28,14 @@ import {Box, Container, Toolbar} from '@material-ui/core';
 
 import './GenericPage.scss'
 import GenericMatButton from "../IpaControls/GenericMatButton";
+
+import {withAppContext} from "../AppProvider";
+
 import {GenericPageContext} from "./genericPageContext";
 import {compose} from "@reduxjs/toolkit";
 import withEntitySearch from "./entities/WithEntitySearch";
 import withEntityAvailableGroups from "./entities/WithEntityAvailableGroups";
-import {getAllCurrentEntities} from "../redux/slices/entities";
+import {getAllCurrentEntities, getIsolatedEntities} from "../redux/slices/entities";
 import {AppContext} from "../appContext";
 
 const URL_LENGTH_WARNING = 80000
@@ -305,6 +308,9 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         if (query.groups && query.groups.length) {
           query.groups = query.groups.join(',')
         }
+
+        query.isolatedEntities = this.props.isolatedEntities.map(isolatedEntity => isolatedEntity._id).join(',')
+
         newPath = userConfig.handlers[destinationHandler].path + '?' + qs.stringify(query);
       }
 
@@ -384,6 +390,9 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
         if (queryParams.groups)
           queryParams.groups = queryParams.groups.split(',');
+
+        if (queryParams.isolatedEntities)
+          queryParams.isolatedEntities = queryParams.isolatedEntities.split(',');
 
         if (queryParams.query && queryParams.query.type && queryParams.query.value) {
           if (queryParams.query.type === "<<TEXT_SEARCH>>")
@@ -482,6 +491,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
   };
 
   const mapStateToProps = state => ({
+    isolatedEntities: getIsolatedEntities(state)
   })
   const mapDispatchToProps = {
   }
