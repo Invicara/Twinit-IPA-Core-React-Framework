@@ -35,14 +35,14 @@ export const entitiesSliceFactory = (identifier = '') => {
         name: sliceName,
         initialState,
         reducers: {
-            setEntities: (state, {payload: {entities}}) => {
+            setEntities: (state, {payload: {entities, shouldIsolate = true}}) => {
                 state.allCurrent = entities;
+                //Whenever we fetch entities we want to isolate them unless specified otherwise.
+                //Maybe this will change over time as requirements get more specific
+                state.isolatedIds = shouldIsolate ? mapIds(entities) : []
             },
             setIsolatedEntities: (state, {payload: entities}) => {
                 state.isolatedIds = mapIds(entities)
-            },
-            setIsolatedEntitiesIds: (state, {payload: ids}) => {
-                state.isolatedIds = ids
             },
             setSelectedEntities: (state, {payload: entities}) => {
                 state.selectedIds = mapIds(entities)
