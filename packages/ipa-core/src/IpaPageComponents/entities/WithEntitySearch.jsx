@@ -114,10 +114,6 @@ const withEntitySearch = WrappedComponent => {
             if(queryParams.groups){
                 this.props.applyGrouping(queryParams.groups);
             }
-            if (queryParams.isolatedEntities) {
-                this.props.setIsolatedEntitiesIds(queryParams.isolatedEntities)
-            }
-
             // set selectedEntities from a list of queryParam entity ids
             if (queryParams.selectedEntities) {
                 this.props.setSelecting(queryParams.selectedEntities.length === 1)
@@ -239,8 +235,7 @@ const withEntitySearch = WrappedComponent => {
             }
             await this.props.fetchEntities(script, selector, value, runScriptOptions);
             //in case of initial query triggered by this page, this callback will still use old query
-            if(onInitialFetchComplete) onInitialFetchComplete();
-
+            if(onInitialFetchComplete)onInitialFetchComplete();
             const fetchedQuery = {
                 query: {type: selector.query, id: selector.id, value},
                 senderEntityType: originalSender || this.props.entitySingular,
@@ -257,6 +252,7 @@ const withEntitySearch = WrappedComponent => {
                 groups: changes.groups
             })
         }
+
         render() {
             const wrappedProps = {...this.props, ...this.state,
                 extendedData : this.props.extendedDataConfig,
@@ -267,7 +263,6 @@ const withEntitySearch = WrappedComponent => {
                                      doEntityAction={this.doEntityAction}
                                      getEntityExtendedData={this.props.getEntityExtendedDataFetcher}
                                      entitiesSelected={this.props.setSelectedEntities}
-                                     isolateEntities={this.props.setIsolatedEntities}
                                      getFetcher={this.getFetcher}
                                      updateEntityType={this.updateEntityType}
                                      onGroupOrFilterChange={this.onGroupOrFilterChange}
