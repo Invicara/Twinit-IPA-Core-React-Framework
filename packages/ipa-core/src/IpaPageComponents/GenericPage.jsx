@@ -28,12 +28,9 @@ import {Box, Container, Toolbar} from '@material-ui/core';
 
 import './GenericPage.scss'
 import GenericMatButton from "../IpaControls/GenericMatButton";
+
 import {GenericPageContext} from "./genericPageContext";
 import {compose} from "@reduxjs/toolkit";
-import withEntitySearch from "./entities/WithEntitySearch";
-import withEntityAvailableGroups from "./entities/WithEntityAvailableGroups";
-import {getAllCurrentEntities} from "../redux/slices/entities";
-import {AppContext} from "../appContext";
 
 const URL_LENGTH_WARNING = 80000
 
@@ -482,6 +479,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
   };
 
   const mapStateToProps = state => ({
+    //please connect here only high level generic slices
   })
   const mapDispatchToProps = {
   }
