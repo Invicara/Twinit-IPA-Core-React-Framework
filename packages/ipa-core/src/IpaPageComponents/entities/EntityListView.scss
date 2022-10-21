@@ -4,6 +4,15 @@
     margin: 10px 0;
   }
 
+  /* unify icon font-size across different font systems*/
+  .action-button {
+    font-size: 1.5em;
+
+    i {
+      font-size: 1em !important;
+    }
+  }
+
   @import "EntityTable";
 
 }
