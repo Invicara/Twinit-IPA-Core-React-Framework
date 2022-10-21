@@ -31,7 +31,8 @@ import {
     getAllCurrentEntities,
     getAppliedFilters, getAppliedGroups,
     getFetchingCurrent,
-    getFilteredEntities
+    getFilteredEntities,
+    getIsolatedEntities
 } from "../../redux/slices/entities";
 import {compose} from "@reduxjs/toolkit";
 import withEntitySearch from "./WithEntitySearch";
@@ -66,10 +67,10 @@ class EntityView extends React.Component {
         if (this.state.displayDetail == true && entities.length > 1) {
             this.setState({displayDetail: false})
         }
-        this.props.entitiesSelected(entities)
+        this.props.isolateEntities(entities)
     }
 
-    tableEntities = () => _.isEmpty(this.props.selectedEntities) ? this.props.currentEntities : this.props.selectedEntities;
+    tableEntities = () => _.isEmpty(this.props.isolatedEntities) ? this.props.allEntities : this.props.isolatedEntities;
 
     onGroupOrFilterChange = (changes) => {
       this.setState({displayDetail: false})
@@ -217,6 +218,7 @@ EntityView.contextTypes = {
 
 const mapStateToProps = state => ({
     allEntities: getAllCurrentEntities(state),
+    isolatedEntities: getIsolatedEntities(state),
     fetching: getFetchingCurrent(state),
     currentEntities: getFilteredEntities(state),
     appliedFilters: getAppliedFilters(state),
