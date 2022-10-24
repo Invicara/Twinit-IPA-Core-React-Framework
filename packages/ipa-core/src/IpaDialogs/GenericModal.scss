@@ -118,38 +118,3 @@ div:not(.ipa-select__value-container).css-1hwfws3 {
     }
   }
 }
-
-.ipa-modal-collection-management {
-  width: 30%;
-  left: 35%;
-  background: white;
-  border: none;
-  border-radius: 40px;
-
-  .content {
-    padding: 30px;
-
-    .padding {
-      padding: 0px;
-    }
-  }
-
-  .bar.bark-light {
-    width: 90%;
-    left: 5%;
-    background: transparent;
-    border-bottom: 1px solid $light-grey;
-    border-radius: 10px 10px 0 0;
-    padding-top: 50px;
-    padding: 3% 5%;
-
-    .title {
-      display: inline;
-      color: var(--app-accent-color);
-      font-size: 1.5rem;
-      padding-top: 20px;
-      padding: 0% 3%;
-      height: 100%;
-    }
-  }
-}
