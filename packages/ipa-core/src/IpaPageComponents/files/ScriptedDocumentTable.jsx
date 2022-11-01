@@ -3,25 +3,8 @@ import FileHelpers from '../../IpaUtils/FileHelpers'
 import withPageNavigation from '../withPageNavigation'
 import DocumentTable from './DocumentTable'
 import { useEffect } from 'react'
-import qs from 'qs';
 
 let ScriptedDocumentTable = props => {
-
-  const getInitialVersions = (documents = []) => {
-    let initialSelectedVersions = {}
-
-    documents.forEach(document => {
-      let firstVersion =
-        document.versions?.[document.versions.length - 1]?._fileVersionId
-      initialSelectedVersions[document._fileId] = firstVersion
-    })
-
-    return initialSelectedVersions
-  }
-
-  const [selectedVersions, setSelectedVersions] = useState(
-    getInitialVersions(props.data)
-  )
   const [sorting, setSorting] = useState(props.config.defaultSort)
   const [columns, setColumns] = useState(props.config.columns)
   
@@ -31,7 +14,6 @@ let ScriptedDocumentTable = props => {
         setColumns(UserConfigColumns)
     }
   }, [])
-  
 
   const transformFileAttributesToProperties = document => {
     if (document.properties) {
@@ -72,10 +54,7 @@ let ScriptedDocumentTable = props => {
 
   let documents = documentsData.map(data => ({
     documentData: data,
-    currentVersion: selectedVersions[data._fileId],
-    setCurrentVersion: (fileId, versionId) => {
-      setSelectedVersions({ ...selectedVersions, [fileId]: versionId })
-    },
+    currentVersion: [data.versions?.[data.versions.length - 1]],
     disableVersions: props.config.includeVersions !== true
   }))
 
@@ -89,11 +68,6 @@ let ScriptedDocumentTable = props => {
           const _fileId = d.documentData._id
           return _fileId 
         })
-        // let query = {
-        //   senderEntityType: 'Asset',
-        //   entityType: 'File',
-        //   queryParams: { selectedEntities: selectedEntities }
-        // }
         let query = {
           entityType: 'File',
           selectedEntities: selectedEntities,
@@ -115,17 +89,21 @@ let ScriptedDocumentTable = props => {
       name: 'View',
       icon: 'fas fa-eye',
       onClick: documents => {
-        console.log("ScriptedDocumentTable action VIEW", documents)
-        const docIds = documents.map(d => {
+        let docIds = []
+        documents.forEach(d => {
           const _fileId = d.documentData._fileId
-          const _fileVersionId = d.currentVersion
-          return { _fileId, _fileVersionId }
+          d.currentVersion.forEach(v => {
+            const _fileVersionId = v._fileVersionId
+            docIds.push({ _fileId, _fileVersionId })})
         })
-        let query = {
-          entityType: 'file',
-          queryParams: { docIds }
-        }
-        props.onNavigate('documentviewer', query, { newTab: true })
+        docIds.forEach(doc => {
+          let docIds = [doc]
+          let query = {
+            entityType: 'file',
+            queryParams: { docIds }
+          }
+          props.onNavigate('documentviewer', query, { newTab: true })
+        })
       },
       bulk: {
         disabled: !props.config.canView
@@ -139,9 +117,11 @@ let ScriptedDocumentTable = props => {
       name: 'Download',
       icon: 'fas fa-download',
       onClick: documents => {
-        console.log("ScriptedDocumentTable action DOWNLOAD", documents)
-        let documentsData = documents.map(d => d.documentData)
-        FileHelpers.downloadDocuments(documentsData)
+        let documentVersionsIds = []
+         documents.forEach(d => {
+          documentVersionsIds.push(...d.currentVersion.map(v=>{return {...v, ...d.documentData}}))
+        })
+        FileHelpers.downloadDocumentsVersions(documentVersionsIds)
       },
       bulk: {
         disabled: !props.config.canDownload
@@ -150,21 +130,6 @@ let ScriptedDocumentTable = props => {
         disabled: !props.config.canDownload
       }
     }
-    // {
-    //   key: 'REORDER',
-    //   name: 'Reorder Columns',
-    //   icon: 'fas fa-columns',
-    //   onClick: () => {
-    //     OpenReorderModal(columns, tableConfig.onColumnsChange)
-    //   },
-    //   bulk: {
-    //     disabled: false
-    //   },
-    //   single: {
-    //     hidden: true,
-    //     disabled: true
-    //   }
-    // }
   ]
 
   let tableConfig = {
@@ -173,14 +138,15 @@ let ScriptedDocumentTable = props => {
     onColumnsChange: (newColumns) => {
       setColumns(newColumns)
     }, //callback triggered when user confirmed order change in presentational component
-    // sort: {                                          
-    //   //If not defined, the presentational component handles the sorting logic
-    //   currentColumn: sorting?.column, //The currently sorted column, if null, no sorting is allowed
-    //   onSort: setSorting, //(optional) Called by the presentational component to defined additional instructions on sort,
-    //   isDescending: !sorting?.descending //defaults to false
-    // }
+    sort: {                                          
+      //If not defined, the presentational component handles the sorting logic
+      currentColumn: sorting?.column, //The currently sorted column, if null, no sorting is allowed
+      onSort: setSorting, //(optional) Called by the presentational component to defined additional instructions on sort,
+      isDescending: !sorting?.descending //defaults to false
+    },
     dateField: props?.config?.dateField,
-    lockedColumns: props?.config?.lockedColumns
+    lockedColumns: props?.config?.lockedColumns, 
+    supportedTypes: props?.config?.supportedTypes
   }
 
   return (

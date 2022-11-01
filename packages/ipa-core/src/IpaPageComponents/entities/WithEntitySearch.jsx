@@ -218,6 +218,22 @@ const withEntitySearch = WrappedComponent => {
             } else if (actions[action].type === 'fileDownload') {
                 FileHelpers.downloadDocuments(Array.isArray(entityInfo.original) ? entityInfo.original : [entityInfo.original]);
                 return {success: true};
+            } else if (actions[action].type === 'fileView') {
+                let docIds = []
+                entityInfo.original.forEach(d => {
+                  const _fileId = d._fileId
+                  d.versions.forEach(v => {
+                    const _fileVersionId = v._fileVersionId
+                    docIds.push({ _fileId, _fileVersionId })})
+                })
+                docIds.forEach(doc => {
+                  let docIds = [doc]
+                  let query = {
+                    entityType: 'file',
+                    queryParams: { docIds }
+                  }
+                this.props.onNavigate('documentviewer', query, { newTab: true })})
+                return {success: true};
             } else {
                 let scriptName = actions[action].script;
                 let result = await ScriptHelper.executeScript(scriptName, {entityInfo: entityInfo});

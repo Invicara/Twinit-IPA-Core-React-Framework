@@ -14,7 +14,6 @@ const DocumentTable = props => {
     const [selectedDocumentsIds, setSelectedDocumentsIds] = useState(initialSelectedDocuments);
     const [sort, setSort] = useState(props.tableConfig.sort)
     const [documents, setDocuments] = useState(props.documents)
-  
     function getDocActions(docIndex) {
       let doc = documents[docIndex];
   
@@ -38,7 +37,7 @@ const DocumentTable = props => {
   
       return actionsConfig
     }
-  
+
     function getSelectedDocuments(selectedIndeces) {
       return documents.filter((d) => selectedIndeces.includes(d.documentData._fileId));
     }
@@ -52,31 +51,87 @@ const DocumentTable = props => {
       }))
     }
     const sortBy =  (name, isDescending) => {
-      console.log('sort by', name)
       setSort({currentColumn: name, isDescending:!isDescending})
       
     }
     const allSelected = selectedDocumentsIds.length === documents.length; 
     
     useEffect(() => {
-      console.log('sort', sort)
-      if(sort){
+      if(sort && !_.isEmpty(sort.currentColumn)){
         let newDocuments =  _.sortBy(documents, a => {
           if(_.includes(sort.currentColumn, 'properties.')) return a.documentData[`${sort.currentColumn}.val`]
             else return a.documentData[sort.currentColumn]
         })
       if(sort && sort.isDescending) newDocuments = _.reverse(newDocuments)
-      console.log('newDocuments', newDocuments)
        setDocuments(newDocuments)
       }
     }, [sort])
+
+    const toogleVersionDrop = (fileId) => {
+      if(!document.querySelector(`.${fileId}`).classList.contains("document-table__version_dropdown_show")) 
+      document.querySelector(`.${fileId}`).classList.add("document-table__version_dropdown_show")
+      else document.querySelector(`.${fileId}`).classList.remove("document-table__version_dropdown_show") 
+    }
+    const setSelectedVersion = (version, doc) => {
+        let newDocuments = [...documents]
+        let newSelectedDocumentsIds = []
+        const selectedDocIndex = selectedDocumentsIds.findIndex((id) => id === doc.documentData.fileId);
+        if(!doc.currentVersion.includes(version)){
+          newDocuments.find(d => d.documentData._fileId === doc.documentData._fileId)?.currentVersion.push(version)
+          if(selectedDocIndex === -1){
+              if(!_.isEmpty(selectedDocumentsIds)) newSelectedDocumentsIds = [...selectedDocumentsIds]
+              if(!newSelectedDocumentsIds.includes(doc.documentData._fileId)) newSelectedDocumentsIds.push(doc.documentData._fileId);
+            }
+          }
+        else {
+          _.pull(newDocuments.find(d => d.documentData._fileId === doc.documentData._fileId)?.currentVersion, version)
+          if(selectedDocIndex != -1){
+            if(!_.isEmpty(selectedDocumentsIds)) newSelectedDocumentsIds = [...selectedDocumentsIds]
+            if(newSelectedDocumentsIds.includes(doc.documentData._fileId)) _.pull(newSelectedDocumentsIds, doc.documentData._fileId)
+            }
+        }
+        setSelectedDocumentsIds(newSelectedDocumentsIds)
+        setDocuments(newDocuments)
+    }
+
+    const selectAllVersions = (doc) => {
+      let newDocuments = [...documents]
+      doc.documentData.versions.forEach(v => {
+          if (!newDocuments.find(d => d.documentData._fileId === doc.documentData._fileId)?.currentVersion.includes(v))
+              newDocuments.find(d => d.documentData._fileId === doc.documentData._fileId)?.currentVersion.push(v)
+      })
+      setDocuments(newDocuments)
+    }
+  
+    const deselectAllVersions = (doc) => {
+      let newDocuments = [...documents]
+      if(doc.documentData.versions.length > 1) {
+      doc.documentData.versions.forEach(v => {
+                   _.pull(newDocuments.find(d => d.documentData._fileId === doc.documentData._fileId)?.currentVersion, v)
+      })
+      setDocuments(newDocuments)}
+    }
+
+    const isDisabled = (doc, action) => {
+      if (doc.currentVersion.length > 0) {
+          if (action.key === "VIEW") {
+              if (props.tableConfig.supportedTypes.includes(doc.documentData.name.split('.')[1])) {
+                  return true
+              }
+              else {
+                  return false
+              }
+          }
+          else return true
+      }
+      else return false
+    }
 
     return <div className="document-table">
       <div className='document-table__actions document-table__actions--bulk'>
         {props.actions
             .filter(action => action.bulk.hidden !== true)
             .map(action => {
-            console.log("DocumentTable render action", action)
             let defaultProps = {
                 disabled: action.bulk.disabled,
                 title: action.name,
@@ -105,8 +160,12 @@ const DocumentTable = props => {
                 onChange={() => {
                   if(allSelected) {
                     setSelectedDocumentsIds(initialSelectedDocuments)
+                    documents.forEach((d) => {
+                      if(d.documentData.versions.length > 1) deselectAllVersions(d)})
                   } else {
-                    setSelectedDocumentsIds(documents.map((d) => d.documentData._fileId ));
+                    setSelectedDocumentsIds(documents.map((d) => {
+                      if(d.documentData.versions.length > 1) selectAllVersions(d)
+                      return d.documentData._fileId} ));
                   }
                 }}
                 checked={allSelected}
@@ -146,10 +205,13 @@ const DocumentTable = props => {
             
           </tr>
           {documents.map((doc, index) => {
-            let date = moment(doc.documentData._metadata[props.tableConfig.dateField])       
+            const date = moment(doc.documentData._metadata[props.tableConfig.dateField])       
             const fileId = doc.documentData._fileId;
             const selectedDocIndex = selectedDocumentsIds.findIndex((id) => id === fileId);
-            let checked = selectedDocIndex != -1;
+            
+            let checked = selectedDocIndex != -1 && (doc.documentData.versions.length > 1 ? doc.currentVersion.length === doc.documentData.versions.length : true)
+            let partialChecked = doc.currentVersion.length < doc.documentData.versions.length && doc.currentVersion.length != 0
+            let versions = _.intersection(doc.documentData.versions, doc.currentVersion)
             return <tr className="document-table__row">
               <td className="document-table__col document-table__col--select">
                 <PinkCheckbox 
@@ -157,12 +219,15 @@ const DocumentTable = props => {
                     let newSelectedDocuments = [...selectedDocumentsIds]
                    if(checked) {
                       newSelectedDocuments.splice(selectedDocIndex, 1);
+                      deselectAllVersions(doc)
                     } else {
                       newSelectedDocuments.push(fileId);
+                      selectAllVersions(doc)
                     }
                     setSelectedDocumentsIds(newSelectedDocuments)
                   }}
                   checked={checked} 
+                  indeterminate={partialChecked}
                 />
               </td>
               <td className="document-table__col document-table__col--actions">
@@ -172,41 +237,40 @@ const DocumentTable = props => {
                     if(action.hidden === true) return null
     
                     let defaultProps = {
-                        disabled: action.disabled,
+                        disabled: !action.disabled,
                         title: action.name,
                         children: action.name,
                         icon: action.icon,
                         onClick: () => action.onClick([doc])
                     }
+                    const disabled = defaultProps.disabled && isDisabled(doc, action)
                     if(action.component) {
                         return <action.component {...defaultProps} {...action.props}/>;
                     }
                     return <span className={`document-table__action-button`}>
                                 <Tooltip title={defaultProps.title}>
-                                    <i className={defaultProps.icon} onClick={defaultProps.onClick}/>
+                                    <i className={`${defaultProps.icon} ${disabled.toString()}`} onClick={defaultProps.onClick}/>
                                 </Tooltip>
                             </span>
                     })}
                 </div>
               </td>
               <td className="document-table__col document-table__col--version">
-                <SimpleSelect 
-                  className='document-table__version-select'
-                  disabled={doc.disableVersions}
-                  clearable={false}
-                  options={doc.documentData.versions.map(v => {
-                    return `${v.versionNumber} (${date.format('DD/MM/YYYY kk:mm:ss a')})`
-                  })} 
-                  value={doc.documentData.versions.find(v => v._fileVersionId === doc.currentVersion).versionNumber}
-                  handleChange={(value) => {
-                    let fileId = doc.documentData._fileId;
-                    let versionId = doc.documentData.versions.find(v => v.versionNumber === value)._fileVersionId;
-                    doc.setCurrentVersion(
-                      fileId, 
-                      versionId
-                    )
-                  }}
-                />
+                <div>
+                  <div className={`document-table__version_display`}>
+                    {versions.map((v, i) => { return `${v.versionNumber}${versions.length > 1 && versions.length != i + 1 ? ',' : ''}`})}
+                    <span className={`${doc.documentData.versions.length > 1 ? 'document-table_dropdown_icon_enabled': 'document-table_dropdown_icon_disabled'}`}>
+                        <i className={`fas fa-caret-down`} onClick={()=>toogleVersionDrop(fileId)}></i>
+                    </span> 
+                  </div>
+                  <div className={`document-table__version_dropdown ${fileId}`}>
+                    {doc.documentData.versions.length > 1 ? doc.documentData.versions.map(v => {
+                      return <div><PinkCheckbox onChange={()=>setSelectedVersion(v, doc)} 
+                       checked={doc.currentVersion?.includes(v)}/>
+                      {v.versionNumber} {date.format('DD/MM/YYYY kk:mm:ss a')}</div>})
+                       : null}
+                  </div>
+                </div>
               </td>
               <td className="document-table__col document-table__col--name">
                {doc.documentData.name}
