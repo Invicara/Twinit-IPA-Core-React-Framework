@@ -29,7 +29,7 @@ import {
 } from "./TreeHelpers";
 import {usePrevious} from "./usePrevious";
 import {getEntityFromModel, getFilteredEntitiesBy} from "./entities";
-import FilterControl from "../IpaControls/FilterControl";
+import {applyFilters} from "../IpaControls/FilterControl";
 
 const IpaUtils = {
     //AppContext,
@@ -67,7 +67,7 @@ const IpaUtils = {
     branchNodeRendererOld: branchNodeRenderer,
     usePrevious,
     getFilteredEntitiesBy,
-    applyFilters : FilterControl.applyFilters,
+    applyFilters : applyFilters,
     getEntityFromModel,
     TreeNodeStatus, TreeNodeActionName
 }
