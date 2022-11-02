@@ -35,7 +35,8 @@ import {getEntitySelectConfig, setUserConfig} from "./slices/user-config";
 import {
     fetchAllNamedUserItems, fetchNamedUserItemItems,
     namedUserItemActions, selectNamedUserItemById,
-    selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus
+    selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus,
+    fetchNamedUserTotalAmountOfItems
 } from "./slices/named-user-item.slice";
 
 const redux = {
@@ -83,6 +84,7 @@ const redux = {
         selectNamedUserItemsLoadingStatus,
         selectNamedUserItemById,
         ...namedUserItemActions,
+        fetchNamedUserTotalAmountOfItems
     }
 }
 

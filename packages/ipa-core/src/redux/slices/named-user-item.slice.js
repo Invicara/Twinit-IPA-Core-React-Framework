@@ -5,6 +5,9 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {IafItemSvc, IafScriptEngine} from "@invicara/platform-api";
+import ScriptHelper from '../../IpaUtils/ScriptHelper';
+import _ from 'lodash';
+
 export const NAMED_USER_ITEM_FEATURE_KEY = 'namedUserItem';
 export const namedUserItemAdapter = createEntityAdapter({
   //IDs are stored in a customized field ("_id")
@@ -29,25 +32,50 @@ export const namedUserItemAdapter = createEntityAdapter({
  * }, [dispatch]);
  * ```
  */
-export const fetchNamedUserItemItems = createAsyncThunk(
+export const fetchNamedUserItemItems = createAsyncThunk( 
   'namedUserItem/fetchStatus',
   async (args, thunkAPI) => {
-      const {userItemId, userItemVersionId, ctx} = args
+      const {scriptName, userItemId, userItemVersionId, ctx} = args
 
-      return IafScriptEngine.getItems({
-          query: {},
-          _userItemId: userItemId,
-          options: {
-              "page": {
-                  "_pageSize": 5,
-                  "_offset":0,
-                  "getPageInfo": true
-              },
-              //userItemVersionId: model_rel_coll_prev._userItemVersionId
-          }
-      }, ctx);
+      if (!scriptName) { 
+        return IafScriptEngine.getItems({
+            query: {},
+            _userItemId: userItemId,
+            options: {
+                "page": {
+                    "_pageSize": 5,
+                    "_offset":0,
+                    "getPageInfo": true
+                },
+                //userItemVersionId: model_rel_coll_prev._userItemVersionId
+            }
+        }, ctx)
+    } else{
+      return ScriptHelper.executeScript(scriptName, userItemId)  // Should the input that is passed through be an object? (Scott's best practices)
+    };
   }
 );
+
+// Making 16 seperate calls to api for each collection, find a way to make one call and get back info for all collections
+export const fetchNamedUserTotalAmountOfItems = createAsyncThunk( 
+  'namedUserItemTotalItems/fetchStatus',
+  async (args, thunkAPI) => {
+    const {originalPromiseResult, ctx} = args
+    const resultArr = originalPromiseResult.map((item) => {
+      return {
+        query: {},
+        _userItemId: item._userItemId,
+        options: {
+          "page": {
+            "getPageInfo": true
+          },
+        }
+      }
+    })
+    return IafScriptEngine.getItemsMulti(resultArr, ctx);   
+  }
+);
+
 /*
 export const fetchNamedUserItems = createAsyncThunk(
     'namedUserItems/fetchStatus',
@@ -62,17 +90,24 @@ export const fetchNamedUserItems = createAsyncThunk(
 export const fetchAllNamedUserItems = createAsyncThunk(
     'allNamedUserItems/fetchStatus',
     async (args, thunkAPI) => {
-      /**
-       * @param {criteria: NamedUserItemCriteria, ctx: Ctx, options: NamedUserItemCriteriaOptions} - args
-       * @returns {Promise<Array<NamedUserItem>>}
-       */
-      //always filter _itemClass
-      const criteria = {query : {"_itemClass": {"$in": ["NamedUserCollection","NamedFileCollection"]}}};
-      const ctx = {...args.ctx} || {};
-      const options = args.options;
-      return IafItemSvc.getAllNamedUserItems(criteria, ctx, options);
-    }
+      const {scriptName} = args
+      
+      if(!scriptName) { 
+        /**
+         * @param {criteria: NamedUserItemCriteria, ctx: Ctx, options: NamedUserItemCriteriaOptions} - args
+         * @returns {Promise<Array<NamedUserItem>>}
+         */
+        //always filter _itemClass
+        const criteria = {query : {"_itemClass": {"$in": ["NamedUserCollection","NamedFileCollection"]}}};
+        const ctx = {...args.ctx} || {};
+        const options = args.options;
+        return IafItemSvc.getAllNamedUserItems(criteria, ctx, options);
+      } else {
+        return ScriptHelper.executeScript(scriptName ) 
+      }
+  }
 );
+
 export const initialNamedUserItemState = namedUserItemAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -95,13 +130,21 @@ export const namedUserItemSlice = createSlice({
         state.loadingStatus = 'loading';
       })
 
-      .addCase(fetchNamedUserItemItems.fulfilled, (state, action) => {
+      .addCase(fetchNamedUserTotalAmountOfItems.pending, (state) => {
+        state.loadingStatus = 'loading';
+      })
 
-        namedUserItemAdapter.updateOne(state, action.payload);
+      .addCase(fetchNamedUserItemItems.fulfilled, (state, action) => { 
+        namedUserItemAdapter.updateOne(state, action.payload); 
         state.loadingStatus = 'loaded';
       })
       .addCase(fetchAllNamedUserItems.fulfilled, (state, action) => {
         namedUserItemAdapter.setAll(state, action.payload);
+        state.loadingStatus = 'loaded';
+      })
+
+      .addCase(fetchNamedUserTotalAmountOfItems.fulfilled, (state, action) => { 
+        namedUserItemAdapter.updateOne(state, action.payload); 
         state.loadingStatus = 'loaded';
       })
 
@@ -112,7 +155,12 @@ export const namedUserItemSlice = createSlice({
       .addCase(fetchAllNamedUserItems.rejected, (state, action) => {
         state.loadingStatus = 'error';
         state.error = action.error.message;
-      });;
+      })
+
+      .addCase(fetchNamedUserTotalAmountOfItems.rejected, (state, action) => {
+        state.loadingStatus = 'error';
+        state.error = action.error.message;
+      });
   },
 });
 /*
