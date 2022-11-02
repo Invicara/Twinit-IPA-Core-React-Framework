@@ -86,9 +86,6 @@ const redux = {
         selectNamedUserItemById,
         ...namedUserItemActions,
         fetchNamedUserTotalAmountOfItems
-    }, 
-    EntityUi: {
-        addEntityComponents
     }
 }
 
