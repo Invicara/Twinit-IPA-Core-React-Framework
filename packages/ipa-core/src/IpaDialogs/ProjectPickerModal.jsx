@@ -292,15 +292,34 @@ export default class ProjectPickerModal extends React.Component {
   render() {
     const {appContextProps, onCancel} = this.props;
     const {projects, remember, projectUserGroups, showLoadButton, invites} = this.state;
-    const loadBtn = showLoadButton ? <div>
+    const loadBtn = showLoadButton ? (<div>
           <div className='custom-control custom-switch' style={{marginTop: '15px', zIndex: '0'}}>
                 <input type="checkbox" className="custom-control-input" id="remswitch" value={remember} checked={remember} onChange={this.onRememberChange.bind(this)}/>
                 <label className="custom-control-label" htmlFor="remswitch">Remember my choice</label>
           </div>
-          <button onClick={onCancel} className="cancel">Cancel</button>
-          <button onClick={this.submitProjSelection} className="load">Load Project</button>
-          </div>
-         : <div className="spinningLoadingIcon projectLoadingIcon"></div>;
+          <button
+            onClick={onCancel}
+            className={
+              this.props.referenceAppConfig.refApp ? "cancel" : "default-cancel"
+            }
+          >
+            Cancel
+          </button>
+          <button
+            onClick={this.submitProjSelection}
+            className={
+              this.props.referenceAppConfig.refApp ? "load" : "default-load"
+            }
+          >
+            Load Project
+          </button>
+          {this.props.referenceAppConfig.refApp && (
+            <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
+              Create Project
+            </button>
+          )}
+        </div>
+      ) : <div className="spinningLoadingIcon projectLoadingIcon"></div>;
     //TODO handle user modal manual close -> load default config
     const selectProjectOptions = (!projects || projects.length == 0) ? [{value: 'none', label: ''}] :
         projects.map((project) => {return {'value': project._id, 'label': project._name}});

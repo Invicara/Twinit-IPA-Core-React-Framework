@@ -37,7 +37,7 @@ import ScriptCache from './IpaUtils/script-cache'
 import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
-
+import SetUpProject from "./ipaProjectSetup/SetupProject";
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
 import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
@@ -64,6 +64,7 @@ class AppProvider extends React.Component {
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
     this.state = {
+      isshowProjectPickerModal: false,
       userConfig: this.props.initialConfig || EmptyConfig,
       user: undefined,
       token: undefined,
@@ -107,6 +108,12 @@ class AppProvider extends React.Component {
   componentDidMount() {
     IafSession.setErrorCallback(this.handleRequestError);
     this.state.actions.restartApp();
+  }
+  handleClick() {
+    console.log("here");
+    this.setState((prev) => {
+      return { ...prev, isshowProjectPickerModal: true };
+    });
   }
 
   async sisenseLogout() {
@@ -457,8 +464,25 @@ class AppProvider extends React.Component {
           let projects = await IafProj.getProjects({_pageSize: 1000});
           if (showProjectPicker)
             self.context.ifefShowModal(
-              <ProjectPickerModal configUserType={this.props.ipaConfig.configUserType} appContextProps={this.state} defaultConfig={EmptyConfig} onAcceptInvite={this.state.actions.restartApp}
-                projects={projects} testConfig={self.testConfig} onConfigLoad={callback} onCancel={() => self.context.ifefShowModal(false)}/>);
+              <ProjectPickerModal
+              configUserType={this.props.ipaConfig.configUserType}
+              referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
+              appContextProps={this.state}
+              defaultConfig={EmptyConfig}
+              onAcceptInvite={this.state.actions.restartApp}
+              projects={projects}
+              testConfig={self.testConfig}
+              onConfigLoad={callback}
+              onCancel={() => self.context.ifefShowModal(false)}
+              referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
+                restartApp={this.state.actions.restartApp}
+                onCancel={() => {
+                  this.setState((prev) => {
+                    return { ...prev, isshowProjectPickerModal: true };
+                  });
+                }}
+              />) }
+            />);
         } catch (error) {
           console.log(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
