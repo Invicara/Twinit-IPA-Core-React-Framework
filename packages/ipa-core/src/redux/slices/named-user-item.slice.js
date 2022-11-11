@@ -108,10 +108,27 @@ export const fetchAllNamedUserItems = createAsyncThunk(
   }
 );
 
+export const fileImport = createAsyncThunk(
+  'importData/importStatus',
+  async (args, thunkAPI) => {
+    const {importScriptName} = args
+    return ScriptHelper.executeScript(importScriptName) 
+  }
+);
+
+export const importDataValidation = createAsyncThunk(
+  'importData/ValidationStatus',
+  async (args, thunkAPI) => {
+    const {valScriptName, importFileResult} = args
+    return ScriptHelper.executeScript(valScriptName, {thunkAPI, importFileResult}) 
+  }
+);
+
 export const initialNamedUserItemState = namedUserItemAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
 });
+
 export const namedUserItemSlice = createSlice({
   name: NAMED_USER_ITEM_FEATURE_KEY,
   initialState: initialNamedUserItemState,
@@ -129,11 +146,15 @@ export const namedUserItemSlice = createSlice({
       .addCase(fetchAllNamedUserItems.pending, (state) => {
         state.loadingStatus = 'loading';
       })
-
       .addCase(fetchNamedUserTotalAmountOfItems.pending, (state) => {
         state.loadingStatus = 'loading';
       })
-
+      .addCase(importDataValidation.pending, (state) => {
+        state.loadingStatus = 'loading';
+      })
+      .addCase(fileImport.pending, (state) => {
+        state.loadingStatus = 'loading';
+      })
       .addCase(fetchNamedUserItemItems.fulfilled, (state, action) => { 
         namedUserItemAdapter.updateOne(state, action.payload); 
         state.loadingStatus = 'loaded';
@@ -142,12 +163,20 @@ export const namedUserItemSlice = createSlice({
         namedUserItemAdapter.setAll(state, action.payload);
         state.loadingStatus = 'loaded';
       })
-
       .addCase(fetchNamedUserTotalAmountOfItems.fulfilled, (state, action) => { 
         namedUserItemAdapter.updateOne(state, action.payload); 
         state.loadingStatus = 'loaded';
       })
-
+      .addCase(importDataValidation.fulfilled, (state, action) => { 
+        namedUserItemAdapter.updateOne(state, action.payload); 
+        state.loadingStatus = 'loaded';
+        state.error = null;
+      })
+      .addCase(fileImport.fulfilled, (state, action) => { 
+        namedUserItemAdapter.updateOne(state, action.payload); 
+        state.loadingStatus = 'loaded';
+        state.error = null;
+      })
       .addCase(fetchNamedUserItemItems.rejected, (state, action) => {
         state.loadingStatus = 'error';
         state.error = action.error.message;
@@ -156,10 +185,17 @@ export const namedUserItemSlice = createSlice({
         state.loadingStatus = 'error';
         state.error = action.error.message;
       })
-
       .addCase(fetchNamedUserTotalAmountOfItems.rejected, (state, action) => {
         state.loadingStatus = 'error';
         state.error = action.error.message;
+      })
+      .addCase(importDataValidation.rejected, (state, action) => {
+        state.loadingStatus = 'error';
+        state.error = action.payload;
+      })
+      .addCase(fileImport.rejected, (state, action) => {
+        state.loadingStatus = 'error';
+        state.error = action.payload;
       });
   },
 });
@@ -203,6 +239,7 @@ export const namedUserItemActions = namedUserItemSlice.actions;
 const { selectAll, selectEntities, selectById } = namedUserItemAdapter.getSelectors();
 export const getNamedUserItemSlice = (rootState) => rootState[NAMED_USER_ITEM_FEATURE_KEY];
 const getLoadingStatus = (slice) => slice.loadingStatus;
+const getErrorStatus = (slice) => slice.error;
 
 export const selectNamedUserItemById = createSelector(
     getNamedUserItemSlice,
@@ -219,5 +256,13 @@ export const selectNamedUserItemEntities = createSelector(
 );
 export const selectNamedUserItemsLoadingStatus = createSelector(
     getNamedUserItemSlice,
-    getLoadingStatus
+    getLoadingStatus,
+);
+export const SelectNamedUserItemsErrorStatus = createSelector(
+  getNamedUserItemSlice,
+  getErrorStatus
+);
+export const SelectNamedUserItemsImportStatus = createSelector(
+  getNamedUserItemSlice,
+  getLoadingStatus
 );

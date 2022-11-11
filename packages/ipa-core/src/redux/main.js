@@ -36,7 +36,8 @@ import {
     fetchAllNamedUserItems, fetchNamedUserItemItems,
     namedUserItemActions, selectNamedUserItemById,
     selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus,
-    fetchNamedUserTotalAmountOfItems
+    fetchNamedUserTotalAmountOfItems, importDataValidation, 
+    SelectNamedUserItemsErrorStatus, fileImport, SelectNamedUserItemsImportStatus
 } from "./slices/named-user-item.slice";
 
 const redux = {
@@ -83,8 +84,12 @@ const redux = {
         selectNamedUserItemEntities,
         selectNamedUserItemsLoadingStatus,
         selectNamedUserItemById,
+        SelectNamedUserItemsErrorStatus,
+        SelectNamedUserItemsImportStatus,
         ...namedUserItemActions,
-        fetchNamedUserTotalAmountOfItems
+        fetchNamedUserTotalAmountOfItems,
+        importDataValidation,
+        fileImport
     }
 }
 
