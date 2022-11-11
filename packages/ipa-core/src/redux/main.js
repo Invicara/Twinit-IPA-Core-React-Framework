@@ -36,7 +36,8 @@ import {
     fetchAllNamedUserItems, fetchNamedUserItemItems,
     namedUserItemActions, selectNamedUserItemById,
     selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus,
-    fetchNamedUserTotalAmountOfItems
+    fetchNamedUserTotalAmountOfItems, importDataValidation, 
+    SelectNamedUserItemsErrorStatus, fileImport, SelectNamedUserItemsImportStatus
 } from "./slices/named-user-item.slice";
 import { addEntityComponents } from "./slices/entityUI"
 
@@ -84,8 +85,12 @@ const redux = {
         selectNamedUserItemEntities,
         selectNamedUserItemsLoadingStatus,
         selectNamedUserItemById,
+        SelectNamedUserItemsErrorStatus,
+        SelectNamedUserItemsImportStatus,
         ...namedUserItemActions,
-        fetchNamedUserTotalAmountOfItems
+        fetchNamedUserTotalAmountOfItems,
+        importDataValidation,
+        fileImport
     }
 }
 
