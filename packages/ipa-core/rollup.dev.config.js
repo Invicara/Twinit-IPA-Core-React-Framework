@@ -94,7 +94,7 @@ export default {
     'react-inspector', 'react-select', 'react-table',
     '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
-    'app-root-path','@invicara/iaf-doc-viewer'
+    'app-root-path'
   ]
   */
 };

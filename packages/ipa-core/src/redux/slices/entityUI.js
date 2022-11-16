@@ -15,11 +15,9 @@ const ENTITY_ACTION_COMPONENTS = {
 import {ImageFactory} from "../../IpaControls/Image";
 import {ScriptedChartFactory} from "../../IpaControls/ScriptedChart";
 import {SimpleTabbedTableFactory, SimpleTableFactory, SimpleTableGroupFactory} from "../../IpaControls/private/simple-table";
-import {ScriptedDocumentTableFactory} from '../../IpaPageComponents/files/ScriptedDocumentTable';
 
 const ENTITY_DATA_COMPONENTS = {
   "SimpleTable": SimpleTableFactory,
-  "ScriptedDocumentTable": ScriptedDocumentTableFactory,
   "SimpleTableGroup": SimpleTableGroupFactory,
   "SimpleTabbedTable": SimpleTabbedTableFactory,
   "Image": ImageFactory,
