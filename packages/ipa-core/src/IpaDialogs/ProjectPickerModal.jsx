@@ -300,7 +300,7 @@ export default class ProjectPickerModal extends React.Component {
           <button
             onClick={onCancel}
             className={
-              this.props.referenceAppConfig.refApp ? "cancel" : "default-cancel"
+              this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"
             }
           >
             Cancel
@@ -308,12 +308,12 @@ export default class ProjectPickerModal extends React.Component {
           <button
             onClick={this.submitProjSelection}
             className={
-              this.props.referenceAppConfig.refApp ? "load" : "default-load"
+              this.props.referenceAppConfig?.refApp ? "load" : "default-load"
             }
           >
             Load Project
           </button>
-          {this.props.referenceAppConfig.refApp && (
+          {this.props.referenceAppConfig?.refApp && (
             <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
               Create Project
             </button>
