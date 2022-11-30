@@ -18,6 +18,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         _.get(node,'selectedStatus', TreeNodeStatus.OFF) === TreeNodeStatus.ON && "selected",
         _.get(node,'selectedStatus', TreeNodeStatus.OFF) === TreeNodeStatus.PARTIAL && "partial",
         _.get(node,'expanded', false) && "expanded",
+        _.get(node,'hidden', false) && "hidden",
     )}
 
     const expandBranch = (node) => onNodeIndexChange(produce(nodeIndex, nodeIndex => {

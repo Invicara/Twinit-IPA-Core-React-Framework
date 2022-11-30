@@ -47,7 +47,7 @@ export const getCellContent = (type, val) => {
     }
 }
 
-export default function Cell  (props) {
+export default function Cell(props) {
     const cellContent = getCellContent(props.type, props.val);
     return <div className={`cell ${props.className || ""}`}>
         {wrapWithTooltip(props.type, cellContent)}

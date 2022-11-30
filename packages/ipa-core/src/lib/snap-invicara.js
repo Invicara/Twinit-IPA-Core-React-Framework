@@ -12,6 +12,7 @@
  */
 /*jslint browser: true*/
 /*global define, module, ender*/
+const snapModule = {};
 (function(win, doc) {
     'use strict';
     var Snap = Snap || function(userOpts) {
@@ -650,4 +651,5 @@
         return Snap;
       });
     }
-  }).call(this, window, document);
+  }).call(this || snapModule, window, document);
+export default snapModule.Snap;

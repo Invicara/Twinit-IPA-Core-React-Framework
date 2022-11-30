@@ -24,7 +24,7 @@ import {
 import {connect} from "react-redux";
 import withEntityConfig from "./WithEntityConfig";
 
-const withEntityStore = WrappedComponent => {
+const withEntityStore = (WrappedComponent) => {
     const EntityStoreHOC =  class extends React.Component {
         constructor(props) {
             super(props);
@@ -51,19 +51,31 @@ const withEntityStore = WrappedComponent => {
         }
 
         componentDidMount() {
+            const initialEntityType = this.deriveInitialEntityType(this.props.queryParams, this.props.handler);
+            if(this.props.currentEntityType){
+                //store is already populated, check if we need to change entity
+                let {queryParams} = this.props;
+                const storeSwitchRequired = queryParams
+                    && queryParams.entityType !== this.props.currentEntityType.singular
+                    && initialEntityType.entityType !== this.props.currentEntityType.singular;
+                if(storeSwitchRequired){
+                    //change store (yes for all components using this HOC)
+                    this.switchStore(initialEntityType);
+                }
+                return;
+            }
             // hello, we have connected to an empty redux store
             // entity type must be set on state to make up for the empty store
-            const initialEntityType = this.deriveInitialEntityType(this.props.queryParams, this.props.handler);
             //re-render the component with entity type
             this.initStoreValues(initialEntityType);
         }
 
         componentWillUnmount() {
-            this.saveStore();
+            //this.saveStore();
             //TODO Once filters are moved to store, refactor the queryParam logic so that it can identify when URL applied
             // filters and entity match the current ones in the store and this cleaning (and the later refetching) of the entities
             // can be removed for being unnecessary and only done when needed
-            this.props.resetEntities();
+            //this.props.resetEntities();
         }
 
         deriveInitialEntityType = (queryParams) => {
@@ -73,7 +85,7 @@ const withEntityStore = WrappedComponent => {
                 // a page dealing with the same entity type it is meant to retrieve, then we can run the passed in query,
                 // fetching the entities using the selectors
                 if (queryParams.query && _.includes(this.props.allowedEntityTypes, queryParams.entityType) &&
-                    queryParams.entityType === queryParams.senderEntityType) {
+                    (!queryParams.senderEntityType || queryParams.entityType === queryParams.senderEntityType)) {
                     // note: id might be an index into the array or a textual id from the user config....
                     return this.props.perEntityConfig[queryParams.entityType];
                 }

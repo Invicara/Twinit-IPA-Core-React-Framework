@@ -112,8 +112,8 @@
     border-top-right-radius: 50%;
   }
 
-  li:first-child {
-    //margin-top: var(--channel-margin-top);
+  li ul li:first-child {
+    margin-top: var(--channel-margin-top);
   }
 
   li:last-child:before,

@@ -3,26 +3,45 @@ $light-grey: #6d6e70;
 
 .project-picker-modal {
 
-    button {
-      text-transform: uppercase;
-      border-radius: 15px;
-      padding: 5px;
-      width: 40%;
-      margin: 20px;
-      border: solid black 2px;
-  
-    }
-    button.load {
-      color: white;
-      background-color: var(--app-accent-color);
-      border-color: var(--app-accent-color);
-    }
-    button.cancel {
-      color: $light-grey;
-      background-color: white;
-      border-color: $light-grey;
-    }
-  
+    
+button {
+  text-transform: uppercase;
+  border-radius: 15px;
+  padding: 5px;
+  width: 40%;
+  margin: 20px;
+  border: solid black 2px;
+
+}
+button.default-load {
+  color: white;
+  background-color: var(--app-accent-color);
+  border-color: var(--app-accent-color);
+}
+button.default-cancel {
+  color: $light-grey;
+  background-color: white;
+  border-color: $light-grey;
+  }
+button.setup {
+  color: white;
+  width: 25% !important;
+  background-color: var(--app-accent-color);
+  border-color: var(--app-accent-color);
+}
+button.cancel{
+  width: 25% !important;
+  color: $light-grey;
+  background-color: white;
+  border-color: $light-grey;
+}
+button.load {
+  color: white;
+  width: 25% !important;
+  background-color: var(--app-accent-color);
+  border-color: var(--app-accent-color);
+}
+
     h4 {
       font-size: 14px;
     }

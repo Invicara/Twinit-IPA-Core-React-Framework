@@ -54,7 +54,6 @@ export class ScriptedLinkedSelects extends React.Component {
         
         //fetch the first selects values
         let firstSelectValues = await ScriptHelper.executeScript(this.props.selectConfigs[0].script);
-        console.log(firstSelectValues)
         let selectOptions = [];
         let selectedOptions = {};
         
@@ -107,7 +106,6 @@ export class ScriptedLinkedSelects extends React.Component {
       
       this.setState({selectedOptions: selectedValues});
       
-      console.log(selectedValues)
       if (this.props.onChange) {
         
         let currentSelections = {};

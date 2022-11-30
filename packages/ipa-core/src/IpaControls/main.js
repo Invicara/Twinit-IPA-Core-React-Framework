@@ -45,8 +45,10 @@ import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useCh
 import RadioButtons from './RadioButtons'
 import Table from './Table/Table'
 import Cell from './Table/Cell'
+import AlertIndicator from './AlertIndicator'
 
 const IpaControls = {
+    AlertIndicator,
     AdvancedSearch,
     BigButtonBar,
     ChartStack,

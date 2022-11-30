@@ -1,29 +1,46 @@
 import React from "react";
 import _ from "lodash";
 import ScriptCache from "../../IpaUtils/script-cache";
+import {AppContext} from "../../appContext";
+import {withAppContext} from "../../appContext";
+import {GenericPageContext} from "../genericPageContext";
+import produce from "immer";
+import {func} from "prop-types";
 
 const withEntityConfig = WrappedComponent => {
     const EntityConfigHOC =  class extends React.Component {
         constructor(props) {
             super(props);
-            this.state = {
-                initialAvailableDataGroups: this.initAvailableDataGroups()
-            }
         }
 
         //Checks if this handler/page supports multiple entity types (like assets and spaces)
         _allowsMultipleEntityTypes = _.memoize((currentConfig) => Array.isArray( currentConfig.type));
 
-        _getAllowedEntityTypes = _.memoize((currentConfig)  => this._allowsMultipleEntityTypes(currentConfig) ?
-            currentConfig.type.map(entityType => entityType.singular) :
-            [currentConfig.singular]);
+        _getAllowedEntityTypes = _.memoize((currentConfig)  => {
+            const allowsMultipleEntityTypes = this._allowsMultipleEntityTypes(currentConfig)
+            if(allowsMultipleEntityTypes) {
+                return currentConfig.type.map(entityType => entityType.singular)
+            }
+
+            //In some instances, the entityType is an object in a type property
+            if(currentConfig.type?.singular) {
+                return [currentConfig.type?.singular]
+            }
+
+            //Otherwise we assume the entityType is in directly in the config as the singular property.
+            return  [currentConfig.singular]
+        });
 
         //keeping this method name to avoid too much refactoring :)
         getPerEntityConfig =  _.memoize((currentConfig) => () => this._getPerEntityConfig(currentConfig) );
         _getPerEntityConfig =  _.memoize((currentConfig) => {
-            const {entityData, entitySelectionPanel, type, selectBy = {/*make sure merge always run*/}, data, tableView, actions} = currentConfig;
+            //console.log("IN ENTITY CONFIG PREP",currentConfig);
             if (this._allowsMultipleEntityTypes(currentConfig)) {
-                const consolidatedConfig = _.mergeWith({...entityData}, {...selectBy}, (entityData, selectors, key) => ({
+                const {entityData = {}, entitySelectionPanel = {}, type, selectBy = {}, data, tableView, actions,  panels = {}} = currentConfig;
+
+                const consolidatedConfig = _.mergeWith({...entityData}, {...selectBy}, (entityData, selectors, key) => {
+                    console.log("IN ENTITY CONFIG MERGE");
+                    return {
                     ...currentConfig,
                     script: entityData.script,
                     entityFromModelScript: entityData.getEntityFromModel,
@@ -32,34 +49,42 @@ const withEntityConfig = WrappedComponent => {
                     entitySelectionPanel: entitySelectionPanel?.[key],
                     data: data?.[key],
                     tableView: tableView?.[key],
-                    actions: actions?.[key]
-                }));
+                    actions: actions?.[key],
+                    panels: panels?.[key]
+                }});
                 let result = _.mapValues(consolidatedConfig, (entityConfig, entityName) =>
-                    ({...entityConfig, ...type.find(t => t.singular === entityName)})
+                    ({...entityConfig, ...currentConfig.type.find(t => t.singular === entityName)})
                 );
+                //console.log("IN ENTITY CONFIG PREP result",result);
                 return result;
             } else {
-                return {
-                    [type.singular]: {
-                        ...currentConfig,
-                        script: entityData[type.singular].script,
-                        entityFromModelScript: entityData[type.singular].getEntityFromModel,
-                        spaceMode: entityData[type.singular].spaceMode,
-                        selectors: selectBy,
-                        data,
-                        actions,
-                        tableView,
-                        singular: type.singular,
-                        plural: type.plural
-                    }
-                }
+                const result = produce(currentConfig, function (currentConfig){
+                    const {entityData = {}, entitySelectionPanel = {}, type, selectBy = {}, data, tableView, actions,  panels = {}} = currentConfig;
+                    return {
+                        [type.singular]: {
+                            ...currentConfig,
+                            script: entityData[type.singular].script,
+                            entityFromModelScript: entityData[type.singular].getEntityFromModel,
+                            spaceMode: entityData[type.singular].spaceMode,
+                            selectors: selectBy?.[type.singular] || [],
+                            entitySelectionPanel: entitySelectionPanel?.[type.singular],
+                            data,
+                            actions,
+                            tableView,
+                            panels,
+                            singular: type.singular,
+                            plural: type.plural
+                    }}
+                });
+                //console.log("IN ENTITY CONFIG PREP result2",result);
+                return result;
             }
         });
 
 
         getEntityExtendedDataFetcher = (extendedDataConfig) => {
             if (!extendedDataConfig) {
-                console.error("Unconfigured extended data");
+                //console.error("Unconfigured extended data");
                 return () => undefined;
             }
             return async (dataType, entityInfo) => {
@@ -87,9 +112,9 @@ const withEntityConfig = WrappedComponent => {
 
         });
 
-        initAvailableDataGroups = () => {
+        initAvailableDataGroups = (currentConfig) => {
             let availableDataGroups = {}
-            Object.entries(this._getExtendedDataConfig(this.props.handler.config)).forEach(([entityType, config]) => {
+            Object.entries(this._getPerEntityConfig(currentConfig)).forEach(([entityType, config]) => {
                 if(config.data){
                     Object.entries(config.data).forEach(([dataGroupName, dataGroup]) => {
                         if (dataGroup.isProperties) {
@@ -147,27 +172,31 @@ const withEntityConfig = WrappedComponent => {
                 })
         }
 
-        getWrappedComponent = (wrappedProps) => <WrappedComponent
-            {...wrappedProps}/>
-
-        render() {
-
-            const config = this.props.handler.config;
+        getWrappedComponent = (handler) => {
+            const config = handler.config;
 
             const wrappedProps = {...this.props, ...this.state,
+                initialAvailableDataGroups: this.initAvailableDataGroups(config),
                 perEntityConfig : this._getPerEntityConfig(config),
+                //TODO: why extendedDataConfig merges keys from all entities? surely this one day will overwrite something right?
                 extendedDataConfig: this._getExtendedDataConfig(config),
                 allowsMultipleEntityTypes: this._getAllowedEntityTypes(config),
                 allowedEntityTypes: this._getAllowedEntityTypes(config),
                 findAvailableDataGroups : this.findAvailableDataGroups(this._getPerEntityConfig(config)),
                 getEntityExtendedDataFetcher: this.getEntityExtendedDataFetcher,
+                //the below prop is kept to be compliant with old code, please use "perEntityConfig" instead
                 getPerEntityConfig: this.getPerEntityConfig(config)
             }
-            return this.getWrappedComponent(wrappedProps)
+            return <WrappedComponent {...wrappedProps}/>}
+
+        render() {
+            return <GenericPageContext.Consumer>
+                {genericPageContext => this.getWrappedComponent(genericPageContext.handler)}
+            </GenericPageContext.Consumer>;
         }
     }
 
-    return EntityConfigHOC
+    return withAppContext(EntityConfigHOC)
 };
 
 

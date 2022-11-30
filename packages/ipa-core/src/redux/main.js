@@ -38,6 +38,7 @@ import {
     selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus,
     fetchNamedUserTotalAmountOfItems
 } from "./slices/named-user-item.slice";
+import { addEntityComponents } from "./slices/entityUI"
 
 const redux = {
     Entities: {
@@ -85,6 +86,9 @@ const redux = {
         selectNamedUserItemById,
         ...namedUserItemActions,
         fetchNamedUserTotalAmountOfItems
+    }, 
+    EntityUi: {
+        addEntityComponents
     }
 }
 

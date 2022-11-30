@@ -1,0 +1,189 @@
+{
+  "ipaConfig": {
+    "appName": "",
+    "configUserType": "hoarelea-dt",
+    "css": [
+      "myTheme.css"
+    ],
+    "applicationId": "b42525d3-0e42-4bf9-b069-7fc16daf67e6",
+    "scriptPlugins": [
+      "ipa-dt-script-plugins.js",
+      "file-perm-script-plugins.js"
+    ],
+    "redux": {
+      "slices": [
+        {
+          "name": "connections",
+          "file": "connections.js"
+        },
+        {
+          "name": "systemBuilder",
+          "file": "system-builder.js"
+        },
+        {
+          "name": "viewSystems",
+          "file": "systems.js"
+        }
+      ]
+    },
+    "components": {
+      "dashboard": [
+        {
+          "name": "SisenseWidgets",
+          "file": "controls/SisenseWidgets.jsx"
+        },
+        {
+          "name": "SisenseIframe",
+          "file": "controls/SisenseIframe.jsx"
+        },
+        {
+          "name": "PropertyInfoTable",
+          "file": "controls/PropertyInfoTable.jsx"
+        },
+        {
+          "name": "MatterportViewer",
+          "file": "controls/MatterportViewer.jsx"
+        }
+      ],
+      "entityData": [
+        {
+          "name": "SisenseWidgets",
+          "file": "controls/SisenseWidgets.jsx"
+        },
+        {
+          "name": "HaystackPointReadingTable",
+          "file": "controls/HaystackPointReadingTable.jsx"
+        },
+        {
+          "name": "MatterportViewer",
+          "file": "controls/MatterportViewer.jsx"
+        }
+      ],
+      "entityAction": [
+        {
+          "name": "ServiceRequestModal",
+          "file": "ServiceRequestModal.jsx"
+        }
+      ]
+    }
+  },
+  "selectedProject": {
+    "_id": "34851c09-3e97-4662-87c0-3ccd63bb0e03",
+    "_description": "Western Transit Shed",
+    "_name": "Western Transit Shed",
+    "_shortName": "wts",
+    "_userType": "project_workspace",
+    "_namespaces": [
+      "wts_lQR0P0EZ"
+    ],
+    "_userAttributes": {
+      "user_group": [
+        "14c6b828-8eb4-46ee-9862-7d20459267d6",
+        "0cdb5b31-0598-4dae-96fe-cf12107a6d3a",
+        "11eba89c-b270-4c58-a742-cfc7814d877b"
+      ],
+      "nextScriptEngine": true
+    },
+    "_metadata": {
+      "_createdAt": 1660933318191,
+      "_updatedAt": 1662752581492,
+      "_createdById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+      "_updatedById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685"
+    },
+    "_appId": "b42525d3-0e42-4bf9-b069-7fc16daf67e6",
+    "rootContainer": {
+      "_uri": "/nameduseritems/62ffd4c6d5cd1e06f1570754",
+      "_name": "Root Container",
+      "_userType": "file_container",
+      "_tipId": "62ffd4c6d5cd1e06f1570755",
+      "_versions": [
+        {
+          "_userAttributes": {
+            "path": "/"
+          },
+          "_userItemDbId": "62ffd4c6d5cd1e06f1570754",
+          "_id": "62ffd4c6d5cd1e06f1570755",
+          "_isTip": true,
+          "_metadata": {
+            "_updatedById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+            "_createdAt": 1660933318870,
+            "_createdById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+            "_updatedAt": 1660933318870
+          },
+          "_version": 1
+        }
+      ],
+      "_irn": "itemsvc:nameduseritem:62ffd4c6d5cd1e06f1570754",
+      "_namespaces": [
+        "wts_lQR0P0EZ"
+      ],
+      "_nextVersion": 2,
+      "_shortName": "Root Container",
+      "_tipVersion": 1,
+      "_versionsCount": 1,
+      "_itemClass": "NamedFileCollection",
+      "_userItemId": "root container_FuMd5GAU9x",
+      "_id": "62ffd4c6d5cd1e06f1570754",
+      "_description": "Root Container",
+      "_metadata": {
+        "_updatedById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+        "_createdAt": 1660933318869,
+        "_createdById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+        "_updatedAt": 1660933318869
+      },
+      "_kind": "collection"
+    }
+  },
+  "selectedUserGroupId": "14c6b828-8eb4-46ee-9862-7d20459267d6",
+  "selectedModel": {
+    "_uri": "/nameduseritems/63067e58d5cd1e06f157d2b1",
+    "_name": "HL-ZZ-ZZ-MEP-0001 WTS Living Lab",
+    "_userType": "bim_model_version",
+    "_tipId": "630e25f5d8e33f3be1b67e0c",
+    "_versions": [
+      {
+        "_userAttributes": {
+          "thumbnail": {
+            "fileVersionId": "e220df89-9050-4527-aae6-000e5bf59182",
+            "fileId": "a0bf3057-34c6-4f58-8340-456a5a42287f"
+          },
+          "bimpk": {
+            "fileVersionId": "8fee7e3a-90b4-4b79-9851-f15b6f36e844",
+            "fileId": "07f39365-ebb4-4648-8294-a551a3480324"
+          }
+        },
+        "_userItemDbId": "63067e58d5cd1e06f157d2b1",
+        "_id": "630e25f5d8e33f3be1b67e0c",
+        "_isTip": true,
+        "_metadata": {
+          "_updatedById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+          "_createdAt": 1661871605082,
+          "_createdById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+          "_updatedAt": 1661871654217
+        },
+        "_version": 2
+      }
+    ],
+    "_irn": "itemsvc:nameduseritem:63067e58d5cd1e06f157d2b1",
+    "_namespaces": [
+      "wts_lQR0P0EZ",
+      "wts_lQR0P0EZ",
+      "wts_lQR0P0EZ"
+    ],
+    "_nextVersion": 3,
+    "_shortName": "HL-ZZ-ZZ-ME_modelver",
+    "_tipVersion": 2,
+    "_versionsCount": 2,
+    "_itemClass": "NamedCompositeItem",
+    "_userItemId": "hl-zz-zz-me_modelver_1Y99nNwf1M",
+    "_id": "63067e58d5cd1e06f157d2b1",
+    "_description": "BIM model version by transform",
+    "_metadata": {
+      "_updatedById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+      "_createdAt": 1661369944118,
+      "_createdById": "9afd35f8-4781-4043-b7ac-6ee9c0af7685",
+      "_updatedAt": 1661871605087
+    },
+    "_kind": "collection"
+  }
+}
