@@ -46,6 +46,7 @@ import RadioButtons from './RadioButtons'
 import AlertIndicator from './AlertIndicator'
 import Table from './Table/Table'
 import Cell from './Table/Cell'
+import AlertIndicator from './AlertIndicator'
 
 const IpaControls = {
     AlertIndicator,
