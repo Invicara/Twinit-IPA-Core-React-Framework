@@ -91,6 +91,9 @@ const redux = {
         fetchNamedUserTotalAmountOfItems,
         importDataValidation,
         fileImport
+    }, 
+    EntityUi: {
+        addEntityComponents
     }
 }
 
