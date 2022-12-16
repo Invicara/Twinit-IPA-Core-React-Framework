@@ -182,9 +182,11 @@ export const entitiesSliceFactory = (identifier = '') => {
                 const foundEntity = getAllCurrentEntities(getState()).find(e => modelEntity.id === e.modelViewerIds[0])
                 return !_.isEmpty(foundEntity)  ? new Promise((resolve)=>resolve(foundEntity)) : getEntityFromModel(entityFromModelScript, modelEntity)
             }));
+
             const filteredToSelect = entitiesToSelect.filter(e => e)
-            if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, ({_id}) => _id))
+            if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, ({modelData}) => modelData.id)) {
                 dispatch(setEntities({entities: filteredToSelect, shouldIsolate: false}))
+            }
             dispatch(setSelectedEntities(filteredToSelect))
             dispatch(setSelecting(false))
         } catch (e) {
