@@ -43,7 +43,7 @@ export default class ProjectPickerModal extends React.Component {
 
   }
   checkUserAccess = async () => {
-    if (this.props.referenceAppConfig.refApp) {
+    if (this.props.referenceAppConfig?.refApp) {
       try {
         let createTestProject = await IafPassSvc.createWorkspaces([]);
         if (createTestProject && createTestProject?._total == 0) {
@@ -381,7 +381,7 @@ export default class ProjectPickerModal extends React.Component {
             }
 
             {this.state.loadingModal && <SimpleTextThrobber throbberText="Loading your project information" />}
-            {this.props.referenceAppConfig.refApp &&
+            {this.props.referenceAppConfig?.refApp &&
             !showLoadButton &&
             !this.state.loadingModal &&
             !this.state.user?.has_access ? (
@@ -398,7 +398,7 @@ export default class ProjectPickerModal extends React.Component {
               <></>
             )}
 
-             {this.props.referenceAppConfig.refApp &&
+             {this.props.referenceAppConfig?.refApp &&
               !showLoadButton &&
               !this.state.loadingModal && (
                 <>
