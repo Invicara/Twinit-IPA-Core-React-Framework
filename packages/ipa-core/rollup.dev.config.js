@@ -26,6 +26,8 @@ import cleaner from 'rollup-plugin-cleaner';
 import image from '@rollup/plugin-image';
 import pkg from './package.json'
 
+const externals =  [...Object.keys(pkg.dependencies || {}),"clsx","@invicara/ui-utils","uid", "query-string", "redux"];
+
 export default {
   input: 'src/main.js',
   output: {
@@ -65,23 +67,19 @@ export default {
       ]
     })
   ],
-  //https://stackoverflow.com/questions/44844088/how-to-set-as-external-all-node-modules-in-rollup
-  external: [...Object.keys(pkg.dependencies), /^node:/].filter(
-      // Bundle modules that do not properly support ES
-      (dep) => !["@sendgrid/mail", "http-errors"].includes(dep),
-  ),
-
-  // Suppress warnings in 3rd party libraries
-  onwarn(warning, warn) {
-    if (
-        !(
-            (warning.id && warning.id.includes("node_modules")) ||
-            (warning.message && warning.message.startsWith("Unknown CLI flags: env."))
-        )
-    ) {
-      warn(warning);
+  //https://gist.github.com/developit/41f088b6294e2591f53b
+  //The external key accepts either an array of module names,
+  // or a function which takes the module name and returns true if it should be treated as external.
+  // For example: external: id => /lodash/.test(id)
+  external: (id) => {
+    const declared = externals.find(function(pattern) {
+      return new RegExp("^"+pattern).test(id);
+    })
+    if(!declared && id.indexOf('/') !== 0 && id.indexOf('.') !== 0 && id.indexOf('src') !==0){
+      console.log("not declared dep:",id)
     }
-  },
+    return declared;
+  }
   /*
   external: [
     'lodash', 'bootstrap', 'classnames',

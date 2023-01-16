@@ -7,6 +7,7 @@ import DownloadsView from './DownloadsView'
 import UserGroupView from './users/UserGroupView'
 import DatasourcesView from './datasources/DatasourcesView'
 import OMAPIView from './omapi/OMAPIView'
+import EmptyComponent from "./mock/EmptyComponent";
 
 const InternalPages = {
     'entities/EntityView': EntityView,
@@ -16,8 +17,8 @@ const InternalPages = {
     'DownloadsView': DownloadsView,
     'users/UserGroupView': UserGroupView,
     'datasources/DatasourcesView': DatasourcesView,
-    'omapi/OMAPIView': OMAPIView
-
+    'omapi/OMAPIView': OMAPIView,
+    'mock/EmptyComponent' : EmptyComponent
 }
 
 export default InternalPages

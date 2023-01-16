@@ -40,6 +40,7 @@ import {getFilteredEntitiesBy} from "../../IpaUtils/entities";
 
 import './EntityView.scss'
 import {EntityTableContainer} from "./EntityTableContainer";
+import withEntityAvailableGroups from "./WithEntityAvailableGroups";
 
 
 const tableComponents = {
@@ -222,6 +223,6 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-    withEntitySearch,
+    withEntitySearch,withEntityAvailableGroups,
     connect(mapStateToProps),
 )(EntityView)

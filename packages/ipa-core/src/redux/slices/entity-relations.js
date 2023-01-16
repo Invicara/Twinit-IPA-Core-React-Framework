@@ -128,12 +128,12 @@ export const retrieveRelated = (originalParentEntities, getScript, relatedTypes)
         _id: e._id
     }));
 
-    const rawEntitiesWithRelated =  await ScriptHelper.executeScript(getScript,{
-            parentEntities,
-            childrenTypes: relatedTypes
-        });
-    const related = rawEntitiesWithRelated.flatMap((entity) => getRelated(entity, relatedTypes));
-    const relations = rawEntitiesWithRelated.flatMap((entity) =>
+    const rawEntitiesWithRelated = await ScriptHelper.executeScript(getScript,{
+        parentEntities,
+        childrenTypes: relatedTypes
+    });
+    const related = _.defaultTo(rawEntitiesWithRelated, []).flatMap((entity) => getRelated(entity, relatedTypes));
+    const relations = _.defaultTo(rawEntitiesWithRelated, []).flatMap((entity) =>
         getRelated(entity, relatedTypes).map(relatedEntity => relatedTypes.find(rt => rt.singular === relatedEntity.entityType).isChild ?
             {parentId: entity._id, childId: relatedEntity._id} : {parentId: relatedEntity._id, childId: entity._id}
         )
@@ -159,14 +159,17 @@ export const applyRelationChanges = (script, relatedTypes) => async (dispatch, g
     const parentEntitiesWithDeletedChildren = getFilteredParentsWithChildren(getState, relation => relation.removed)
     const parentTypes = _.uniq([...parentEntitiesWithDeletedChildren, ...parentEntitiesWithNewChildren].map(pe => pe.entityType))
     await Promise.all([...relatedTypes, getCurrentEntityType(getState()).singular].map(
-        childrenType => parentTypes.map(parentType => ScriptHelper.executeScript(script, {
+        childrenType => parentTypes.map(parentType => {
+            let params = {
                 parentEntityType: parentType, //TODO Analyze some alternative to better group these complex lists and avoid so much filtering
                 parentEntitiesWithNewChildren: parentEntitiesWithNewChildren.filter(p => p.entityType === parentType && !_.isEmpty(p.childrenMap[childrenType])),
                 parentEntitiesWithDeletedChildren: parentEntitiesWithDeletedChildren.filter(p => p.entityType === parentType && !_.isEmpty(p.childrenMap[childrenType])),
                 childrenEntityType: childrenType,
-            })
-
-        )
+            };
+            console.log("applyRelationChanges script", script)
+            console.log("applyRelationChanges params", params)
+            return ScriptHelper.executeScript(script, params)
+        })
     ))
 }
 

@@ -46,6 +46,9 @@ class EnhancedFetchControl extends React.Component {
 
     //value is optional, it can be used to provide a value not yet available in the state.
     handleFetch = (selectorId, value, state) => {
+        //The disable props can prevent fetching. 
+        // It is especially useful to prevent spontaneous fetching from TreeSearch after it reloads itself. 
+        if(this.props.disable) return;
         let selector = this.state.selectorsMap[selectorId]
         let newValue = value || selector.currentValue
         if (_.isEmpty(newValue)) {
@@ -81,6 +84,7 @@ class EnhancedFetchControl extends React.Component {
                     onFetch={(event, value, state) => this.handleFetch(selector.id, value, state)}
                     currentValue={selector.currentValue}
                     currentState={selector.currentState}
+                    disable={this.props.disable} //Its not useful yet but might be for some Controls in the future.
                     reloadToken={this.props.reloadToken}
                 />
             </div>

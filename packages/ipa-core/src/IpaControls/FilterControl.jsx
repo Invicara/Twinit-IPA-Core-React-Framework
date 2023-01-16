@@ -76,11 +76,18 @@ const getFormattedDateFromTimestamp = (ts, type) => {
 }
 
 class FilterControl extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filters: Object.assign({}, this.props.filters),
+      completeFilters: Object.assign({}, this.props.filters),
+      key: getRandomString("filter-")
+    }
+  }
 
-  state = {
-    filters: Object.assign({}, this.props.filters),
-    completeFilters: Object.assign({}, this.props.filters),
-    key: getRandomString("filter-")
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let derivedState = {...prevState, filters: Object.assign({}, nextProps.filters),completeFilters: Object.assign({}, nextProps.filters)};
+    return derivedState;
   }
 
   onFilterChange = (filters) => {
@@ -96,8 +103,11 @@ class FilterControl extends React.Component {
   }
 
   componentDidUpdate(prevProps){
-    if(!_.isEmpty(prevProps.filters) && _.isEmpty(this.props.filters)){
-      this.onFilterChange(this.props.filters)
+    if(!_.isEqual(prevProps.filters, this.props.filters) ){
+      //fire onFilterChange event ONLY for the same entity, changes in filters due to entity swap should be ignored
+      if(_.isEqual(prevProps.entitySingular, this.props.entitySingular)){
+        this.onFilterChange(this.props.filters)
+      }
     }
   }
 
@@ -220,16 +230,15 @@ class FilterDropDownPanel extends React.Component {
   }
 
   add = (e) => {
-    const filters = produce(this.props.filters, filters => {
-        let filter = filters[this.state.selectedProperty] || {}
-        let type =
+    const copyOfFilters = _.cloneDeep(this.props.filters);
+    let filter = copyOfFilters[this.state.selectedProperty] || {}
+    let type =
         filter.op = this.state.selectedFunction
-        filter.value = this.state.selectedValue
-        filter.type = this.props.available[this.state.selectedProperty].type
-        filters[this.state.selectedProperty] = filter
-    })
-    this.props.onChange(filters)
-    this.hide(e.target)
+    filter.value = this.state.selectedValue
+    filter.type = this.props.available[this.state.selectedProperty].type
+    copyOfFilters[this.state.selectedProperty] = filter
+    this.props.onChange(copyOfFilters);
+    this.hide(e.target);
   }
 
   propertyChanged = (v) => {

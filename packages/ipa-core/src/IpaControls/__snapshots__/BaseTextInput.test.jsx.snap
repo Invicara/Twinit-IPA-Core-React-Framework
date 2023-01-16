@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`change la classe lorsqu'on le survole 1`] = `
+<div
+  className="base-text-input undefined "
+>
+  <input
+    className="form-control test-base-text-input"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    placeholder="placeholder"
+    value=""
+  />
+</div>
+`;

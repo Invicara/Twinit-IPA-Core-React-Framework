@@ -91,7 +91,7 @@ export default class EntityRelationsModal extends React.Component {
       
       ScriptHelper.executeScript(this.props.action.script, {removeEntities: [relatedEntity], removeFrom: [this.props.entity], entityType: this.state.currentType.value}).then((result) => {
         
-        if (result.success) {
+        if (result?.success) {
           this.getEntitiesForCollection()
         } else {
           this.setState({error: "An error occured removing relations!"})

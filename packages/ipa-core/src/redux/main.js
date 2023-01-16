@@ -39,6 +39,7 @@ import {
     fetchNamedUserTotalAmountOfItems, importDataValidation, 
     SelectNamedUserItemsErrorStatus, fileImport, SelectNamedUserItemsImportStatus
 } from "./slices/named-user-item.slice";
+import { addEntityComponents } from "./slices/entityUI"
 
 const redux = {
     Entities: {
@@ -90,6 +91,9 @@ const redux = {
         fetchNamedUserTotalAmountOfItems,
         importDataValidation,
         fileImport
+    }, 
+    EntityUi: {
+        addEntityComponents
     }
 }
 

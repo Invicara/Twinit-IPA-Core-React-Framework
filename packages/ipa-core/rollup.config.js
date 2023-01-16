@@ -24,7 +24,8 @@ import postcss from 'rollup-plugin-postcss';
 import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
 import image from '@rollup/plugin-image';
-import pkg from './package.json'
+import fs from 'fs';
+//import pkg from './package.json'
 
 //We use a function and not a variable bc multi-module bundle can have trouble with shared plugin instances as per https://github.com/rollup/rollupjs.org/issues/69#issuecomment-306062235
 const getPlugins = () => [
@@ -57,7 +58,9 @@ const getPlugins = () => [
         ]
     })]
 
-const external = [...Object.keys(pkg.dependencies), /^node:/];
+//const external = [...Object.keys(pkg.dependencies), /^node:/];
+let pkg = JSON.parse(fs.readFileSync('./package.json')),
+    external = [...Object.keys(pkg.dependencies || {}),"clsx","@invicara/ui-utils","uid", "query-string", "redux"];
 /*
 const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
@@ -72,6 +75,7 @@ const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path', 'json5',
+
 ]
 */
 
@@ -96,21 +100,17 @@ export default {
         cleaner({targets: ['./dist']}),
         ...getPlugins()
     ],
-    //https://stackoverflow.com/questions/44844088/how-to-set-as-external-all-node-modules-in-rollup
-    external: external.filter(
-        // Bundle modules that do not properly support ES
-        (dep) => !["@sendgrid/mail", "http-errors"].includes(dep),
-    ),
-
-    // Suppress warnings in 3rd party libraries
-    onwarn(warning, warn) {
-        if (
-            !(
-                (warning.id && warning.id.includes("node_modules")) ||
-                (warning.message && warning.message.startsWith("Unknown CLI flags: env."))
-            )
-        ) {
-            warn(warning);
+    //https://gist.github.com/developit/41f088b6294e2591f53b
+    //The external key accepts either an array of module names,
+    // or a function which takes the module name and returns true if it should be treated as external.
+    // For example: external: id => /lodash/.test(id)
+    external: (id) => {
+        const declared = external.find(function(pattern) {
+            return new RegExp("^"+pattern).test(id);
+        })
+        if(!declared && id.indexOf('/') !== 0 && id.indexOf('.') !== 0 && id.indexOf('src') !==0){
+            console.log("not declared dep:",id)
         }
-    },
+        return declared;
+    }
 };

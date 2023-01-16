@@ -34,6 +34,7 @@ import ScriptedChart from "./ScriptedChart";
 import SimpleMultiSelect from "./SimpleMultiSelect";
 import SimpleSelect from "./SimpleSelect";
 import SimpleTextThrobber from "./SimpleTextThrobber";
+import SimpleTextReducer from './SimpleTextReducer';
 import {TextSearch} from "./TextSearch";
 import TreeControl from "./TreeControl";
 import {TreeSearch} from "./TreeSearch";
@@ -44,9 +45,11 @@ import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useCh
 import RadioButtons from './RadioButtons'
 import Table from './Table/Table'
 import Cell from './Table/Cell'
+import AlertIndicator from './AlertIndicator'
 import ToastContainer, {useToast} from './ToastContainer'
 
 const IpaControls = {
+    AlertIndicator,
     AdvancedSearch,
     BigButtonBar,
     ChartStack,
@@ -92,6 +95,7 @@ const IpaControls = {
     ReactiveTreeControl,
     ScriptedChart,
     SimpleMultiSelect,
+    SimpleTextReducer,
     SimpleSelect,
     SimpleTable,
     SimpleTabbedTable,

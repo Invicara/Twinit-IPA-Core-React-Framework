@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
@@ -9,28 +9,33 @@ import clsx from 'clsx'
 import _, { rest } from 'lodash'
 import EntityDataGroupContainer from './EntityDataGroupContainer'
 
-export const useEntityData = (collapsable, entity, config, getData, dataGroupName) => {
+export const useEntityData = (collapsable, collapsed, entity, config, getData, dataGroupName) => {
   const [fetching, setFetching] = useState(false)
   const [error, setError] = useState(null)
   const [data, setData] = useState(null)
-  const [myInterval, setMyInterval] = useState(null)
   const [reloadToken, setReloadToken] = useState(false)
+  const myIntervals = useRef([])
+
+  const isDataVisible = !collapsable || !collapsed 
 
   const getContainerData = async (collapsable, entity, config, getData, dataGroupName) => {
+    reset();
     try {
       setFetching(true)
-
 
       if(!entity) {
         throw new Error("No entity data")
       }
       
+      const isDataVisible = !collapsable || !collapsed
       let data = []
       if(config?.isProperties) {
         data = entity?.properties
-      } else if(!collapsable && dataGroupName) {
+      } else if(isDataVisible && dataGroupName) {
+        setFetching(true)
         data = await getData(dataGroupName, entity)
       }
+
       setData(data)
       setError(undefined)
     } catch(err) {
@@ -41,36 +46,51 @@ export const useEntityData = (collapsable, entity, config, getData, dataGroupNam
     }
   }
 
-  useEffect(() => {
-    ;(async () => {
-      await getContainerData(collapsable, entity, config, getData, dataGroupName)
+  
 
-      if (config?.refreshInterval) {
-        if (config.refreshInterval < config.scriptExpiration)
-          console.warn(
-            'Refresh Interval is less than Script Expiration which will cause cached data to be used instead fetching new data!'
-          )
-        let myInterval = setInterval(() => {
-          getContainerData(collapsable, entity, config, getData, dataGroupName)
-        }, config.refreshInterval * 60000)
-        setMyInterval(myInterval)
-      }
-    })()
-
-    return () => {
-      if (myInterval) clearInterval(myInterval)
+  const initiateFirstFetching = () => {
+    if(isDataVisible) { //We load the data only if it is visible
+      getContainerData(collapsable, entity, config, getData, dataGroupName);
     }
-  }, [entity, dataGroupName, reloadToken])
+  }
+
+  const startFetchingLoop = () => {
+    let interval = undefined;
+    if (config?.refreshInterval && isDataVisible) {
+      if (config.refreshInterval < config.scriptExpiration) {
+        console.warn('Refresh Interval is less than Script Expiration which will cause cached data to be used instead fetching new data!')
+      }
+      interval = setInterval(() => {
+        getContainerData(collapsable, entity, config, getData, dataGroupName);
+      }, config.refreshInterval * 60000)
+
+      myIntervals.current.push(interval);
+    }
+
+    return interval
+  }
+
+  useEffect(() => {
+
+    initiateFirstFetching();
+    
+    const loop = startFetchingLoop();
+    
+    return () => {
+      if (loop) clearInterval(loop)
+    }
+  }, [entity, dataGroupName, reloadToken, collapsed])
 
   const reload = () => {
     setReloadToken(!reloadToken)
   }
 
   const reset = () => {
+    myIntervals.current.forEach(interval=>clearInterval(interval));
     setFetching(false)
     setData(null)
-    setMyInterval(null)
-    setReloadToken(false)
+    setError(null)
+    //setReloadToken(false)
   }
 
   return {data, fetching, error, reset, reload}
@@ -85,10 +105,11 @@ const EntityDataContainer = props => {
 
   const {data, fetching, error, reset, reload} = useEntityData(
     props.collapsable,
+    collapsed,
     props.entity,
     props.config,
     props.getData,
-    props.dataGroupName
+    props.dataGroupName,
   )
 
   const toggleCollapsed = async () => {
@@ -131,6 +152,7 @@ const EntityDataContainer = props => {
   )
 }
 
+/*
 const mapStateToProps = state => ({})
 
 const mapDispatchToProps = {
@@ -140,3 +162,6 @@ const mapDispatchToProps = {
 export default compose(connect(mapStateToProps, mapDispatchToProps))(
   EntityDataContainer
 )
+*/
+
+export default EntityDataContainer

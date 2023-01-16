@@ -37,19 +37,11 @@ import ScriptCache from './IpaUtils/script-cache'
 import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
-
+import SetUpProject from "./ipaProjectSetup/SetupProject";
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
 import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
-
-export const AppContext = React.createContext();
-
-
-// props -- component props passed by parent
-// contextProps -- Provider props
-export const withAppContext = (Component) => (props) => (<AppContext.Consumer>
-  {(contextProps) => <Component {...props} {...contextProps}/>}
-</AppContext.Consumer>);
+import {AppContext, withAppContext} from "./appContext";
 
 class AppProvider extends React.Component {
   constructor(props) {
@@ -72,7 +64,8 @@ class AppProvider extends React.Component {
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
     this.state = {
-      userConfig: EmptyConfig,
+      isshowProjectPickerModal: false,
+      userConfig: this.props.initialConfig || EmptyConfig,
       user: undefined,
       token: undefined,
       isAuthorized: false,
@@ -101,7 +94,8 @@ class AppProvider extends React.Component {
         toggleBottomPanel: this.toggleBottomPanel.bind(this),
         openBottomPanelMax: this.openBottomPanelMax.bind(this),
         getCurrentHandler: this.getCurrentHandler.bind(this),
-        showModal: this.showIpaModal.bind(this)
+        showModal: this.showIpaModal.bind(this),
+        handlePageHandlerLoadError:  this.handlePageHandlerLoadError.bind(this),
       }
     };
 
@@ -114,6 +108,12 @@ class AppProvider extends React.Component {
   componentDidMount() {
     IafSession.setErrorCallback(this.handleRequestError);
     this.state.actions.restartApp();
+  }
+  handleClick() {
+    console.log("here");
+    this.setState((prev) => {
+      return { ...prev, isshowProjectPickerModal: true };
+    });
   }
 
   async sisenseLogout() {
@@ -256,6 +256,7 @@ class AppProvider extends React.Component {
      * instead of just goign straight to the handlers like we do below. Plus I think this commented code
      * relies on the name of the handler matchign the path of the handler, which is nto always guaranteed
      * to be true - scott mollon 12/4/2020
+     * DOMI SEPT 2022 - keep this code and activate as it is useful for MemoryRouter and other routers that do not produce HashRouter hrefs
      */
     //look for handler in page list
     // const pageGroup = config.groupedPages ? Object.entries(config.groupedPages).find(p => p[1].pages.some(e => e[page] !== undefined)) : undefined;
@@ -278,6 +279,10 @@ class AppProvider extends React.Component {
     return handler;
   };
 
+  handlePageHandlerLoadError(error) {
+    throw error;
+  }
+
   handleRequestError(error) {
     console.error(error)
     if (_.get(error,'errorResult.status') === 401) {
@@ -294,7 +299,7 @@ class AppProvider extends React.Component {
     let token, user;
 
     store.dispatch({type: "PROJECT_SWITCHED"})
-    console.log(store.getState())
+    //console.log(store.getState())
 
     //check for invites. If so - redirect to signup
     if (window.location.search) {
@@ -459,8 +464,25 @@ class AppProvider extends React.Component {
           let projects = await IafProj.getProjects({_pageSize: 1000});
           if (showProjectPicker)
             self.context.ifefShowModal(
-              <ProjectPickerModal configUserType={this.props.ipaConfig.configUserType} appContextProps={this.state} defaultConfig={EmptyConfig} onAcceptInvite={this.state.actions.restartApp}
-                projects={projects} testConfig={self.testConfig} onConfigLoad={callback} onCancel={() => self.context.ifefShowModal(false)}/>);
+              <ProjectPickerModal
+              configUserType={this.props.ipaConfig.configUserType}
+              referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
+              appContextProps={this.state}
+              defaultConfig={EmptyConfig}
+              onAcceptInvite={this.state.actions.restartApp}
+              projects={projects}
+              testConfig={self.testConfig}
+              onConfigLoad={callback}
+              onCancel={() => self.context.ifefShowModal(false)}
+              referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
+                restartApp={this.state.actions.restartApp}
+                onCancel={() => {
+                  this.setState((prev) => {
+                    return { ...prev, isshowProjectPickerModal: true };
+                  });
+                }}
+              />) }
+            />);
         } catch (error) {
           console.log(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
@@ -478,7 +500,7 @@ class AppProvider extends React.Component {
   }
 
   async testConfig(config) {
-    return await calculateRoutes(config, this.state, this.props.ipaConfig);
+    return await calculateRoutes(config, this.props.ipaConfig);
   }
 
   showIpaModal(modalContent) {
@@ -507,11 +529,10 @@ class AppProvider extends React.Component {
       } else return false
     }
     
-    console.log(config, routes)
-    console.log("TEST CHANGE 2")
-    routes = await routes
+    //console.log(config, routes)
+    //console.log("APP PROVIDER WILL SET USER CONFIG",{...config});
 
-    //clear routes immediately so that the UI rmeoves the last project's routes
+    //clear routes immediately so that the UI removes the last project's routes
     this.setState({
       token,
       user,
@@ -519,9 +540,16 @@ class AppProvider extends React.Component {
         pageList: [],
         pageRoutes: [],
         pageGroups: [],
-      },
-      userConfig: config
+      }
     });
+
+    //ONE ROUTES ARE CLEARED, UPDATE CONFIG!
+    this.setUserConfig(config);
+
+    //DOMI: now we can safetly prepare new routes once userConfig is updated on state and in REDUX
+    routes = await routes
+
+
 
     this.sisenseLogout()
 
@@ -630,11 +658,16 @@ class AppProvider extends React.Component {
         });
     }
 
-    store.dispatch(addUserConfig(config))
+
     store.dispatch(addUser(user))
 
     if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
+  }
+
+  setUserConfig(config) {
+    store.dispatch(addUserConfig(config));
+    this.setState({userConfig : config});
   }
 
   navigateToHomepage() {
@@ -644,11 +677,13 @@ class AppProvider extends React.Component {
   
 
   render() {
-    return <AppContext.Provider value={this.state}>{this.props.children}</AppContext.Provider>
+    //console.log("APP PROVIDER RE-RENDERS");
+    const context = {...this.state};
+    return <AppContext.Provider value={context}>{this.props.children}</AppContext.Provider>
   }
 }
 
-const addScriptFunction = (fn) => {
+export const addScriptFunction = (fn) => {
   let fnName = "$" + fn.name
   let fnWrapper = {}
   fnWrapper[fnName] = {
@@ -658,7 +693,7 @@ const addScriptFunction = (fn) => {
   expression.use(fnWrapper)
 }
 
-async function calculateRoutes(config, appContextProps, ipaConfig) {
+async function calculateRoutes(config, ipaConfig) {
   const pList = [];
   const pRoutes = [];
   const pGroups = [];
@@ -678,19 +713,19 @@ async function calculateRoutes(config, appContextProps, ipaConfig) {
     return withAppContext(withGenericPageErrorBoundary(withGenericPage(rawPageComponent, optionalProps)))
   }
 
-  function getPageComponent(pageComponent, optionalProps) {
+  function getPageComponent(pageComponent, pageComponentProps) {
 
     let component
     try {
       component = require('../../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
-      component = asIpaPage(component, optionalProps)
+      component = asIpaPage(component, pageComponentProps)
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
 
       component = InternalPages[pageComponent] ? InternalPages[pageComponent] : null
 
       if (component) {
-        component = asIpaPage(component, optionalProps)
+        component = asIpaPage(component, pageComponentProps)
         console.log(pageComponent + ' loaded from framework')
       }
       else {
@@ -820,8 +855,6 @@ async function calculateRoutes(config, appContextProps, ipaConfig) {
       }
     }
   });
-
-  appContextProps.userConfig = config;
 
   // Add homepage
   let homePageHandler

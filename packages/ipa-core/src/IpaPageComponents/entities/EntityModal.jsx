@@ -64,7 +64,7 @@ class EntityModal extends React.Component {
     try {
       this.initiateModal()
     } catch(err) {
-      if (err.message === 'ENTITY_NOT_VALID') {
+      if (err?.message === 'ENTITY_NOT_VALID') {
         this.setState({
           shouldLoadForm: false,
           error: (
@@ -268,7 +268,7 @@ class EntityModal extends React.Component {
       try {
         newEntity = this.getBulkEntity(entity)
       } catch (err) {
-        if (err.message === 'No entity to edit') {
+        if (err?.message === 'No entity to edit') {
           this.setState({
             shouldLoadForm: false,
             error: (
@@ -434,6 +434,10 @@ class EntityModal extends React.Component {
     )
     this.setState({ working: false })
 
+    if(!result && !_.isObjectLike(result)) {
+      throw new Error("Scripting error: no result object yielded")
+    }
+
     if (result.success) {
       let mergedEntity = this.mergeEntityWithActionResult(
         this.props.action.name,
@@ -445,7 +449,7 @@ class EntityModal extends React.Component {
       
     } else {
       this.props.action.onError?.(this.props.action.type, result, newEntity)
-      throw new Error(result.message)
+      throw new Error(result?.message)
     }
   }
 
@@ -517,7 +521,7 @@ class EntityModal extends React.Component {
       let formErrorMessage =
         'Unexpected error while preparing the entities for saving, please try again later'
       
-      switch(err.message) {
+      switch(err?.message) {
         case "MISSING_REQUIRED_PROPERTIES":
           formErrorMessage = 'Required properties are missing values!'
           break;
@@ -537,7 +541,7 @@ class EntityModal extends React.Component {
       let formErrorMessage =
         'Unexpected error while preparing the entities for saving, please try again later'
       
-      switch(err.message) {
+      switch(err?.message) {
         case "MISSING_REQUIRED_PROPERTIES":
           formErrorMessage = 'Required properties are missing values!'
           break;
@@ -557,7 +561,7 @@ class EntityModal extends React.Component {
       let formErrorMessage =
         'Unexpected error while preparing the entities for deletion, please try again later'
       
-      switch(err.message) {
+      switch(err?.message) {
         case "MISSING_REQUIRED_PROPERTIES":
           formErrorMessage = 'Required properties are missing values!'
           break;

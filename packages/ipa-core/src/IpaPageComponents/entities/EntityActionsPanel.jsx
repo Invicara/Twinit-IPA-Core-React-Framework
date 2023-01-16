@@ -7,7 +7,7 @@ import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import { getEntityActionComponent } from '../../redux/slices/entityUI'
 import './EntityActionsPanel.scss';
 import '../../IpaStyles/DbmTooltip.scss'
-import { Tooltip } from "@material-ui/core";
+import ActionButton from "../../IpaControls/ActionButton";
 
 const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer}) => {
   let icons = []
@@ -75,7 +75,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       let origEntity = action.showOnTable && !Array.isArray(entity) ? [{...entity}] : entity;
 
       let result = await action.doEntityAction(action.name, {new: newEntity, original: origEntity}, type);
-      if (result.success) {
+      if (result?.success) {
         if (action.onSuccess) {
           action.onSuccess(action.type, newEntity, result)
         }
@@ -92,9 +92,12 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
       if (action.allow)
         icons.push(
-          <Tooltip key={"icon-"+actionName} title={actionName}>
-            <i className={action.icon}  onClick={e=>doAction(actionName)}/>
-          </Tooltip>
+          <ActionButton 
+            key={"icon-"+actionName} 
+            icon={action.icon} 
+            title={actionName} 
+            onClick={e=>doAction(actionName)}
+          />
         )
     })
   }
