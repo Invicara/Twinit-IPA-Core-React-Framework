@@ -44,6 +44,7 @@ import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useCh
 import RadioButtons from './RadioButtons'
 import Table from './Table/Table'
 import Cell from './Table/Cell'
+import ToastContainer, {useToast} from './ToastContainer'
 
 const IpaControls = {
     AdvancedSearch,
@@ -99,8 +100,10 @@ const IpaControls = {
     StackableDrawer,
     Table,
     TextSearch,
+    ToastContainer,
     TreeControl,
     TreeSearch,
+    useToast,
     defaultTheme, //TODO This is a theme, not a control. I left it here bc it's just one, but if there were to be more, we should consider creating an IpaThemes module
 }
 
