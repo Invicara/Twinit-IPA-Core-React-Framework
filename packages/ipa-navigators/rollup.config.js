@@ -35,7 +35,6 @@ const getPlugins = () => [
         extensions: ['.js', '.jsx', '.css', '.scss', '.svg']
     }),
     postcss(),
-    image({include:['src/IpaIcons/**/*']}),
     babel({
         exclude: 'node_modules/**',
         sourceMaps: false,
@@ -53,45 +52,22 @@ const getPlugins = () => [
     copy({
         targets: [
             {src: 'src/img/**/*', dest: 'modules/img'},
-            {src: 'src/*/*.scss', dest: 'modules/styles'},
-            {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'}
+            {src: 'src/*/*.scss', dest: 'modules/styles'}
         ]
     })]
 
 //const external = [...Object.keys(pkg.dependencies), /^node:/];
 let pkg = JSON.parse(fs.readFileSync('./package.json')),
     external = [...Object.keys(pkg.dependencies || {}),"clsx","@invicara/ui-utils","uid", "query-string", "redux"];
-/*
-const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
-    'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
-    '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles', '@material-ui/icons',
-    '@nivo/bar', '@nivo/pie', '@nivo/line',
-    'file-saver', 'immer', 'interactjs', 'json-schema-faker', 'jszip',
-    'mime-types', 'moment', 'prop-types', 'qs', 'object-assign',
-    '@reduxjs/toolkit', 'react-redux',
-    'react-autosuggest', 'react-click-outside', 'react-css-modules',
-    'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
-    'react-inspector', 'react-select','react-select/creatable', 'react-table',
-    '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
-    '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
-    'app-root-path', 'json5',
-
-]
-*/
 
 export default {
     input: {
-        'IpaControls':'src/IpaControls/main.js',
-        'IpaUtils':'src/IpaUtils/main.js',
-        'IpaDialogs':'src/IpaDialogs/main.js',
-        'IpaPageComponents':'src/IpaPageComponents/main.js',
-        'IpaRedux':'src/redux/main.js',
-        'IpaLayouts':'src/IpaLayouts/main.js',
+        'IpaNavigators':'src/navigators/main.js',
     },
     output: {
         dir: 'modules',
         format: 'cjs',
-        name: 'IpaControls',
+        name: 'IpaNavigators',
         sourcemap: false,
         entryFileNames: '[name]/index.js',
     },

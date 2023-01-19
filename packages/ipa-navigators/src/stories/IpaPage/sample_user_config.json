@@ -5,31 +5,13 @@
       "iaf_relations_scripts",
       "iaf_collect_allusers",
       "iaf_dt_types",
-      "iaf_coll_mgmt",
-      "iaf_coll_mgmt_val"
+      "iaf_ext_val_scr"
     ],
     "exec": [
       "loadProjectAndCollections"
     ]
   },
   "entityDataConfig": {
-    "System": {
-      "Element Properties": {
-        "selected": true,
-        "isProperties": true,
-        "component": {
-          "name": "SimpleTableGroup",
-          "className": "simple-property-grid",
-          "groupClassName": "simple-table-group-name",
-          "groups": {
-            "Base Properties": [
-              "Revit Family",
-              "Revit Type"
-            ]
-          }
-        }
-      }
-    },
     "Model Element": {
       "Element Properties": {
         "selected": true,
@@ -63,6 +45,9 @@
               "Type Mark",
               "Manufacturer",
               "Description"
+            ],
+            "Sensor Information": [
+              "SensorIDs"
             ],
             "Location": [
               "Level",
@@ -100,6 +85,15 @@
           }
         }
       },
+      "Asset Performance": {
+        "script": "getAssetSensorChartData3",
+        "scriptExpiration": 0,
+        "refreshInterval": 0,
+        "component": {
+          "name": "SimpleTable",
+          "className": "simple-property-grid simple-property-grid-clearheader"
+        }
+      },
       "Files": {
         "script": "getDocumentsForAsset",
         "scriptExpiration": 0,
@@ -111,7 +105,7 @@
             {
               "name": "Name",
               "accessor": "name",
-              "download": false
+              "download": true
             },
             {
               "name": "Discipline",
@@ -145,32 +139,95 @@
           "className": "simple-property-grid",
           "groupClassName": "simple-table-group-name",
           "hidden": [
-            "revitGuid",
-            "revitId",
-            "Area Num",
-            "Perimeter Num",
-            "Volume Num"
+            "Area Num"
           ],
           "groups": {
             "Location Information": [
               "Level",
               "Name",
-              "Number"
+              "Number",
+              "Area"
             ],
-            "Room Information": [
-              "Room Name",
-              "Room Number"
+            "Sensor Information": [
+              "SensorIDs"
             ],
-            "Space Information": [
-              "Area",
-              "Perimeter",
-              "Volume",
-              "Department",
-              "Occupancy",
-              "Capacity",
-              "Comments"
+            "Revit Information": [
+              "Revit Family",
+              "Revit Type",
+              "Revit Category",
+              "revitGuid",
+              "revitId"
             ]
           }
+        }
+      },
+      "Real Time IAQ": {
+        "script": "getRealtimeAwair",
+        "scriptExpiration": 0,
+        "component": {
+          "name": "SimpleTable",
+          "className": "fixed-header simple-property-grid",
+          "columns": [
+            {
+              "name": "Metric",
+              "accessor": "metric"
+            },
+            {
+              "name": "Value",
+              "accessor": "value"
+            }
+          ]
+        }
+      },
+      "Occupancy vs CO2": {
+        "script": "getSpaceOccVsC02DemoData",
+        "scriptExpiration": 0,
+        "refreshInterval": 0,
+        "component": {
+          "name": "ScriptedChart",
+          "style": {
+            "height": "250px"
+          },
+          "chart": "TwoAxisLine",
+          "script": "getSpaceOccVsC02DemoData",
+          "chartConfig": {
+            "line1": {
+              "axisLabel": "Occupancy",
+              "axisLabelPosition": "middle",
+              "displayInTooltip": "Occupancy",
+              "colors": [
+                "#7AAABE"
+              ],
+              "curve": "monotoneX",
+              "yScale": {
+                "type": "linear",
+                "min": 0,
+                "max": 20
+              },
+              "axisBottom": null,
+              "enableGridX": false,
+              "enablePoints": false,
+              "lineWidth": 4
+            },
+            "line2": {
+              "colors": [
+                "#9B8DC6",
+                "#DBCBE8"
+              ],
+              "curve": "monotoneX",
+              "axisLabel": "CO2",
+              "axisLabelPosition": "middle",
+              "yScale": {
+                "type": "linear"
+              },
+              "enableGridX": false,
+              "axisBottom": null,
+              "enablePoints": false,
+              "lineWidth": 4,
+              "displayInTooltip": "CO2"
+            }
+          },
+          "config": {}
         }
       },
       "Files": {
@@ -200,14 +257,6 @@
     }
   },
   "entitySelectConfig": {
-    "System": [
-      {
-        "id": "systemsearch",
-        "query": "<<TEXT_SEARCH>>",
-        "display": "System Search",
-        "script": "getSystemsAsEntities"
-      }
-    ],
     "Model Element": [
       {
         "id": "revfile",
@@ -387,25 +436,98 @@
       "config": {
         "layout": "grid",
         "className": "homepage",
+        "headerInfo": {
+          "title": "Western Transit Shed"
+        },
         "rows": 3,
-        "columns": 3,
+        "columns": 4,
         "panels": {
-          "properties": {
+          "image1": {
             "position": {
               "top": 1,
               "left": 1,
               "bottom": 2,
               "right": 2
             },
+            "component": "Image",
+            "filename": "hl-building-1.png"
+          },
+          "text1": {
+            "position": {
+              "top": 1,
+              "left": 1,
+              "bottom": 2,
+              "right": 3
+            },
             "component": "PropertyInfoTable",
-            "script": "getPropertyInfo"
+            "script": "getText1"
+          },
+          "image2": {
+            "position": {
+              "top": 1,
+              "left": 3,
+              "bottom": 2,
+              "right": 4
+            },
+            "component": "Image",
+            "filename": "hl-building-2.png"
+          },
+          "text2": {
+            "position": {
+              "top": 1,
+              "left": 3,
+              "bottom": 2,
+              "right": 5
+            },
+            "component": "PropertyInfoTable",
+            "script": "getText2"
+          },
+          "alerts": {
+            "position": {
+              "top": 2,
+              "left": 1,
+              "bottom": 3,
+              "right": 5
+            },
+            "script": "getAlertsDemo",
+            "component": {
+              "name": "ScriptedAlertTable",
+              "title": "System Alerts",
+              "className": "fixed-header simple-property-grid",
+              "navigateTo": {
+                "Asset": "navigator",
+                "Space": "navigator"
+              },
+              "columns": [
+                {
+                  "name": "Alert",
+                  "accessor": "properties.Description",
+                  "active": true
+                },
+                {
+                  "name": "Source",
+                  "accessor": "properties.Entity Name",
+                  "active": true
+                },
+                {
+                  "name": "Urgency",
+                  "accessor": "properties.Urgency",
+                  "active": true
+                },
+                {
+                  "name": "Keywords",
+                  "accessor": "properties.Keywords",
+                  "active": true
+                }
+              ]
+            }
           }
         }
       }
     },
     "navigator": {
-      "title": "New Navigator",
-      "icon": "inv-icon-svg inv-icon-nav",
+      "title": "Navigator",
+      "icon": "fas fa-compass fa-2x",
       "shortName": "navi",
       "description": "Model Navigator",
       "pageComponent": "newNavigator/NavigatorView",
@@ -416,14 +538,11 @@
         "iaf_schemas_allusers",
         "iaf_dt_model_elems",
         "iaf_pick_lists",
-        "iaf_systems_scripts"
+        "iaf_systems_scripts",
+        "living-lab-int"
       ],
       "config": {
         "type": [
-          {
-            "singular": "System",
-            "plural": "Systems"
-          },
           {
             "singular": "Model Element",
             "plural": "Model Elements"
@@ -438,11 +557,6 @@
           }
         ],
         "entityData": {
-          "System": {
-            "script": "getSystemsAsEntities",
-            "getEntityFromModel": "getSystemFromModel",
-            "spaceMode": false
-          },
           "Model Element": {
             "script": "getModelElementsBySourceFile",
             "getEntityFromModel": "getElementFromModel",
@@ -460,22 +574,6 @@
           }
         },
         "data": {
-          "System": {
-            "System Properties": {
-              "selected": true,
-              "isProperties": true,
-              "component": {
-                "name": "SimpleTableGroup",
-                "className": "simple-property-grid",
-                "groupClassName": "simple-table-group-name",
-                "groups": {
-                  "Base Properties": [
-                    "Revit Family"
-                  ]
-                }
-              }
-            }
-          },
           "Model Element": {
             "Element Properties": {
               "selected": true,
@@ -510,6 +608,9 @@
                     "Manufacturer",
                     "Description"
                   ],
+                  "Sensor Information": [
+                    "SensorIDs"
+                  ],
                   "Location": [
                     "Level",
                     "Room Name",
@@ -542,6 +643,23 @@
                     "Revit Type",
                     "revitGuid",
                     "revitId"
+                  ]
+                }
+              }
+            },
+            "Asset Performance": {
+              "script": "getAssetSensorChartData2",
+              "scriptExpiration": 0,
+              "refreshInterval": 0,
+              "component": {
+                "name": "SimpleTable",
+                "className": "simple-property-grid simple-property-grid-clearheader"
+              },
+              "alerts": {
+                "script": "getAlertsForAssetDemo",
+                "query": {
+                  "tags": [
+                    "AHU"
                   ]
                 }
               }
@@ -583,7 +701,7 @@
             }
           },
           "Space": {
-            "Properties": {
+            "Space Properties": {
               "selected": true,
               "isProperties": true,
               "component": {
@@ -591,26 +709,109 @@
                 "className": "simple-property-grid",
                 "groupClassName": "simple-table-group-name",
                 "hidden": [
-                  "Name",
-                  "Scan View Url",
-                  "Perimeter",
-                  "Volume",
-                  "Elevation",
-                  "Phase",
-                  "Space Category",
-                  "Capacity",
-                  "Comments",
-                  "Department",
-                  "Occupancy",
-                  "Space Type",
-                  "Image"
+                  "Area Num"
                 ],
                 "groups": {
-                  "Space Properties": [
-                    "Floor",
+                  "Location Information": [
+                    "Level",
+                    "Name",
                     "Number",
-                    "Type",
                     "Area"
+                  ],
+                  "Sensor Information": [
+                    "SensorIDs"
+                  ],
+                  "Revit Information": [
+                    "Revit Family",
+                    "Revit Type",
+                    "Revit Category",
+                    "revitGuid",
+                    "revitId"
+                  ]
+                }
+              }
+            },
+            "Real Time IAQ": {
+              "script": "getRealtimeAwair",
+              "scriptExpiration": 0,
+              "component": {
+                "name": "SimpleTable",
+                "className": "fixed-header simple-property-grid",
+                "columns": [
+                  {
+                    "name": "Metric",
+                    "accessor": "metric"
+                  },
+                  {
+                    "name": "Value",
+                    "accessor": "value"
+                  }
+                ]
+              }
+            },
+            "Occupancy vs CO2": {
+              "script": "getSpaceOccVsC02DemoData",
+              "scriptExpiration": 0,
+              "refreshInterval": 0,
+              "component": {
+                "name": "ScriptedChart",
+                "style": {
+                  "height": "250px"
+                },
+                "chart": "TwoAxisLine",
+                "script": "getSpaceOccVsC02DemoData",
+                "chartConfig": {
+                  "line1": {
+                    "axisLabel": "Occupancy",
+                    "axisLabelPosition": "middle",
+                    "displayInTooltip": "Occupancy",
+                    "colors": [
+                      "#7AAABE"
+                    ],
+                    "curve": "monotoneX",
+                    "yScale": {
+                      "type": "linear",
+                      "min": 0,
+                      "max": 20
+                    },
+                    "axisBottom": null,
+                    "enableGridX": false,
+                    "enablePoints": false,
+                    "lineWidth": 4
+                  },
+                  "line2": {
+                    "colors": [
+                      "#9B8DC6",
+                      "#DBCBE8"
+                    ],
+                    "curve": "monotoneX",
+                    "axisLabel": "CO2",
+                    "axisLabelPosition": "middle",
+                    "yScale": {
+                      "type": "linear"
+                    },
+                    "axisBottom": null,
+                    "enableGridX": false,
+                    "enablePoints": false,
+                    "lineWidth": 4,
+                    "displayInTooltip": "CO2"
+                  }
+                },
+                "config": {},
+                "alerts": {
+                  "script": "getAlertsForSpaceDemo",
+                  "query": {
+                    "tags": [
+                      "CO2"
+                    ]
+                  }
+                }
+              },
+              "alerts": {
+                "script": "getAlertsForSpaceDemo",
+                "query": {
+                  "tags": [
+                    "CO2"
                   ]
                 }
               }
@@ -932,19 +1133,6 @@
           }
         },
         "tableView": {
-          "System": {
-            "component": {
-              "name": "EntityListView",
-              "className": "entity-list-view-default",
-              "multiselect": true,
-              "columns": [
-                {
-                  "name": "Name",
-                  "accessor": "Entity Name"
-                }
-              ]
-            }
-          },
           "Model Element": {
             "component": {
               "name": "EntityListView",
@@ -965,16 +1153,16 @@
               "multiselect": true,
               "columns": [
                 {
-                  "name": "Name",
+                  "name": "Asset Name",
                   "accessor": "Entity Name"
                 },
                 {
                   "name": "Mark",
-                  "accessor": "properties.Mark"
+                  "accessor": "properties.Mark.val"
                 },
                 {
-                  "name": "Room",
-                  "accessor": "properties.Room"
+                  "name": "Level",
+                  "accessor": "properties.Level.val"
                 }
               ]
             }
@@ -986,955 +1174,28 @@
               "multiselect": true,
               "columns": [
                 {
-                  "name": "Name",
+                  "name": "Space Name",
                   "accessor": "Entity Name"
                 },
                 {
-                  "name": "Floor",
-                  "accessor": "properties.Floor"
+                  "name": "Level",
+                  "accessor": "properties.Level.val"
                 },
                 {
-                  "name": "Number",
-                  "accessor": "properties.Number"
+                  "name": "Name",
+                  "accessor": "properties.Name.val"
                 }
               ]
             }
           }
         },
-        "panels": {
-          "Systems": {
-            "enabled": true
-          }
-        }
-      }
-    },
-    "navigator2": {
-      "title": "New Navigator without systems",
-      "icon": "inv-icon-svg inv-icon-nav",
-      "shortName": "navi",
-      "description": "Model Navigator without systems",
-      "pageComponent": "newNavigator/NavigatorView",
-      "path": "/navigator2",
-      "scriptTypes": [
-        "iaf_asset_allusers",
-        "iaf_space_allusers",
-        "iaf_schemas_allusers",
-        "iaf_dt_model_elems",
-        "iaf_pick_lists",
-        "iaf_systems_scripts"
-      ],
-      "config": {
-        "type": [
-          {
-            "singular": "Asset",
-            "plural": "Assets"
-          },
-          {
-            "singular": "Space",
-            "plural": "Spaces"
-          }
-        ],
-        "entityData": {
-          "Asset": {
-            "script": "getAssets",
-            "getEntityFromModel": "getAssetFromModel",
-            "spaceMode": false
-          },
-          "Space": {
-            "script": "getSpaces",
-            "getEntityFromModel": "getSpaceFromModel",
-            "spaceMode": true
-          }
-        },
-        "data": {
-          "Asset": {
-            "Asset Properties": {
-              "selected": true,
-              "isProperties": true,
-              "component": {
-                "name": "SimpleTableGroup",
-                "className": "simple-property-grid",
-                "groupClassName": "simple-table-group-name",
-                "hidden": [],
-                "groups": {
-                  "Identification": [
-                    "Mark",
-                    "Type Mark",
-                    "Manufacturer",
-                    "Description"
-                  ],
-                  "Location": [
-                    "Level",
-                    "Room Name",
-                    "Room Number"
-                  ],
-                  "System Information": [
-                    "System Name",
-                    "System Classification",
-                    "Workset"
-                  ],
-                  "Classification": [
-                    "dtCategory",
-                    "dtType",
-                    "ClassificationCode",
-                    "ClassificationCode(2)",
-                    "ClassificationCode(3)",
-                    "ClassificationCode(4)",
-                    "ClassificationCode(5)",
-                    "OmniClass Number",
-                    "OmniClass Title",
-                    "Assembly Code",
-                    "Assembly Description",
-                    "NRM1 Code",
-                    "NRM1 Description",
-                    "Hoare Lea Schedule",
-                    "CISfb Code"
-                  ],
-                  "Revit Data": [
-                    "Revit Family",
-                    "Revit Type",
-                    "revitGuid",
-                    "revitId"
-                  ]
-                }
-              }
-            },
-            "Files": {
-              "script": "getDocumentsForAsset",
-              "scriptExpiration": 0,
-              "showCount": true,
-              "component": {
-                "name": "SimpleTable",
-                "className": "fixed-header simple-property-grid",
-                "columns": [
-                  {
-                    "name": "Name",
-                    "accessor": "name",
-                    "download": false
-                  },
-                  {
-                    "name": "Discipline",
-                    "accessor": "fileAttributes.fileDiscipline"
-                  },
-                  {
-                    "name": "Type",
-                    "accessor": "fileAttributes.fileType"
-                  },
-                  {
-                    "name": "Stage",
-                    "accessor": "fileAttributes.stageDescription"
-                  }
-                ]
-              }
-            },
-            "Specification Data": {
-              "script": "getAssetSpecificationData",
-              "component": {
-                "name": "SimpleTable",
-                "className": "simple-property-grid simple-property-grid-clearheader"
-              }
+        "panels" : {
+          "Systems" : {
+            "scripts" : {
+              "getSystemIdsForEntity" : "getSystemIdsForEntity",
+              "getSystemsAsEntities" : "getSystemsAsEntities",
+              "getSystemAlerts" : "getSystemAlerts"
             }
-          },
-          "Space": {
-            "Properties": {
-              "selected": true,
-              "isProperties": true,
-              "component": {
-                "name": "SimpleTableGroup",
-                "className": "simple-property-grid",
-                "groupClassName": "simple-table-group-name",
-                "hidden": [
-                  "Name",
-                  "Scan View Url",
-                  "Perimeter",
-                  "Volume",
-                  "Elevation",
-                  "Phase",
-                  "Space Category",
-                  "Capacity",
-                  "Comments",
-                  "Department",
-                  "Occupancy",
-                  "Space Type",
-                  "Image"
-                ],
-                "groups": {
-                  "Space Properties": [
-                    "Floor",
-                    "Number",
-                    "Type",
-                    "Area"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "actions": {
-          "Asset": {
-            "Relate": {
-              "allow": true,
-              "icon": "fas fa-link",
-              "type": "relate",
-              "showOnTable": true,
-              "getScript": "getEntityRelatedItems",
-              "updateScript": "updateRelations",
-              "relatedTypes": [
-                {
-                  "singular": "Asset",
-                  "plural": "Assets",
-                  "isChild": true
-                },
-                {
-                  "singular": "File",
-                  "plural": "Files",
-                  "isChild": true
-                },
-                {
-                  "singular": "Space",
-                  "plural": "Spaces",
-                  "isParent": true
-                },
-                {
-                  "singular": "Collection",
-                  "plural": "Collection",
-                  "isParent": true
-                },
-                {
-                  "singular": "BMS Equipment",
-                  "plural": "BMS Equipment",
-                  "isChild": true
-                }
-              ],
-              "component": {
-                "name": "RelationsModal"
-              }
-            },
-            "Upload": {
-              "allow": true,
-              "icon": "icofont-upload-alt",
-              "type": "navigate",
-              "showOnTable": true,
-              "navigateTo": "fileUpload"
-            },
-            "Collections": {
-              "allow": true,
-              "icon": "icofont-cubes",
-              "type": "collect",
-              "showOnTable": true,
-              "script": "addAssetsToCollections",
-              "component": {
-                "name": "EntityCollectionModal",
-                "okButtonText": "Apply",
-                "scripts": {
-                  "getCollectionTypes": "getCollectionTypes",
-                  "getCollectionNames": "getCollectionNames"
-                }
-              }
-            },
-            "Create": {
-              "allow": true,
-              "icon": "fas fa-plus",
-              "type": "create",
-              "preActionScript": "createAssetFromSchema",
-              "script": "createAsset",
-              "showOnTable": true,
-              "component": {
-                "name": "EntityModal",
-                "hierarchySelects": {
-                  "id": "edithierarchyselects",
-                  "query": "<<SCRIPTED_LINKED_SELECTS>>",
-                  "display": "Category",
-                  "selects": [
-                    {
-                      "display": "dtCategory",
-                      "script": "getDtCategories"
-                    },
-                    {
-                      "display": "dtType",
-                      "script": "getDtTypes",
-                      "multi": false
-                    }
-                  ]
-                },
-                "showGroupNames": true,
-                "groups": {
-                  "Asset Properties": [
-                    "Floor",
-                    "Mark",
-                    "Room"
-                  ],
-                  "Product": [
-                    "Manufacturer",
-                    "Model"
-                  ],
-                  "Classification": [
-                    "Revit Family",
-                    "Revit Type",
-                    "dtCategory",
-                    "dtType"
-                  ],
-                  "General": [
-                    "Date",
-                    "DateTime",
-                    "Image Url",
-                    "Matterport Url",
-                    "WithUnitNumber",
-                    "WithUnitText"
-                  ]
-                },
-                "okButtonText": "Save"
-              }
-            },
-            "Edit": {
-              "allow": true,
-              "icon": "fas fa-edit",
-              "type": "edit",
-              "script": "editAsset",
-              "showOnTable": true,
-              "component": {
-                "name": "EntityModal",
-                "requiredProperties": [
-                  "dtCategory",
-                  "dtType"
-                ],
-                "hierarchySelects": {
-                  "id": "edithierarchyselects",
-                  "query": "<<SCRIPTED_LINKED_SELECTS>>",
-                  "display": "Category",
-                  "selects": [
-                    {
-                      "display": "dtCategory",
-                      "script": "getDtCategories",
-                      "multi": false
-                    },
-                    {
-                      "display": "dtType",
-                      "script": "getDtTypes",
-                      "multi": false
-                    }
-                  ]
-                },
-                "showGroupNames": true,
-                "hidden": [
-                  "dtCategory",
-                  "dtType",
-                  "Revit Blob"
-                ],
-                "disabledInMulti": [
-                  "Revit Family",
-                  "Revit Type"
-                ],
-                "groups": {
-                  "Asset Properties": [
-                    "Containing Floor",
-                    "Mark",
-                    "Room Number",
-                    "BA Name"
-                  ],
-                  "Product": [
-                    "Manufacturer",
-                    "Model"
-                  ],
-                  "Classification": [
-                    "Revit Type",
-                    "Revit Family"
-                  ],
-                  "General": [
-                    "Date",
-                    "Image Url",
-                    "Matterport Url"
-                  ]
-                },
-                "okButtonText": "Save"
-              }
-            },
-            "Export": {
-              "allow": true,
-              "icon": "fas fa-file-export",
-              "script": "exportAssets",
-              "showOnTable": true
-            },
-            "Delete": {
-              "allow": true,
-              "icon": "fas fa-trash-alt",
-              "type": "delete",
-              "script": "deleteAsset",
-              "showOnTable": true,
-              "component": {
-                "name": "EntityModal",
-                "disableAll": true,
-                "okButtonText": "Delete"
-              }
-            }
-          },
-          "Space": {
-            "Relate": {
-              "allow": true,
-              "icon": "fas fa-link",
-              "type": "relate",
-              "showOnTable": true,
-              "getScript": "getEntityRelatedItems",
-              "updateScript": "updateRelations",
-              "relatedTypes": [
-                {
-                  "singular": "Asset",
-                  "plural": "Assets",
-                  "isChild": true
-                },
-                {
-                  "singular": "File",
-                  "plural": "Files",
-                  "isChild": true
-                },
-                {
-                  "singular": "Space",
-                  "plural": "Spaces",
-                  "isParent": true
-                },
-                {
-                  "singular": "Collection",
-                  "plural": "Collection",
-                  "isParent": true
-                },
-                {
-                  "singular": "BMS Equipment",
-                  "plural": "BMS Equipment",
-                  "isChild": true
-                }
-              ],
-              "component": {
-                "name": "RelationsModal"
-              }
-            },
-            "Create": {
-              "allow": true,
-              "icon": "fas fa-plus",
-              "type": "create",
-              "script": "createSpace",
-              "preActionScript": "createSpaceFromSchema",
-              "showOnTable": true,
-              "component": {
-                "name": "EntityModal",
-                "disabled": [
-                  "Level",
-                  "Area"
-                ],
-                "disabledInMulti": [
-                  "Number"
-                ],
-                "propertyUiTypes": {
-                  "Type": {
-                    "query": "<<CREATABLE_SCRIPTED_SELECTS>>",
-                    "script": "getSpaceTypeOptions",
-                    "multi": true
-                  }
-                },
-                "showGroupNames": true,
-                "groups": {
-                  "Space Properties": [
-                    "Floor",
-                    "Number",
-                    "Type",
-                    "Area"
-                  ]
-                },
-                "okButtonText": "Save"
-              }
-            },
-            "Edit": {
-              "allow": true,
-              "icon": "fas fa-edit",
-              "type": "edit",
-              "script": "editSpace",
-              "showOnTable": true,
-              "component": {
-                "name": "EntityModal",
-                "disabled": [
-                  "Level",
-                  "Area"
-                ],
-                "disabledInMulti": [
-                  "Number"
-                ],
-                "propertyUiTypes": {
-                  "Type": {
-                    "query": "<<CREATABLE_SCRIPTED_SELECTS>>",
-                    "script": "getSpaceTypeOptions",
-                    "multi": true
-                  }
-                },
-                "showGroupNames": true,
-                "groups": {
-                  "Space Properties": [
-                    "Floor",
-                    "Number",
-                    "Type",
-                    "Area"
-                  ]
-                },
-                "okButtonText": "Save"
-              }
-            },
-            "Export": {
-              "allow": true,
-              "icon": "fas fa-file-export",
-              "script": "exportSpaces",
-              "showOnTable": true
-            }
-          }
-        },
-        "tableView": {
-          "Asset": {
-            "component": {
-              "name": "EntityListView",
-              "className": "entity-list-view-default",
-              "multiselect": true,
-              "columns": [
-                {
-                  "name": "Name",
-                  "accessor": "Entity Name"
-                },
-                {
-                  "name": "Mark",
-                  "accessor": "properties.Mark"
-                },
-                {
-                  "name": "Room",
-                  "accessor": "properties.Room"
-                }
-              ]
-            }
-          },
-          "Space": {
-            "component": {
-              "name": "EntityListView",
-              "className": "entity-list-view-default",
-              "multiselect": true,
-              "columns": [
-                {
-                  "name": "Name",
-                  "accessor": "Entity Name"
-                },
-                {
-                  "name": "Floor",
-                  "accessor": "properties.Floor"
-                },
-                {
-                  "name": "Number",
-                  "accessor": "properties.Number"
-                }
-              ]
-            }
-          }
-        }
-      }
-    },
-    "navigator3": {
-      "title": "Old Navigator",
-      "icon": "inv-icon-svg inv-icon-nav",
-      "shortName": "navi3",
-      "description": "Model Navigator",
-      "pageComponent": "navigator/NavigatorView",
-      "path": "/navigator3",
-      "scriptTypes": [
-        "iaf_asset_allusers",
-        "iaf_space_allusers",
-        "iaf_schemas_allusers"
-      ],
-      "config": {
-        "type": [
-          {
-            "singular": "Asset",
-            "plural": "Assets"
-          },
-          {
-            "singular": "Space",
-            "plural": "Spaces"
-          }
-        ],
-        "entityData": {
-          "Asset": {
-            "script": "getAssets",
-            "getEntityFromModel": "getAssetFromModel",
-            "spaceMode": false
-          },
-          "Space": {
-            "script": "getSpaces",
-            "getEntityFromModel": "getSpaceFromModel",
-            "spaceMode": true
-          }
-        },
-        "data": {
-          "Asset": {
-            "Asset Properties": {
-              "selected": true,
-              "isProperties": true,
-              "component": {
-                "name": "SimpleTabbedTable",
-                "className": "assert-properties-tabbed-table",
-                "hidden": [
-                  "Scan View",
-                  "Asset Photo",
-                  "Was it in AIR",
-                  "Virtual Asset",
-                  "Drawing",
-                  "BA Asset Type",
-                  "Asset Type",
-                  "Asset SubType",
-                  "Fire Rating",
-                  "baUniclass2015",
-                  "baUniclass2015Name",
-                  "revitGuid",
-                  "revitId",
-                  "PDTD"
-                ],
-                "groups": {
-                  "Asset Properties": [
-                    "Containing Floor",
-                    "Mark",
-                    "Room Number",
-                    "BA Name"
-                  ],
-                  "Product": [
-                    "Manufacturer",
-                    "Model"
-                  ],
-                  "Classification": [
-                    "Revit Family",
-                    "Revit Type",
-                    "Revit Blob",
-                    "dtCategory",
-                    "dtType"
-                  ],
-                  "General": [
-                    "Date",
-                    "Image Url",
-                    "Matterport Url"
-                  ]
-                }
-              }
-            },
-            "Collections": {
-              "script": "getCollectionsForAsset",
-              "scriptExpiration": 0,
-              "component": {
-                "name": "SimpleTabbedTable",
-                "className": "",
-                "columns": [
-                  {
-                    "name": "Type",
-                    "accessor": "properties.Type.val"
-                  },
-                  {
-                    "name": "Name",
-                    "accessor": "Collection Name"
-                  }
-                ]
-              }
-            },
-            "Files": {
-              "script": "getDocumentsForAsset",
-              "scriptExpiration": 0,
-              "showCount": true,
-              "component": {
-                "name": "ScriptedDocumentTable",
-                "className": "fixed-header simple-property-grid",
-                "canDownload": true,
-                "canView": true,
-                "includeVersions": true,
-                "columns": [
-                  {
-                    "name": "id",
-                    "accessor": "_id"
-                  },
-                  {
-                    "name": "Contributor",
-                    "accessor": "properties.Contributor"
-                  },
-                  {
-                    "name": "Building",
-                    "accessor": "properties.Building"
-                  },
-                  {
-                    "name": "File Type",
-                    "accessor": "properties.File Type"
-                  }
-                ],
-                "defaultSort": {
-                  "column": "name",
-                  "descending": false
-                },
-                "lockedColumns": [
-                  "Version",
-                  "Contributor"
-                ],
-                "dateField": "_updatedAt",
-                "supportedTypes": [
-                  "pdf",
-                  "jpg",
-                  "png",
-                  "doc",
-                  "docx",
-                  "xls",
-                  "xlsx",
-                  "ppt",
-                  "pptx"
-                ]
-              }
-            }
-          },
-          "Space": {
-            "Properties": {
-              "selected": true,
-              "isProperties": true,
-              "component": {
-                "name": "SimpleTableGroup",
-                "className": "simple-property-grid",
-                "groupClassName": "simple-table-group-name",
-                "hidden": [
-                  "Name",
-                  "Scan View Url",
-                  "Perimeter",
-                  "Volume",
-                  "Elevation",
-                  "Phase",
-                  "Space Category",
-                  "Capacity",
-                  "Comments",
-                  "Department",
-                  "Occupancy",
-                  "Space Type",
-                  "Image"
-                ],
-                "groups": {
-                  "Space Properties": [
-                    "Floor",
-                    "Number",
-                    "Type",
-                    "Area"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "actions": {
-          "Relate": {
-            "allow": true,
-            "icon": "fas fa-link",
-            "type": "relate",
-            "showOnTable": true,
-            "getScript": "getEntityRelatedItems",
-            "updateScript": "updateRelations",
-            "relatedTypes": [
-              {
-                "singular": "Asset",
-                "plural": "Assets",
-                "isChild": true
-              },
-              {
-                "singular": "File",
-                "plural": "Files",
-                "isChild": true
-              },
-              {
-                "singular": "Space",
-                "plural": "Spaces",
-                "isParent": true
-              },
-              {
-                "singular": "Collection",
-                "plural": "Collection",
-                "isParent": true
-              },
-              {
-                "singular": "BMS Equipment",
-                "plural": "BMS Equipment",
-                "isChild": true
-              }
-            ],
-            "component": {
-              "name": "RelationsModal"
-            }
-          },
-          "Edit": {
-            "allow": true,
-            "icon": "fas fa-edit",
-            "type": "edit",
-            "script": "editAsset",
-            "showOnTable": true,
-            "component": {
-              "name": "EntityModal",
-              "requiredProperties": [
-                "dtCategory",
-                "dtType"
-              ],
-              "hierarchySelects": {
-                "id": "edithierarchyselects",
-                "query": "<<SCRIPTED_LINKED_SELECTS>>",
-                "display": "Category",
-                "selects": [
-                  {
-                    "display": "dtCategory",
-                    "script": "getDtCategories",
-                    "multi": false
-                  },
-                  {
-                    "display": "dtType",
-                    "script": "getDtTypes",
-                    "multi": false
-                  }
-                ]
-              },
-              "showGroupNames": true,
-              "hidden": [
-                "dtCategory",
-                "dtType",
-                "Revit Blob"
-              ],
-              "disabledInMulti": [
-                "Revit Family",
-                "Revit Type"
-              ],
-              "groups": {
-                "Asset Properties": [
-                  "Containing Floor",
-                  "Mark",
-                  "Room Number",
-                  "BA Name"
-                ],
-                "Product": [
-                  "Manufacturer",
-                  "Model"
-                ],
-                "Classification": [
-                  "Revit Type",
-                  "Revit Family"
-                ],
-                "General": [
-                  "Date",
-                  "Image Url",
-                  "Matterport Url"
-                ]
-              },
-              "okButtonText": "Save"
-            }
-          },
-          "Upload": {
-            "allow": true,
-            "icon": "icofont-upload-alt",
-            "type": "navigate",
-            "showOnTable": true,
-            "navigateTo": "fileUpload"
-          },
-          "Collections": {
-            "allow": true,
-            "icon": "icofont-cubes",
-            "type": "collect",
-            "showOnTable": true,
-            "script": "addAssetsToCollections",
-            "component": {
-              "name": "EntityCollectionModal",
-              "okButtonText": "Apply",
-              "scripts": {
-                "getCollectionTypes": "getCollectionTypes",
-                "getCollectionNames": "getCollectionNames"
-              }
-            }
-          },
-          "Create": {
-            "allow": true,
-            "icon": "fas fa-plus",
-            "type": "create",
-            "preActionScript": "createAssetFromSchema",
-            "script": "createAsset",
-            "showOnTable": true,
-            "component": {
-              "name": "EntityModal",
-              "hierarchySelects": {
-                "id": "edithierarchyselects",
-                "query": "<<SCRIPTED_LINKED_SELECTS>>",
-                "display": "Category",
-                "selects": [
-                  {
-                    "display": "dtCategory",
-                    "script": "getDtCategories"
-                  },
-                  {
-                    "display": "dtType",
-                    "script": "getDtTypes",
-                    "multi": false
-                  }
-                ]
-              },
-              "showGroupNames": true,
-              "groups": {
-                "Asset Properties": [
-                  "Floor",
-                  "Mark",
-                  "Room"
-                ],
-                "Product": [
-                  "Manufacturer",
-                  "Model"
-                ],
-                "Classification": [
-                  "Revit Family",
-                  "Revit Type",
-                  "dtCategory",
-                  "dtType"
-                ],
-                "General": [
-                  "Date",
-                  "DateTime",
-                  "Image Url",
-                  "Matterport Url",
-                  "WithUnitNumber",
-                  "WithUnitText"
-                ]
-              },
-              "okButtonText": "Save"
-            }
-          },
-          "Export": {
-            "allow": true,
-            "icon": "fas fa-file-export",
-            "script": "exportAssets",
-            "showOnTable": true
-          },
-          "Delete": {
-            "allow": true,
-            "icon": "fas fa-trash-alt",
-            "type": "delete",
-            "script": "deleteAsset",
-            "showOnTable": true,
-            "component": {
-              "name": "EntityModal",
-              "disableAll": true,
-              "okButtonText": "Delete"
-            }
-          }
-        },
-        "tableView": {
-          "component": {
-            "name": "EntityListView",
-            "className": "entity-list-view-default",
-            "multiselect": true,
-            "columns": [
-              {
-                "name": "Name",
-                "accessor": "Entity Name"
-              },
-              {
-                "name": "Mark",
-                "accessor": "properties.Mark"
-              },
-              {
-                "name": "Room",
-                "accessor": "properties.Room"
-              }
-            ]
           }
         }
       }
@@ -1983,7 +1244,7 @@
               },
               {
                 "name": "Revit Element ID",
-                "accessor": "properties.SystemelementId.val"
+                "accessor": "properties.SystemelementId"
               }
             ]
           }
@@ -2030,9 +1291,9 @@
           "nonFilterableProperties": [],
           "nonGroupableProperties": [],
           "defaultGroups": [
-            "Level",
-            "Room Name",
-            "Room Number"
+            "Mark",
+            "Type Mark",
+            "Level"
           ]
         },
         "tableView": {
@@ -2072,6 +1333,10 @@
               {
                 "name": "Room Number",
                 "accessor": "properties.Room Number.val"
+              },
+              {
+                "name": "SensorIDs",
+                "accessor": "properties.SensorIDs.val"
               }
             ]
           }
@@ -2289,8 +1554,8 @@
                 "accessor": "properties.Number.val"
               },
               {
-                "name": "Area",
-                "accessor": "properties.Area.val"
+                "name": "SensorIDs",
+                "accessor": "properties.SensorIDs.val"
               }
             ]
           }
@@ -2332,9 +1597,7 @@
                 "revitId"
               ],
               "hidden": [
-                "Area Num",
-                "Perimeter Num",
-                "Volume Num"
+                "Area Num"
               ],
               "showGroupNames": true,
               "groups": {
@@ -2342,19 +1605,14 @@
                   "Level",
                   "Name",
                   "Number",
-                  "Area",
-                  "Perimeter",
-                  "Volume",
-                  "Department",
-                  "Occupancy",
-                  "Capacity",
-                  "Comments"
+                  "Area"
                 ],
-                "Associated Room Properties": [
-                  "Room Name",
-                  "Room Number"
+                "Sensor Properties": [
+                  "SensorIDs"
                 ],
                 "Revit Properties": [
+                  "Revit Family",
+                  "Revit Type",
                   "revitGuid",
                   "revitId"
                 ]
@@ -2642,7 +1900,7 @@
               "selects": [
                 {
                   "display": "dtCategory",
-                  "script": "getDtCategories"
+                  "script": "getDtCategoriesForSelects"
                 },
                 {
                   "display": "dtType",
@@ -2708,34 +1966,6 @@
         ]
       }
     },
-    "modelVer": {
-      "title": "Manage Model",
-      "actionTitle": "Manage Model",
-      "shortName": "manmod",
-      "description": "Manage Imported Model Versions",
-      "icon": "ion-gear-a icofont-2x",
-      "pageComponent": "models/ModelImportView",
-      "path": "/manageModel",
-      "config": {
-        "scripts": {
-          "findMissingItems": "findMissingItems",
-          "download": "downloadMissingElements"
-        }
-      }
-    },
-    "scriptRunner": {
-      "title": "Script Development",
-      "actionTitle": "Validate Model",
-      "icon": "icofont-code-alt",
-      "pageComponent": "solutionMgmt/ScriptRunnerView",
-      "path": "/scriptRunner",
-      "config": {
-        "allowScriptInput": true
-      },
-      "scriptTypes": [
-        "iaf_ext_val_scr"
-      ]
-    },
     "downloads": {
       "title": "Downloads",
       "icon": "fas fa-download fa-2x",
@@ -2747,259 +1977,62 @@
       ],
       "path": "/downloads"
     },
-    "userGroup": {
-      "title": "User Group",
-      "actionTitle": "User Group Actions",
-      "icon": "ion-gear-a icofont-2x",
-      "pageComponent": "users/UserGroupView",
-      "path": "/UserGroupView",
+    "engScenario": {
+      "title": "Energy Scenarios",
+      "icon": "fas fa-plug fa-2x",
+      "actionTitle": "Energy Scenarios",
+      "pageComponent": "dashboards/DashboardView",
+      "path": "/energyScenarios",
       "config": {
-        "appUrl": "/digitaltwin",
-        "allowUserGroupEdit": true,
-        "allowUserGroupInvite": true,
-        "allowManageInvites": true,
-        "allowManageUsers": true
-      },
-      "script": {
-        "itemFetchScript": "fetchNonSystemCollections"
+        "layout": "fullpage",
+        "component": "Iframe",
+        "url": "https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fapp.powerbi.com%2Fview%3Fr%3DeyJrIjoiMGMxNmNmMDktZjhjNC00ZjRjLTgyZjktMDBhYWY1ODJlZmI4IiwidCI6ImE0MGZlNGJhLWFiYzctNDhmZS04NzkyLWI0Mzg4OTkzNjQwMCIsImMiOjZ9&data=05%7C01%7CAndrewBullmore%40hoarelea.com%7C10fac944cbba40282c6008da79dc695b%7Ca40fe4baabc748fe8792b43889936400%7C0%7C0%7C637956284809949185%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=v3IszhwS6YfzugG12rteCTtg5buYPBiDoLgwjV8YSBk%3D&reserved=0"
       }
     },
-    "datasources": {
-      "title": "Datasources",
-      "actionTitle": "Datasources",
-      "icon": "ion-gear-a icofont-2x",
-      "pageComponent": "datasources/DatasourcesView",
-      "path": "/Datasources",
+    "engPerf": {
+      "title": "Energy Performance",
+      "icon": "fas fa-battery-three-quarters fa-2x",
+      "actionTitle": "Energy Performance",
+      "pageComponent": "dashboards/DashboardView",
+      "path": "/energyPerformance",
       "config": {
-        "allowManageDatasources": true,
-        "allowViewPermissions": true
+        "layout": "fullpage",
+        "component": "Iframe",
+        "url": "https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fapp.powerbi.com%2Fview%3Fr%3DeyJrIjoiMzdiMWI4NDctMTY4NC00YzhiLWJjYzctOWNmNWM5MzQzOGFiIiwidCI6ImE0MGZlNGJhLWFiYzctNDhmZS04NzkyLWI0Mzg4OTkzNjQwMCIsImMiOjZ9&data=05%7C01%7CAndrewBullmore%40hoarelea.com%7C10fac944cbba40282c6008da79dc695b%7Ca40fe4baabc748fe8792b43889936400%7C0%7C0%7C637956284809949185%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=tzrPmPrD%2Bv01pgDQC%2FoVwf1kaRt%2FgH%2BcMQvfPpd3JdY%3D&reserved=0"
       }
     },
-    "systemBuilder": {
-      "title": "System Builder",
-      "icon": "icofont-bricks",
-      "actionTitle": "System Builder",
-      "pageComponent": "systems/SystemBuilderLanding",
-      "path": "/systembuilder",
-      "detailPage": {
-        "pathParam": ":systemId",
-        "component": "systems/SystemBuilderEditor"
-      },
-      "scriptTypes": [
-        "iaf_files_allusers",
-        "iaf_asset_allusers",
-        "iaf_space_allusers",
-        "iaf_pick_lists",
-        "iaf_schemas_allusers",
-        "iaf_systems_scripts"
-      ],
-      "onHandlerLoad": [
-        "loadFileAttributes"
-      ],
+    "engCon": {
+      "title": "Energy Consumption",
+      "icon": "far fa-lightbulb fa-2x",
+      "actionTitle": "Energy Comsumption",
+      "pageComponent": "dashboards/DashboardView",
+      "path": "/energyConsumption",
       "config": {
-        "canEditSystems": true,
-        "createSystemScript": "createSystem",
-        "getSystemScript": "getSystem",
-        "editSystemScript": "editSystem",
-        "getSystemFromSchemaScript": "createEntityFromSchema",
-        "createSystemElementScript": "createSystemElement",
-        "getAllSystemsScript": "getAllSystems",
-        "updateSystemScript": "updateSystemRelations",
-        "sourceFileIndexScript": "getAllModels",
-        "allowEntities": [
-          {
-            "type": "Assets",
-            "script": "getAssets",
-            "default": true,
-            "plural": "Assets",
-            "singular": "Asset",
-            "entityFromModelScript": "getAssetFromModelSystems",
-            "searchConfig": {
-              "id": "advsrch",
-              "query": "<<ADVANCED_SEARCH>>",
-              "display": "Advanced Search",
-              "searchable": {
-                "Mark": {
-                  "type": "text"
-                },
-                "BA Name": {
-                  "type": "text"
-                },
-                "Revit Family": {
-                  "type": "text"
-                },
-                "Revit Type": {
-                  "type": "text"
-                }
-              }
-            }
-          },
-          {
-            "type": "Spaces",
-            "script": "getSpaces",
-            "plural": "Spaces",
-            "singular": "Space",
-            "entityFromModelScript": "getSpaceFromModelSystems",
-            "searchConfig": {
-              "id": "advsrch",
-              "query": "<<ADVANCED_SEARCH>>",
-              "display": "Advanced Search",
-              "searchable": {
-                "Level": {
-                  "type": "text"
-                },
-                "Number": {
-                  "type": "text"
-                },
-                "Name": {
-                  "type": "text"
-                }
-              }
-            }
-          },
-          {
-            "type": "ModelElements",
-            "script": "getModelElementsWithLimit",
-            "plural": "Model Elements",
-            "singular": "Model Element",
-            "entityFromModelScript": "getModelData",
-            "isModel": true,
-            "searchConfig": {
-              "id": "advsrch",
-              "query": "<<ADVANCED_SEARCH>>",
-              "display": "Advanced Search",
-              "searchable": {
-                "Revit Type": {
-                  "type": "text"
-                },
-                "Revit Category": {
-                  "type": "text"
-                },
-                "Revit Family": {
-                  "type": "text"
-                }
-              },
-              "queryLimit": 1000
-            }
-          }
-        ],
-        "picklistSelectsConfig": {
-          "canCreateItems": true,
-          "pickListScript": "getPickList",
-          "createPickListScript": "updatePickList",
-          "initialPickListType": "SystemsCategories",
-          "selects": [
-            {
-              "display": "System Category",
-              "createPickListOnUpdate": true
-            },
-            {
-              "display": "System Type",
-              "createPickListOnUpdate": false
-            }
-          ]
-        },
-        "systemStatus": [
-          "Active",
-          "Inactive"
-        ],
-        "settings": {
-          "system3DColor": "#C71784"
-        }
-      }
-    },
-    "nuic": {
-      "title": "Test Named User Item Collections",
-      "icon": "icofont-engineer",
-      "shortName": "namedusercollections",
-      "description": "Test Named User Item Collections",
-      "pageComponent": "solutionMgmt/NamedUserCollectionsView",
-      "detailPage": {
-        "pathParam": ":nuicId",
-        "component": "solutionMgmt/NamedUserCollectionsDetailView",
-        "nested": "true"
-      },
-      "path": "/nuic",
-      "config": {
-        "scripts": {
-          "getAllCollections": "getAllCollections",
-          "recreateCollection": "recreateCollection",
-          "createCollection": "createCollection",
-          "getTopItems": "getTopItems",
-          "addItemToCollection": "addItemToCollection",
-          "importXls": "importXls",
-          "exportObjectsToXls": "saveObjectsToXls",
-          "exportArraysToXls": "saveArraysToXls",
-          "fileUploadVal": "fileUploadVal",
-          "fileImport": "fileImport",
-          "addToCollectionVal": "addToCollectionVal"
-        }
-      },
-      "actions": {
-        "mainPage": {
-          "Add New Collection": {
-            "allow": true,
-            "icon": "fa fa-plus",
-            "type": "navigate",
-            "showOnTable": true,
-            "navigateTo": ""
-          }
-        },
-        "detailedPage": {
-          "Recreate": {
-            "allow": true,
-            "icon": "fa fa-trash",
-            "type": "navigate",
-            "showOnTable": true,
-            "navigateTo": ""
-          },
-          "Replace": {
-            "allow": true,
-            "icon": "fa fa-retweet",
-            "type": "navigate",
-            "showOnTable": true,
-            "navigateTo": ""
-          },
-          "Add To": {
-            "allow": true,
-            "icon": "fa fa-plus",
-            "type": "navigate",
-            "showOnTable": true,
-            "navigateTo": ""
-          },
-          "Update": {
-            "allow": true,
-            "icon": "fa fa-sync",
-            "type": "navigate",
-            "showOnTable": true,
-            "navigateTo": ""
-          }
-        },
-        "dataValidation": {
-          "allow": true
-        }
+        "layout": "fullpage",
+        "component": "Iframe",
+        "url": "https://test-analytics.invicara.com/app/main#/dashboards/631859788ddb710036f59949?embed=true"
       }
     }
   },
   "homepage": {
     "handler": "homepage"
   },
+  "connectors": [
+    {
+      "name": "SisenseIframe",
+      "config": {
+        "url": "https://test-analytics.invicara.com"
+      }
+    }
+  ],
   "groupedPages": {
     "Asset Twin": {
       "icon": "fas fa-dice-d6 fa-2x",
       "position": 1,
       "pages": [
         {
-          "page": "New Navigator",
+          "page": "Navigator",
           "handler": "navigator"
-        },
-        {
-          "page": "New Navigator without systems",
-          "handler": "navigator2"
-        },
-        {
-          "page": "Old Navigator",
-          "handler": "navigator3"
         },
         {
           "page": "Model Elements",
@@ -3016,10 +2049,24 @@
         {
           "page": "search",
           "handler": "search"
+        }
+      ]
+    },
+    "Analytics": {
+      "icon": "fas fa-chart-bar fa-2x",
+      "position": 1.5,
+      "pages": [
+        {
+          "page": "Energy Scenarios",
+          "handler": "engScenario"
         },
         {
-          "page": "System Builder",
-          "handler": "systemBuilder"
+          "page": "Energy Performance",
+          "handler": "engPerf"
+        },
+        {
+          "page": "Energy Consumption",
+          "handler": "engCon"
         }
       ]
     },
@@ -3037,32 +2084,6 @@
         }
       ]
     },
-    "Admin": {
-      "icon": "fas fa-user-shield fa-2x",
-      "position": 3,
-      "pages": [
-        {
-          "page": "modelVer",
-          "handler": "modelVer"
-        },
-        {
-          "page": "Script Development",
-          "handler": "scriptRunner"
-        },
-        {
-          "page": "userGroup",
-          "handler": "userGroup"
-        },
-        {
-          "page": "datasources",
-          "handler": "datasources"
-        },
-        {
-          "handler": "nuic",
-          "page": "Test Named User Collections"
-        }
-      ]
-    },
     "Downloads": {
       "icon": "fas fa-file-download fa-2x",
       "position": 4,
@@ -3076,7 +2097,7 @@
   },
   "settings": {
     "appImage": {
-      "url": "https://hoarelea.com/app/themes/hoare-lea-website-2017/assets/svg/standalone/output/hoare-lea-logo-v04.svg"
+      "url": "https://apps.invicara.com/library/v1/hl/Hoare Lea_logo_white.svg"
     }
   }
 }
