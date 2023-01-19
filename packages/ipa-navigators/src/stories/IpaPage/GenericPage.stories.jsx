@@ -19,7 +19,7 @@ const ipaConfigStoryOverwrite = {
 
   "configUserType": "user_group",
 
-  "access_token" : "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3Nfa2V5X2lkIjoiMzE1OTRmN2UtZjkxZS00ZGVmLWJkYmMtNjE4OWQyNzUwZGIwIiwidXNlcl9uYW1lIjoiNmU1Mjc5MjItODg1ZS00MmI3LWIyMGEtYjgyOGIyYzc1ZTJmIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIl0sImV4cCI6MTY3NDE0NzYxMSwiYXBwX2lkIjoiMGYwMmM4MTctODY1NS00MjNlLTlkMjItNTQzOTE4NzA3OGY5IiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImp0aSI6IjhmOWVmZTE3LTMxNmYtNGNjOS05Y2M4LTg5NDc2MThiMTkyZSIsImNsaWVudF9pZCI6IjBmMDJjODE3LTg2NTUtNDIzZS05ZDIyLTU0MzkxODcwNzhmOSJ9.hyCM1A5ZIKkxyGM71SQ6IahHHoOtikD4Adczt3s8w4-3NYY6pZb7sWqrwQEaoKorMQfm7oKkvsivhIEkvPYBtpPnOo8nnqBdtGfYhNpfZYGPtbgEvs9dShd89ZqzSKZnASFoZP0cfc-m3lNnPTMfV-71VfABjX_feMCsP1bRZUMcfa8Y8UIRhndK4dNOsWU2nuWLYI7Rqs1ylXYB6ltpjocUWQrH2ykvFgiB4CjBlf2PQATOo_8nmhSWpSBs0S-8GWzusfKtCNbMxPfee9yrPqCnjYJx44Iq6A8_A6acfvA9j6zjdIgH4cDT9eYtXBt-4n0XXTWZt_fz2j8AZVDSDg",
+  "access_token" : "",
   "project_name" : "Obayashi",
   "user_group_name": "Solutions Mgmt",
   //"user_config_name": "DBM Solution Admin",//only use this is you want to use live config
