@@ -2,9 +2,10 @@ import React from "react";
 import {getAllByText, getByText, render, waitFor} from "@testing-library/react";
 import _ from 'lodash'
 import EmptyComponent from "../IpaPageComponents/mock/EmptyComponent";
-import {decorateWithMockAppProvider} from "./MockAppProvider";
+import {decorateWithMockAppProvider} from "../IpaMock/MockAppProvider";
 import RenderHandlerByPath from "../stories/mock/RenderRoute";
 import sampleUserConfig from "../stories/IpaPageComponents/sample_user_config.json";
+import sampleSelectedItems from "../stories/IpaPageComponents/sample_selectedItems.json.json";
 
 const mockInterceptedComponent = jest.fn();
 jest.mock("../IpaPageComponents/mock/EmptyComponent", () => (props) => {
@@ -26,7 +27,7 @@ test("Navigator config should use default", async () => {
     const currentPath = "/navigator";
     const userConfig = _.cloneDeep(sampleUserConfig);
     const userConfigMerged = _.merge(userConfig, configOverride);
-    const DigitalTwinNavigatorTest = decorateWithMockAppProvider(()=><RenderHandlerByPath path={currentPath}></RenderHandlerByPath>, userConfigMerged, currentPath);
+    const DigitalTwinNavigatorTest = decorateWithMockAppProvider(()=><RenderHandlerByPath path={currentPath}></RenderHandlerByPath>, {}, userConfigMerged, currentPath, sampleSelectedItems);
 
     const container = render(DigitalTwinNavigatorTest);
 

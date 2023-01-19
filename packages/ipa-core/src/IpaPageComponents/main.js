@@ -14,11 +14,13 @@ import {EntityListView} from "./entities/EntityListView";
 import {EntityTableContainer} from "./entities/EntityTableContainer";
 import {JSONEditor} from "./omapi/JSONEditor";
 import useSortEntities, {ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE, usePaginateEntities} from "./entities/sortEntities";
+import withGenericPageErrorBoundary from "./GenericPageErrorBoundary";
+import withGenericErrorBoundary from "./GenericErrorBoundary";
 
 const IpaPageComponents = {
     //higher order components
-    withEntityStore, withEntitySearch, withEntityConfig, withEntityAvailableGroups,
-    GenericPageContext, withGenericPageContext,
+    withEntityStore, withEntitySearch, withEntityConfig, withEntityAvailableGroups, withGenericErrorBoundary,
+    GenericPageContext, withGenericPageContext, withGenericPageErrorBoundary,
     //components
     EntitySelectionPanel,
     EntityDataStack,

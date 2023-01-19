@@ -2,7 +2,7 @@ import renderer from 'react-test-renderer';
 import React from 'react';
 import ProjectPickerModal from './ProjectPickerModal';
 import {AppContext} from "../appContext";
-import {createLegacyContextSupport} from "../stories/util/legacyContext";
+import {createLegacyContextSupport} from "../test/util/legacyContext";
 import PropTypes from "prop-types";
 
 
