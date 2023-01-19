@@ -120,28 +120,26 @@ class MockAppProvider extends AppProvider {
     }
 
 
+    /* load script plugins */
+
+    /*
+      We load all the exported functions from each file listed in ipaConfig.scriptPlugins.
+
+      Each script plugin file must be located in ./app/ipaCore/scriptPlugins
+    */
     let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
     if (scriptPlugins) {
-      for (const filename of scriptPlugins) {
+      scriptPlugins.forEach((filename) => {
         try {
           let funcs = require('../../../../../app/ipaCore/scriptPlugins/' + filename)
           for (let fnName in funcs) {
             addScriptFunction(funcs[fnName])
           }
         } catch(e) {
-          try {
-            let funcs = await import('@ipa-core-app/ipaCore/scriptPlugins/' + filename)
-            for (let fnName in funcs) {
-              addScriptFunction(funcs[fnName])
-            }
-          } catch(e2) {
-            console.error(e2)
-            console.error('Script plugin not able to be loaded using @ipa-core-app module resolution: ' + filename);
-
-            console.error(e);
-          }
+          console.error(e)
+          console.error('Script plugin not able to be loaded: ' + filename)
         }
-      }
+      })
     }
 
     /* load redux extended slices provided by the app */
@@ -154,26 +152,19 @@ class MockAppProvider extends AppProvider {
      *
      * We may want to protect against that?
      *
-     * Reducer (slice) files must be located in ./app/ipaCore/redux or @ipa-core-app/ipaCore/redux
+     * Reducer (slice) files must be located in ./app/ipaCore/redux
      */
     if (this.props.ipaConfig && this.props.ipaConfig.redux && this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
-      for (const sliceFile of this.props.ipaConfig.redux.slices) {
+      this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
         try {
           let slice = require('../../../../../app/ipaCore/redux/' + sliceFile.file).default
           let newReducer = addReducerSlice({name: sliceFile.name, slice: slice})
           store.replaceReducer(newReducer)
         } catch(e) {
-          try {
-            let slice = (await import('@ipa-core-app/ipaCore/redux/' + sliceFile.file)).default;
-            let newReducer = addReducerSlice({name: sliceFile.name, slice: slice});
-            store.replaceReducer(newReducer);
-          } catch(e2) {
-            console.error(e2)
-            console.error(e)
-            console.error('Slice not able to be loaded: ' + sliceFile.name);
-          }
+          console.error(e)
+          console.error('Slice not able to be loaded: ' + sliceFile.name)
         }
-      }
+      })
     } else {
       console.warn("No ipa-core redux configuration found")
     }
@@ -185,27 +176,21 @@ class MockAppProvider extends AppProvider {
      * These components if named the same as a framework component can override the
      * framework dashborad component.
      *
-     * Dashboard compnent files must be located in ./app/ipaCore/components or @ipa-core-app/ipaCore/components
+     * Dashboard compnent files must be located in ./app/ipaCore/components
      */
 
     if (this.props.ipaConfig && this.props.ipaConfig.components) {
       if (this.props.ipaConfig.components.dashboard && this.props.ipaConfig.components.dashboard.length) {
         let dashComponents = []
-        for (const dashCompFile of this.props.ipaConfig.components.dashboard) {
+        this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
           try {
             let dashComp = require('../../../../../app/ipaCore/components/' + dashCompFile.file).default
-            dashComponents.push({name: dashCompFile.name, component: dashComp});
-          } catch(e) {
-            try {
-              let dashComp = (await import('@ipa-core-app/ipaCore/components/' + dashCompFile.file)).default;
-              dashComponents.push({name: dashCompFile.name, component: dashComp});
-            } catch(e2) {
-              console.error(e)
-              console.error('Dashboard component not able to be loaded: ' + dashCompFile.name);
-              console.error(e2)
-            }
+            dashComponents.push({name: dashCompFile.name, component: dashComp})
+          } catch (e) {
+            console.error(e)
+            console.error('Dashboard component not able to be loaded: ' + dashCompFile.name)
           }
-        }
+        })
         if (dashComponents.length) store.dispatch(addDashboardComponents(dashComponents))
       }
 
@@ -216,74 +201,45 @@ class MockAppProvider extends AppProvider {
       * These components if named the same as a framework component can override the
       * framework component.
       *
-      * entity component files must be located in ./app/ipaCore/components or @ipa-core-app/ipaCore/components
+      * entity compnent files must be located in ./app/ipaCore/components
       */
       if (this.props.ipaConfig.components.entityAction && this.props.ipaConfig.components.entityAction.length) {
-        let entityActionComponents = [];
-        for (const actionCompFile of this.props.ipaConfig.components.entityAction) {
+        let entityActionComponents = []
+        this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
           try {
-            let actComp = require('../../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
-            entityActionComponents.push({name: actionCompFile.name, component: actComp});
-          } catch(e) {
-            try {
-              let actComp = (await import('@ipa-core-app/ipaCore/components/'+ actionCompFile.file))[actionCompFile.name+'Factory'];
-              entityActionComponents.push({name: actionCompFile.name, component: actComp});
-            } catch(e2) {
-              console.error(e2)
-              console.error(e)
-              console.error('Entity Action component not able to be loaded: ' + actionCompFile.name);
-            }
-          }
-        }
-        if (entityActionComponents.length) store.dispatch(addEntityComponents('action',entityActionComponents))
-      }
-
-      /*
-      * Here we load the entity data components provided by the local application
-      * These components if named the same as a framework component can override the
-      * framework component.
-      *
-      * entity component files must be located in ./app/ipaCore/components or @ipa-core-app/ipaCore/components/
-      */
-      if (this.props.ipaConfig.components.entityData && this.props.ipaConfig.components.entityData.length) {
-        let entityDataComponents = [];
-        for (const dataCompFile of this.props.ipaConfig.components.entityData) {
-          try {
-            let dataComp = require('../../../../../app/ipaCore/components/'+ dataCompFile.file)
-            let dataCompFactory = dataComp[dataCompFile.name+'Factory']
-            entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory});
-          } catch(e) {
-            try {
-              let dataComp = await import('@ipa-core-app/ipaCore/components/'+ dataCompFile.file)
-              let dataCompFactory = dataComp[dataCompFile.name+'Factory']
-              entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory});
-            } catch(e2) {
-              console.error(e)
-              console.error('Entity Data component not able to be loaded: ' + dataCompFile.name)
-              console.error(e2);
-            }
-          }
-        }
-        if (entityDataComponents.length) store.dispatch(addEntityComponents('data',entityDataComponents))
-      }
-    } else {
-      console.warn("No ipa-core component configuration found")
-    }
-
-    if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
-      for (const styleSheet of this.props.ipaConfig.css) {
-        try {
-          let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
-        } catch(e) {
-          try {
-            let customCss = await import('@ipa-core-app/ipaCore/css/'+ styleSheet)
-          } catch(e2) {
+            let actComp = require('../../../../../app/ipaCore/components/' + actionCompFile.file)[actionCompFile.name + 'Factory']
+            entityActionComponents.push({name: actionCompFile.name, component: actComp})
+          } catch (e) {
             console.error(e)
-            console.error(e2);
+            console.error('Entity Action component not able to be loaded: ' + actionCompFile.name)
           }
-        }
+        })
+        if (entityActionComponents.length) store.dispatch(addEntityComponents('action', entityActionComponents))
       }
+
+      if (this.props.ipaConfig.components.entityData && this.props.ipaConfig.components.entityData.length) {
+        let entityDataComponents = []
+        this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
+          try {
+            let dataComp = require('../../../../../app/ipaCore/components/' + dataCompFile.file)
+            let dataCompFactory = dataComp[dataCompFile.name + 'Factory']
+            entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
+          } catch (e) {
+            console.error(e)
+            console.error('Entity Action component not able to be loaded: ' + dataCompFile.name)
+          }
+        })
+        if (entityDataComponents.length) store.dispatch(addEntityComponents('data', entityDataComponents))
+      }
+
     }
+      if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
+        this.props.ipaConfig.css.forEach((styleSheet) => {
+          try {
+            let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
+          } catch(e) {}
+        })
+      }
 
 
 

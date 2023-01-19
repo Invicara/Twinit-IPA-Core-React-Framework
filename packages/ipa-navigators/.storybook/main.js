@@ -35,26 +35,23 @@ module.exports = {
     config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/img\/invicara-logo_white.svg/));
 
 
-    config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/scriptPlugins.*/));
-    config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/redux.*/));
-    config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/css.*/));
-    config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/components.*/));
-    config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/pageComponents.*/));
+    //config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/scriptPlugins.*/));
+    //config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/redux.*/));
+    //config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/css.*/));
+    //config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/components.*/));
+    //config.plugins.push(new webpack.IgnorePlugin(/^\.\.\/\.\.\/\.\.\/\.\.\/\.\.\/app\/ipaCore\/pageComponents.*/));
 
     config.plugins.push(new CopyWebpackPlugin([
       {from: 'node_modules/@invicara/iaf-viewer/dist/lib/', to: 'digitaltwin/lib/', toType: 'dir'}
     ]));
 
-
-
-
     config.resolve = config.resolve || {};
     config.resolve.alias = config.resolve.alias || {};
-    config.resolve.alias['@ipa-core-app/ipaCore/scriptPlugins'] = path.resolve(__dirname, "../", "src/scriptPlugins")
-    config.resolve.alias['@ipa-core-app/ipaCore/redux'] = path.resolve(__dirname, "../", "src/redux")
-    config.resolve.alias['@ipa-core-app/ipaCore/css'] = path.resolve(__dirname, "../", "src/css")
-    config.resolve.alias['@ipa-core-app/ipaCore/components'] = path.resolve(__dirname, "../", "src/components")
-    config.resolve.alias['@ipa-core-app/ipaCore/pageComponents'] = path.resolve(__dirname, "../", "src/pageComponents")
+    config.resolve.alias['../../../../../app/ipaCore/scriptPlugins'] = path.resolve(__dirname, "../", "src/scriptPlugins")
+    config.resolve.alias['../../../../../app/ipaCore/redux'] = path.resolve(__dirname, "../", "src/redux")
+    config.resolve.alias['../../../../../app/ipaCore/css'] = path.resolve(__dirname, "../", "src/css")
+    config.resolve.alias['../../../../../app/ipaCore/components'] = path.resolve(__dirname, "../", "src/components")
+    config.resolve.alias['../../../../../app/ipaCore/pageComponents'] = path.resolve(__dirname, "../", "src/pageComponents")
 
 
     // Return the altered config
