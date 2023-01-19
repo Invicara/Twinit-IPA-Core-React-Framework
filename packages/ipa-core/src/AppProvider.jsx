@@ -57,7 +57,7 @@ class AppProvider extends React.Component {
     let authRoot = endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot
     if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/'
 
-    
+
     let appId = endPointConfig?.applicationId ? endPointConfig.applicationId : this.props.ipaConfig?.applicationId
     if (!appId) console.error('Application ID missing from endPointConfig or ipaConfig')
 
@@ -84,8 +84,8 @@ class AppProvider extends React.Component {
         pageGroups: []
       },
       selectedItems: localStorage.ipadt_selectedItems
-        ? JSON.parse(localStorage.ipadt_selectedItems)
-        : {},
+          ? JSON.parse(localStorage.ipadt_selectedItems)
+          : {},
       actions: {
         reloadConfig: this.initialize.bind(this, false),
         restartApp: this.initialize.bind(this),
@@ -192,8 +192,8 @@ class AppProvider extends React.Component {
     // end
 
     document.getElementById('BottomPanel').style.display = wasOpen
-      ? 'none'
-      : 'block';
+        ? 'none'
+        : 'block';
     document.getElementById('BottomPanel').style.height = this.defaultBottomPanelHeight;
 
     this.context.ifefSnapper.toggle('bottom');
@@ -238,7 +238,7 @@ class AppProvider extends React.Component {
     }
     else if (page.endsWith('#')){
       if (!pagesHavePositions)
-          return config.handlers[actualPage(config, pageNames[0]).handler];
+        return config.handlers[actualPage(config, pageNames[0]).handler];
       else {
         let lowestPos = pagesConfig[pageNames[0]].position;
         let lowestHandler = actualPage(config, pageNames[0]).handler;
@@ -346,21 +346,30 @@ class AppProvider extends React.Component {
       /*
         We load all the exported functions from each file listed in ipaConfig.scriptPlugins.
 
-        Each script plugin file must be located in ./app/ipaCore/scriptPlugins
+        Each script plugin file must be located in ./app/ipaCore/scriptPlugins or @ipa-core-app/ipaCore/scriptPlugins
       */
       let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
       if (scriptPlugins) {
-        scriptPlugins.forEach((filename) => {
+        for (const filename of scriptPlugins) {
           try {
             let funcs = require('../../../../../app/ipaCore/scriptPlugins/' + filename)
             for (let fnName in funcs) {
               addScriptFunction(funcs[fnName])
             }
           } catch(e) {
-            console.error(e)
-            console.error('Script plugin not able to be loaded: ' + filename)
+            try {
+              let funcs = await import(/* webpackIgnore: true */'@ipa-core-app/ipaCore/scriptPlugins/' + filename)
+              for (let fnName in funcs) {
+                addScriptFunction(funcs[fnName])
+              }
+            } catch(e2) {
+              console.error(e2)
+              console.error('Script plugin not able to be loaded using @ipa-core-app module resolution: ' + filename);
+
+              console.error(e);
+            }
           }
-        })
+        }
       }
 
       /* load redux extended slices provided by the app */
@@ -373,19 +382,26 @@ class AppProvider extends React.Component {
        *
        * We may want to protect against that?
        *
-       * Reducer (slice) files must be located in ./app/ipaCore/redux
+       * Reducer (slice) files must be located in ./app/ipaCore/redux or @ipa-core-app/ipaCore/redux
        */
       if (this.props.ipaConfig && this.props.ipaConfig.redux && this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
-        this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
+        for (const sliceFile of this.props.ipaConfig.redux.slices) {
           try {
             let slice = require('../../../../../app/ipaCore/redux/' + sliceFile.file).default
             let newReducer = addReducerSlice({name: sliceFile.name, slice: slice})
             store.replaceReducer(newReducer)
           } catch(e) {
-            console.error(e)
-            console.error('Slice not able to be loaded: ' + sliceFile.name)
+            try {
+              let slice = (await import(/* webpackIgnore: true */'@ipa-core-app/ipaCore/redux/' + sliceFile.file)).default;
+              let newReducer = addReducerSlice({name: sliceFile.name, slice: slice});
+              store.replaceReducer(newReducer);
+            } catch(e2) {
+              console.error(e2)
+              console.error(e)
+              console.error('Slice not able to be loaded: ' + sliceFile.name);
+            }
           }
-        })
+        }
       } else {
         console.warn("No ipa-core redux configuration found")
       }
@@ -397,21 +413,27 @@ class AppProvider extends React.Component {
        * These components if named the same as a framework component can override the
        * framework dashborad component.
        *
-       * Dashboard compnent files must be located in ./app/ipaCore/components
+       * Dashboard compnent files must be located in ./app/ipaCore/components or @ipa-core-app/ipaCore/components
        */
 
       if (this.props.ipaConfig && this.props.ipaConfig.components) {
         if (this.props.ipaConfig.components.dashboard && this.props.ipaConfig.components.dashboard.length) {
           let dashComponents = []
-          this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
+          for (const dashCompFile of this.props.ipaConfig.components.dashboard) {
             try {
               let dashComp = require('../../../../../app/ipaCore/components/' + dashCompFile.file).default
-              dashComponents.push({name: dashCompFile.name, component: dashComp})
+              dashComponents.push({name: dashCompFile.name, component: dashComp});
             } catch(e) {
-              console.error(e)
-              console.error('Dashboard component not able to be loaded: ' + dashCompFile.name)
+              try {
+                let dashComp = (await import(/* webpackIgnore: true */'@ipa-core-app/ipaCore/components/' + dashCompFile.file)).default;
+                dashComponents.push({name: dashCompFile.name, component: dashComp});
+              } catch(e2) {
+                console.error(e)
+                console.error('Dashboard component not able to be loaded: ' + dashCompFile.name);
+                console.error(e2)
+              }
             }
-          })
+          }
           if (dashComponents.length) store.dispatch(addDashboardComponents(dashComponents))
         }
 
@@ -422,38 +444,73 @@ class AppProvider extends React.Component {
         * These components if named the same as a framework component can override the
         * framework component.
         *
-        * entity compnent files must be located in ./app/ipaCore/components
+        * entity component files must be located in ./app/ipaCore/components or @ipa-core-app/ipaCore/components
         */
         if (this.props.ipaConfig.components.entityAction && this.props.ipaConfig.components.entityAction.length) {
-          let entityActionComponents = []
-          this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
+          let entityActionComponents = [];
+          for (const actionCompFile of this.props.ipaConfig.components.entityAction) {
             try {
               let actComp = require('../../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
-              entityActionComponents.push({name: actionCompFile.name, component: actComp})
+              entityActionComponents.push({name: actionCompFile.name, component: actComp});
             } catch(e) {
-              console.error(e)
-              console.error('Entity Action component not able to be loaded: ' + actionCompFile.name)
+              try {
+                let actComp = (await import(/* webpackIgnore: true */'@ipa-core-app/ipaCore/components/'+ actionCompFile.file))[actionCompFile.name+'Factory'];
+                entityActionComponents.push({name: actionCompFile.name, component: actComp});
+              } catch(e2) {
+                console.error(e2)
+                console.error(e)
+                console.error('Entity Action component not able to be loaded: ' + actionCompFile.name);
+              }
             }
-          })
+          }
           if (entityActionComponents.length) store.dispatch(addEntityComponents('action',entityActionComponents))
         }
 
+        /*
+        * Here we load the entity data components provided by the local application
+        * These components if named the same as a framework component can override the
+        * framework component.
+        *
+        * entity component files must be located in ./app/ipaCore/components or @ipa-core-app/ipaCore/components/
+        */
         if (this.props.ipaConfig.components.entityData && this.props.ipaConfig.components.entityData.length) {
-          let entityDataComponents = []
-          this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
+          let entityDataComponents = [];
+          for (const dataCompFile of this.props.ipaConfig.components.entityData) {
             try {
               let dataComp = require('../../../../../app/ipaCore/components/'+ dataCompFile.file)
               let dataCompFactory = dataComp[dataCompFile.name+'Factory']
-              entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
+              entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory});
             } catch(e) {
-              console.error(e)
-              console.error('Entity Action component not able to be loaded: ' + dataCompFile.name)
+              try {
+                let dataComp = await import(/* webpackIgnore: true */'@ipa-core-app/ipaCore/components/'+ dataCompFile.file)
+                let dataCompFactory = dataComp[dataCompFile.name+'Factory']
+                entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory});
+              } catch(e2) {
+                console.error(e)
+                console.error('Entity Data component not able to be loaded: ' + dataCompFile.name)
+                console.error(e2);
+              }
             }
-          })
+          }
           if (entityDataComponents.length) store.dispatch(addEntityComponents('data',entityDataComponents))
         }
       } else {
         console.warn("No ipa-core component configuration found")
+      }
+
+      if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
+        for (const styleSheet of this.props.ipaConfig.css) {
+          try {
+            let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
+          } catch(e) {
+            try {
+              let customCss = await import(/* webpackIgnore: true */'@ipa-core-app/ipaCore/css/'+ styleSheet)
+            } catch(e2) {
+              console.error(e)
+              console.error(e2);
+            }
+          }
+        }
       }
 
       //config loader
@@ -466,37 +523,29 @@ class AppProvider extends React.Component {
           let projects = await IafProj.getProjects({_pageSize: 1000});
           if (showProjectPicker)
             self.context.ifefShowModal(
-              <ProjectPickerModal
-              configUserType={this.props.ipaConfig.configUserType}
-              referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
-              appContextProps={this.state}
-              defaultConfig={EmptyConfig}
-              onAcceptInvite={this.state.actions.restartApp}
-              projects={projects}
-              testConfig={self.testConfig}
-              onConfigLoad={callback}
-              onCancel={() => self.context.ifefShowModal(false)}
-              referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
-                restartApp={this.state.actions.restartApp}
-                onCancel={() => {
-                  this.setState((prev) => {
-                    return { ...prev, isshowProjectPickerModal: true };
-                  });
-                }}
-              />) }
-            />);
+                <ProjectPickerModal
+                    configUserType={this.props.ipaConfig.configUserType}
+                    referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
+                    appContextProps={this.state}
+                    defaultConfig={EmptyConfig}
+                    onAcceptInvite={this.state.actions.restartApp}
+                    projects={projects}
+                    testConfig={self.testConfig}
+                    onConfigLoad={callback}
+                    onCancel={() => self.context.ifefShowModal(false)}
+                    referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
+                        restartApp={this.state.actions.restartApp}
+                        onCancel={() => {
+                          this.setState((prev) => {
+                            return { ...prev, isshowProjectPickerModal: true };
+                          });
+                        }}
+                    />) }
+                />);
         } catch (error) {
           console.log(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
         }
-      }
-
-      if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
-        this.props.ipaConfig.css.forEach((styleSheet) => {
-          try {
-            let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
-          } catch(e) {}
-        })
       }
     }
   }
@@ -511,26 +560,26 @@ class AppProvider extends React.Component {
   }
 
   async onConfigLoad(config, routes, token, user) {
-    
+
     function hasSisenseConnectors(config) {
       if (config.connectors) {
-  
+
         let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
         if (sisenseConnector) {
-  
+
           let sisUrl = sisenseConnector.config.url
           let lastChar = sisUrl.slice(-1)
           if (lastChar === '/' || lastChar === '\\')
             sisUrl = sisUrl.slice(0, -1)
-  
+
           sessionStorage.setItem('sisenseBaseUrl', sisUrl)
           return sisUrl
         }
         else return false
-  
+
       } else return false
     }
-    
+
     //console.log(config, routes)
     //console.log("APP PROVIDER WILL SET USER CONFIG",{...config});
 
@@ -583,16 +632,16 @@ class AppProvider extends React.Component {
           const orchId = sisenseSSOOrch.id;
 
           const params = {
-              orchestratorId: orchId,
-              _actualparams: [
-                  {
-                      sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
-                      params: {
-                          userGroupId: this.state.selectedItems.selectedUserGroupId,
-                          projectNamespace: this.state.selectedItems.selectedProject._namespaces[0]
-                      }
-                  }
-              ]
+            orchestratorId: orchId,
+            _actualparams: [
+              {
+                sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
+                params: {
+                  userGroupId: this.state.selectedItems.selectedUserGroupId,
+                  projectNamespace: this.state.selectedItems.selectedProject._namespaces[0]
+                }
+              }
+            ]
           }
 
           const orchResult = await IafDataSource.runOrchestrator(orchId, params);
@@ -644,20 +693,20 @@ class AppProvider extends React.Component {
 
       this.setState({isLoading: false});
 
-    // Eval the "autoeval" script for any bootstrap setup of app.
-    if (config.scripts && config.scripts.autoeval) {
-      if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
-    }
-    
+      // Eval the "autoeval" script for any bootstrap setup of app.
+      if (config.scripts && config.scripts.autoeval) {
+        if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
+      }
+
     } else {
-        //This is state where the user has an account but no accepted invites
-        if (routes)
-          this.setState({
-            router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
-          });
+      //This is state where the user has an account but no accepted invites
+      if (routes)
         this.setState({
-          isLoading: false
+          router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
         });
+      this.setState({
+        isLoading: false
+      });
     }
 
 
@@ -676,7 +725,7 @@ class AppProvider extends React.Component {
     window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
   }
 
-  
+
 
   render() {
     //console.log("APP PROVIDER RE-RENDERS");
@@ -715,34 +764,39 @@ async function calculateRoutes(config, ipaConfig) {
     return withAppContext(withGenericPageErrorBoundary(withGenericPage(rawPageComponent, optionalProps)))
   }
 
-  function getPageComponent(pageComponent, pageComponentProps) {
+  async function getPageComponent(pageComponent, pageComponentProps) {
 
     let component
     try {
       component = require('../../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
-      component = asIpaPage(component, pageComponentProps)
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
-
-      component = InternalPages[pageComponent] ? InternalPages[pageComponent] : null
-
-      if (component) {
-        component = asIpaPage(component, pageComponentProps)
-        console.log(pageComponent + ' loaded from framework')
+      try {
+        component = (await import(/* webpackIgnore: true */'@ipa-core-app/ipaCore/pageComponents/' + pageComponent + '.jsx')).default;
+        console.log(pageComponent + ' loaded from application via @ipa-core-app module');
+      } catch(e2) {
+        component = InternalPages[pageComponent] ? InternalPages[pageComponent] : null
+        if(!component) {
+          console.error(e)
+          console.error(e2)
+          console.error("can't find page component: ", pageComponent);
+        }
       }
-      else {
-        console.error(e)
-        console.error("can't find page component: ", pageComponent)
-        console.log("Skipping", pageComponent)
-        component = null
-      }
+    }
+    if (component) {
+      component = asIpaPage(component, pageComponentProps)
+      console.log(pageComponent + ' loaded from framework')
+    }
+    else {
+      console.log("Skipping", pageComponent)
+      component = null
     }
 
     return component
 
   }
 
-  function addRoute(handlerName, handler, addPage, pathPrefix, pageGroup) {
+  async function addRoute(handlerName, handler, addPage, pathPrefix, pageGroup) {
     if (!handler.pageComponent) {
       console.error("This version of AppProvider only supports handlers with a pageComponent")
       console.log("Skipping", handler)
@@ -778,11 +832,11 @@ async function calculateRoutes(config, ipaConfig) {
       }
     }
 
-    let component = getPageComponent(handler.pageComponent, {masterPage : item, detailPage: detailItem});
+    let component = await getPageComponent(handler.pageComponent, {masterPage : item, detailPage: detailItem});
     if (!component) return
 
     if(handler.detailPage){
-      detailComponent = getPageComponent(handler.detailPage.component,  {masterPage : item});
+      detailComponent = await getPageComponent(handler.detailPage.component,  {masterPage : item});
       if (detailComponent) {
         detailItem.nestedRoute = buildRoute(detailItem,detailComponent);
       }
@@ -839,24 +893,23 @@ async function calculateRoutes(config, ipaConfig) {
   }
 
   // Add the component for each page (dynamically requires the JSX)
-  pages.forEach(key => {
+  for(const key of pages) {
     if(usingGroupedConfig){
       addGroup(key, pagesConfig[key].icon);
-      pagesConfig[key].pages.forEach(page => {
+      for(const page of pagesConfig[key].pages){
         if (page.handler) {
           let handler = config.handlers[page.handler];
-          addRoute(page.handler, handler, true, undefined, key);
+          await addRoute(page.handler, handler, true, undefined, key);
         }
-      })
+      }
     }else{
       let page = config.pages[key];
       if (page.handler) {
         let handler = config.handlers[page.handler];
-
-        addRoute(page.handler, handler, true);
+        await addRoute(page.handler, handler, true);
       }
     }
-  });
+  }
 
   // Add homepage
   let homePageHandler
@@ -867,7 +920,7 @@ async function calculateRoutes(config, ipaConfig) {
     console.warn("no homepage specified, defaulting to first page")
     homePageHandler = config.handlers[actualPage(config, pages[0]).handler];
   }
-  let HomePage = getPageComponent(homePageHandler.pageComponent);
+  let HomePage = await getPageComponent(homePageHandler.pageComponent);
   if (!HomePage) console.error("can't find page component, no homepage", homePageHandler.pageComponent)
   else {
     pRoutes.unshift(<Route path='/' key='/' exact={true} component={HomePage} />);

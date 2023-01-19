@@ -87,7 +87,6 @@ export default {
         'IpaPageComponents':'src/IpaPageComponents/main.js',
         'IpaRedux':'src/redux/main.js',
         'IpaLayouts':'src/IpaLayouts/main.js',
-        'IpaMock':'src/IpaMock/main.js',
     },
     output: {
         dir: 'modules',

@@ -1,0 +1,10 @@
+{
+  "appName": "Invicara Storybook",
+  "configUserType": "hoarelea-dt",
+  "applicationId": "b42525d3-0e42-4bf9-b069-7fc16daf67e6",
+  "redux": {
+    "slices": [
+      {"name": "viewSystems", "file": "systems.js"}
+    ]
+  }
+}

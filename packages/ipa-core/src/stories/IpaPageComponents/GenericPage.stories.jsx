@@ -3,13 +3,8 @@ import PropTypes from 'prop-types';
 import sampleUserConfig from "./sample_user_config.json";
 import sampleSelectedItems from "./sample_selectedItems.json";
 import GenericPage from "../../IpaPageComponents/GenericPage";
-import MockAppProvider, {decorateWithMockAppProvider} from "../../test/MockAppProvider";
+import {decorateWithMockAppProvider} from "../../IpaMock/MockAppProvider";
 import RenderHandlerByPath from "../mock/RenderRoute";
-import {createMemoryHistory} from "history";
-import {createLegacyContextSupport} from "../util/legacyContext";
-import {Provider} from "react-redux";
-import store from "../../redux/store";
-import {MemoryRouter} from "react-router-dom";
 import _ from "lodash";
 
 export default {
@@ -20,7 +15,7 @@ export default {
   },
   decorators : [
     (Story, args) => {
-      return decorateWithMockAppProvider(Story, args.args.userConfig, args.args.currentPath);
+      return decorateWithMockAppProvider(Story, {}, args.args.userConfig, args.args.currentPath, sampleSelectedItems);
     }]
 };
 
