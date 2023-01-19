@@ -16,7 +16,12 @@ const CompactButtonBar = (props) => {
     let buttons = Object.entries(props.actions).map(([key,a]) =>
       <div key={key} className={btnClass} onClick={e=>doAction(key)}>
         <div className="compact-button-bar-image">
-          <img src={"/digitaltwin/" + a.icon}/>
+          <img src={
+            (props?.dashboard?.props?.selectedItems?.ipaConfig
+              ?.referenceAppConfig?.refApp
+              ? "/reference/"
+              : "/digitaltwin/") + a.icon
+          }/>
         </div>
         <div className="compact-button-bar-button-text-container">
           <div><h1>{a.title}</h1></div>        

@@ -31,7 +31,7 @@ export default class ProjectPickerModal extends React.Component {
   }
 
   componentDidMount = async () => {
-
+    this.checkUserAccess();
     this.loadModal();
 
   }
@@ -42,6 +42,22 @@ export default class ProjectPickerModal extends React.Component {
       this.loadModal();
 
   }
+  checkUserAccess = async () => {
+    if (this.props.referenceAppConfig?.refApp) {
+      try {
+        let createTestProject = await IafPassSvc.createWorkspaces([]);
+        if (createTestProject && createTestProject?._total == 0) {
+          this.setState({
+            user: {
+              has_access: true,
+            },
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
 
   getUserGroupOptions = (projectid) => {
     return this.state.appUserGroups[projectid] ? this.state.appUserGroups[projectid].map((ug) => {return {'value': ug._id, 'label': ug._name}}) : [];
@@ -365,6 +381,45 @@ export default class ProjectPickerModal extends React.Component {
             }
 
             {this.state.loadingModal && <SimpleTextThrobber throbberText="Loading your project information" />}
+            {this.props.referenceAppConfig?.refApp &&
+            !showLoadButton &&
+            !this.state.loadingModal &&
+            !this.state.user?.has_access ? (
+              <>
+                <br />
+                <div>
+                  <span className="text-danger">
+                    You don't have permission to create a project in Platform
+                    Reference App, please contact the Admin.
+                  </span>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
+
+             {this.props.referenceAppConfig?.refApp &&
+              !showLoadButton &&
+              !this.state.loadingModal && (
+                <>
+                  {" "}
+                  <button
+                    onClick={() => {
+                      if (!this.state.user?.has_access) {
+                        return;
+                      }
+                      this.props.referenceAppCreateProject();
+                    }}
+                    className={
+                      this.state.user?.has_access ? "setup" : "disabled"
+                    }
+                    disabled={!this.state.user?.has_access}
+                  >
+                    Create Project
+                  </button>
+                </>
+              )}
+
 
             <div>
               {currentInvites && currentInvites.length > 0 &&
