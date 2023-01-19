@@ -19,9 +19,8 @@
   ],
   "dependencies": {
     "@invicara/iaf-viewer": "2.2.6",
-    "@invicara/ipa-core": "^2.2.58",
-    "react-keep-alive": "^2.5.2",
     "@invicara/invicara-lib": "^2.1.0",
+    "@invicara/ipa-core": "2.2.59",
     "@material-ui/core": "^4.8.0",
     "@material-ui/icons": "^4.9.1",
     "@reduxjs/toolkit": "^1.3.6",
@@ -29,6 +28,7 @@
     "prop-types": "^15.6.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-keep-alive": "^2.5.2",
     "react-redux": "^7.2.0",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1"
