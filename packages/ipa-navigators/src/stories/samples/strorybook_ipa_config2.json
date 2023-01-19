@@ -9,9 +9,9 @@
   },
   "referenceAppConfig" : {},
 
-  "access_token" : "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3Nfa2V5X2lkIjoiNjIwNjUxN2EtNjU4NC00Mjg5LTg1YTEtZmEwM2UyMjc3NGNjIiwidXNlcl9uYW1lIjoiNWFmOTJiMzktNTdiZC00NTcyLTkyNmItM2Y4NWJlYjBhODE4Iiwic2NvcGUiOlsicmVhZCIsIndyaXRlIl0sImV4cCI6MTY3Mzk1ODM1OCwiYXBwX2lkIjoiMGYwMmM4MTctODY1NS00MjNlLTlkMjItNTQzOTE4NzA3OGY5IiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9VU0VSIl0sImp0aSI6Ijc5Mzk4NzhkLTI4NjgtNGI1NS1iN2VhLTUxZThiMWNiMjNlOCIsImNsaWVudF9pZCI6IjBmMDJjODE3LTg2NTUtNDIzZS05ZDIyLTU0MzkxODcwNzhmOSJ9.m2dgrpkgoHJZaYxmD4bg_MX-nEjOE71uPRPcY8XDSsgjgPFafreftp46WTnwuiqqpFEF70gfH2pnAMs8bC690JXekNU2tFM22HcAEYvokdHMt00Tc0tNnluyyZ2CAnfqLH4yDNanVwnWeHwHO26EO3qaZLMSwsoyiw4x4H1pdekq0WWUzC7_xOG-q7rQNT7BnZoFzDOQAFsTD3SjDsATIQQN_oJgP7VLKR4odowZR_2hJDqGRKLRe4rOYisA4f5ZwIFPOC95qvvHzJVkA-w-fqA4btxeptadtatJ-Y6zoST1sQmMQI4qkKEkeE1kGK4kqeFMfidhVg0esetaSBY6NQ",
+  "access_token" : null,
   "project_name" : "Test JS",
   "user_group_name": "Solutions Mgmt",
-  "user_config_name": "DBM Solution Admin"
+  "user_config_name": null
 
 }

@@ -1,10 +1,17 @@
 {
-  "appName": "Invicara Storybook",
-  "configUserType": "hoarelea-dt",
-  "applicationId": "b42525d3-0e42-4bf9-b069-7fc16daf67e6",
+  "appName": "Invicara DT Storybook",
+  "applicationId": "0f02c817-8655-423e-9d22-5439187078f9",
+  "configUserType": "ipa-dt",
   "redux": {
     "slices": [
-      {"name": "viewSystems", "file": "systems.js"}
+      {"name": "viewSystems", "file": "slices/systems.js"}
     ]
-  }
+  },
+  "referenceAppConfig" : {},
+
+  "access_token" : null,
+  "project_name" : "Test JS",
+  "user_group_name": "Solutions Mgmt",
+  "user_config_name": "DBM Solution Admin"
+
 }

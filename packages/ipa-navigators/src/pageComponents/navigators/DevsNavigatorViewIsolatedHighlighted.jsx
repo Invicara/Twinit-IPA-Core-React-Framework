@@ -22,7 +22,7 @@ import {
 } from "@invicara/ipa-core/modules/IpaPageComponents";
 import {useDispatch, useSelector} from "react-redux";
 import {Entities} from "@invicara/ipa-core/modules/IpaRedux";
-import {EnhancedIafViewer} from "../../navigators/devs/EnhancedIafViewer";
+import {EnhancedIafViewer} from "../../navigators/devs/EnhancedIafViewerIsolatedHighlighted";
 import { extractSpacesFromEntities } from "../../navigators/EntityEnabledIafViewer";
 import {withEntityStore} from "@invicara/ipa-core/modules/IpaPageComponents";
 import _ from "lodash";

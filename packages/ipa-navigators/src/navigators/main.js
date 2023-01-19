@@ -1,7 +1,7 @@
-import NavigatorView from './navigators/NavigatorView'
-import SystemSearchPanel from './navigators/SystemSearchPanel'
+import NavigatorView from '../pageComponents/navigators/NavigatorView'
+import SystemSearchPanel from './SystemSearchPanel'
 
-const IpaPageComponents = {
+const IpaNavigators = {
     //higher order components
     panels : {
         SystemSearchPanel
@@ -17,4 +17,4 @@ const IpaPageComponents = {
 
 }
 
-export default IpaPageComponents
+export default IpaNavigators

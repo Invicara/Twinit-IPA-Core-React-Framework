@@ -111,7 +111,7 @@ class ViewerWrapper extends React.Component {
                     isolatedElementIds={this.isolatedElementIds(this.props.isolatedEntities)}
                     //isolatedElementIds={isolatedElementIds.length==1 ? isolatedElementIds : isolatedElementIdsWithoutSpace}
                     spaceElementIds={this.spaceElementIds(this.props.isolatedSpaces)}
-                    highlightedElementIds={this.highlightedElementIds(this.props.isolatedEntities)}
+                    highlightedElementIds={this.highlightedElementIds(this.props.selectedEntities)}
                     selection={this.highlightedElementIds(this.props.selectedEntities)}
                 />
             </div>
@@ -129,7 +129,8 @@ export const EnhancedIafViewer = ({
                                       viewerResizeCanvas,
                                       onSelect,
                                       hiddenEntities,
-                                      colorGroups,
+                                      themeColor,
+                                      coloredElements,
                                       isolatedSpaces,
                                       isolatedRemainingEntities,
                                       focusedEntity
@@ -138,6 +139,20 @@ export const EnhancedIafViewer = ({
     const saveSettingsCallback = useCallback((settings) => {localStorage.iafviewer_settings = JSON.stringify(settings)},[]);
     const emptyArray = useMemo(()=>[],[]);
     const viewerSettings = useMemo(()=>localStorage.iafviewer_settings  ? JSON.parse(localStorage.iafviewer_settings ) : undefined ,[localStorage.iafviewer_settings ]);
+
+    const colorGroups = useMemo(() => {
+        if(!coloredElements){
+            return undefined;
+        }
+        return [{
+        "groupName": "SystemColor",
+        "colors":
+            [{
+                "color": themeColor,
+                "opacity": 1,
+                "elementIds": coloredElements.reduce((acc,e) => acc.concat(e.modelViewerIds),[])
+            }]
+    }]},[coloredElements]);
 
 
     return (
