@@ -49,6 +49,7 @@ import Table from './Table/Table'
 import Cell from './Table/Cell'
 import AlertIndicator from './AlertIndicator'
 import ToastContainer, {useToast} from './ToastContainer'
+import {Toast, SuccessToast, ErrorToast} from './ToastNotifications'
 
 const IpaControls = {
     AlertIndicator,
@@ -70,6 +71,7 @@ const IpaControls = {
     DynamicAttributeInput,
     EnhancedFetchControl,
     EnhancedPickListSelect,
+    ErrorToast,
     ScriptedLinkedSelects,
     ScriptedLinkedSelectsOld,
     ScriptedSelects,
@@ -105,8 +107,10 @@ const IpaControls = {
     SimpleTextThrobber,
     SplitButton,
     StackableDrawer,
+    SuccessToast,
     Table,
     TextSearch,
+    Toast,
     ToastContainer,
     TreeControl,
     TreeSearch,
