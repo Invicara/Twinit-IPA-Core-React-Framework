@@ -46,6 +46,8 @@ import RadioButtons from './RadioButtons'
 import Table from './Table/Table'
 import Cell from './Table/Cell'
 import AlertIndicator from './AlertIndicator'
+import ToastContainer, {useToast} from './ToastContainer'
+import {Toast, SuccessToast, ErrorToast} from './ToastNotifications'
 
 const IpaControls = {
     AlertIndicator,
@@ -66,6 +68,7 @@ const IpaControls = {
     DynamicAttributeInput,
     EnhancedFetchControl,
     EnhancedPickListSelect,
+    ErrorToast,
     ScriptedLinkedSelects,
     ScriptedLinkedSelectsOld,
     ScriptedSelects,
@@ -101,10 +104,14 @@ const IpaControls = {
     SimpleTextThrobber,
     SplitButton,
     StackableDrawer,
+    SuccessToast,
     Table,
     TextSearch,
+    Toast,
+    ToastContainer,
     TreeControl,
     TreeSearch,
+    useToast,
     defaultTheme, //TODO This is a theme, not a control. I left it here bc it's just one, but if there were to be more, we should consider creating an IpaThemes module
 }
 
