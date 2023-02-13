@@ -33,6 +33,7 @@ import {
 } from "./slices/entities-pluggable-search";
 import {getEntitySelectConfig, setUserConfig} from "./slices/user-config";
 import {
+    fetchAssocitedFileSvcData,
     fetchAllNamedUserItems, fetchNamedUserItemItems,
     namedUserItemActions, selectNamedUserItemById,
     selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus,
@@ -80,6 +81,7 @@ const redux = {
         ...modal.actions
     },
     NamedUserItems: {
+        fetchAssocitedFileSvcData,
         fetchAllNamedUserItems,
         fetchNamedUserItemItems,
         selectNamedUserItemEntities,
