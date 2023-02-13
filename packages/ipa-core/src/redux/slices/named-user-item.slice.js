@@ -77,6 +77,24 @@ export const fetchNamedUserTotalAmountOfItems = createAsyncThunk(
   }
 );
 
+let collectionIndexes = []
+export const fetchAssocitedFileSvcData = createAsyncThunk( 
+  'namedUserItemFileSvcData/fetchStatus',
+  async (args, thunkAPI) => {
+      const {fileItems, idx, ctx} = args 
+      let fileSvcRes
+      for(let i = 0; i < fileItems.length; i++){
+        if(!fileItems[i]._fileId) { 
+            const criteria = {"_name" :fileItems[i].filename || fileItems[i].name}
+            fileSvcRes = await IafFileSvc.getFiles(criteria, ctx);
+          }
+        if (collectionIndexes.includes(idx)) break;
+        if(fileSvcRes) collectionIndexes.push(idx)
+      }
+    return collectionIndexes;
+  }
+);
+
 /*
 export const fetchNamedUserItems = createAsyncThunk(
     'namedUserItems/fetchStatus',
@@ -150,6 +168,9 @@ export const namedUserItemSlice = createSlice({
       .addCase(fetchNamedUserTotalAmountOfItems.pending, (state) => {
         state.loadingStatus = 'loading';
       })
+      .addCase(fetchAssocitedFileSvcData.pending, (state) => {
+        state.loadingStatus = 'loading';
+      })
       .addCase(importDataValidation.pending, (state) => {
         state.loadingStatus = 'loading';
       })
@@ -165,6 +186,10 @@ export const namedUserItemSlice = createSlice({
         state.loadingStatus = 'loaded';
       })
       .addCase(fetchNamedUserTotalAmountOfItems.fulfilled, (state, action) => { 
+        namedUserItemAdapter.updateOne(state, action.payload); 
+        state.loadingStatus = 'loaded';
+      })
+      .addCase(fetchAssocitedFileSvcData.fulfilled, (state, action) => { 
         namedUserItemAdapter.updateOne(state, action.payload); 
         state.loadingStatus = 'loaded';
       })
@@ -187,6 +212,10 @@ export const namedUserItemSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(fetchNamedUserTotalAmountOfItems.rejected, (state, action) => {
+        state.loadingStatus = 'error';
+        state.error = action.error.message;
+      })
+      .addCase(fetchAssocitedFileSvcData.rejected, (state, action) => {
         state.loadingStatus = 'error';
         state.error = action.error.message;
       })
