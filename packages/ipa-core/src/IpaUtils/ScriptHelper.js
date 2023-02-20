@@ -163,14 +163,14 @@ function getScriptOperators() {
 function isProjectNextGenJs() {
   const sessionProject = JSON.parse(sessionStorage.getItem('project'))
   console.log("sessionProject", sessionProject)
-  console.log("sessionProject._userAttributes.nextScriptEngine", sessionProject._userAttributes.nextScriptEngine)
   if(sessionProject._userAttributes.hasOwnProperty('nextScriptEngine')) {
+    console.log("sessionProject._userAttributes.nextScriptEngine", sessionProject._userAttributes.nextScriptEngine)
     return sessionProject._userAttributes.nextScriptEngine  
   }
-  else {  
+  else {
     const currentProject = IafProj.getCurrent()
     console.log("currentProject", currentProject)
-    return (currentProject._userAttributes.nextScriptEngine ? currentProject._userAttributes.nextScriptEngine : false)
+    return (currentProject?._userAttributes?.nextScriptEngine ? currentProject._userAttributes.nextScriptEngine : false)
   }
 }
 
