@@ -11,6 +11,7 @@ import GenericIframe from './GenericIframe'
 import MiniButton, {MiniIconButton} from './MiniButton'
 import {AdvancedSearch} from "./AdvancedSearch";
 import BigButtonBar from "./BigButtonBar";
+import BaseTextInput from "./BaseTextInput";
 import CompactButtonBar from "./CompactButtonBar";
 import {defaultTheme, DynamicAttributeInput} from "./DynamicAttributeInput";
 import {EnhancedPickListSelect} from "./EnhancedPickListSelect";
@@ -53,6 +54,7 @@ const IpaControls = {
     AlertIndicator,
     AdvancedSearch,
     BigButtonBar,
+    BaseTextInput,
     ChartStack,
     RoundCheckbox,
     SquareInSquareCheckbox,

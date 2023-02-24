@@ -20,7 +20,9 @@ import * as PropTypes from 'prop-types';
 import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
-import {IafSession, IafProj, IafDataSource, IafScriptEngine} from '@invicara/platform-api';
+import {IafSession, IafProj, IafDataSource} from '@invicara/platform-api';
+import {IafScriptEngine} from '@invicara/iaf-script-engine';
+console.log("IafScriptEngine", IafScriptEngine)
 import { expression } from '@invicara/expressions'
 
 import EmptyConfig, {actualPage} from './emptyConfig';
@@ -55,7 +57,7 @@ class AppProvider extends React.Component {
     let authRoot = endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot
     if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/'
 
-    
+
     let appId = endPointConfig?.applicationId ? endPointConfig.applicationId : this.props.ipaConfig?.applicationId
     if (!appId) console.error('Application ID missing from endPointConfig or ipaConfig')
 
@@ -82,8 +84,8 @@ class AppProvider extends React.Component {
         pageGroups: []
       },
       selectedItems: localStorage.ipadt_selectedItems
-        ? JSON.parse(localStorage.ipadt_selectedItems)
-        : {},
+          ? JSON.parse(localStorage.ipadt_selectedItems)
+          : {},
       actions: {
         reloadConfig: this.initialize.bind(this, false),
         restartApp: this.initialize.bind(this),
@@ -190,8 +192,8 @@ class AppProvider extends React.Component {
     // end
 
     document.getElementById('BottomPanel').style.display = wasOpen
-      ? 'none'
-      : 'block';
+        ? 'none'
+        : 'block';
     document.getElementById('BottomPanel').style.height = this.defaultBottomPanelHeight;
 
     this.context.ifefSnapper.toggle('bottom');
@@ -236,7 +238,7 @@ class AppProvider extends React.Component {
     }
     else if (page.endsWith('#')){
       if (!pagesHavePositions)
-          return config.handlers[actualPage(config, pageNames[0]).handler];
+        return config.handlers[actualPage(config, pageNames[0]).handler];
       else {
         let lowestPos = pagesConfig[pageNames[0]].position;
         let lowestHandler = actualPage(config, pageNames[0]).handler;
@@ -350,7 +352,7 @@ class AppProvider extends React.Component {
       if (scriptPlugins) {
         scriptPlugins.forEach((filename) => {
           try {
-            let funcs = require('../../../../../app/ipaCore/scriptPlugins/' + filename)
+            let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
             for (let fnName in funcs) {
               addScriptFunction(funcs[fnName])
             }
@@ -376,7 +378,7 @@ class AppProvider extends React.Component {
       if (this.props.ipaConfig && this.props.ipaConfig.redux && this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
         this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
           try {
-            let slice = require('../../../../../app/ipaCore/redux/' + sliceFile.file).default
+            let slice = require('../../../../app/ipaCore/redux/' + sliceFile.file).default
             let newReducer = addReducerSlice({name: sliceFile.name, slice: slice})
             store.replaceReducer(newReducer)
           } catch(e) {
@@ -403,7 +405,7 @@ class AppProvider extends React.Component {
           let dashComponents = []
           this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
             try {
-              let dashComp = require('../../../../../app/ipaCore/components/' + dashCompFile.file).default
+              let dashComp = require('../../../../app/ipaCore/components/' + dashCompFile.file).default
               dashComponents.push({name: dashCompFile.name, component: dashComp})
             } catch(e) {
               console.error(e)
@@ -426,7 +428,7 @@ class AppProvider extends React.Component {
           let entityActionComponents = []
           this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
             try {
-              let actComp = require('../../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
+              let actComp = require('../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
               entityActionComponents.push({name: actionCompFile.name, component: actComp})
             } catch(e) {
               console.error(e)
@@ -440,7 +442,7 @@ class AppProvider extends React.Component {
           let entityDataComponents = []
           this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
             try {
-              let dataComp = require('../../../../../app/ipaCore/components/'+ dataCompFile.file)
+              let dataComp = require('../../../../app/ipaCore/components/'+ dataCompFile.file)
               let dataCompFactory = dataComp[dataCompFile.name+'Factory']
               entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
             } catch(e) {
@@ -464,25 +466,25 @@ class AppProvider extends React.Component {
           let projects = await IafProj.getProjects({_pageSize: 1000});
           if (showProjectPicker)
             self.context.ifefShowModal(
-              <ProjectPickerModal
-              configUserType={this.props.ipaConfig.configUserType}
-              referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
-              appContextProps={this.state}
-              defaultConfig={EmptyConfig}
-              onAcceptInvite={this.state.actions.restartApp}
-              projects={projects}
-              testConfig={self.testConfig}
-              onConfigLoad={callback}
-              onCancel={() => self.context.ifefShowModal(false)}
-              referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
-                restartApp={this.state.actions.restartApp}
-                onCancel={() => {
-                  this.setState((prev) => {
-                    return { ...prev, isshowProjectPickerModal: true };
-                  });
-                }}
-              />) }
-            />);
+                <ProjectPickerModal
+                    configUserType={this.props.ipaConfig.configUserType}
+                    referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
+                    appContextProps={this.state}
+                    defaultConfig={EmptyConfig}
+                    onAcceptInvite={this.state.actions.restartApp}
+                    projects={projects}
+                    testConfig={self.testConfig}
+                    onConfigLoad={callback}
+                    onCancel={() => self.context.ifefShowModal(false)}
+                    referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
+                        restartApp={this.state.actions.restartApp}
+                        onCancel={() => {
+                          this.setState((prev) => {
+                            return { ...prev, isshowProjectPickerModal: true };
+                          });
+                        }}
+                    />) }
+                />);
         } catch (error) {
           console.log(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
@@ -492,7 +494,7 @@ class AppProvider extends React.Component {
       if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
         this.props.ipaConfig.css.forEach((styleSheet) => {
           try {
-            let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
+            let customCss = require('../../../../app/ipaCore/css/'+ styleSheet)
           } catch(e) {}
         })
       }
@@ -509,26 +511,26 @@ class AppProvider extends React.Component {
   }
 
   async onConfigLoad(config, routes, token, user) {
-    
+
     function hasSisenseConnectors(config) {
       if (config.connectors) {
-  
+
         let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
         if (sisenseConnector) {
-  
+
           let sisUrl = sisenseConnector.config.url
           let lastChar = sisUrl.slice(-1)
           if (lastChar === '/' || lastChar === '\\')
             sisUrl = sisUrl.slice(0, -1)
-  
+
           sessionStorage.setItem('sisenseBaseUrl', sisUrl)
           return sisUrl
         }
         else return false
-  
+
       } else return false
     }
-    
+
     //console.log(config, routes)
     //console.log("APP PROVIDER WILL SET USER CONFIG",{...config});
 
@@ -581,16 +583,16 @@ class AppProvider extends React.Component {
           const orchId = sisenseSSOOrch.id;
 
           const params = {
-              orchestratorId: orchId,
-              _actualparams: [
-                  {
-                      sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
-                      params: {
-                          userGroupId: this.state.selectedItems.selectedUserGroupId,
-                          projectNamespace: this.state.selectedItems.selectedProject._namespaces[0]
-                      }
-                  }
-              ]
+            orchestratorId: orchId,
+            _actualparams: [
+              {
+                sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
+                params: {
+                  userGroupId: this.state.selectedItems.selectedUserGroupId,
+                  projectNamespace: this.state.selectedItems.selectedProject._namespaces[0]
+                }
+              }
+            ]
           }
 
           const orchResult = await IafDataSource.runOrchestrator(orchId, params);
@@ -642,20 +644,20 @@ class AppProvider extends React.Component {
 
       this.setState({isLoading: false});
 
-    // Eval the "autoeval" script for any bootstrap setup of app.
-    if (config.scripts && config.scripts.autoeval) {
-      if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
-    }
-    
+      // Eval the "autoeval" script for any bootstrap setup of app.
+      if (config.scripts && config.scripts.autoeval) {
+        if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
+      }
+
     } else {
-        //This is state where the user has an account but no accepted invites
-        if (routes)
-          this.setState({
-            router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
-          });
+      //This is state where the user has an account but no accepted invites
+      if (routes)
         this.setState({
-          isLoading: false
+          router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
         });
+      this.setState({
+        isLoading: false
+      });
     }
 
 
@@ -674,7 +676,7 @@ class AppProvider extends React.Component {
     window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
   }
 
-  
+
 
   render() {
     //console.log("APP PROVIDER RE-RENDERS");
@@ -717,7 +719,7 @@ async function calculateRoutes(config, ipaConfig) {
 
     let component
     try {
-      component = require('../../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
+      component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
       component = asIpaPage(component, pageComponentProps)
       console.log(pageComponent + ' loaded from application')
     } catch(e) {

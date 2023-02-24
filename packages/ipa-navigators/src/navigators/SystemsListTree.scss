@@ -1,0 +1,25 @@
+.systems-list-tree {
+
+    .fancy-tree {
+        --tree-padding-left: 0em;
+        --connector-left: -0.19em;
+        --channel-margin-top: 0em;
+        --channel-height-hack: 28px;
+        --channel-connector-border-radius: 0 0 0 1em;
+        --channel-connector-width: 0.75em;
+        --channel-connector-height: 1.5em;
+        --channel-connector-top: 1.5em;
+        --channel-connector-left: -0.25em;
+    }
+
+    .viewer-toggle {
+        display: inline-flex;
+        align-items: center;
+        background: white;
+        font-size: 12px;
+        justify-content: flex-end;
+        margin-right: 0px;
+        margin-bottom: 0px;
+    }
+
+}

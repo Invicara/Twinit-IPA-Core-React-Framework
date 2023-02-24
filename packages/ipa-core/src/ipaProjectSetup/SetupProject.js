@@ -1,6 +1,7 @@
 import React from "react";
 import { IafProj, IafSession, IafScripts } from "@invicara/platform-api";
 import * as PlatformApi from "@invicara/platform-api";
+import {IafScriptEngine} from '@invicara/iaf-script-engine';
 import _ from "lodash";
 import GenericModal from "../IpaDialogs/GenericModal";
 import "../IpaDialogs/ProjectPickerModal.scss";
@@ -81,7 +82,7 @@ export default class SetUpProject extends React.Component {
     // Get Project Module
     let ctx = { _namespaces: project._list[0]._namespaces };
     ctx.authToken = IafSession.getAuthToken();
-    let module = await PlatformApi.IafScriptEngine.dynamicImport(
+    let module = await IafScriptEngine.dynamicImport(
       { query: { _userType: "iaf_ext_proj_setup" } },
       ctx
     );
@@ -90,7 +91,7 @@ export default class SetUpProject extends React.Component {
     scripts = module.default.getRunnableScripts();
     let pApi = PlatformApi;
     let uiUtils = UiUtils;
-    let IafApi = PlatformApi.IafScriptEngine;
+    let IafApi = IafScriptEngine;
     let ProjectSetupCallBack = this.props.restartApp;
     console.log("PlatformApi", pApi);
     console.log("UIUtils", uiUtils);

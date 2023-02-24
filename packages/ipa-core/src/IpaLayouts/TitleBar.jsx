@@ -55,7 +55,7 @@ export default class TitleBar extends React.Component {
                             <LinkedIcon customClass={'session-item'} clickHandler={this.props.parent.props.userLogout} iconClasses={'ipa-icon-svg'} iconImg={IconLogout} linkText={'Logout'}/>
                             <LinkedIcon customClass={'session-item'} clickHandler={goToUserAccount} iconClasses={'ipa-icon-svg'} iconImg={IconUser} linkText={this.props.contextProps.user._firstname + " " + this.props.contextProps.user._lastname}/>
 
-                            <div className={'session-item'}>{version.package}</div>
+                            <div className={'session-item'}>{version?.version}</div>
                         </div>
                     </div>                    
                 </div>

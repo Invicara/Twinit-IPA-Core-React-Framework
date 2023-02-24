@@ -1,0 +1,17 @@
+{
+  "appName": "Invicara DT Storybook",
+  "applicationId": "0f02c817-8655-423e-9d22-5439187078f9",
+  "configUserType": "ipa-dt",
+  "redux": {
+    "slices": [
+      {"name": "viewSystems", "file": "slices/systems.js"}
+    ]
+  },
+  "referenceAppConfig" : {},
+
+  "access_token" : null,
+  "project_name" : "Test JS",
+  "user_group_name": "Solutions Mgmt",
+  "user_config_name": null
+
+}
