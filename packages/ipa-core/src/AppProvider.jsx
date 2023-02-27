@@ -474,6 +474,7 @@ class AppProvider extends React.Component {
                     onAcceptInvite={this.state.actions.restartApp}
                     projects={projects}
                     testConfig={self.testConfig}
+                    userLogout = {this.state.actions.userLogout}
                     onConfigLoad={callback}
                     onCancel={() => self.context.ifefShowModal(false)}
                     referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
