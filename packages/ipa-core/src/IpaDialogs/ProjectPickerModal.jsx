@@ -380,6 +380,7 @@ export default class ProjectPickerModal extends React.Component {
               <div>
                 You are not yet a member of any projects, please
                 {(!currentInvites || currentInvites.length === 0) && <span> contact your project admin for an invite</span>}
+
                 {this.props.referenceAppConfig?.refApp && (
             <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
               Create Project
@@ -402,6 +403,9 @@ export default class ProjectPickerModal extends React.Component {
                     Reference App, please contact the Admin.
                   </span>
                 </div>
+                <button onClick={()=>this.props.userLogout()}>
+                  Logout
+                </button>
               </>
             ) : (
               <></>
