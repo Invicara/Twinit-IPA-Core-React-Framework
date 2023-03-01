@@ -1,0 +1,71 @@
+/* BASE WHITE SVG's */
+$inv-icon-assets-url:        '/digitaltwin/icons/icon-assets.svg';
+$inv-icon-docs-url:          '/digitaltwin/icons/icon-docs.svg';
+$inv-icon-download-url:      '/digitaltwin/icons/icon-download.svg';
+$inv-icon-logout-url:        '/digitaltwin/icons/icon-logout.svg';
+$inv-icon-reports-url:       '/digitaltwin/icons/icon-reports.svg';
+$inv-icon-spaces-url:        '/digitaltwin/icons/icon-spaces.svg';
+$inv-icon-user-url:          '/digitaltwin/icons/icon-user.svg';
+$inv-icon-smartBuilding-url: '/digitaltwin/icons/icon-smartBuilding.svg';
+$inv-icon-nav-url:           '/digitaltwin/icons/icon-nav.svg';
+
+.inv-icon-assets   { background-image: url($inv-icon-assets-url); }
+.inv-icon-docs     { background-image: url($inv-icon-docs-url); }
+.inv-icon-download { background-image: url($inv-icon-download-url); }
+.inv-icon-logout   { background-image: url($inv-icon-logout-url); }
+.inv-icon-reports  { background-image: url($inv-icon-reports-url); }
+.inv-icon-spaces   { background-image: url($inv-icon-spaces-url); }
+.inv-icon-user     { background-image: url($inv-icon-user-url); }
+.inv-icon-smartBuilding { background-image: url($inv-icon-smartBuilding-url); }
+.inv-icon-nav      { background-image: url($inv-icon-nav-url); }
+
+/**
+  tweaked size and position to avoid clipping
+ */
+.inv-icon-smartBuilding {
+  background-size: 36px;
+  background-position-x: -2px;
+}
+
+.inv-icon-nav {
+  background-size: 40px;
+  background-position: -5px;
+}
+
+
+@mixin icon-masked($icon-svg-url) {
+  -webkit-mask-image: url($icon-svg-url);
+  mask-image: url($icon-svg-url);
+}
+
+.inv-icon__masked {
+  /*remove background image and use mask instead*/
+  background-image: none;
+  &.inv-icon-assets   { @include icon-masked($inv-icon-assets-url);}
+  &.inv-icon-docs     { @include icon-masked($inv-icon-docs-url); }
+  &.inv-icon-download { @include icon-masked($inv-icon-download-url); }
+  &.inv-icon-logout   { @include icon-masked($inv-icon-logout-url); }
+  &.inv-icon-reports  { @include icon-masked($inv-icon-reports-url); }
+  &.inv-icon-spaces   { @include icon-masked($inv-icon-spaces-url); }
+  &.inv-icon-user     { @include icon-masked($inv-icon-user-url); }
+  &.inv-icon-smartBuilding { @include icon-masked($inv-icon-smartBuilding-url); }
+  &.inv-icon-nav { @include icon-masked($inv-icon-nav-url); }
+
+  &.inv-icon-svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/*
+Colored icons not through the mask
+*/
+.inv-icon-assets.purple { background-image: url(/digitaltwin/icons/icon-assets-purple.svg); }
+.inv-icon-docs.purple { background-image: url(/digitaltwin/icons/icon-docs-purple.svg); }
+.inv-icon-download.purple { background-image: url(/digitaltwin/icons/icon-download-purple.svg); }
+.inv-icon-logout.purple { background-image: url(/digitaltwin/icons/icon-logout-purple.svg); }
+.inv-icon-reports.purple { background-image: url(/digitaltwin/icons/icon-reports-purple.svg); }
+.inv-icon-spaces.purple { background-image: url(/digitaltwin/icons/icon-spaces-purple.svg); }
+.inv-icon-user.purple { background-image: url(/digitaltwin/icons/icon-user-purple.svg); }
+.inv-icon-smartBuilding.purple { background-image: url(/digitaltwin/icons/icon-smartBuilding-purple.svg); }
+.inv-icon-nav.purple{ background-image: url(/digitaltwin/icons/icon-nav-purple.svg); }

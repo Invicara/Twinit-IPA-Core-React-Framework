@@ -11,6 +11,7 @@ import {
     selectEntitiesFromModels,
     setEntities,
     setIsolatedEntities,
+    setSelectedEntities,
     setViewerSyncOn,
     getSnapshot
 } from "./slices/entities";
@@ -41,6 +42,7 @@ import {
     SelectNamedUserItemsErrorStatus, fileImport, SelectNamedUserItemsImportStatus
 } from "./slices/named-user-item.slice";
 import { addEntityComponents } from "./slices/entityUI"
+import store  from '../redux/store'
 
 const redux = {
     Entities: {
@@ -56,6 +58,7 @@ const redux = {
         isSelectingEntities,
         setEntities,
         setIsolatedEntities,
+        setSelectedEntities,
         setViewerSyncOn,
         getSnapshot
     },
@@ -96,7 +99,8 @@ const redux = {
     }, 
     EntityUi: {
         addEntityComponents
-    }
+    },
+    store: store
 }
 
 export default redux
