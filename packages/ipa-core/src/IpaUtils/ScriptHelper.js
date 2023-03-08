@@ -5,6 +5,8 @@ import { expression, sift } from '@invicara/expressions';
 import * as PlatformApi from '@invicara/platform-api'
 import * as UiUtils from '@invicara/ui-utils'
 
+import _ from 'lodash'
+
 async function loadScript(query, ctx) {
   console.log('loadScript query', query)
   if (!query) {
