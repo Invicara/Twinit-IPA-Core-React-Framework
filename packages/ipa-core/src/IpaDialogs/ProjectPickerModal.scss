@@ -9,7 +9,8 @@ button {
   border-radius: 15px;
   padding: 5px;
   width: 40%;
-  margin: 20px;
+  margin: 5px;
+  margin-top: 20px !important;
   border: solid black 2px;
 
 }
@@ -25,19 +26,19 @@ button.default-cancel {
   }
 button.setup {
   color: white;
-  width: 25% !important;
+  width: 23% !important;
   background-color: var(--app-accent-color);
   border-color: var(--app-accent-color);
 }
 button.cancel{
-  width: 25% !important;
+  width: 23% !important;
   color: $light-grey;
   background-color: white;
   border-color: $light-grey;
 }
 button.load {
   color: white;
-  width: 25% !important;
+  width: 23% !important;
   background-color: var(--app-accent-color);
   border-color: var(--app-accent-color);
 }
@@ -72,4 +73,16 @@ button.load {
       background-color: var(--app-accent-color);
     }
   
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .button-container {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
   }
