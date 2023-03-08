@@ -317,6 +317,14 @@ export default class ProjectPickerModal extends React.Component {
                 <input type="checkbox" className="custom-control-input" id="remswitch" value={remember} checked={remember} onChange={this.onRememberChange.bind(this)}/>
                 <label className="custom-control-label" htmlFor="remswitch">Remember my choice</label>
           </div>
+          <div className='button-container'>
+          {this.props.referenceAppConfig?.refApp &&
+          <button onClick={()=>this.props.userLogout()} className={
+              this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"
+            }>
+                  Logout
+                </button>
+          }
           <button
             onClick={onCancel}
             className={
@@ -338,6 +346,7 @@ export default class ProjectPickerModal extends React.Component {
               Create Project
             </button>
           )}
+          </div>
         </div>
       ) : <div className="spinningLoadingIcon projectLoadingIcon"></div>;
     //TODO handle user modal manual close -> load default config
@@ -380,11 +389,12 @@ export default class ProjectPickerModal extends React.Component {
               <div>
                 You are not yet a member of any projects, please
                 {(!currentInvites || currentInvites.length === 0) && <span> contact your project admin for an invite</span>}
-                {this.props.referenceAppConfig?.refApp && (
+
+                {/* {this.props.referenceAppConfig?.refApp && (
             <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
               Create Project
             </button>
-          )}
+          )} */}
                 {(currentInvites && currentInvites.length > 0) && <span> accept an invite</span>}
               </div>
             }
