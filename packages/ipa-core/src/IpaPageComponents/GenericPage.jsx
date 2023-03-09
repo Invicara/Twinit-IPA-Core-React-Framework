@@ -406,7 +406,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       if (!_.isEqual(queryParams, this.state.queryParams)) {
         this.setState({ queryParams });
       } else {
-        this.setState({ queryParams: {} });
+        // this.setState({ queryParams: {} }); //commenting this as is breaking queryparams for document viewer
       }
 
     }
