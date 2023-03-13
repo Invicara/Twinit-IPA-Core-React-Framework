@@ -9,6 +9,7 @@ import CrossEntitySearch from "../../IpaControls/CrossEntitySearch";
 import GenericIframe from "../../IpaControls/GenericIframe";
 import ScriptedAlertTable from '../../IpaControls/AlertTable/ScriptedAlertTable'
 import ScriptedDocumentTable from "../../IpaPageComponents/files/ScriptedDocumentTable";
+import StandaloneDocumentTable from "../../IpaPageComponents/files/StandaloneDocumentTable";
 
 const DASHBOARD_COMPONENTS = {
   "ChartTestPage": ChartTestPage,
@@ -19,7 +20,8 @@ const DASHBOARD_COMPONENTS = {
   "Image": Image,
   "Iframe": GenericIframe,
   "ScriptedAlertTable": ScriptedAlertTable,
-  "ScriptedDocumentTable": ScriptedDocumentTable
+  "ScriptedDocumentTable": ScriptedDocumentTable, 
+  "StandaloneDocumentTable": StandaloneDocumentTable
 }
 
 let applicatonDashboardComponents = {}

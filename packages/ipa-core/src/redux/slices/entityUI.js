@@ -16,10 +16,13 @@ import {ImageFactory} from "../../IpaControls/Image";
 import {ScriptedChartFactory} from "../../IpaControls/ScriptedChart";
 import {SimpleTabbedTableFactory, SimpleTableFactory, SimpleTableGroupFactory} from "../../IpaControls/private/simple-table";
 import {ScriptedDocumentTableFactory} from '../../IpaPageComponents/files/ScriptedDocumentTable';
+import {StandaloneDocumentTableFactory} from '../../IpaPageComponents/files/StandaloneDocumentTable';
+
 
 const ENTITY_DATA_COMPONENTS = {
   "SimpleTable": SimpleTableFactory,
   "ScriptedDocumentTable": ScriptedDocumentTableFactory,
+  "StandaloneDocumentTable": StandaloneDocumentTableFactory,
   "SimpleTableGroup": SimpleTableGroupFactory,
   "SimpleTabbedTable": SimpleTabbedTableFactory,
   "Image": ImageFactory,
@@ -94,7 +97,6 @@ export const getEntityDataComponent = (componentName) => (dispatch, getState) =>
   let component = null
   component = applicatonDataComponents[componentName]
   if (!component) component = ENTITY_DATA_COMPONENTS[componentName]
-  
   return component
   
 }
