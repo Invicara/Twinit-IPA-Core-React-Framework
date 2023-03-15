@@ -86,7 +86,7 @@ const withEntitySearch = WrappedComponent => {
                 // dealing with another type of entities, that means we can't use the query from the source page so we
                 // run a query to select those ids directly and keep the original sender ...
                 else if (_.includes(this.props.allowedEntityTypes, queryParams.entityType) &&
-                    (!queryParams.senderEntityType || queryParams.entityType === queryParams.senderEntityType) &&
+                    (!queryParams.senderEntityType || queryParams.entityType !== queryParams.senderEntityType) &&
                     queryParams.selectedEntities
                     //this check is important not to mess with store
                     && queryParams.entityType === this.props.entitySingular) {
