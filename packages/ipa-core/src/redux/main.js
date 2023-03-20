@@ -13,7 +13,12 @@ import {
     setIsolatedEntities,
     setSelectedEntities,
     setViewerSyncOn,
-    getSnapshot
+    getSnapshot,
+    getFilteredEntities,
+    getAppliedGroups,
+    fetchEntities,
+    resetEntities,
+    setCurrentEntityType
 } from "./slices/entities";
 
 import * as modal from './slices/modal'
@@ -41,11 +46,16 @@ import {
     fetchNamedUserTotalAmountOfItems, importDataValidation, 
     SelectNamedUserItemsErrorStatus, fileImport, SelectNamedUserItemsImportStatus
 } from "./slices/named-user-item.slice";
-import { addEntityComponents } from "./slices/entityUI"
+import { addEntityComponents, getEntityDataComponent } from "./slices/entityUI"
 import store  from '../redux/store'
 
 const redux = {
-    Entities: {
+    Entities: { 
+        getFilteredEntities,
+        getAppliedGroups,
+        fetchEntities,
+        resetEntities,
+        setCurrentEntityType,
         getCurrentEntityType,
         getIsolatedEntities,
         getSelectedEntities,
@@ -98,7 +108,8 @@ const redux = {
         fileImport
     }, 
     EntityUi: {
-        addEntityComponents
+        addEntityComponents,
+        getEntityDataComponent
     },
     store: store
 }
