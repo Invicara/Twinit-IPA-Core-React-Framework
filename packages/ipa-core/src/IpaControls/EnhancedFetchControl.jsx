@@ -12,12 +12,21 @@ class EnhancedFetchControl extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState){
-        if(!_.isEqual(_.sortBy(prevProps.selectors), _.sortBy(this.props.selectors))){
-            this.setState(this.getInitialState(prevState))
+
+        const selectorsChanged = !_.isEqual(_.sortBy(prevProps.selectors), _.sortBy(this.props.selectors))
+
+        if(selectorsChanged){
+            this.setState(this.getInitialState())
+        }
+
+        const shouldClearSelectorsValues = !_.isEqual(prevProps.shouldClearToken, this.props.shouldClearToken);
+
+        if(shouldClearSelectorsValues) {
+            this.setState(this.getInitialState());
         }
     }
 
-    getInitialState(previousState){
+    getInitialState(){
         return {
             currentSelectorId: -1,
             selectorsMap: this.resetSelectorsMap(this.props.selectors, this.props.initialValue),
