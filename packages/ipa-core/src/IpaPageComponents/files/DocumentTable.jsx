@@ -59,14 +59,14 @@ const DocumentTable = props => {
 
   useEffect(() => {
     if (sort && !_.isEmpty(sort.currentColumn)) {
-      let newDocuments = _.sortBy(documents, a => {
+      let newDocuments = _.sortBy(props.documents, a => {
         if (_.includes(sort.currentColumn, 'properties.')) return a.documentData[`${sort.currentColumn}.val`]
         else return a.documentData[sort.currentColumn]
       })
       if (sort && sort.isDescending) newDocuments = _.reverse(newDocuments)
       setDocuments(newDocuments)
     }
-    if (props.documents.length > 1) {
+    if (props.documents.length > 0) {
       let newDocs = props.documents
       if(newDocs.length != documents.length){
          setDocuments(newDocs)
