@@ -56,12 +56,11 @@ export const fetchNamedUserItemItems = createAsyncThunk(
             }
         }, ctx)
     } else{
-      return ScriptHelper.executeScript(scriptName, userItemId)  // Should the input that is passed through be an object? (Scott's best practices)
+      return ScriptHelper.executeScript(scriptName, userItemId)
     };
   }
 );
 
-// Making 16 seperate calls to api for each collection, find a way to make one call and get back info for all collections
 export const fetchNamedUserTotalAmountOfItems = createAsyncThunk( 
   'namedUserItemTotalItems/fetchStatus',
   async (args, thunkAPI) => {
@@ -143,7 +142,7 @@ export const importDataValidation = createAsyncThunk(
   'importData/ValidationStatus',
   async (args, thunkAPI) => {
     const {valScriptName, importFileResult} = args
-    return ScriptHelper.executeScript(valScriptName, {thunkAPI, importFileResult}) 
+    return await ScriptHelper.executeScript(valScriptName, {thunkAPI, importFileResult})
   }
 );
 
