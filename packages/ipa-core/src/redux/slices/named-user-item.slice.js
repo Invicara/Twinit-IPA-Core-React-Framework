@@ -4,12 +4,8 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
-<<<<<<< HEAD
 import {IafItemSvc} from "@invicara/platform-api";
 import {IafScriptEngine} from '@invicara/iaf-script-engine';
-=======
-import {IafItemSvc, IafScriptEngine, IafFileSvc} from "@invicara/platform-api";
->>>>>>> 6294efc ([DBM-1722] Relate files to fileSvc)
 import ScriptHelper from '../../IpaUtils/ScriptHelper';
 import _ from 'lodash';
 
