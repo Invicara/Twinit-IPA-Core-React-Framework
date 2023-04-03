@@ -18,7 +18,11 @@ import {
     getAppliedGroups,
     fetchEntities,
     resetEntities,
-    setCurrentEntityType
+    setCurrentEntityType,
+    resetForFilteringAndGrouping,
+    applyFiltering,
+    applyGrouping,
+    resetFiltering
 } from "./slices/entities";
 
 import * as modal from './slices/modal'
@@ -70,7 +74,11 @@ const redux = {
         setIsolatedEntities,
         setSelectedEntities,
         setViewerSyncOn,
-        getSnapshot
+        getSnapshot,
+        resetForFilteringAndGrouping,
+        applyFiltering,
+        applyGrouping,
+        resetFiltering
     },
     EntitiesPluggableSearch: {
         getAllCurrentSearchedEntities,
