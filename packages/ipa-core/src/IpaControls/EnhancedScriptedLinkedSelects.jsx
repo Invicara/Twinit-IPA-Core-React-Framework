@@ -58,6 +58,8 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
                 previousSelectsValues ? {input: flattenIfNotMulti(previousSelectsValues, selects)} : undefined
             );  
 
+            selectOptions = selectOptions || [];
+
             newSelects = {
                 ...selects,
                 [nextSelect.display]: {...nextSelect, options: selectOptions.sort((a, b) => a.localeCompare(b))}
