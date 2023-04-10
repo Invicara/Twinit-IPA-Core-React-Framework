@@ -22,7 +22,8 @@ import {
     resetForFilteringAndGrouping,
     applyFiltering,
     applyGrouping,
-    resetFiltering
+    resetFiltering,
+    setSelecting
 } from "./slices/entities";
 
 import * as modal from './slices/modal'
@@ -78,7 +79,8 @@ const redux = {
         resetForFilteringAndGrouping,
         applyFiltering,
         applyGrouping,
-        resetFiltering
+        resetFiltering,
+        setSelecting
     },
     EntitiesPluggableSearch: {
         getAllCurrentSearchedEntities,
