@@ -651,6 +651,14 @@ class AppProvider extends React.Component {
         if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
       }
 
+      //Load all custom styles from userConfig
+      if(config.settings?.styles) {
+        var r = document.querySelector(':root');
+        Object.entries(config.settings.styles).map(([key, value]) => {
+          r.style.setProperty(key, value)
+        })
+      }
+
     } else {
       //This is state where the user has an account but no accepted invites
       if (routes)
