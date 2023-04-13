@@ -1,7 +1,7 @@
 import React from "react";
 import { IafProj, IafSession, IafScripts } from "@invicara/platform-api";
 import * as PlatformApi from "@invicara/platform-api";
-import {IafScriptEngine} from '@invicara/iaf-script-engine';
+import { IafScriptEngine } from "@invicara/iaf-script-engine";
 import _ from "lodash";
 import GenericModal from "../IpaDialogs/GenericModal";
 import "../IpaDialogs/ProjectPickerModal.scss";
@@ -19,8 +19,11 @@ export default class SetUpProject extends React.Component {
         _userAttributes: { nextScriptEngine: true },
         click: false,
       },
+      projects: [],
       ProjSetupModule: undefined,
       scripts: undefined,
+      open: false,
+      isDeleting: false,
     };
     this.ref = React.createRef();
   }
@@ -30,13 +33,28 @@ export default class SetUpProject extends React.Component {
     this.setState({ project: { ...this.state.project, [id]: value } });
   };
 
-  handleProjectSetUp = async (e,  restartApp) => {
-    e.preventDefault();
-    this.setState({ click: true });
+  async deletePreviousProject() {
+    const { projects } = this.props;
+    this.setState({ isDeleting: true });
+    if(projects !== undefined){
+    for (let index = 0; index < projects.length; index++) {
+      await IafProj.delete(projects[index]);
+    }
+  }
+    this.setState({ isDeleting: false });
+  }
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleProjectSetUp = async (e, restartApp) => {
+    await this.deletePreviousProject();
+    this.setState({ click: true, open: false });
+    let scriptFile = await UiUtils.IafLocalFile.selectFiles({ accept: ".zip" });
     let project = await IafProj.createProject(this.state.project);
     console.log(project);
     await IafProj.switchProject(project._list[0]._id);
-    let scriptFile = await UiUtils.IafLocalFile.selectFiles({ accept: ".zip" });
     let x = scriptFile;
     let y = x[0];
     document.getElementById("msg").innerHTML =
@@ -114,94 +132,115 @@ export default class SetUpProject extends React.Component {
   render() {
     const title = <span>Setup Project</span>;
     return (
-      <GenericModal
-        title={title}
-        modalBody={
-          <div className="project-picker-modal">
-            <form style={{ width: "100%" }} onSubmit={this.handleProjectSetUp}>
-              <div style={{ margin: "9px 0" }}>
-                <label>Name</label>
-                <mobiscroll.Input
-                  style={{ width: "100%" }}
-                  id="_name"
-                  type="text"
-                  placeholder="Name"
-                  name="_name"
-                  required={true}
-                  value={this.state.project._name}
-                  onChange={this.handleInputChange}
-                ></mobiscroll.Input>
-              </div>
-              <div style={{ margin: "9px 0" }}>
-                <label>Short Name</label>
+      <div>
+        <GenericModal
+          title={title}
+          modalBody={
+            <div className="project-picker-modal">
+              {!this.state.open && (
+                <form style={{ width: "100%" }} onSubmit={this.handleClickOpen}>
+                  <div style={{ margin: "9px 0" }}>
+                    <label>Name</label>
+                    <mobiscroll.Input
+                      style={{ width: "100%" }}
+                      id="_name"
+                      type="text"
+                      placeholder="Name"
+                      name="_name"
+                      required={true}
+                      value={this.state.project._name}
+                      onChange={this.handleInputChange}
+                    ></mobiscroll.Input>
+                  </div>
+                  <div style={{ margin: "9px 0" }}>
+                    <label>Short Name</label>
 
-                <mobiscroll.Input
-                  style={{ width: "100%" }}
-                  id="_shortName"
-                  type="text"
-                  placeholder="Short Name"
-                  name="_shortName"
-                  required={true}
-                  value={this.state.project._shortName}
-                  onChange={this.handleInputChange}
-                ></mobiscroll.Input>
-              </div>
-              <div style={{ margin: "9px 0" }}>
-                <label>Description</label>
+                    <mobiscroll.Input
+                      style={{ width: "100%" }}
+                      id="_shortName"
+                      type="text"
+                      placeholder="Short Name"
+                      name="_shortName"
+                      required={true}
+                      value={this.state.project._shortName}
+                      onChange={this.handleInputChange}
+                    ></mobiscroll.Input>
+                  </div>
+                  <div style={{ margin: "9px 0" }}>
+                    <label>Description</label>
 
-                <mobiscroll.Input
-                  style={{ width: "100%" }}
-                  id="_description"
-                  type="text"
-                  placeholder="Name"
-                  name="_description"
-                  required={true}
-                  value={this.state.project._description}
-                  onChange={this.handleInputChange}
-                ></mobiscroll.Input>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  padding: "0 2em",
-                }}
-              >
-                {this.state.click ? (
-                  <>
-                    <p id="msg">Please upload zip file</p>
-                    <p id="msg2"></p>
-                    <button
-                      id="donebtn"
-                      style={{ display: "none" }}
-                      onClick={() => {
-                        this.props.restartApp();
-                        document.getElementById("mybtn").click();
-                      }}
-                      classname="load"
-                    >
-                      Done
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => this.props.restartApp()}
-                      className="load"
-                    >
-                      Cancel
-                    </button>
-                    <button type="submit" className="load">
-                      Set up
-                    </button>
-                  </>
-                )}
-              </div>
-            </form>
-          </div>
-        }
-      />
+                    <mobiscroll.Input
+                      style={{ width: "100%" }}
+                      id="_description"
+                      type="text"
+                      placeholder="Name"
+                      name="_description"
+                      required={true}
+                      value={this.state.project._description}
+                      onChange={this.handleInputChange}
+                    ></mobiscroll.Input>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      padding: "0 2em",
+                    }}
+                  >
+                    {this.state.click ? (
+                      <>
+                        <p id="msg">Please upload zip file</p>
+                        <p id="msg2"></p>
+                        <button
+                          id="donebtn"
+                          style={{ display: "none" }}
+                          onClick={() => {
+                            this.props.restartApp();
+                            document.getElementById("mybtn").click();
+                          }}
+                          classname="load"
+                        >
+                          Done
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => this.props.restartApp()}
+                          className="load"
+                        >
+                          Cancel
+                        </button>
+                        <button type="submit" className="load">
+                          Set up
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </form>
+              )}
+              {this.state.open && !this.state.isDeleting ? (
+                <div style={{ float: "left" }}>
+                  By Clicking on Agree button you are confirming that, All
+                  previously created projects and invited projects will get
+                  deleted from your account.
+                  <div>
+                  <button onClick={() => this.props.restartApp()} style={{ float: "left" }}>
+                    Disagree
+                  </button>
+                  <button onClick={this.handleProjectSetUp} style={{ float: "left" }} autoFocus>
+                    Agree
+                  </button>
+                  </div>
+                </div>
+              ) : (
+                <div></div>
+              )}
+            </div>
+          }
+        />
+      </div>
     );
   }
 }

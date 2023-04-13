@@ -479,6 +479,7 @@ class AppProvider extends React.Component {
                     onCancel={() => self.context.ifefShowModal(false)}
                     referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
                         restartApp={this.state.actions.restartApp}
+                        projects={projects}
                         onCancel={() => {
                           this.setState((prev) => {
                             return { ...prev, isshowProjectPickerModal: true };
