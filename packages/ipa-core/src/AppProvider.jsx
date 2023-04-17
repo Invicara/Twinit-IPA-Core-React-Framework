@@ -27,7 +27,7 @@ import { expression } from '@invicara/expressions'
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 
-import StyleVars from "./IpaStyles/styleVars.json";
+import DefaultStyleVars from "./IpaStyles/styleVars.json";
 
 import ProjectPickerModal from "./IpaDialogs/ProjectPickerModal";
 import ScriptHelper from './IpaUtils/ScriptHelper'
@@ -653,7 +653,7 @@ class AppProvider extends React.Component {
         if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
       }
 
-      let rootStyles =  config.settings?.styles || StyleVars;
+      let rootStyles =  config.settings?.styles || this.props.ipaConfig.styleVars || DefaultStyleVars;
 
       //Load all custom styles from userConfig
       if(rootStyles) {
