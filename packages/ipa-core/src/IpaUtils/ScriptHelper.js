@@ -1,4 +1,6 @@
-import { IafProj, IafScriptEngine, IafSession} from "@invicara/platform-api";
+import { IafProj, IafSession} from "@invicara/platform-api";
+import {IafScriptEngine} from "@invicara/iaf-script-engine";
+
 
 import { expression, sift } from '@invicara/expressions';
 
@@ -73,7 +75,7 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback){
       //log console error and throw exception
       console.error(`executeScript "${scriptName}" not found on loadedScripts `)
     } else {
-      let libraries = { PlatformApi, UiUtils }
+      let libraries = { PlatformApi: {...PlatformApi, IafScriptEngine}, UiUtils }
       let result = loadedScripts[scriptName](operand, libraries, ctx, callback);
       if (result && result instanceof Promise) {
           result = await result;
