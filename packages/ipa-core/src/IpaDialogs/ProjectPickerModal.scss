@@ -43,6 +43,13 @@ button.load {
   border-color: var(--app-accent-color);
 }
 
+button.done {
+  color: white;
+  width: 40% !important;
+  background-color: var(--app-accent-color);
+  border-color: var(--app-accent-color);
+}
+
     h4 {
       font-size: 14px;
     }
