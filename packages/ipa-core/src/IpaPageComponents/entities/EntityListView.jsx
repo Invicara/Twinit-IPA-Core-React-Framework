@@ -48,10 +48,10 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
     }
     const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
 
-    const handleColumnClick = useCallback((col) => sortEntitiesBy(col.accessor),[sortEntitiesBy]);
+    const handleColumnClick = useCallback((col) => () => sortEntitiesBy(col.accessor),[sortEntitiesBy]);
 
     const buildHeader = useCallback((col) => {
-        return <div key={col.name} onClick={handleColumnClick} className='header-column'>
+        return <div key={col.name} onClick={handleColumnClick(col)} className='header-column'>
             {col.name} {col.accessor == currentSort.property &&
             <i className={currentSort.order == 'asc' ? "fas fa-angle-double-up" : "fas fa-angle-double-down"}></i>
         }
@@ -78,7 +78,7 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         plural: entityPlural
     }},[entitySingular,entityPlural]);
 
-    return <div className={`entity-list-view-root entity-table ${config.className}`}>
+    return <div className={`entity-list-view-root entity-table ${config?.className || ""}`}>
         {actions && <div className='actions-panel'>
             <EntityActionsPanel
                 actions={actions}
@@ -91,18 +91,18 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
             {`Showing ${entities.length} ${entities.length > 1 ? entityPlural : entitySingular}`}
         </div>
         <div className='header-row'>
-            {config.multiselect && <div className='header-column checkbox'>
+            {config?.multiselect && <div className='header-column checkbox'>
                 <RoundCheckbox checked={allChecked} onChange={handleAllCheck}/>
             </div>}
-            {config.columns.map(col => buildHeader(col))}
+            {config?.columns.map(col => buildHeader(col))}
         </div>
         {_.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order).map(instance => {
             const handleChange = () => handleCheck(instance)
             return <div key={instance._id} className='content-row'>
-                {config.multiselect && <div className='content-column checkbox'>
+                {config?.multiselect && <div className='content-column checkbox'>
                     <RoundCheckbox checked={instance.checked} onChange={handleChange}/>
                 </div>}
-                {config.columns.map(buildCell(instance))}
+                {config?.columns.map(buildCell(instance))}
             </div>})
         }
     </div>

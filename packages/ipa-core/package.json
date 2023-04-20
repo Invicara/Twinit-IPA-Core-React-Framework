@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-core",
-  "version": "2.2.15",
+  "version": "2.3.0",
   "description": "Invicara platform application frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "@invicara/expressions": "~2.2.0",
+    "@invicara/iaf-doc-viewer": "2.2.14",
     "@invicara/platform-api": "2.2.6",
     "@invicara/react-ifef": "~2.2.0",
     "@invicara/script-data": "~2.2.0",
@@ -67,19 +68,20 @@
     "uid": "^2.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.1.2",
-    "@babel/core": "^7.1.2",
-    "@babel/helpers": "^7.1.2",
-    "@babel/plugin-external-helpers": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/plugin-transform-modules-commonjs": "^7.18.2",
-    "@babel/plugin-transform-regenerator": "^7.0.0",
-    "@babel/preset-env": "^7.17.12",
-    "@babel/preset-react": "^7.17.12",
-    "@babel/register": "^7.0.0",
+    "@babel/cli": "~7.18.0",
+    "@babel/core": "~7.18.0",
+    "@babel/generator": "~7.18.0",
+    "@babel/helpers": "~7.18.0",
+    "@babel/plugin-external-helpers": "~7.18.0",
+    "@babel/plugin-proposal-class-properties": "~7.18.0",
+    "@babel/plugin-proposal-object-rest-spread": "~7.18.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.0",
+    "@babel/plugin-transform-regenerator": "~7.18.0",
+    "@babel/preset-env": "^7.18.0",
+    "@babel/preset-react": "~7.18.0",
+    "@babel/register": "~7.18.0",
     "@rollup/plugin-babel": "^5.3.0",
-    "@rollup/plugin-image": "^2.0.6",
+    "@rollup/plugin-image": "^2.1.1",
     "@storybook/addon-actions": "^6.5.5",
     "@storybook/addon-essentials": "^6.5.5",
     "@storybook/addon-interactions": "^6.5.5",
@@ -90,7 +92,7 @@
     "@storybook/react": "^6.5.5",
     "@storybook/testing-library": "0.0.11",
     "@svgr/rollup": "^5.5.0",
-    "@testing-library/react": "^13.2.0",
+    "@testing-library/react": "^12.1.4",
     "babel-jest": "^28.1.0",
     "babel-loader": "^8.0.4",
     "clean-webpack-plugin": "^0.1.19",
@@ -100,14 +102,16 @@
     "enzyme-adapter-react-16": "^1.15.6",
     "fast-async": "^6.3.8",
     "file-loader": "^2.0.0",
+    "history": "^4.10.1",
     "html-webpack-plugin": "^3.2.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^28.1.0",
     "jest-environment-jsdom": "^28.1.0",
+    "jest-transform-stub": "^2.0.0",
     "node-sass": "^4.7.2",
     "postcss-assets": "^6.0.0",
     "react-test-renderer": "^17.0.2",
-    "rollup": "^1.10.0",
+    "rollup": "^1.20.0",
     "rollup-plugin-cleaner": "^1.0.0",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-copy": "^3.0.0",
@@ -116,6 +120,7 @@
     "rollup-plugin-node-resolve": "^4.0.1",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-uglify": "^6.0.4",
+    "sass": "^1.52.3",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.20.2",
     "terser-webpack-plugin": "^1.3.0",
@@ -137,6 +142,15 @@
     "presets": [
       "@babel/preset-env",
       "@babel/preset-react"
+    ]
+  },
+  "xxxjest": {
+    "moduleNameMapper": {
+      "\\.(css|less|scss)$": "identity-obj-proxy"
+    },
+    "transform": {},
+    "extensionsToTreatAsEsm": [
+      ".jsx"
     ]
   }
 }

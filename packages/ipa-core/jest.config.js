@@ -13,10 +13,11 @@ const config = {
   },
   "transform": {
     "^.+\\.(js|jsx)?$": "babel-jest",
+    ".+\\.(png|jpg|gif|ttf|woff|woff2|svg)$": "jest-transform-stub"
   },
   //transformIgnorePatterns: [`<rootDir>/node_modules/(?!(${esModules})/)`],
   "transformIgnorePatterns": [
-    // Change MODULE_NAME_HERE to your module that isn't being compiled
+    // add to esModules module that isn't being compiled
     `/node_modules/(?!${esModules}).+\\.js$`
   ],
   testEnvironment: 'jsdom',
@@ -30,7 +31,8 @@ const config = {
       pluginBaseUrl: 'http://dt-dev.invicara.com/downloads/IPAPlugins/',
       baseRoot: 'http://localhost:8083/digitaltwin'
     }
-  }
+  },
+  setupFilesAfterEnv: ["<rootDir>/src/test/jest.setup.js"]
   //"extensionsToTreatAsEsm": [
   //  ".jsx"
   //]

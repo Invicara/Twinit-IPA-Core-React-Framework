@@ -1,25 +1,20 @@
-import React, {useEffect, useState, useReducer} from "react";
-import FancyTreeControl from "./FancyTreeControl";
-import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel";
+import React, {useEffect, useReducer, useRef} from "react";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
-import {produce} from "immer";
-import _, { set } from "lodash";
-import {uid} from 'uid';
+import _ from "lodash";
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
-import {parseNodeName, parseNode, stringifyNode} from "./private/tree";
+import {parseNodeNameWithParent, stringifyNodeWithParent} from "./private/tree";
 import ReactiveTreeControl from "./ReactiveTreeControl";
 import './TreeSearch.scss';
 
 const treeControlLeafNodeRenderer = (group) => {
-    return <div>{parseNodeName(group.name).displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
+    return <div>{parseNodeNameWithParent(group.name).childNodeInfo.displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
 }
 
 const treeControlBranchNodeRenderer = (group) => {
     const childCount = group.count;
-    
     return (
         <span>            
-            {parseNodeName(group.name).displayName}
+            {parseNodeNameWithParent(group.name).childNodeInfo.displayName}
             {!!childCount && <span className="count" style={{fontSize: "0.8em"}}>{childCount}</span>}
           </span>
     )
@@ -28,7 +23,7 @@ const treeControlBranchNodeRenderer = (group) => {
 const treeSearchReducer = (state, action) => {
     switch (action.type) {
         case 'reloading':
-            return {...state, reloading: true, pristine: false};
+            return {...state, reloading: true};
         case 'reloaded':
             return {...state, reloading: false, nodeIndex: action.nodeIndex};
         case 'update_node':
@@ -42,39 +37,31 @@ const treeSearchReducer = (state, action) => {
                 }
             }
         default:
-            return {...state, reloading: false, pristine: false, nodeIndex: action.nodeIndex ? action.nodeIndex : state.nodeIndex};
+            return {...state, reloading: false, nodeIndex: action.nodeIndex ? action.nodeIndex : state.nodeIndex};
     }
 }
 
-const initialTreeState = {reloading: false, pristine: true, nodeIndex : {}};
+const initialTreeState = {reloading: false, nodeIndex : {}};
 
-export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken }) => {
-
-    //A flat array containing all the nodes and their relevant information
-    //below moved to reducer
-    //const [nodeIndex, setNodeIndex] = useState({});
-    //const [reloading, setReloading] = useState(false);
+export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken, fetchAfterTreeLoad = false}) => {
 
     const [treeState, dispatch] = useReducer(treeSearchReducer, initialTreeState);
 
-    let countNodesByKey = new Map();
+    //we will keep track of those dependencies, to determine if it's first render in an effect
+    const reloadTokenLatest = useRef(reloadToken);
+    const treeLevelsLatest = useRef(treeLevels);
 
     useEffect(() => {
         dispatch({type: 'reloading'});
-        const initialTree = treeState.pristine && currentState && !_.isEmpty(currentState) ? currentState : treeState.nodeIndex;
-        try {
-            refreshTree(initialTree).then((nodeIndex) => {
-                //TODO: shouldSkipFetch used in newNavigator, when switching betweeen tabs, is this the best approach?
-                const shouldSkipFetch = !_.isEmpty(initialTree);
-                dispatch({type: 'reloaded',nodeIndex: nodeIndex});
-                if(!shouldSkipFetch) {
-                    onFetch(undefined, getFilteringNodes(nodeIndex), nodeIndex);
-                }
-            })
-        } catch (e) {
-            dispatch({type: 'reloaded'});
+        //if it's initial render, we must know of the fact, as the tree might render from memory instead of doing a fetch
+        //use case: switching between entity tabs
+        const initialRefresh = reloadTokenLatest.current == reloadToken && treeLevelsLatest.current == treeLevels;
+        const preLoadedTree = currentState && !_.isEmpty(currentState) ? {...currentState} : {...treeState.nodeIndex};
+        if(initialRefresh && !_.isEmpty(preLoadedTree)){
+            dispatch({type: 'reloaded',nodeIndex: preLoadedTree});
         }
-    }, [treeLevels,reloadToken])
+        fetchTree();
+    }, [treeLevels,reloadToken]);
 
 
     useEffect(() => {
@@ -96,6 +83,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
 
 
     async function getTree() {
+
         const level = 0;
         const parentNames = undefined;
         const parents = undefined;
@@ -111,17 +99,34 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
         return newNodeIndex;
     };
 
-    async function refreshTree(initialTree) {
-        let newNodeIndex = _.isEmpty(initialTree) ? await getTree() : initialTree;
+    async function refreshTree() {
+        let newNodeIndex = await getTree();
         return newNodeIndex;
+    }
+
+    async function fetchTree() {
+        reloadTokenLatest.current = reloadToken;
+        treeLevelsLatest.current = treeLevels;
+        try {
+            refreshTree().then((nodeIndex) => {
+                dispatch({type: 'reloaded',nodeIndex: nodeIndex});
+                //if currentValue is empty, means nothing is selected on the tree == don't do FETCH, as it will overwrite redux state done by other components
+                //deselecting is handled by a different call to 'onFetch' inside handleNodeIndexChange()
+                //if the tree is part of the withEntitySearch component (==redux entity store) initial fetch is handled by onLoadComplete()
+                //if the tree is not part of the withEntitySearch, please use 'fetchAfterTreeLoad' flag to activate initial fetch
+                if(fetchAfterTreeLoad) {
+                    onFetch(undefined, currentValue, nodeIndex);
+                }
+            })
+        } catch (e) {
+            dispatch({type: 'reloaded'});
+        }
     }
 
     const getPreviousValues = (parentNames) => {
 
         let keys = treeLevels.map(tl => tl.property);
-        let values = parentNames.map(name => parseNodeName(name)?.displayName);
-
-
+        let values = parentNames.map(name => parseNodeNameWithParent(name)?.childNodeInfo?.displayName);
         return _.zipObject(keys, values)
     }
 
@@ -197,31 +202,43 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
 
     async function getLevelNodes(level, parentNames = []) {
 
+
         let input = getPreviousValues(parentNames);
 
-        const rawNodes = await ScriptHelper.executeScript(treeLevels[level].script,
-            parentNames ? {input} : undefined)
+        let rawNodes = await ScriptHelper.executeScript(
+            treeLevels[level].script,
+            parentNames ? {input} : undefined
+        )
+
+        /**
+         *  This assumes a tree no deeper than two levels. Ultimately, we need to get persistent ids from the platform for each node, 
+         *  or to improve the stringifying/parsing functions.
+         */
+
+        const parentBaseName = level !== 0 ? parentNames[parentNames.length - 1] : undefined
+        
+        // const parentInfo = {displayName: input.Level, level:}
 
         const levelNodes = rawNodes.map((node, position) => {
 
 
-            const displayName = node.name ? node.name : node;
-            const nameKey = stringifyNode({displayName: displayName, level, position});
-
-            // create unique (but repeatable on each re-render) id for the node
-            // to also allow it to work with query navigation
-            let idSuffixPart = countNodesByKey.get(nameKey) || 0;
-            let id = `${nameKey}-${++idSuffixPart}`;
-            countNodesByKey.set(nameKey,idSuffixPart);
+            const displayName = node.name || node;
+            const nameKey = stringifyNodeWithParent(parentBaseName, {displayName: displayName, level, position});
+            
+            // // create unique (but repeatable on each re-render) id for the node
+            // // to also allow it to work with query navigation
+            // let idSuffixPart = (countNodesByKey.get(nameKey) || 0) + 1;
+            // let id = `${nameKey}-${idSuffixPart}`;
+            // countNodesByKey.set(nameKey,idSuffixPart);
 
             // we cannot use random ids on each render due to navigation issues
             // we need to wait for a persistent ids
             //let id = uid();
 
             if(node.name) {
-                return {...node, id: id, name: nameKey}
+                return {...node, id: nameKey, name: nameKey}
             } else {
-                return {id: id, name: nameKey, childCount: 0}
+                return {id: nameKey, name: nameKey, childCount: 0}
             }
         });
         return levelNodes;
@@ -287,8 +304,12 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
 
     async function handleNodeIndexChange(nodeIndex) {
 
+        const childrenLoaded = (childrenIds, nodeIndex) => {
+            return childrenIds.every(childrenId => _.keys(nodeIndex).includes(childrenId))
+        }
+
         const childrenPromises = _.values(nodeIndex).map((node) => {
-            let childrenNotLoaded = _.isEqual(node.children, node.childrenNames);
+            let childrenNotLoaded = !childrenLoaded(node.children, nodeIndex);
             if (node.expanded && childrenNotLoaded) {
                 return getChildrenAndParent(node.id, nodeIndex, currentValue)
             } else {
@@ -321,7 +342,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
                 renderBranchNode={treeControlBranchNodeRenderer}
                 nodeIndex={treeState.nodeIndex}
                 onNodeIndexChange={handleNodeIndexChange}
-            /> : <p>Loading tree...</p>
+            /> : <p className="tree-search__loading">Loading tree...</p>
         }
     </div>
     

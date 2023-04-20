@@ -34,7 +34,7 @@ import _, { times } from 'lodash'
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
-import {StackableDrawer} from '../../IpaControls/StackableDrawer'
+import {StackableDrawer} from '../../IpaDialogs/StackableDrawer'
 
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css'

@@ -2,7 +2,7 @@ import SimpleTable from './SimpleTable'
 import SimpleTabbedTable from './SimpleTabbedTable'
 import GenericMatButton from './GenericMatButton'
 import EnhancedFetchControl from './EnhancedFetchControl'
-import {StackableDrawer} from './StackableDrawer'
+import {StackableDrawer} from '../IpaDialogs/StackableDrawer'
 import FancyTreeControl from './FancyTreeControl'
 import ChartStack from './ChartStack'
 import CrossEntitySearch from './CrossEntitySearch'
@@ -34,6 +34,7 @@ import ScriptedChart from "./ScriptedChart";
 import SimpleMultiSelect from "./SimpleMultiSelect";
 import SimpleSelect from "./SimpleSelect";
 import SimpleTextThrobber from "./SimpleTextThrobber";
+import SimpleTextReducer from './SimpleTextReducer';
 import {TextSearch} from "./TextSearch";
 import TreeControl from "./TreeControl";
 import {TreeSearch} from "./TreeSearch";
@@ -42,8 +43,10 @@ import {Overlay} from "./Overlay";
 import SplitButton from "./SplitButton";
 import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useChecked} from "./Checkboxes";
 import RadioButtons from './RadioButtons'
+import AlertIndicator from './AlertIndicator'
 
 const IpaControls = {
+    AlertIndicator,
     AdvancedSearch,
     BigButtonBar,
     ChartStack,
@@ -88,6 +91,7 @@ const IpaControls = {
     ReactiveTreeControl,
     ScriptedChart,
     SimpleMultiSelect,
+    SimpleTextReducer,
     SimpleSelect,
     SimpleTable,
     SimpleTabbedTable,

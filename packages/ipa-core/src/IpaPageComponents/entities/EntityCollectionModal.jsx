@@ -17,7 +17,6 @@
 
 import React from 'react';
 import _ from "lodash";
-import Select from 'react-select';
 import * as PropTypes from "prop-types";
 
 
@@ -65,8 +64,6 @@ export default class EntityCollectionModal extends React.Component {
           
           let isSingleEntity = this.props.entity && typeof this.props.entity === 'object' && !Array.isArray(this.props.entity)
           let isArrayOfEntites = Array.isArray(this.props.entity) && !!this.props.entity.length
-          console.log("isSingleEntity", isSingleEntity)
-          console.log("isArrayOfEntites", isArrayOfEntites)
           if (isSingleEntity || isArrayOfEntites)
             this.setState({error: null, selectedType: null, selectedCollections: [], showBody: true, reloadTrigger: !this.state.reloadTrigger});
         }

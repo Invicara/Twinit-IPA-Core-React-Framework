@@ -130,11 +130,13 @@ class DashboardView extends React.Component {
     getComponent = async (config) => {
         let Component = null
         let componentInfo = null
-        //if (config.component) Component = DASHBOARD_COMPONENTS[config.component]
-        if (config.component) Component = this.props.getDashboardComponent(config.component)
-        else if (config.componentScript) {
-          componentInfo = await ScriptHelper.executeScript(config.componentScript, {reactorInfo: this.state.reactorInfo})
-          if (componentInfo && componentInfo.component) Component = this.props.getDashboardComponent(componentInfo.component)
+        //Added logic to check if its a simple component or complex on the isString functions
+        let name = _.isString(config.component) ? config.component : config.component.name
+        let script = _.isString(config.component) ? config.componentScript : config.script
+        if (config.component) Component = await this.props.getDashboardComponent(name)
+        if (script) {
+               componentInfo = await ScriptHelper.executeScript(script, {reactorInfo: this.state.reactorInfo})
+               if (componentInfo && componentInfo.component) Component = await this.props.getDashboardComponent(componentInfo.component)
         }
         
         if (!Component) {
@@ -161,8 +163,12 @@ class DashboardView extends React.Component {
           reactorInfo: config.reactee ? this.state.reactorInfo : null
         }
 
-        return <Component {...config} {...reactiveOptions} {...componentInfo} dashboard={this}/>
-    }
+        if(!_.isString(config.component)){
+          return <Component config={config.component} data={componentInfo} {...reactiveOptions} dashboard={this}/>
+        } else {
+          return <Component {...config} {...reactiveOptions} {...componentInfo} dashboard={this}/>
+        }
+      }
 
     doAction = (action) => {
         if (!action || action.type != "navigate") {

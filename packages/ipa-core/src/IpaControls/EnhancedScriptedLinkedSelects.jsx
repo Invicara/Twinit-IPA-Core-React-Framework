@@ -58,6 +58,8 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
                 previousSelectsValues ? {input: flattenIfNotMulti(previousSelectsValues, selects)} : undefined
             );  
 
+            selectOptions = selectOptions || [];
+
             newSelects = {
                 ...selects,
                 [nextSelect.display]: {...nextSelect, options: selectOptions.sort((a, b) => a.localeCompare(b))}
@@ -94,7 +96,7 @@ export const ScriptedLinkedSelects = ({currentValue, onChange, disabled, touched
                     options={selectOptions}
                     placeholder={placeholder}
                     closeMenuOnSelect={!select.multi}
-                    isClearable={isClearable}
+                    isClearable
                     required={select.required}
                     isDisabled={_.isEmpty(select.options) || disabled}
                     menuPlacement="auto"

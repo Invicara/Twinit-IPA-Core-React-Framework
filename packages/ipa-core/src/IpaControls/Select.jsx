@@ -12,6 +12,13 @@ import {any, array, bool, func, object, shape, string} from 'prop-types'
 
 const Select = props => {
 
+  const optionStyle = (styles, { data }) => {
+    return {
+      ...styles,
+      color: data.highlight ? 'var(--app-accent-color)' : styles.color
+    }
+  };
+
   let selectProps = {
     styles: {
       control: selectStyles,
@@ -33,16 +40,14 @@ const Select = props => {
     menuPosition: props.menuPosition
   }
 
-  let optionStyle = (styles, { data }) => {
-    return {
-      ...styles,
-      color: data.highlight ? 'var(--app-accent-color)' : styles.color
-    }
-  };
-
-  console.log("Select props", props);
-  console.log("CreatableSelect", CreatableSelect);
-  console.log("ReactSelect", ReactSelect);
+  let SelectComponent = null;
+  if(props.creatable && CreatableSelect) {
+    //ReactSelect seems to be changing where we can get the component between CreatableSelect and CreatableSelect.default
+    //This was probably a one time mistake from ReactSelect but I use this just in case.
+    SelectComponent = CreatableSelect.default || CreatableSelect
+  } else {
+    SelectComponent = ReactSelect
+  }
 
 
   return (
@@ -50,10 +55,7 @@ const Select = props => {
       {props.labelProps && (
         <ControlLabel {...props.labelProps} required={props.required}/>
       )}
-      {props.creatable ? 
-        <CreatableSelect.default {...selectProps}/> : 
-        <ReactSelect {...selectProps}/>
-      }
+      <SelectComponent {...selectProps}/>  
     </div>
   )
 }

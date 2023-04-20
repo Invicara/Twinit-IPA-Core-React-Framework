@@ -19,7 +19,7 @@ import React from "react"
 import * as PropTypes from "prop-types"
 import _ from 'lodash'
 
-import {StackableDrawer} from "../../IpaControls/StackableDrawer";
+import {StackableDrawer} from "../../IpaDialogs/StackableDrawer";
 import EnhancedFetchControl from "../../IpaControls/EnhancedFetchControl";
 import {applyFilters} from "../../IpaControls/FilterControl"
 
@@ -31,7 +31,8 @@ import {
     getAllCurrentEntities,
     getAppliedFilters, getAppliedGroups,
     getFetchingCurrent,
-    getFilteredEntities
+    getFilteredEntities,
+    getIsolatedEntities
 } from "../../redux/slices/entities";
 import {compose} from "@reduxjs/toolkit";
 import withEntitySearch from "./WithEntitySearch";
@@ -39,10 +40,13 @@ import {branchNodeRenderer, leafNodeRenderer} from "../../IpaUtils/TreeRendererH
 import {getFilteredEntitiesBy} from "../../IpaUtils/entities";
 
 import './EntityView.scss'
+import {EntityTableContainer} from "./EntityTableContainer";
+import withEntityAvailableGroups from "./WithEntityAvailableGroups";
 
 
 const tableComponents = {
     'EntityListView': EntityListView,
+    'EntityTableContainer': EntityTableContainer,
 };
 
 class EntityView extends React.Component {
@@ -63,10 +67,10 @@ class EntityView extends React.Component {
         if (this.state.displayDetail == true && entities.length > 1) {
             this.setState({displayDetail: false})
         }
-        this.props.entitiesSelected(entities)
+        this.props.isolateEntities(entities)
     }
 
-    tableEntities = () => _.isEmpty(this.props.selectedEntities) ? this.props.currentEntities : this.props.selectedEntities;
+    tableEntities = () => _.isEmpty(this.props.isolatedEntities) ? this.props.allEntities : this.props.isolatedEntities;
 
     onGroupOrFilterChange = (changes) => {
       this.setState({displayDetail: false})
@@ -152,7 +156,7 @@ class EntityView extends React.Component {
         }
 
         // make sure query id is numeric
-        let query = Object.assign({}, this.props.queryParams.query)
+        let query = Object.assign({}, this.props.queryParams && this.props.queryParams.query ? this.props.queryParams.query : {})
         if (query.id && _.isNaN(parseInt(query.id))) {
             query.id = "" + handler.config.selectBy.findIndex(sb => query.id == sb.id)
         }
@@ -214,12 +218,13 @@ EntityView.contextTypes = {
 
 const mapStateToProps = state => ({
     allEntities: getAllCurrentEntities(state),
+    isolatedEntities: getIsolatedEntities(state),
     fetching: getFetchingCurrent(state),
     currentEntities: getFilteredEntities(state),
     appliedFilters: getAppliedFilters(state),
 });
 
 export default compose(
-    withEntitySearch,
+    withEntitySearch,withEntityAvailableGroups,
     connect(mapStateToProps),
 )(EntityView)

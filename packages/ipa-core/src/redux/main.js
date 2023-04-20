@@ -11,6 +11,7 @@ import {
     selectEntitiesFromModels,
     setEntities,
     setIsolatedEntities,
+    setIsolatedEntitiesIds,
     setViewerSyncOn,
     getSnapshot
 } from "./slices/entities";
@@ -33,10 +34,11 @@ import {
 } from "./slices/entities-pluggable-search";
 import {getEntitySelectConfig, setUserConfig} from "./slices/user-config";
 import {
-    fetchAllNamedUserItems,
+    fetchAllNamedUserItems, fetchNamedUserItemItems,
     namedUserItemActions, selectNamedUserItemById,
     selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus
 } from "./slices/named-user-item.slice";
+import { addEntityComponents } from "./slices/entityUI"
 
 const redux = {
     Entities: {
@@ -52,6 +54,7 @@ const redux = {
         isSelectingEntities,
         setEntities,
         setIsolatedEntities,
+        setIsolatedEntitiesIds,
         setViewerSyncOn,
         getSnapshot
     },
@@ -78,10 +81,14 @@ const redux = {
     },
     NamedUserItems: {
         fetchAllNamedUserItems,
+        fetchNamedUserItemItems,
         selectNamedUserItemEntities,
         selectNamedUserItemsLoadingStatus,
         selectNamedUserItemById,
         ...namedUserItemActions,
+    }, 
+    EntityUi: {
+        addEntityComponents
     }
 }
 

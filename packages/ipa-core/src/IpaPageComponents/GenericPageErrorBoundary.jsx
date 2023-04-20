@@ -8,6 +8,7 @@ function withGenericPageErrorBoundary(WrappedComponent) {
             this.state = {
                 hasError: false
             };
+            //console.log("GENERIC PAGE ERROR BOUNDARY constructor props.userConfig",{...props.userConfig});
         }
 
         static getDerivedStateFromError(error) {
@@ -22,6 +23,7 @@ function withGenericPageErrorBoundary(WrappedComponent) {
         }
 
         render() {
+            //console.log("GENERIC PAGE ERROR BOUNDARY render this.props.userConfig",{...this.props.userConfig});
             return this.state.hasError ?
                 <div className="inv-error-boundary-container">
                     <span>

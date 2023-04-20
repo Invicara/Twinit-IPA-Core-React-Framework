@@ -5,15 +5,15 @@ export const ASCENDING_ORDER = 'asc';
 export const DESCENDING_ORDER = 'desc';
 export const ENTITY_LIST_SORT_PREFERENCE = 'entityListSortPreference';
 
-export default function useSortEntities (entitySingular, onSortChange) {
+export default function useSortEntities (entitySingular, onSortChange, initialSort = {
+    property: 'Entity Name',
+    valueAccessor: 'Entity Name',
+    order: ASCENDING_ORDER
+}) {
 
     const key = ENTITY_LIST_SORT_PREFERENCE + entitySingular;
     const sessionPreference = sessionStorage.getItem(key);
-    const sortPreference = sessionPreference ? JSON.parse(sessionPreference) : {
-        property: 'Entity Name',
-        valueAccessor: 'Entity Name',
-        order: ASCENDING_ORDER
-    };
+    const sortPreference = sessionPreference ? JSON.parse(sessionPreference) : initialSort;
 
     const [currentSort, setSort] = useState(sortPreference);
 

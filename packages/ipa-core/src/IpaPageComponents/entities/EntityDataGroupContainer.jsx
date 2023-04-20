@@ -36,7 +36,6 @@ const EntityDataGroupContainer = (props) => {
       else if (props.data == null || (Array.isArray(props.data) && props.data.length == 0))
         return <div>No data</div>
 
-
       let factory = props.getEntityDataComponent(props.config?.component?.name)
       if (!factory) {
         console.error('No factory for ' + props.config?.component?.name)

@@ -1,0 +1,47 @@
+.action-button {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    background-color: var(--app-accent-color);
+    color: white;
+    border-radius: 10px;
+    font-size: 20px;
+    margin: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    i {
+        padding: 0;
+    }
+
+    .inv-icon-nav {
+        background-position: 0;
+    }
+
+    .inv-icon-svg {
+        width: 42px;
+        height: 42px;
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-position: 0;
+    }
+
+    &.inv-icon__masked {
+        width: 20px;
+        height: 20px;
+    }
+
+    /*this is to style font icons, not svg*/
+    &:not(.inv-icon-svg).inv-icon__masked {
+      width: 20px;
+      height: 20px;
+      font-size: inherit;
+      margin: 0;
+      padding: 3px;
+      background-color: white;
+      color: var(--app-accent-color);
+    }
+
+}

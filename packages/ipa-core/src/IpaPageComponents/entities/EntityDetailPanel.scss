@@ -57,6 +57,15 @@
         background-color: var(--app-accent-color);
       }
     }
+
+    /* unify icon font-size across different font systems*/
+    .action-button {
+      font-size: 1.5em;
+
+      i {
+        font-size: 1em !important;
+      }
+    }
   }
 
   // RHS of the Entity Detail Panel
@@ -72,7 +81,7 @@
   .entity-data-stack-title {
     display: flex;
     align-items: center;
-    color: #666666;
+    color: var(--app-accent-color);
     font-size: 24px;
     font-weight: bold;
 

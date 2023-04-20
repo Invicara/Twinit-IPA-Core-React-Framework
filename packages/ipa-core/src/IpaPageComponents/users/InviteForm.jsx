@@ -122,7 +122,7 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
 
     let params = {
       base_url: endPointConfig.baseRoot,
-      invite_link: appUrl,
+      invite_link: appUrl+(appUrl.endsWith('/')?'':'/'),
       type: 'Project',
       name: project._name,
       inviter_name: currentUser._firstname + " " + currentUser._lastname,

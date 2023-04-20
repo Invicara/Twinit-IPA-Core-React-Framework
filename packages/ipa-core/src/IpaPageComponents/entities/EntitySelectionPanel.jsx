@@ -19,12 +19,15 @@ import React from "react";
 
 import {nestedGroup} from "../../IpaUtils/helpers"
 
-import FilterControl, {applyFilters} from "../../IpaControls/FilterControl"
+import FilterControl from "../../IpaControls/FilterControl"
 import GroupControl from "../../IpaControls/GroupControl"
 import FancyTreeControl from "../../IpaControls/FancyTreeControl"
 import _ from "lodash";
 import {listEquals} from "../../IpaUtils/compare";
 import {getFilteredEntitiesBy} from "../../IpaUtils/entities";
+
+const LAST_SELECTED_GROUP_KEY = "lastSelectedGroup"
+const PROJECT_ID_KEY = 'ipaSelectedProjectId';
 
 const GROUP_SELECT_STYLES = {
     control: styles => ({...styles, width: '90%', margin: '10px 0'}),
@@ -41,45 +44,83 @@ export const TreeSelectMode = {
     NONE_MEANS_NONE:"noneMeansNone"
 };
 
-const LAST_SELECTED_GROUP_KEY = "lastSelectedGroup"
-const PROJECT_ID_KEY = 'ipaSelectedProjectId';
-
 class EntitySelectionPanel extends React.Component {
   constructor(props) {
     super(props)
-
-    let groups = [];
-    let lastSelectedGroupFromLocalStotage = getLastSelectedGroups(this.props)
-
-    if(!_.isEmpty(this.props.selectedGroups)) {
-      groups = this.props.selectedGroups
-    } else if(lastSelectedGroupFromLocalStotage !== null) {
-      groups = lastSelectedGroupFromLocalStotage
-    } else if(this.props.defaultGroups) {
-      groups = this.props.defaultGroups
-    }
 
     this.state = {
       entities: [],
       tree: {},
       numFilteredEntities: this.props.entities.length,
-      numEntities: this.props.entities.length,
-      //FIXME Remove this props-to-state copy
-      filters: this.props.selectedFilters || {},
-      //domi: added brackets to below, otherwise babel got confused
-      groups
+      numEntities: this.props.entities.length
+      //removed props-to-state copy of filters and groups 
+      // we now compute them as derived props (getSelectedGroups and getSelectedFilters)
     }    
+  }
+
+  getLastSelectedGroupsFromSessionStorage(entitySingular) {
+    let stringifiedGroups = sessionStorage.getItem(
+      LAST_SELECTED_GROUP_KEY + entitySingular + sessionStorage.getItem(PROJECT_ID_KEY)
+    )
+  
+    let groups;
+  
+    if(stringifiedGroups === '') {
+      groups = [];
+    } else if(stringifiedGroups !== null) {
+      groups = stringifiedGroups.split(',');
+    } else {
+      groups = getInitialGroups(this.props);
+    }
+  
+    return groups;
+  }
+
+  //we check for groups state in sessionStorage and initialize the state with it
+  loadGroups() {
+    let groups = this.getLastSelectedGroupsFromSessionStorage(this.props.entitySingular);
+
+    let initialGroups = []
+    if(groups) { //we found saved groups state
+      initialGroups = [...groups]//notify parent component
+    } else {
+      initialGroups = getInitialGroups(this.props)
+    }
+
+    this.groupsChanged(initialGroups)
+  }
+
+  saveGroups(props) {
+    let groupsToSave = props.selectedGroups;
+
+    const projectId = sessionStorage.getItem(PROJECT_ID_KEY);
+    
+    
+    sessionStorage.setItem(LAST_SELECTED_GROUP_KEY + props.entitySingular + projectId, groupsToSave);
+  
+  }
+
+  componentDidMount() {
+    this.loadGroups()
+  }
+
+  componentWillUnmount() {
+    this.saveGroups(this.props)
+  }
+
+  // Since EntitySelectionPanel does not unmount when changing from Assets to Spaces in the NewNavigator, 
+  // we also save the previous groups if the entity type changes, and load the new groups
+  componentDidUpdate(prevProps) {
+    if(prevProps.entitySingular !== this.props.entitySingular) {
+      this.saveGroups(prevProps)
+      this.loadGroups(this.props);
+    }
   }
 
   //FIXME Remove this props-to-state copy
   static getDerivedStateFromProps(props, state) {
 
     let derivedState = {...state}
-    if (state.entities.length>0 && !listEquals(props.entities.map(e => e.id),state.entities.map(e => e.id))) {
-      //domi: I am commenting this out... when we add a category node, the applied groups and filters get nuked :/
-      //derivedState.groups = []
-      //derivedState.filters = {}
-    }
     derivedState.uniquePropNames = getUniquePropNames(props.entities)
     derivedState.availableFilters = getAvailableFilterValues(props.entities, derivedState.uniquePropNames, props.nonFilterableProperties)
     let {tree, numFilteredEntities} = makeTree(props, derivedState)
@@ -91,37 +132,18 @@ class EntitySelectionPanel extends React.Component {
     return derivedState
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-      if (!_.isEmpty(prevProps.selectedFilters) && _.isEmpty(this.props.selectedFilters)) {
-          this.setState({filters: {}})
-      }
-      if (!_.isEmpty(prevProps.selectedGroups) && _.isEmpty(this.props.selectedGroups)) {
-          this.setState({groups: []})
-      }
-  }
-
   filtersChanged = (filters) => {
-        this.setState({filters})
-        this.props.onGroupOrFilterChange({filters})
+    this.props.onGroupOrFilterChange({filters})
   }
 
   groupsChanged = (groups) => {
-
-    if(_.isEmpty(groups)) {
-      groups = [...this.props.defaultGroups];
-    }
-
-    const projectId = sessionStorage.getItem(PROJECT_ID_KEY);
-    
-    sessionStorage.setItem(LAST_SELECTED_GROUP_KEY + this.props.entitySingular + projectId, [groups]);
-    
     this.props.onGroupOrFilterChange({groups})
   }
 
   onSelectLeaves = (leaves) => {
       let selection = []
       if (leaves.length==0 && this.props.treeSelectMode === TreeSelectMode.NONE_MEANS_ALL) {
-          selection = getFilteredEntitiesBy(this.props.entities, this.state.filters);
+          selection = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props));
       }
       else {
           leaves.forEach(el => {
@@ -144,7 +166,7 @@ class EntitySelectionPanel extends React.Component {
   }
 
   onSelectAll = () => {
-      this.onSelectEntities(getFilteredEntitiesBy(this.props.entities, this.state.filters));
+      this.onSelectEntities(getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props)));
   }
   
   getAvailableGroupValues = () => {
@@ -173,28 +195,31 @@ class EntitySelectionPanel extends React.Component {
 
     const allSelected = this.state.numFilteredEntities === this.props.selectedEntities.length
 
-    const selectedGroups = getSelectedGroups(this.props)
+    const selectedFilters = getSelectedFilters(this.props)
 
     return (
       <div className="entity-tree-panel">
          <label className="title">Group By</label>
          <GroupControl className="entity-group"
+                        entitySingular={this.props.entitySingular}
                         styles={GROUP_SELECT_STYLES}
                         groups={this.getAvailableGroupValues()}
-                        selected={selectedGroups}
+                        selected={this.props.selectedGroups}
                         onChange={this.groupsChanged} />
         <label className="title">Filter By</label>
         <FilterControl className="entities-filter entities-filter--with-count"
+                       entitySingular={this.props.entitySingular}
                        styles={FILTER_SELECT_STYLES}
+                       filters={selectedFilters}
+                       availableFilters={this.state.availableFilters}
                        onChange={this.filtersChanged}
-                       filters={this.state.filters}
-                       availableFilters={this.state.availableFilters}/>
+                       />
         <div className="entity-count">
             <span>{countMessage}</span>
         </div>
         <FancyTreeControl className="entity-tree"
           name={this.props.name + "_tree"}
-          selectedGroups={selectedGroups}
+          selectedGroups={this.props.selectedGroups}
           renderLeafNode={this.props.leafNodeRenderer}
           renderBranchNode={this.props.branchNodeRenderer}
           onSelect={this.onSelectLeaves}
@@ -238,40 +263,35 @@ const getAvailableFilterValues = (entities, uniquePropNames, nonFilterableProps)
   return availableFilters
 }
 
-const getLastSelectedGroups = (props) => {
-  let stringifiedGroups = sessionStorage.getItem(
-    LAST_SELECTED_GROUP_KEY + props.entitySingular + sessionStorage.getItem(PROJECT_ID_KEY)
-  )
-
-  let groups = []
-
-  if(stringifiedGroups) {
-    groups = stringifiedGroups.split(',');
-  }
-
-  return groups;
-}
-
-const getSelectedGroups = (props) => {
+const getInitialGroups = (props) => {
   let groups = [];
-  let lastSelectedGroupFromLocalStotage = getLastSelectedGroups(props)
 
   if(!_.isEmpty(props.selectedGroups)) {
-    groups = props.selectedGroups
-  } else if(lastSelectedGroupFromLocalStotage !== null) {
-    groups = lastSelectedGroupFromLocalStotage
+    groups = [...props.selectedGroups]
   } else if(props.defaultGroups) {
-    groups = props.defaultGroups
+    groups = [...props.defaultGroups]
   }
   
   return groups;
 }
 
+const getSelectedFilters = (props) => {
+  let filters = {};
+
+  if(!_.isEmpty(props.selectedFilters)) {
+    filters = props.selectedFilters
+  } else if(props.defaultFilters) {
+    filters = props.defaultFilters
+  }
+  
+  return filters;
+}
+
 const makeTree = (props, state) => {
-    let filteredEntities = getFilteredEntitiesBy(props.entities, state.filters)
+    let filteredEntities = getFilteredEntitiesBy(props.entities, getSelectedFilters(props))
     let numFilteredEntities = filteredEntities.length
     let tree = {}
-    let groups = getSelectedGroups(props);
+    let groups = props.selectedGroups;
     if (groups && groups.length)
         tree = nestedGroup(filteredEntities, groups, (a, p) => a.properties[p] ? a.properties[p].val : null)
     else
