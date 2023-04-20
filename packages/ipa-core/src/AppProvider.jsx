@@ -234,11 +234,11 @@ class AppProvider extends React.Component {
     let pagesHavePositions = pagesConfig[pageNames[0]].position;
 
     if (page.endsWith('#') && config.homepage && config.homepage.handler) {
-      return config.handlers[config.homepage.handler];
+      handler = config.handlers[config.homepage.handler];
     }
     else if (page.endsWith('#')){
       if (!pagesHavePositions)
-        return config.handlers[actualPage(config, pageNames[0]).handler];
+        handler = config.handlers[actualPage(config, pageNames[0]).handler];
       else {
         let lowestPos = pagesConfig[pageNames[0]].position;
         let lowestHandler = actualPage(config, pageNames[0]).handler;
@@ -248,7 +248,7 @@ class AppProvider extends React.Component {
             lowestHandler = actualPage(config, pn).handler;
           }
         })
-        return config.handlers[lowestHandler];
+        handler = config.handlers[lowestHandler];
       }
 
     }
@@ -275,9 +275,9 @@ class AppProvider extends React.Component {
       const requestPathAsArray = this.getPageArray();
       const lastButOnePathElement = requestPathAsArray[requestPathAsArray.length - 2]; //For detail components where the last element is the pathParam
       const allHandlers = Object.values(config.handlers);
-      return allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
+      handler = allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
     }
-
+    
     return handler;
   };
 
@@ -725,7 +725,7 @@ async function calculateRoutes(config, ipaConfig) {
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
 
-      component = InternalPages[pageComponent] ? InternalPages[pageComponent] : null
+      component = InternalPages[pageComponent] || null
 
       if (component) {
         component = asIpaPage(component, pageComponentProps)
@@ -839,6 +839,8 @@ async function calculateRoutes(config, ipaConfig) {
     pages.sort();
   }
 
+  let alreadyRoutedPages = []
+
   // Add the component for each page (dynamically requires the JSX)
   pages.forEach(key => {
     if(usingGroupedConfig){
@@ -846,6 +848,7 @@ async function calculateRoutes(config, ipaConfig) {
       pagesConfig[key].pages.forEach(page => {
         if (page.handler) {
           let handler = config.handlers[page.handler];
+          alreadyRoutedPages.push(page.handler);
           addRoute(page.handler, handler, true, undefined, key);
         }
       })
@@ -853,11 +856,23 @@ async function calculateRoutes(config, ipaConfig) {
       let page = config.pages[key];
       if (page.handler) {
         let handler = config.handlers[page.handler];
-
+        alreadyRoutedPages.push(page.handler);
         addRoute(page.handler, handler, true);
       }
     }
   });
+
+
+  //Add handlers that are not present in pages or groupedPages
+  // We also skip the homepage as it's handled differently later
+  Object.entries(config.handlers)
+    .forEach(([key, value]) => {
+      const isAlreadyRouted = alreadyRoutedPages.includes(key)
+      const isHomepage = key === config.homepage?.handler
+      if(!isAlreadyRouted && !isHomepage) {
+        addRoute(key, value, true);
+      }
+    })
 
   // Add homepage
   let homePageHandler
