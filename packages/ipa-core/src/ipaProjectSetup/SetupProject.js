@@ -12,8 +12,9 @@ import { IafDataSource } from "@invicara/platform-api";
 export default class SetUpProject extends React.Component {
   constructor(props) {
     super(props);
-    console.log("endPointConfig",endPointConfig);
+    console.log("endPointConfig", endPointConfig);
     this.state = {
+      createdProject: null,
       project: {
         _description: "",
         _name: "",
@@ -37,73 +38,16 @@ export default class SetUpProject extends React.Component {
     console.log("called"); // console to know function is called
     this.setState({ click: true });
     let project = await IafProj.createProject(this.state.project); //Create Project
+    this.setState({ createdProject: project });
     console.log("project", project);
     let ctx = { _namespaces: project._list[0]._namespaces };
     ctx.authToken = IafSession.getAuthToken();
     await IafProj.switchProject(project._list[0]._id); //switch project using ID
 
-    //get setupScript.js
-    // let scriptFile = await fetch(
-    //   `${endPointConfig.setupFileOrigin}`
-    // );
-    // let scriptContent = [`${await scriptFile.text()}`];
-    // console.log("scriptFileTxt", scriptContent);
-    // if (_.size(scriptContent) > 0) {
-    //   let scriptItem = {
-    //     _name: "Project Setup",
-    //     _shortName: "iaf_ext_proj_setup",
-    //     _description: "Scripts to Setup a Project",
-    //     _userType: "iaf_ext_proj_setup",
-    //     _namespaces: project._list[0]._namespaces,
-    //     _version: {
-    //       _userData: scriptContent[0],
-    //     },
-    //   };
-    //   //create or replace script
-    //   let results = await IafScripts.updateOrCreateScript(scriptItem, ctx);
-    //   console.log("Result of create script", results);
-    // }
-    let myZipFile;
-    await fetch("/scripts.zip") //fetch zip file using link
-      .then((response) => response.blob())
-      .then((blob) => {
-        // Store the binary blob in a variable
-        myZipFile = new Blob([blob], { type: "application/zip" });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    let zipFileObj = {
-      //object of zip file to passed on _loadZipFile
-      fileObj: myZipFile,
-    };
-    let configFiles = await UiUtils.IafLocalFile._loadZipFile(zipFileObj); //load all files using configFiles
-    console.log("ConfigFiles", configFiles);
-
-    let scriptFiles = [];
-    var projectSetupData = await configFiles.files["scripts/setup.js"] // get setup.js
-      .async("blob") //create blob
-      .then(async function (fileData) {
-        console.log("fileData", fileData);
-        var data = new File([fileData], "setup.js"); //create file from blob
-        console.log("data", data);
-        var selectFile = data;
-        var file = {
-          // create file object in which file is stored
-          fileObj: selectFile,
-          size: selectFile.size,
-          name: selectFile.name,
-        };
-        console.log("file", file);
-        scriptFiles[0] = file;
-      });
-    if (_.size(scriptFiles) < 1) {
-      return;
-    }
-
-    //Create Script
-    let scriptContent = await UiUtils.IafLocalFile.loadFiles(scriptFiles);
-    console.log("scriptContent", scriptContent);
+    // get setupScript.js
+    let scriptFile = await fetch(`${endPointConfig.setupFileOrigin}`);
+    let scriptContent = [`${await scriptFile.text()}`];
+    console.log("scriptFileTxt", scriptContent);
     if (_.size(scriptContent) > 0) {
       let scriptItem = {
         _name: "Project Setup",
@@ -115,8 +59,7 @@ export default class SetUpProject extends React.Component {
           _userData: scriptContent[0],
         },
       };
-      let ctx = { _namespaces: project._list[0]._namespaces };
-      //create or replace
+      //create or replace script
       let results = await IafScripts.updateOrCreateScript(scriptItem, ctx);
       console.log("Result of create script", results);
     }
@@ -162,7 +105,7 @@ export default class SetUpProject extends React.Component {
           params: {
             ctx: JSON.stringify(ctx),
             project: project,
-            zipLink: endPointConfig.zipFileOrigin
+            zipLink: endPointConfig.zipFileOrigin,
           },
         },
       ],
@@ -195,27 +138,29 @@ export default class SetUpProject extends React.Component {
           clearInterval(map_orch_timer);
           console.log("handleProjectSetUp === done");
           document.getElementById("donebtn").style.display = "block";
-          document.getElementById("msg").innerHTML = "Setup Completed";
+          document.getElementById("msg").textContent = "Setup Completed";
           break;
-      
+
         case "ERROR":
           console.error("Error message", status.orchrunsteps[0]._statusmsg);
           var msgElem = document.getElementById("msg");
-          msgElem.innerHTML = "Setup did not Complete, An error occured during setup!";
-          msgElem.style.color = "red";
           clearInterval(map_orch_timer);
+          msgElem.textContent =
+            "Setup did not Complete, An error occured during setup!";
+          msgElem.style.color = "red";
           break;
-      
+
         default:
           let endTime = Date.now();
           let diffInSeconds = (endTime - startTime) / 1000;
-          document.getElementById("msg").innerHTML =
+          document.getElementById("msg").textContent =
             "Setup is in progress, please wait...";
-          console.log(`Project setup running since ${diffInSeconds / 60} minutes.`);
+          console.log(
+            `Project setup running since ${diffInSeconds / 60} minutes.`
+          );
           break;
       }
     }, 10000);
-
   };
 
   render() {
@@ -271,33 +216,28 @@ export default class SetUpProject extends React.Component {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
+                  alignItems: "center",
                   width: "100%",
                   padding: "0 3em",
                 }}
               >
                 {this.state.click ? (
-                  <div
-                    style={{
-                      marginTop: "20px",
-                      display: "flex",
-                      alignItems: "center",
+                <div style={{ display: "flex", alignItems: "center", marginLeft: "-3em" }}>
+                  <button
+                    id="donebtn"
+                    style={{ display: "none", marginRight: "40px" }}
+                    onClick={() => {
+                      this.props.restartApp();
                     }}
+                    className="done"
                   >
-                    <p id="msg" style={{ marginRight: "10px",marginTop: "20px" }}>
-                      Fetching Script...
-                    </p>
-                    <button
-                      id="donebtn"
-                      style={{ display: "none", marginLeft: "40px" }}
-                      onClick={() => {
-                        this.props.restartApp();
-                      }}
-                      className="done"
-                    >
-                      Done
-                    </button>
-                  </div>
-                ) : (
+                    Done
+                  </button>
+                  <p id="msg" style={{ marginLeft: "10px",width:"300px",marginTop:"20px" }}>
+                    Fetching Script...
+                  </p>
+                </div>
+                ):(
                   <>
                     <button
                       onClick={() => this.props.restartApp()}
