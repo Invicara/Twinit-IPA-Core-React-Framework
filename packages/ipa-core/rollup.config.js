@@ -46,7 +46,20 @@ const getPlugins = () => [
         plugins: [
             require("@babel/plugin-proposal-object-rest-spread"),
             require("fast-async"),
-            ["@babel/plugin-proposal-class-properties", {"loose": true}]
+            ["@babel/plugin-proposal-class-properties", {"loose": true}],
+            //make sure we do not pull the whole material ui
+            //https://github.com/avocadowastaken/babel-plugin-direct-import
+            [
+                "babel-plugin-direct-import",
+                {
+                    "modules": [
+                        "@material-ui/lab",
+                        "@material-ui/core",
+                        "@material-ui/icons",
+                        "@material-ui/system"
+                    ]
+                }
+            ]
         ]
     }),
     commonjs(),
@@ -54,7 +67,10 @@ const getPlugins = () => [
         targets: [
             {src: 'src/img/**/*', dest: 'modules/img'},
             {src: 'src/*/*.scss', dest: 'modules/styles'},
-            {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'}
+            {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'},
+            {src: 'src/img/**/*', dest: 'esm_modules/img'},
+            {src: 'src/*/*.scss', dest: 'esm_modules/styles'},
+            {src: 'src/IpaIcons/**/*', dest: 'esm_modules/IpaIcons'}
         ]
     })]
 
