@@ -25,7 +25,7 @@ export const JSONEditor = ({jsonValue, readonly, onChange}) => {
       readOnly: readonly,
       theme: 'monokai-sublime',
       lineNumbers: true,
-      matchBrackets: true,
+      // matchBrackets: true,
       autoCloseBrackets: true,
       foldGutter: true,
       gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']

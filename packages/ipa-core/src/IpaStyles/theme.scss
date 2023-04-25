@@ -1,29 +1,3 @@
-:root {
-    //accent color for the entire application
-    --app-accent-color: #C71784;
-
-    //styles for the app header and dropdown menu
-    --head-bkg-color: #333333;  //background color of the top header bar
-    --head-appname-color: whitesmoke;  //text color of the application name next to the logo
-    --head-menu-bkg-color: #666666;  //background color of the right hand session dropdown
-    --head-menu-hover-color: #999999;  //background color on hover of a menu item
-
-    //styles for the left navbar
-    --nav-bkg-color: #333333;  //background color of the left hand nav, both grouped and ungrouped
-    --nav-icon-color: white;  //color of icons in nav when not active
-    --nav-hover-color: #999999;  //background color on hover of nev item
-    --nav-activegrp-bkg-color: #bfbfbf;  //background color of a selected nav item, both grouped and ungrouped
-    //active nav items icons take --app-accent-color and/or have active class applied
-
-    //styles for the FancyTree control
-    --fancytree-one-color: #C71784;
-    --fancytree-one-channel-color: #f3d5e4;
-    --fancytree-two-color:#f26827;
-    --fancytree-two-channel-color: #fde0d7;
-    --fancytree-three-color:#00a693;
-    --fancytree-three-channel-color: #cdebe8;
-}
-
 //react-ifef applies its own styles. We need to override them here so we can
 //allow apps to more easily control them via variables
 header {
