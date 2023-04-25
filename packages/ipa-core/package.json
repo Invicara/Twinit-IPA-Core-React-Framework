@@ -42,7 +42,7 @@
     "history": "^4.10.1",
     "immer": "^9.0.17",
     "interactjs": "^1.9.20",
-    "json-schema-faker": "^0.5.0-rcv.24",
+    "json-schema-faker": "0.5.0-rcv.40",
     "json5": "^2.2.0",
     "jszip": "^3.4.0",
     "lodash": "^4.17.5",
