@@ -22,8 +22,11 @@ export default class SetUpProject extends React.Component {
         _userAttributes: { nextScriptEngine: true },
         click: false,
       },
+      projects: [],
       ProjSetupModule: undefined,
       scripts: undefined,
+      open: false,
+      isDeleting: false,
     };
     this.ref = React.createRef();
   }
@@ -32,11 +35,26 @@ export default class SetUpProject extends React.Component {
     const { id, value } = e.target;
     this.setState({ project: { ...this.state.project, [id]: value } });
   };
+  async deletePreviousProject() {
+    const { projects } = this.props;
+    this.setState({ isDeleting: true });
+    if(projects !== undefined){
+    for (let index = 0; index < projects.length; index++) {
+      await IafProj.delete(projects[index]);
+    }
+  }
+    this.setState({ isDeleting: false });
+  }
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
 
   handleProjectSetUp = async (e, restartApp) => {
-    e.preventDefault();
     console.log("called"); // console to know function is called
-    this.setState({ click: true });
+    e.preventDefault();
+    await this.deletePreviousProject();
+    this.setState({ click: true, open: false });
     let project = await IafProj.createProject(this.state.project); //Create Project
     this.setState({ createdProject: project });
     console.log("project", project);
@@ -166,26 +184,28 @@ export default class SetUpProject extends React.Component {
   render() {
     const title = <span>Setup Project</span>;
     return (
-      <GenericModal
-        title={title}
-        modalBody={
-          <div className="project-picker-modal">
-            <form style={{ width: "100%" }} onSubmit={this.handleProjectSetUp}>
-              <div style={{ margin: "9px 0" }}>
-                <label>Name</label>
-                <mobiscroll.Input
-                  style={{ width: "100%" }}
-                  id="_name"
-                  type="text"
-                  placeholder="Name"
-                  name="_name"
-                  required={true}
-                  value={this.state.project._name}
-                  onChange={this.handleInputChange}
-                ></mobiscroll.Input>
-              </div>
-              <div style={{ margin: "9px 0" }}>
-                <label>Short Name</label>
+      <div>
+        <GenericModal
+          title={title}
+          modalBody={
+            <div className="project-picker-modal">
+              {!this.state.open && (
+                <form style={{ width: "100%" }} onSubmit={this.handleClickOpen}>
+                  <div style={{ margin: "9px 0" }}>
+                    <label>Name</label>
+                    <mobiscroll.Input
+                      style={{ width: "100%" }}
+                      id="_name"
+                      type="text"
+                      placeholder="Name"
+                      name="_name"
+                      required={true}
+                      value={this.state.project._name}
+                      onChange={this.handleInputChange}
+                    ></mobiscroll.Input>
+                  </div>
+                  <div style={{ margin: "9px 0" }}>
+                    <label>Short Name</label>
 
                 <mobiscroll.Input
                   style={{ width: "100%" }}
@@ -226,9 +246,7 @@ export default class SetUpProject extends React.Component {
                   <button
                     id="donebtn"
                     style={{ display: "none", marginRight: "40px" }}
-                    onClick={() => {
-                      this.props.restartApp();
-                    }}
+                    onClick={() => this.props.restartApp()}
                     className="done"
                   >
                     Done
@@ -252,9 +270,28 @@ export default class SetUpProject extends React.Component {
                 )}
               </div>
             </form>
-          </div>
-        }
-      />
-    );
-  }
+           )}
+           {this.state.open && !this.state.isDeleting ? (
+             <div style={{ float: "left" }}>
+               By Clicking on Agree button you are confirming that, All
+               previously created projects and invited projects will get
+               deleted from your account.
+               <div>
+               <button onClick={() => this.props.restartApp()} style={{ float: "left" }}>
+                 Disagree
+               </button>
+               <button onClick={this.handleProjectSetUp} style={{ float: "left" }} autoFocus>
+                 Agree
+               </button>
+               </div>
+             </div>
+           ) : (
+             <div></div>
+           )}
+         </div>
+       }
+     />
+   </div>
+ );
+}
 }
