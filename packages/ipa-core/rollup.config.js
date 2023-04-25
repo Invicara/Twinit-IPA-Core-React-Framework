@@ -89,15 +89,22 @@ export default {
         'IpaLayouts':'src/IpaLayouts/main.js',
         'IpaMock':'src/IpaMock/main.js',
     },
-    output: {
+    output: [{
         dir: 'modules',
         format: 'cjs',
         name: 'IpaControls',
         sourcemap: false,
         entryFileNames: '[name]/index.js',
-    },
+    },{
+        dir: 'esm_modules',
+        format: 'esm',
+        name: 'IpaControls',
+        sourcemap: false,
+        entryFileNames: '[name]/index.js',
+    }],
     plugins: [
         cleaner({targets: ['./modules']}),
+        cleaner({targets: ['./esm-modules']}),
         cleaner({targets: ['./dist']}),
         ...getPlugins()
     ],
