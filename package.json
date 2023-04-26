@@ -12,5 +12,8 @@
   },
   "devDependencies": {
     "lerna": "^3.19.0"
+  },
+  "dependencies": {
+    "@invicara/script-data": "^3.1.4-alpha.3"
   }
 }
