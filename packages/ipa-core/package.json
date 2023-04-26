@@ -15,8 +15,8 @@
   "main": "modules/index.js",
   "module": "esm_modules/index.js",
   "exports": {
-    "require": ".modules/index.js",
-    "import": ".esm_modules/index.js"
+    "./*.js": "./*.js",
+    "./*": "./*/index.js"
   },
   "files": [
     "/dist",
