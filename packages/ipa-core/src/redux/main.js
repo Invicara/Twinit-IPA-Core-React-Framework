@@ -11,9 +11,19 @@ import {
     selectEntitiesFromModels,
     setEntities,
     setIsolatedEntities,
-    setIsolatedEntitiesIds,
+    setSelectedEntities,
     setViewerSyncOn,
-    getSnapshot
+    getSnapshot,
+    getFilteredEntities,
+    getAppliedGroups,
+    fetchEntities,
+    resetEntities,
+    setCurrentEntityType,
+    resetForFilteringAndGrouping,
+    applyFiltering,
+    applyGrouping,
+    resetFiltering,
+    setSelecting
 } from "./slices/entities";
 
 import * as modal from './slices/modal'
@@ -34,14 +44,23 @@ import {
 } from "./slices/entities-pluggable-search";
 import {getEntitySelectConfig, setUserConfig} from "./slices/user-config";
 import {
+    fetchAssocitedFileSvcData,
     fetchAllNamedUserItems, fetchNamedUserItemItems,
     namedUserItemActions, selectNamedUserItemById,
-    selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus
+    selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus,
+    fetchNamedUserTotalAmountOfItems, importDataValidation, 
+    SelectNamedUserItemsErrorStatus, fileImport, SelectNamedUserItemsImportStatus
 } from "./slices/named-user-item.slice";
-import { addEntityComponents } from "./slices/entityUI"
+import { addEntityComponents, getEntityDataComponent } from "./slices/entityUI"
+import store  from '../redux/store'
 
 const redux = {
-    Entities: {
+    Entities: { 
+        getFilteredEntities,
+        getAppliedGroups,
+        fetchEntities,
+        resetEntities,
+        setCurrentEntityType,
         getCurrentEntityType,
         getIsolatedEntities,
         getSelectedEntities,
@@ -54,9 +73,14 @@ const redux = {
         isSelectingEntities,
         setEntities,
         setIsolatedEntities,
-        setIsolatedEntitiesIds,
+        setSelectedEntities,
         setViewerSyncOn,
-        getSnapshot
+        getSnapshot,
+        resetForFilteringAndGrouping,
+        applyFiltering,
+        applyGrouping,
+        resetFiltering,
+        setSelecting
     },
     EntitiesPluggableSearch: {
         getAllCurrentSearchedEntities,
@@ -80,16 +104,24 @@ const redux = {
         ...modal.actions
     },
     NamedUserItems: {
+        fetchAssocitedFileSvcData,
         fetchAllNamedUserItems,
         fetchNamedUserItemItems,
         selectNamedUserItemEntities,
         selectNamedUserItemsLoadingStatus,
         selectNamedUserItemById,
+        SelectNamedUserItemsErrorStatus,
+        SelectNamedUserItemsImportStatus,
         ...namedUserItemActions,
+        fetchNamedUserTotalAmountOfItems,
+        importDataValidation,
+        fileImport
     }, 
     EntityUi: {
-        addEntityComponents
-    }
+        addEntityComponents,
+        getEntityDataComponent
+    },
+    store: store
 }
 
 export default redux

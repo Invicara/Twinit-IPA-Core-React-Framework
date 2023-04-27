@@ -20,25 +20,25 @@ import { Provider } from 'react-redux'
 import * as PropTypes from 'prop-types';
 import _ from "lodash";
 
-import SampleConfig from '../stories/IpaPageComponents/sample_user_config.json';
-
 import {addUserConfig} from "../redux/slices/user-config";
 import {addUser} from "../redux/slices/user";
+import store, {addReducerSlice} from '../redux/store'
 
-import store, { addReducerSlice } from '../redux/store'
-import { addDashboardComponents } from '../redux/slices/dashboardUI'
-import { addEntityComponents } from '../redux/slices/entityUI'
-import {AppContext, withAppContext} from "../appContext";
-import sampleSelectedItems from "../stories/IpaPageComponents/sample_selectedItems.json";
+import {AppContext} from "../appContext";
 import AppProvider, {addScriptFunction} from "../AppProvider";
+
 import {MemoryRouter} from "react-router-dom";
 import {createMemoryHistory} from "history";
-import sampleUserConfig from "../stories/IpaPageComponents/sample_user_config.json";
-import {createLegacyContextSupport} from "../stories/util/legacyContext";
+import {IafProj, IafSession, IafFetch} from "@invicara/platform-api";
+import {createLegacyContextSupport} from "./util/legacyContext";
+import {addDashboardComponents} from "../redux/slices/dashboardUI";
+import {addEntityComponents} from "../redux/slices/entityUI";
+import ScriptHelper from "../IpaUtils/ScriptHelper";
 
 
 class MockAppProvider extends AppProvider {
   constructor(props) {
+    Object.assign(IafFetch.CONFIG, endPointConfig);
     super(props);
 
     console.log('MockAppProvider state', this.state);
@@ -68,6 +68,57 @@ class MockAppProvider extends AppProvider {
   }
 
   async initialize(loadConfigFromCache = true, showProjectPicker = true) {
+
+    if(this.props.manageLoggedInUser) {
+      if (!IafSession.loggedIn()) {
+        const url = IafSession.getAuthUrl(window.location.href);
+        window.location.assign(url);
+      }
+      if (document.location.hash && document.location.hash !== '') {
+        await IafSession.setSessionData(IafSession.extractToken(document.location.hash));
+        window.location.assign(document.location.pathname);
+      }
+    }
+
+    let currProject = undefined;
+    let currUserGroup = undefined;
+
+    if(this.props.ipaConfig.access_token){
+      await IafSession.setSessionData(this.props.ipaConfig.access_token);
+    }
+
+    if(this.props.ipaConfig.project_name){
+
+      let options = {_pageSize: 50}
+      let projects = await IafProj.getProjects({_name:this.props.ipaConfig.project_name},undefined,options);
+
+      const project = projects?.[0];
+      await IafProj.switchProject(project._id);
+      //sessionStorage.setItem("ipaSelectedProjectId", project._id);
+      IafSession.setSessionStorage("project",project);
+      IafSession.setSessionStorage("ipaSelectedProjectId",project._id);
+
+      currProject = await IafProj.getCurrent();
+
+      let userGroups = await IafProj.getProjectUserGroupsForCurrentUser(currProject._id);
+      currUserGroup = userGroups.find(ug=>ug._name==this.props.ipaConfig.user_group_name)
+
+      //for page components
+      this.setSelectedItems({
+        selectedProject: currProject,
+        selectedUserGroupId: currUserGroup._id
+      });
+
+      //for non page components
+      if(this.props?.sampleSelectedItems?.selectedProject && this.props?.sampleSelectedItems?.selectedUserGroupId) {
+        this.setSelectedItems({
+          selectedProject: this.props.sampleSelectedItems.selectedProject,
+          selectedUserGroupId: this.props.sampleSelectedItems.selectedUserGroupId
+        });
+      }
+
+    }
+
 
     /* load script plugins */
 
@@ -135,7 +186,7 @@ class MockAppProvider extends AppProvider {
           try {
             let dashComp = require('../../../../../app/ipaCore/components/' + dashCompFile.file).default
             dashComponents.push({name: dashCompFile.name, component: dashComp})
-          } catch(e) {
+          } catch (e) {
             console.error(e)
             console.error('Dashboard component not able to be loaded: ' + dashCompFile.name)
           }
@@ -156,48 +207,53 @@ class MockAppProvider extends AppProvider {
         let entityActionComponents = []
         this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
           try {
-            let actComp = require('../../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
+            let actComp = require('../../../../../app/ipaCore/components/' + actionCompFile.file)[actionCompFile.name + 'Factory']
             entityActionComponents.push({name: actionCompFile.name, component: actComp})
-          } catch(e) {
+          } catch (e) {
             console.error(e)
             console.error('Entity Action component not able to be loaded: ' + actionCompFile.name)
           }
         })
-        if (entityActionComponents.length) store.dispatch(addEntityComponents('action',entityActionComponents))
+        if (entityActionComponents.length) store.dispatch(addEntityComponents('action', entityActionComponents))
       }
 
       if (this.props.ipaConfig.components.entityData && this.props.ipaConfig.components.entityData.length) {
         let entityDataComponents = []
         this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
           try {
-            let dataComp = require('../../../../../app/ipaCore/components/'+ dataCompFile.file)
-            let dataCompFactory = dataComp[dataCompFile.name+'Factory']
+            let dataComp = require('../../../../../app/ipaCore/components/' + dataCompFile.file)
+            let dataCompFactory = dataComp[dataCompFile.name + 'Factory']
             entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
-          } catch(e) {
+          } catch (e) {
             console.error(e)
             console.error('Entity Action component not able to be loaded: ' + dataCompFile.name)
           }
         })
-        if (entityDataComponents.length) store.dispatch(addEntityComponents('data',entityDataComponents))
+        if (entityDataComponents.length) store.dispatch(addEntityComponents('data', entityDataComponents))
       }
-    } else {
-      console.warn("No ipa-core component configuration found")
-    }
 
-
-    if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
-      this.props.ipaConfig.css.forEach((styleSheet) => {
-        try {
-          let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
-        } catch(e) {}
-      })
     }
+      if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
+        this.props.ipaConfig.css.forEach((styleSheet) => {
+          try {
+            let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
+          } catch(e) {}
+        })
+      }
+
 
 
     //config loader
-    const config = this.props.initialConfig || SampleConfig;
+    let config = this.props.initialConfig;
+
+    if(this.props.ipaConfig.user_config_name){
+      const userConfig = currUserGroup._userAttributes.userConfigs.find(uc=>uc._name==this.props.ipaConfig.user_config_name);
+      const configs = await IafProj.getUserConfigs(currProject,{_id:userConfig._id});
+      config = JSON.parse(configs[0]._versions.find(uc=>uc._version==configs[0]._tipVersion)._userData);
+    }
+
     console.log("MockAppProvider initialized config, ",config);
-    this.onConfigLoad(config, this.testConfig(config), 'token', {})
+    this.onConfigLoad(config, this.testConfig(config), this.props.ipaConfig.access_token, {});
 
   }
 
@@ -205,6 +261,28 @@ class MockAppProvider extends AppProvider {
     console.log("MockAppProvider on config load, ",config);
     store.dispatch(addUserConfig(config))
     store.dispatch(addUser(user))
+
+    //load all config level scripts
+    if (!!config.onConfigLoad && !!config.onConfigLoad.load && config.onConfigLoad.load.length > 0) {
+
+      //load each script
+      let loadThese = config.onConfigLoad.load;
+      for (let i = 0; i < loadThese.length; i++) {
+
+        await ScriptHelper.loadScript({_userType: loadThese[i]});
+      }
+    }
+
+    //execute all config level scripts
+    if (!!config.onConfigLoad && !!config.onConfigLoad.exec && config.onConfigLoad.exec.length > 0) {
+
+      //load each script
+      let execThese = config.onConfigLoad.exec;
+      for (let i = 0; i < execThese.length; i++) {
+
+        await ScriptHelper.executeScript(execThese[i]);
+      }
+    }
 
     //need to enable the router after we load all the scripts in the config
     //to make sure all pages have data loaded into the script engine beforehand
@@ -217,8 +295,6 @@ class MockAppProvider extends AppProvider {
     console.log("MockAppProvider routes", routes);
 
     this.setState({isLoading: false});
-
-    this.setSelectedItems({selectedProject: sampleSelectedItems.selectedProject, selectedUserGroupId: sampleSelectedItems.selectedUserGroupId});
 
     if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
@@ -236,7 +312,7 @@ MockAppProvider.contextTypes = {
 
 export default MockAppProvider;
 
-export const decorateWithMockAppProvider = (Component, userConfig = {}, currentPath = "/assets") => {
+export const decorateWithMockAppProvider = (Component, ipaConfig = {}, userConfig = {}, currentPath = "/assets",sampleSelectedItems, optionalProps = {}) => {
   //console.log("withMockAppProvider props",props)
   const history = createMemoryHistory({
     initialEntries: [currentPath], // The initial URLs in the history stack
@@ -249,11 +325,17 @@ export const decorateWithMockAppProvider = (Component, userConfig = {}, currentP
   const LegacyContextProvider = createLegacyContextSupport({ ifefPlatform: PropTypes.object, ifefUpdatePopover: PropTypes.func })
   const context = {ifefPlatform:{},ifefUpdatePopover:_.noop};
 
-  return <Provider store={store}><MockAppProvider
-    initialConfig={userConfig}
-    location={history.location} history={history}
-    ipaConfig={{}}
-    onConfigLoad={_.noop}>
+  const providerProps = {
+    initialConfig: userConfig,
+    location: history.location,
+    history: history,
+    ipaConfig: ipaConfig,
+    onConfigLoad: _.noop,
+    sampleSelectedItems: sampleSelectedItems,
+    ...optionalProps
+  }
+
+  return <Provider store={store}><MockAppProvider {...providerProps}>
       <MemoryRouter initialEntries={[currentPath]}>
         <LegacyContextProvider context={context}>
           <Component/>

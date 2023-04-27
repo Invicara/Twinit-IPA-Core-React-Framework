@@ -21,6 +21,7 @@ import IpaDialogs from './IpaDialogs/main'
 import IpaUtils from './IpaUtils/main'
 import IpaPageComponents from './IpaPageComponents/main'
 import IpaRedux from './redux/main'
+import IpaMocks from './IpaMock/main'
 
 module.exports = {
     IpaMainLayout,
@@ -28,5 +29,6 @@ module.exports = {
     IpaDialogs,
     IpaUtils,
     IpaPageComponents,
-    IpaRedux
+    IpaRedux,
+    IpaMocks
 };

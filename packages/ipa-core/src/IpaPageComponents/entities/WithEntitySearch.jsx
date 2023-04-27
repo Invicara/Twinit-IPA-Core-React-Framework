@@ -86,7 +86,7 @@ const withEntitySearch = WrappedComponent => {
                 // dealing with another type of entities, that means we can't use the query from the source page so we
                 // run a query to select those ids directly and keep the original sender ...
                 else if (_.includes(this.props.allowedEntityTypes, queryParams.entityType) &&
-                    (!queryParams.senderEntityType || queryParams.entityType === queryParams.senderEntityType) &&
+                    (!queryParams.senderEntityType || queryParams.entityType !== queryParams.senderEntityType) &&
                     queryParams.selectedEntities
                     //this check is important not to mess with store
                     && queryParams.entityType === this.props.entitySingular) {
@@ -114,10 +114,6 @@ const withEntitySearch = WrappedComponent => {
             if(queryParams.groups){
                 this.props.applyGrouping(queryParams.groups);
             }
-            if (queryParams.isolatedEntities) {
-                this.props.setIsolatedEntitiesIds(queryParams.isolatedEntities)
-            }
-
             // set selectedEntities from a list of queryParam entity ids
             if (queryParams.selectedEntities) {
                 this.props.setSelecting(queryParams.selectedEntities.length === 1)
@@ -222,6 +218,22 @@ const withEntitySearch = WrappedComponent => {
             } else if (actions[action].type === 'fileDownload') {
                 FileHelpers.downloadDocuments(Array.isArray(entityInfo.original) ? entityInfo.original : [entityInfo.original]);
                 return {success: true};
+            } else if (actions[action].type === 'fileView') {
+                let docIds = []
+                entityInfo.original.forEach(d => {
+                  const _fileId = d._fileId
+                  d.versions.forEach(v => {
+                    const _fileVersionId = v._fileVersionId
+                    docIds.push({ _fileId, _fileVersionId })})
+                })
+                docIds.forEach(doc => {
+                  let docIds = [doc]
+                  let query = {
+                    entityType: 'file',
+                    queryParams: { docIds }
+                  }
+                this.props.onNavigate('documentviewer', query, { newTab: true })})
+                return {success: true};
             } else {
                 let scriptName = actions[action].script;
                 let result = await ScriptHelper.executeScript(scriptName, {entityInfo: entityInfo});
@@ -239,8 +251,7 @@ const withEntitySearch = WrappedComponent => {
             }
             await this.props.fetchEntities(script, selector, value, runScriptOptions);
             //in case of initial query triggered by this page, this callback will still use old query
-            if(onInitialFetchComplete) onInitialFetchComplete();
-
+            if(onInitialFetchComplete)onInitialFetchComplete();
             const fetchedQuery = {
                 query: {type: selector.query, id: selector.id, value},
                 senderEntityType: originalSender || this.props.entitySingular,
@@ -257,6 +268,7 @@ const withEntitySearch = WrappedComponent => {
                 groups: changes.groups
             })
         }
+
         render() {
             const wrappedProps = {...this.props, ...this.state,
                 extendedData : this.props.extendedDataConfig,
@@ -267,7 +279,6 @@ const withEntitySearch = WrappedComponent => {
                                      doEntityAction={this.doEntityAction}
                                      getEntityExtendedData={this.props.getEntityExtendedDataFetcher}
                                      entitiesSelected={this.props.setSelectedEntities}
-                                     isolateEntities={this.props.setIsolatedEntities}
                                      getFetcher={this.getFetcher}
                                      updateEntityType={this.updateEntityType}
                                      onGroupOrFilterChange={this.onGroupOrFilterChange}

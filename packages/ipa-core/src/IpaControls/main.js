@@ -11,6 +11,7 @@ import GenericIframe from './GenericIframe'
 import MiniButton, {MiniIconButton} from './MiniButton'
 import {AdvancedSearch} from "./AdvancedSearch";
 import BigButtonBar from "./BigButtonBar";
+import BaseTextInput from "./BaseTextInput";
 import CompactButtonBar from "./CompactButtonBar";
 import {defaultTheme, DynamicAttributeInput} from "./DynamicAttributeInput";
 import {EnhancedPickListSelect} from "./EnhancedPickListSelect";
@@ -43,12 +44,17 @@ import {Overlay} from "./Overlay";
 import SplitButton from "./SplitButton";
 import {PinkCheckbox, RoundCheckbox, SquareInSquareCheckbox, TickCheckbox, useChecked} from "./Checkboxes";
 import RadioButtons from './RadioButtons'
+import Table from './Table/Table'
+import Cell from './Table/Cell'
 import AlertIndicator from './AlertIndicator'
+import ToastContainer, {useToast} from './ToastContainer'
+import {Toast, SuccessToast, ErrorToast, WarningToast} from './ToastNotifications'
 
 const IpaControls = {
     AlertIndicator,
     AdvancedSearch,
     BigButtonBar,
+    BaseTextInput,
     ChartStack,
     RoundCheckbox,
     SquareInSquareCheckbox,
@@ -56,6 +62,7 @@ const IpaControls = {
     TickCheckbox,
     useChecked,
     RadioButtons,
+    Cell,
     CompactButtonBar,
     ControlProvider,
     CreatableScriptedSelects,
@@ -63,6 +70,7 @@ const IpaControls = {
     DynamicAttributeInput,
     EnhancedFetchControl,
     EnhancedPickListSelect,
+    ErrorToast,
     ScriptedLinkedSelects,
     ScriptedLinkedSelectsOld,
     ScriptedSelects,
@@ -98,9 +106,15 @@ const IpaControls = {
     SimpleTextThrobber,
     SplitButton,
     StackableDrawer,
+    SuccessToast,
+    Table,
     TextSearch,
+    Toast,
+    ToastContainer,
     TreeControl,
     TreeSearch,
+    useToast,
+    WarningToast,
     defaultTheme, //TODO This is a theme, not a control. I left it here bc it's just one, but if there were to be more, we should consider creating an IpaThemes module
 }
 

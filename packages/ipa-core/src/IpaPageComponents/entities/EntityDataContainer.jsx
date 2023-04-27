@@ -145,7 +145,7 @@ const EntityDataContainer = props => {
             'entity-data-content-collapsed': false
           })}
         >
-          <EntityDataGroupContainer config={props.config} fetching={fetching} data={data}/>
+          <EntityDataGroupContainer config={props.config} fetching={fetching} data={data} context={props.entity}/>
         </div>
       )}
     </div>

@@ -201,20 +201,19 @@ const withVersion = container => async file => {
 }
 
 const uploadFile = (container, file, refreshBytes) => new Promise((resolve, reject) => {
-    const fileBlob = produce(getBlob(file), fileBlob => {
-            fileBlob.fileItem = {
-                fileAttributes: _.fromPairs(_.toPairs(file.fileAttributes).flatMap(([attrName, attrValue]) =>
-                    comesFromComplexSelect(attrValue) ? asValuePair(attrName, attrValue) : [[attrName, attrValue]]
-                ))
-            };
-    });
-    IafFile.uploadFileResumable(container, fileBlob, {
-        filename: file.name,
-        onComplete: resolve,
-        onError: reject,
-        onProgress: refreshBytes
+    const newFile = new File([getBlob(file)], file.name, {type:getBlob(file).type})
+    newFile.fileItem = {
+      fileAttributes: _.fromPairs(_.toPairs(file.fileAttributes).flatMap(([attrName, attrValue]) =>
+        comesFromComplexSelect(attrValue) ? asValuePair(attrName, attrValue) : [[attrName, attrValue]]
+      ))
+    }
+    IafFile.uploadFileResumable(container, newFile, {
+      filename: file.name,
+      onComplete: resolve,
+      onError: reject,
+      onProgress: refreshBytes
     })
-});
+  })
 
 //We always take the first value bc we are not allowing multi-selects for file upload. See configReader for validation.
 const asValuePair = (attrName, attrValue) => {

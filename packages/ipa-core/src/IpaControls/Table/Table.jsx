@@ -1,41 +1,45 @@
 import React from 'react'
+import { propsEqual } from '../../IpaUtils/compare'
 import Cell from './Cell'
 import './Table.scss'
-export default function Table (props) {
-  console.log('Table props', props)
 
-  const hasData = props.rows && props.rows.length > 0
+export default function Table ({rows, className, headers, options}) {
+    
+  const hasData = rows && rows.length > 0
   return (
-    <table className={props.className}>
-      {props.headers && (
-        <tr>
-          {props.headers?.map(h => {
-            return (
-              <th>
-                <Cell type='text' val={h} />
-              </th>
-            )
-          })}
-        </tr>
-      )}
-
-      {hasData &&
-        props.rows.map(r => (
+    <table className={className}>
+      <tbody>
+        {headers && (
           <tr>
-            {r.map(c => (
-              <td>
-                <Cell type={c.type} val={c.val} className={c.className} />
-              </td>
-            ))}
+            {headers?.map(header => {
+              return (
+                <th key={header}>
+                  <Cell type='text' val={header} />
+                </th>
+              )
+            })}
           </tr>
-        ))}
-      {!hasData && (
-        <tr>
-          <td colSpan={props.headers?.length} className={`table__empty-message ${props.options?.emptyMessageClassName || ""}`}>
-            {props.options?.emptyMessage}
-          </td>
-        </tr>
-      )}
+        )}
+
+        {hasData &&
+          rows.map((row, idx) => (
+            <tr key={idx}> 
+              {row.map((cell, idx) => (
+                <td key={idx}>
+                  <Cell type={cell.type} val={cell.val} className={cell.className} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        {!hasData && (
+          <tr>
+            <td colSpan={headers?.length} className={`table__empty-message ${options?.emptyMessageClassName || ""}`}>
+              {options?.emptyMessage}
+            </td>
+          </tr>
+        )}
+      </tbody>
     </table>
   )
 }
+

@@ -3,26 +3,53 @@ $light-grey: #6d6e70;
 
 .project-picker-modal {
 
-    button {
-      text-transform: uppercase;
-      border-radius: 15px;
-      padding: 5px;
-      width: 40%;
-      margin: 20px;
-      border: solid black 2px;
-  
-    }
-    button.load {
-      color: white;
-      background-color: var(--app-accent-color);
-      border-color: var(--app-accent-color);
-    }
-    button.cancel {
-      color: $light-grey;
-      background-color: white;
-      border-color: $light-grey;
-    }
-  
+    
+button {
+  text-transform: uppercase;
+  border-radius: 15px;
+  padding: 5px;
+  width: 40%;
+  margin: 5px;
+  margin-top: 20px !important;
+  border: solid black 2px;
+
+}
+button.default-load {
+  color: white;
+  background-color: var(--app-accent-color);
+  border-color: var(--app-accent-color);
+}
+button.default-cancel {
+  color: $light-grey;
+  background-color: white;
+  border-color: $light-grey;
+  }
+button.setup {
+  color: white;
+  width: 23% !important;
+  background-color: var(--app-accent-color);
+  border-color: var(--app-accent-color);
+}
+button.cancel{
+  width: 23% !important;
+  color: $light-grey;
+  background-color: white;
+  border-color: $light-grey;
+}
+button.load {
+  color: white;
+  width: 23% !important;
+  background-color: var(--app-accent-color);
+  border-color: var(--app-accent-color);
+}
+
+button.done {
+  color: white;
+  width: 40% !important;
+  background-color: var(--app-accent-color);
+  border-color: var(--app-accent-color);
+}
+
     h4 {
       font-size: 14px;
     }
@@ -53,4 +80,16 @@ $light-grey: #6d6e70;
       background-color: var(--app-accent-color);
     }
   
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .button-container {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
   }

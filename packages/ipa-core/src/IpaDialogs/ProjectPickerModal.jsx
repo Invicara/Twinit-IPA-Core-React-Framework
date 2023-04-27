@@ -31,7 +31,7 @@ export default class ProjectPickerModal extends React.Component {
   }
 
   componentDidMount = async () => {
-
+    this.checkUserAccess();
     this.loadModal();
 
   }
@@ -42,6 +42,22 @@ export default class ProjectPickerModal extends React.Component {
       this.loadModal();
 
   }
+  checkUserAccess = async () => {
+    if (this.props.referenceAppConfig?.refApp) {
+      try {
+        let createTestProject = await IafPassSvc.createWorkspaces([]);
+        if (createTestProject && createTestProject?._total == 0) {
+          this.setState({
+            user: {
+              has_access: true,
+            },
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
 
   getUserGroupOptions = (projectid) => {
     return this.state.appUserGroups[projectid] ? this.state.appUserGroups[projectid].map((ug) => {return {'value': ug._id, 'label': ug._name}}) : [];
@@ -234,6 +250,10 @@ export default class ProjectPickerModal extends React.Component {
   onUserGroupPicked = (selectedOption) => {
     const selectedUserGroupId = selectedOption.value;
     this.setState({selectedUserGroupId: selectedUserGroupId, userGroupValue: selectedOption});
+    console.log("selectedOption", selectedOption)
+    console.log("selectedUserGroupId",selectedUserGroupId)
+    window.localStorage.setItem("selectedUserGroup", selectedOption.label);
+    window.localStorage.setItem("selectedUserGroupId",selectedUserGroupId)
   }
 
   submitProjSelection = async () => {
@@ -292,15 +312,43 @@ export default class ProjectPickerModal extends React.Component {
   render() {
     const {appContextProps, onCancel} = this.props;
     const {projects, remember, projectUserGroups, showLoadButton, invites} = this.state;
-    const loadBtn = showLoadButton ? <div>
+    const loadBtn = showLoadButton ? (<div>
           <div className='custom-control custom-switch' style={{marginTop: '15px', zIndex: '0'}}>
                 <input type="checkbox" className="custom-control-input" id="remswitch" value={remember} checked={remember} onChange={this.onRememberChange.bind(this)}/>
                 <label className="custom-control-label" htmlFor="remswitch">Remember my choice</label>
           </div>
-          <button onClick={onCancel} className="cancel">Cancel</button>
-          <button onClick={this.submitProjSelection} className="load">Load Project</button>
+          <div className='button-container'>
+          {this.props.referenceAppConfig?.refApp &&
+          <button onClick={()=>this.props.userLogout()} className={
+              this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"
+            }>
+                  Logout
+                </button>
+          }
+          <button
+            onClick={onCancel}
+            className={
+              this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"
+            }
+          >
+            Cancel
+          </button>
+          <button
+            onClick={this.submitProjSelection}
+            className={
+              this.props.referenceAppConfig?.refApp ? "load" : "default-load"
+            }
+          >
+            Load Project
+          </button>
+          {this.props.referenceAppConfig?.refApp && (
+            <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
+              Create Project
+            </button>
+          )}
           </div>
-         : <div className="spinningLoadingIcon projectLoadingIcon"></div>;
+        </div>
+      ) : <div className="spinningLoadingIcon projectLoadingIcon"></div>;
     //TODO handle user modal manual close -> load default config
     const selectProjectOptions = (!projects || projects.length == 0) ? [{value: 'none', label: ''}] :
         projects.map((project) => {return {'value': project._id, 'label': project._name}});
@@ -341,11 +389,59 @@ export default class ProjectPickerModal extends React.Component {
               <div>
                 You are not yet a member of any projects, please
                 {(!currentInvites || currentInvites.length === 0) && <span> contact your project admin for an invite</span>}
+
+                {/* {this.props.referenceAppConfig?.refApp && (
+            <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
+              Create Project
+            </button>
+          )} */}
                 {(currentInvites && currentInvites.length > 0) && <span> accept an invite</span>}
               </div>
             }
 
             {this.state.loadingModal && <SimpleTextThrobber throbberText="Loading your project information" />}
+            {this.props.referenceAppConfig?.refApp &&
+            !showLoadButton &&
+            !this.state.loadingModal &&
+            !this.state.user?.has_access ? (
+              <>
+                <br />
+                <div>
+                  <span className="text-danger">
+                    You don't have permission to create a project in Platform
+                    Reference App, please contact the Admin.
+                  </span>
+                </div>
+                <button onClick={()=>this.props.userLogout()}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <></>
+            )}
+
+             {this.props.referenceAppConfig?.refApp &&
+              !showLoadButton &&
+              !this.state.loadingModal && (
+                <>
+                  {" "}
+                  <button
+                    onClick={() => {
+                      if (!this.state.user?.has_access) {
+                        return;
+                      }
+                      this.props.referenceAppCreateProject();
+                    }}
+                    className={
+                      this.state.user?.has_access ? "setup" : "disabled"
+                    }
+                    disabled={!this.state.user?.has_access}
+                  >
+                    Create Project
+                  </button>
+                </>
+              )}
+
 
             <div>
               {currentInvites && currentInvites.length > 0 &&

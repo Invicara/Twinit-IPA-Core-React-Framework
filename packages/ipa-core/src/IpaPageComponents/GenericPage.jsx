@@ -20,23 +20,17 @@ import qs from 'qs';
 import _ from 'lodash'
 import { Redirect } from 'react-router-dom'
 import * as PropTypes from "prop-types";
-import {PopoverMenuView} from "../IpaLayouts/PopoverMenuView";
+import { PopoverMenuView } from "../IpaLayouts/PopoverMenuView";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import produce from "immer";
-import {connect} from "react-redux";
-import {Box, Container, Toolbar} from '@material-ui/core';
+import { connect } from "react-redux";
+import { Box, Container, Toolbar } from '@material-ui/core';
 
 import './GenericPage.scss'
 import GenericMatButton from "../IpaControls/GenericMatButton";
 
-import {withAppContext} from "../AppProvider";
-
-import {GenericPageContext} from "./genericPageContext";
-import {compose} from "@reduxjs/toolkit";
-import withEntitySearch from "./entities/WithEntitySearch";
-import withEntityAvailableGroups from "./entities/WithEntityAvailableGroups";
-import {getAllCurrentEntities, getIsolatedEntities} from "../redux/slices/entities";
-import {AppContext} from "../appContext";
+import { GenericPageContext } from "./genericPageContext";
+import { compose } from "@reduxjs/toolkit";
 
 const URL_LENGTH_WARNING = 80000
 
@@ -52,7 +46,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         userConfig: null,
         isLoading: true,
         isPageLoading: true,
-        queryParams: this.parseQueryParams(props.location.search,this.isSelectionInfoValid)
+        queryParams: this.parseQueryParams(props.location.search, this.isSelectionInfoValid)
       };
 
       this._loadPageData = this._loadPageData.bind(this);
@@ -66,20 +60,20 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
     async componentDidMount() {
 
-      this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
+      this.setState({ project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig });
       await this._loadPageData();
       this.onNavigated();
     }
 
     componentDidUpdate(prevProps) {
       //if the search changes the component doesn't get re-mounted, but still we need to react to the change in navigation
-      if(this.props.location.search !== prevProps.location.search){
+      if (this.props.location.search !== prevProps.location.search) {
         this.onNavigated();
       }
 
       //patch: set project in case it has changed without this component being re-mounted
-      if(this.state.project && (this.state.project._id !== this.props.selectedItems.selectedProject._id)){
-        this.setState({project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig});
+      if (this.state.project && (this.state.project._id !== this.props.selectedItems.selectedProject._id)) {
+        this.setState({ project: this.props.selectedItems.selectedProject, userConfig: this.props.selectedItems.userConfig });
       }
 
       //if user switches project while on the page reload page
@@ -93,149 +87,151 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
     async _loadPageData() {
 
-      this.setState({isLoading: true, isPageLoading: true});
+      this.setState({ isLoading: true, isPageLoading: true });
 
       let { handlers } = this.props.userConfig;
       //console.log("GENERIC PAGE PROPS",this.props);
       let handler = undefined;
       try {
-          handler = await produce(this.props.actions.getCurrentHandler(), async handler => {
+        handler = await produce(this.props.actions.getCurrentHandler(), async handler => {
 
-        //put selectBy info on handler if configured at the userConfig level and not the page level
-        //and if selectBy config is not provided on the handler already, this allows to override selectBys at a page level
-        if (handler.config && !handler.config.selectBy && handler.config.type && this.props.userConfig.entitySelectConfig) {
-          if (!Array.isArray(handler.config.type) && this.props.userConfig.entitySelectConfig[handler.config.type.singular]) {
+          //put selectBy info on handler if configured at the userConfig level and not the page level
+          //and if selectBy config is not provided on the handler already, this allows to override selectBys at a page level
+          if (handler.config && !handler.config.selectBy && handler.config.type && this.props.userConfig.entitySelectConfig) {
+            if (!Array.isArray(handler.config.type) && this.props.userConfig.entitySelectConfig[handler.config.type.singular]) {
 
-            //if the page is expecting only one selectBy config
-            handler.config = {...handler.config, selectBy: this.props.userConfig.entitySelectConfig[handler.config.type.singular]}
+              //if the page is expecting only one selectBy config
+              handler.config = { ...handler.config, selectBy: this.props.userConfig.entitySelectConfig[handler.config.type.singular] }
 
-          }
-          else {
-            //if the page is expecting multiple selectByConfigs filter to the ones it expects
-            handler.config = {...handler.config,
-              selectBy: _.fromPairs(
+            }
+            else {
+              //if the page is expecting multiple selectByConfigs filter to the ones it expects
+              handler.config = {
+                ...handler.config,
+                selectBy: _.fromPairs(
                   handler.config.type.filter(t => !!this.props.userConfig.entitySelectConfig[t.singular])
-                      .map(t => [t.singular, this.props.userConfig.entitySelectConfig[t.singular]])
-              )
+                    .map(t => [t.singular, this.props.userConfig.entitySelectConfig[t.singular]])
+                )
+              }
+
             }
-
           }
-        }
 
-        const handlerHasConfig = !!handler?.config;
-        const hasDefaultConfig = _.isObject(this.props.userConfig.entityDataConfig)
-        const expectsMultipleDataConfig = Array.isArray(handler?.config?.type);
+          const handlerHasConfig = !!handler?.config;
+          const hasDefaultConfig = _.isObject(this.props.userConfig.entityDataConfig)
+          const expectsMultipleDataConfig = Array.isArray(handler?.config?.type);
 
-        if(hasDefaultConfig && handlerHasConfig) {
-          if(expectsMultipleDataConfig) {
+          if (hasDefaultConfig && handlerHasConfig) {
+            if (expectsMultipleDataConfig) {
 
-            handler.config = {...handler.config,
-              data: _.fromPairs(
+              handler.config = {
+                ...handler.config,
+                data: _.fromPairs(
                   handler.config.type
-                      .filter(t => !!this.props.userConfig.entityDataConfig[t.singular])
-                      .map(t => {
-                        const handlerData = handler?.config?.data?.[t.singular]
-                        const defaultData = this.props.userConfig.entityDataConfig[t.singular];
-                        let data = produce(defaultData || {}, function(data){
-                          //merge handler config into default data, so treat as full override
-                          _.merge(data, handlerData || {});
-                        });
-                        return [t.singular, data]
-                      })
-              )
+                    .filter(t => !!this.props.userConfig.entityDataConfig[t.singular])
+                    .map(t => {
+                      const handlerData = handler?.config?.data?.[t.singular]
+                      const defaultData = this.props.userConfig.entityDataConfig[t.singular];
+                      let data = produce(defaultData || {}, function (data) {
+                        //merge handler config into default data, so treat as full override
+                        _.merge(data, handlerData || {});
+                      });
+                      return [t.singular, data]
+                    })
+                )
+              }
+            } else {
+              const entityType = handler.config.type;
+              const handlerData = handler?.config?.data
+              const defaultData = entityType && this.props.userConfig.entityDataConfig[entityType.singular]
+              let data = produce(defaultData || {}, function (data) {
+                //merge handler config into default data, so treat as full override
+                _.merge(data, handlerData || {});
+              });
+              handler.config = { ...handler.config, data };
             }
-          } else {
-            const entityType = handler.config.type;
-            const handlerData = handler?.config?.data
-            const defaultData = entityType && this.props.userConfig.entityDataConfig[entityType.singular]
-            let data = produce(defaultData || {}, function(data){
-              //merge handler config into default data, so treat as full override
-              _.merge(data, handlerData || {});
+          }
+
+          let hasActions = !!handler.actionHandlers && !!handler.actionHandlers.length;
+
+          if (hasActions) {
+            let actions = [];
+
+            handler.actionHandlers.forEach((action) => {
+              actions.push({ title: handlers[action].actionTitle, onClick: (e) => this.handleAction(action) });
             });
-            handler.config = {...handler.config, data};
+
+            this.context.ifefUpdatePopover(<PopoverMenuView actions={actions} />);
+
+          } else {
+            this.context.ifefUpdatePopover(null);
           }
-        }
 
-        let hasActions = !!handler.actionHandlers && !!handler.actionHandlers.length;
+          //load script from userConfig
+          let scriptTypes = handler.scriptTypes ? handler.scriptTypes : null;
 
-        if (hasActions) {
-          let actions = [];
+          if (!!scriptTypes && scriptTypes.length > 0) {
 
-          handler.actionHandlers.forEach((action) => {
-            actions.push({title: handlers[action].actionTitle, onClick: (e) => this.handleAction(action)});
-          });
-
-          this.context.ifefUpdatePopover(<PopoverMenuView actions={actions}/>);
-
-        } else {
-          this.context.ifefUpdatePopover(null);
-        }
-
-        //load script from userConfig
-        let scriptTypes = handler.scriptTypes ? handler.scriptTypes : null;
-
-        if (!!scriptTypes && scriptTypes.length > 0) {
-
-          //load all script types on the handler
-          for (let i = 0; i < scriptTypes.length; i++) {
-            try {
-              await ScriptHelper.loadScript({_userType: scriptTypes[i]});
-            } catch (error) {
-              if(this.props.handlePageHandlerLoadError){
-                //if we have error handler, execute it (in case of mocking provider)
-                this.props.handlePageHandlerLoadError(error);
-              } else {
-                //else throw error and break handler loading (note errors in lifecycle components will be swallowed)
-                console.log(error);
-                throw error;
+            //load all script types on the handler
+            for (let i = 0; i < scriptTypes.length; i++) {
+              try {
+                await ScriptHelper.loadScript({ _userType: scriptTypes[i] });
+              } catch (error) {
+                if (this.props.handlePageHandlerLoadError) {
+                  //if we have error handler, execute it (in case of mocking provider)
+                  this.props.handlePageHandlerLoadError(error);
+                } else {
+                  //else throw error and break handler loading (note errors in lifecycle components will be swallowed)
+                  console.log(error);
+                  throw error;
+                }
               }
             }
           }
-        }
 
-        //load script from userConfig
-        let runScripts = handler.onHandlerLoad ? handler.onHandlerLoad : null;
-        if (!!runScripts && runScripts.length > 0) {
+          //load script from userConfig
+          let runScripts = handler.onHandlerLoad ? handler.onHandlerLoad : null;
+          if (!!runScripts && runScripts.length > 0) {
 
-          //load all script types on the handler
-          for (let i = 0; i < runScripts.length; i++) {
-            try {
-              await ScriptHelper.executeScript(runScripts[i]);
-            } catch (error) {
-              if(this.props.actions.handlePageHandlerLoadError){
-                //if we have error handler, execute it (in case of mocking provider)
-                this.props.actions.handlePageHandlerLoadError(error);
-              } else {
-                //else throw error and break handler loading (note errors in lifecycle components will be swallowed)
-                console.error(error);
-                throw error;
+            //load all script types on the handler
+            for (let i = 0; i < runScripts.length; i++) {
+              try {
+                await ScriptHelper.executeScript(runScripts[i]);
+              } catch (error) {
+                if (this.props.actions.handlePageHandlerLoadError) {
+                  //if we have error handler, execute it (in case of mocking provider)
+                  this.props.actions.handlePageHandlerLoadError(error);
+                } else {
+                  //else throw error and break handler loading (note errors in lifecycle components will be swallowed)
+                  console.error(error);
+                  throw error;
+                }
               }
             }
           }
-        }
-      })
+        })
       }
-      catch (e){
+      catch (e) {
         console.error("Error generating handler");
         console.error(e);
       }
       //console.log("HANDLER PREPARED",handler);
-      this.setState({isLoading: false, handler});
+      this.setState({ isLoading: false, handler });
     }
 
     handleAction(handler) {
       this.context.ifefShowPopover(false);
-      const {match, history, userConfig} = this.props;
+      const { match, history, userConfig } = this.props;
 
       history.push(`${match.path}${userConfig.handlers[handler].path}`);
     }
 
     onLoadComplete() {
-      this.setState({isPageLoading: false});
+      this.setState({ isPageLoading: false });
     }
 
     onLoadComplete() {
-      this.setState({isPageLoading: false});
+      this.setState({ isPageLoading: false });
     }
 
     isSelectionInfoValid(selectionInfo) {
@@ -248,7 +244,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
     }
 
-    setQueryParams = (partial) => this.setState({queryParams: {...this.state.queryParams, ...partial}})
+    setQueryParams = (partial) => this.setState({ queryParams: { ...this.state.queryParams, ...partial } })
 
     //provide pageComponents with a navigate function to place query criteria in the url to pass to other pages
     onNavigateOut = (userConfig, genericQueryParams, validator, history) => (destinationHandler, selectionInfo, options = {}) => {
@@ -290,7 +286,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
           query = Object.assign(query, selectionInfo.queryParams)
         }
 
-        if(selectionInfo) {
+        if (selectionInfo) {
           query.entityType = selectionInfo.entityType
         }
 
@@ -298,7 +294,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         //if its not an array leave as is as then it represents settings for a fetch control
         if (query.query && query.query.value && !query.query.id && query.query.id !== 0)
           query.query.value = Array.isArray(query.query.value) ? query.query.value.join(',') : query.query.value
-        if (selectionInfo && selectionInfo.selectedEntities && selectionInfo.selectedEntities.length>0) {
+        if (selectionInfo && selectionInfo.selectedEntities && selectionInfo.selectedEntities.length > 0) {
           query.selectedEntities = selectionInfo.selectedEntities.join(',');
           query.entityType = selectionInfo.entityType
           query.script = selectionInfo.script
@@ -308,9 +304,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         if (query.groups && query.groups.length) {
           query.groups = query.groups.join(',')
         }
-
-        query.isolatedEntities = this.props.isolatedEntities.map(isolatedEntity => isolatedEntity._id).join(',')
-
         newPath = userConfig.handlers[destinationHandler].path + '?' + qs.stringify(query);
       }
 
@@ -318,10 +311,14 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       if (newPath.length > URL_LENGTH_WARNING)
         console.warn('url length is very large and navigation may not work!');
 
-      if(options.newTab === true) {
-        window.open(`${endPointConfig.baseRoot}/#${newPath}`, '_blank')?.focus()
+      if (options != undefined) {
+        if (options.newTab === true) {
+          window.open(`${endPointConfig.baseRoot}/#${newPath}`, '_blank')?.focus()
+        } else {
+          history.push(newPath);
+        }
       } else {
-        history.push(newPath);
+        this.props.history.push(newPath);
       }
     }
 
@@ -338,7 +335,8 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         // This limit can be overridden by passing an arrayLimit option: We are going to use an arraylimit of 100 to cover almost every case,
         // if we are still finding more bugs on this parse, we will need to implement another solution for these arrays
 
-        queryParams = qs.parse(rawParams, { arrayLimit: 100,
+        queryParams = qs.parse(rawParams, {
+          arrayLimit: 100,
           decoder(str, decoder, charset) {
             const strWithoutPlus = str.replace(/\+/g, ' ');
             if (charset === 'iso-8859-1') {
@@ -372,13 +370,13 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         //if the query contains no id and a value which is a string, turn the value into an array
         //in this case its a list of ids to fetch
         if (queryParams.query && !queryParams.query.id && queryParams.query.id !== 0 && queryParams.query.value) {
-          if (typeof(queryParams.query.value)=="string") {
+          if (typeof (queryParams.query.value) == "string") {
             queryParams.query.value = queryParams.query.value.split(',');
           }
         }
 
         if (queryParams.selectedEntities) {
-          if (typeof(queryParams.selectedEntities)=="string") {
+          if (typeof (queryParams.selectedEntities) == "string") {
             queryParams.selectedEntities = queryParams.selectedEntities.split(',');
           }
         }
@@ -390,9 +388,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
         if (queryParams.groups)
           queryParams.groups = queryParams.groups.split(',');
-
-        if (queryParams.isolatedEntities)
-          queryParams.isolatedEntities = queryParams.isolatedEntities.split(',');
 
         if (queryParams.query && queryParams.query.type && queryParams.query.value) {
           if (queryParams.query.type === "<<TEXT_SEARCH>>")
@@ -407,11 +402,11 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
     onNavigated() {
 
-      const queryParams = this.parseQueryParams(this.props.location.search,this.isSelectionInfoValid)
-      if(!_.isEqual(queryParams, this.state.queryParams)) {
-        this.setState({queryParams});
+      const queryParams = this.parseQueryParams(this.props.location.search, this.isSelectionInfoValid)
+      if (!_.isEqual(queryParams, this.state.queryParams)) {
+        this.setState({ queryParams });
       } else {
-        this.setState({queryParams: {}});
+        // this.setState({ queryParams: {} }); //commenting this as is breaking queryparams for document viewer
       }
 
     }
@@ -423,13 +418,13 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
           {/*breadcrumbs to the left*/}
           <Box sx={{ flexGrow: 1 }}>
             {this.state.handler.toolbar.breadcrumbButtons && (this.state.handler.toolbar.breadcrumbButtons.map((b) => (
-                <GenericMatButton {...b.props}>{b.text}</GenericMatButton>
+              <GenericMatButton {...b.props}>{b.text}</GenericMatButton>
             )))}
           </Box>
           {/*actions to the right to the left*/}
           <Box sx={{ flexGrow: 0 }}>
             {this.state.handler.toolbar.actionButtons && (this.state.handler.toolbar.actionButtons.map((b) => (
-                <GenericMatButton {...b.props}>{b.text}</GenericMatButton>
+              <GenericMatButton {...b.props}>{b.text}</GenericMatButton>
             )))}
             {this.state.handler.toolbar.pagination && this.state.handler.pagination.toolbar.hasPrevious && <GenericMatButton>Prev</GenericMatButton>}
             {this.state.handler.toolbar.pagination && this.state.handler.pagination.toolbar.hasNext && <GenericMatButton>Next</GenericMatButton>}
@@ -441,17 +436,17 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
     }
 
     body = (genericPageContext) => this.state.isLoading ? (
-        <div style={{padding: '40px'}}>
-          <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
-        </div>
+      <div style={{ padding: '40px' }}>
+        <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
+      </div>
     ) : (<React.Fragment>
       {this.toolbar()}
       <PageComponent {...optionalProps} {...this.props}
-                     onLoadComplete={this.onLoadComplete}
-                     handler={this.state.handler}
-                     onNavigate={genericPageContext.onNavigate}
-                     setQueryParams={this.setQueryParams}
-                     queryParams={this.state.queryParams}
+        onLoadComplete={this.onLoadComplete}
+        handler={this.state.handler}
+        onNavigate={genericPageContext.onNavigate}
+        setQueryParams={this.setQueryParams}
+        queryParams={this.state.queryParams}
       />
     </React.Fragment>)
 
@@ -468,7 +463,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
     render() {
 
-      const onNavigate = this.onNavigateOut(this.props.userConfig,this.state.queryParams,this.isSelectionInfoValid,this.props.history);
+      const onNavigate = this.onNavigateOut(this.props.userConfig, this.state.queryParams, this.isSelectionInfoValid, this.props.history);
 
       //looks like handler is "calculated" only when component mounts and never changes
       const genericPageContext = {
@@ -491,13 +486,13 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
   };
 
   const mapStateToProps = state => ({
-    isolatedEntities: getIsolatedEntities(state)
+    //please connect here only high level generic slices
   })
   const mapDispatchToProps = {
   }
 
   return compose(
-      connect(mapStateToProps, mapDispatchToProps),
+    connect(mapStateToProps, mapDispatchToProps),
   )(GenericPage);
 
 };
