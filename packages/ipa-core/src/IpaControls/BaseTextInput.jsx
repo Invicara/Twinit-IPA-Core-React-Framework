@@ -46,7 +46,7 @@ const BaseTextInput = (props) => {
 
 BaseTextInput.propTypes = {
     className: string,
-    labelProps: ControlLabel.propTypes,
+    labelProps: shape({...ControlLabel.propTypes}),
     inputProps: shape({
         type: string,
         value: any,
@@ -56,6 +56,7 @@ BaseTextInput.propTypes = {
         className: string,
         style: object,
         onFocusChange: func,
+        onBlur: func,
     }).isRequired,
     component: element,
 }
