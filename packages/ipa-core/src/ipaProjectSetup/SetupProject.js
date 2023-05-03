@@ -35,20 +35,118 @@ export default class SetUpProject extends React.Component {
     const { id, value } = e.target;
     this.setState({ project: { ...this.state.project, [id]: value } });
   };
+
   async deletePreviousProject() {
     const { projects } = this.props;
     this.setState({ isDeleting: true });
-    if(projects !== undefined){
-    for (let index = 0; index < projects.length; index++) {
-      await IafProj.delete(projects[index]);
+    if (projects !== undefined) {
+      for (let index = 0; index < projects.length; index++) {
+        await IafProj.delete(projects[index]);
+      }
     }
-  }
     this.setState({ isDeleting: false });
   }
 
   handleClickOpen = () => {
     this.setState({ open: true });
   };
+
+  async createScripts(projectList, ctx) {
+    let project = projectList._list[0];
+    let scriptsDescriptors = [
+      {
+        _name: "Upload Scripts",
+        _shortName: "uploadRunnableScripts",
+        _description: "Upload all Scripts",
+        _userType: "uploadRunnableScripts",
+      },
+      {
+        _name: "User Config Import",
+        _shortName: "configUpload",
+        _description: "Upload config files",
+        _userType: "configUpload",
+      },
+      {
+        _name: "Upload bimpk file",
+        _shortName: "uploadBimpk",
+        _description: "Upload and extract bimpk files",
+        _userType: "uploadBimpk",
+      },
+      {
+        _name: "Create Collections",
+        _shortName: "createCollections",
+        _description: "Create collections",
+        _userType: "createCollections",
+      },
+      {
+        _name: "Import File Attributes",
+        _shortName: "fileAttributesImport",
+        _description: "Import File Attributes",
+        _userType: "fileAttributesImport",
+      },
+      {
+        _name: "Import Api Config",
+        _shortName: "apiConfigImport",
+        _description: "Import Api Config File",
+        _userType: "apiConfigImport",
+      },
+    ];
+
+    //Fetch Zip
+    let myZipFile;
+    await fetch(`${endPointConfig.setupZipFileOrigin}`) //fetch zip file using link
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Store the binary blob in a variable
+        myZipFile = new Blob([blob], { type: "application/zip" });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    let zipFileObj = {
+      //object of zip file to passed on _loadZipFile
+      fileObj: myZipFile,
+    };
+    let scriptFiles = await UiUtils.IafLocalFile._loadZipFile(zipFileObj); //load all files using scriptFiles
+    console.log("scriptFiles", scriptFiles);
+
+    let scripts = [];
+    const scriptNames = [
+      "uploadRunnableScripts",
+      "configUpload",
+      "uploadBimpk",
+      "createCollections",
+      "fileAttributesImport",
+      "apiConfigImport",
+    ];
+    for (let i = 0; i < scriptNames.length; i++) {
+      const scriptName = scriptNames[i];
+      const scriptContent = await scriptFiles.files[
+        `setupScripts/${scriptName}.js`
+      ].async("string");
+      scripts.push({ scriptName, scriptContent });
+    }
+
+    //* Adding more information like version and namesapce
+    let scriptItems = [];
+    scripts.forEach((c) => {
+      let item = scriptsDescriptors.find(
+        (obj) => obj._shortName === c.scriptName
+      );
+      if (item) {
+        //TODO: use javascript stringify, not JSON stringify
+        item._version = { _userData: c.scriptContent };
+        item._namespaces = project._namespaces;
+        scriptItems.push(item);
+      }
+    });
+    console.log("Script items with information.", scriptItems);
+
+    //* Creating script in project
+    //TODO: create scripts
+    let createScriptRes = await PlatformApi.IafScripts.create(scriptItems, ctx);
+    console.log("Scripts are Created", createScriptRes);
+  }
 
   handleProjectSetUp = async (e, restartApp) => {
     console.log("called"); // console to know function is called
@@ -60,125 +158,177 @@ export default class SetUpProject extends React.Component {
     console.log("project", project);
     let ctx = { _namespaces: project._list[0]._namespaces };
     ctx.authToken = IafSession.getAuthToken();
+    const div = document.getElementById("msg"); //div selector
     await IafProj.switchProject(project._list[0]._id); //switch project using ID
-
     // get setupScript.js
-    let scriptFile = await fetch(`${endPointConfig.setupFileOrigin}`);
-    let scriptContent = [`${await scriptFile.text()}`];
-    console.log("scriptFileTxt", scriptContent);
-    if (_.size(scriptContent) > 0) {
-      let scriptItem = {
-        _name: "Project Setup",
-        _shortName: "iaf_ext_proj_setup",
-        _description: "Scripts to Setup a Project",
-        _userType: "iaf_ext_proj_setup",
-        _namespaces: project._list[0]._namespaces,
-        _version: {
-          _userData: scriptContent[0],
-        },
-      };
-      //create or replace script
-      let results = await IafScripts.updateOrCreateScript(scriptItem, ctx);
-      console.log("Result of create script", results);
-    }
-
+    await this.createScripts(project, ctx);
     //Orchestrator
-    let orchestratorConfig = await IafScriptEngine.addDatasource({
-      _name: "Upload Zip", //name of the orchestrator, can be anything
-      _description: "Orchestrator run script.js",
-      _namespaces: ctx._namespaces, //the namespace the orchestrator is created in
-      _userType: "iaf_ext_proj_setup", // _userType for the orchestrator
-      _params: {
-        tasks: [
-          // the ordered list of steps that are a part of the orchestrator
+    await runOrchestrator();
+    //Orchestrator is wrapped inside function to avoid running parallel with createScripts
+    async function runOrchestrator() {
+      let orchestratorConfig = await IafScriptEngine.addDatasource({
+        _name: "Setup Project",
+        _description: "Run all scripts needed for setup",
+        _namespaces: ctx._namespaces,
+        _userType: "setup_runner",
+        _params: {
+          tasks: [
+            // the ordered list of steps that are a part of the orchestrator
+            {
+              _sequenceno: 1,
+              _name: "Uploading user Scripts.",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "uploadRunnableScripts",
+                _scriptName: "uploadScripts", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 2,
+              _name: "Creating User Configurations.",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "configUpload",
+                _scriptName: "userConifgImports", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 3,
+              _name: "Uploding BIMPK file",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "uploadBimpk",
+                _scriptName: "bimpkOperations", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 4,
+              _name: "Creating required collections.",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "createCollections",
+                _scriptName: "createCollections", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 5,
+              _name: "Importing file attributes.",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "fileAttributesImport",
+                _scriptName: "fileAttributesImport", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 6,
+              _name: "Imporiting api config.",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "apiConfigImport",
+                _scriptName: "apiConfigImport", // the named script to run in the file above
+              },
+            },
+          ],
+        },
+      });
+      console.log(orchestratorConfig);
+
+      //Fetch created orchestrator
+      let projOrchList = await IafDataSource.getOrchestrators({}, ctx);
+      console.log(projOrchList);
+      let runSetupOrch = projOrchList._list.find(
+        (o) => o._userType === "setup_runner"
+      );
+      console.log(runSetupOrch);
+
+      let datasourceRunRequest = {
+        orchestratorId: runSetupOrch.id,
+        _actualparams: [
           {
-            _sequenceno: 1, // the order of the task in the orchestrator, in this case first and only
-            _name: "Run setup", // a name for the step in the orchestrator
-            _orchcomp: "default_script_target", // this indicates that the task will execute a script
-            _actualparams: {
-              userType: "iaf_ext_proj_setup", // the _userType to use to load this script file
-              _scriptName: "setUpProject", // the named script to run in the file above
+            // an array of the parameters we want to pass to each step when the orchestrator runs
+            sequence_type_id: runSetupOrch.orchsteps[0]._compid,
+
+            // in this case we only have one step so its always at index 0
+            params: {
+              ctx: JSON.stringify(ctx),
+              project: project,
+              zipLink: endPointConfig.projectZipFileOrigin,
             },
           },
         ],
-      },
-    });
-    console.log(orchestratorConfig);
+      };
 
-    //Fetch created orchestrator
-    let projOrchList = await IafDataSource.getOrchestrators({}, ctx);
-    console.log(projOrchList);
-    let runSetupOrch = projOrchList._list.find(
-      (o) => o._userType === "iaf_ext_proj_setup"
-    );
-    console.log(runSetupOrch);
-
-    let datasourceRunRequest = {
-      orchestratorId: runSetupOrch.id, // _id of the orchestrator to run
-      _actualparams: [
-        {
-          // an array of the parameters we want to pass to each step when the orchestrator runs
-          sequence_type_id: runSetupOrch.orchsteps[0]._compid, // this is how we identify the step receiving the parameters
-          // in this case we only have one step so its always at index 0
-          params: {
-            ctx: JSON.stringify(ctx),
-            project: project,
-            zipLink: endPointConfig.zipFileOrigin,
-          },
-        },
-      ],
-    };
-
-    // run the orchestrator - this returns an orchestrator run item that indicates the orchestrator has been 'QUEUED'
-    const orchRun = await IafDataSource.runOrchestrator(
-      runSetupOrch.id,
-      datasourceRunRequest,
-      ctx
-    );
-    console.log("orchRun", orchRun);
-
-    //Get Orchestrator Status
-    const orchReqForRes = { runid: orchRun.id };
-    console.log("handleProjectSetUp === orchReqForRes", orchReqForRes);
-
-    //Check status afetr every 10 seconds
-    let startTime = Date.now();
-    const map_orch_timer = setInterval(async () => {
-      let status = await IafScriptEngine.getDatasourceRunStatus(
-        orchReqForRes,
+      // run the orchestrator - this returns an orchestrator run item that indicates the orchestrator has been 'QUEUED'
+      const orchRun = await IafDataSource.runOrchestrator(
+        runSetupOrch.id,
+        datasourceRunRequest,
         ctx
       );
-      status = status.find((f) => f._usertype == "iaf_ext_proj_setup");
-      console.log("handleProjectSetUp === SetupProject Run Status", status);
-      switch (status._status) {
-        case "COMPLETED":
-          console.log("COMPLETED SetupProject", status);
-          clearInterval(map_orch_timer);
-          console.log("handleProjectSetUp === done");
-          document.getElementById("donebtn").style.display = "block";
-          document.getElementById("msg").textContent = "Setup Completed";
-          break;
+      console.log("orchRun", orchRun);
 
-        case "ERROR":
-          console.error("Error message", status.orchrunsteps[0]._statusmsg);
-          var msgElem = document.getElementById("msg");
-          clearInterval(map_orch_timer);
-          msgElem.textContent =
-            "Setup did not Complete, An error occured during setup!";
-          msgElem.style.color = "red";
-          break;
+      //Get Orchestrator Status
+      const orchReqForRes = { runid: orchRun.id };
+      console.log("handleProjectSetUp === orchReqForRes", orchReqForRes);
 
-        default:
-          let endTime = Date.now();
-          let diffInSeconds = (endTime - startTime) / 1000;
-          document.getElementById("msg").textContent =
-            "Setup is in progress, please wait...";
-          console.log(
-            `Project setup running since ${diffInSeconds / 60} minutes.`
-          );
-          break;
-      }
-    }, 10000);
+      //Check status afetr every 10 seconds
+      let startTime = Date.now();
+      const map_orch_timer = setInterval(async () => {
+        let status = await IafScriptEngine.getDatasourceRunStatus(
+          orchReqForRes,
+          ctx
+        );
+        status = status.find((f) => f._usertype == "setup_runner");
+        console.log("SetupProject Run Status", status);
+        switch (status._status) {
+          
+          case "COMPLETED":
+            console.log("COMPLETED SetupProject", status);
+            clearInterval(map_orch_timer);
+            console.log("handleProjectSetUp === done");
+            div.style.display = "none";
+            document.getElementById("donebtn").style.display = "block";
+            break;
+
+          case "RUNNING":
+            let endTime = Date.now();
+            let diffInSeconds = (endTime - startTime) / 1000;
+            console.log(
+              `Project setup running since ${(diffInSeconds / 60).toFixed(
+                2
+              )} minutes.`
+            );
+
+            let messageArray = [];
+            let sequencedOrchSteps = status.orchrunsteps.sort(
+              (a, b) => a._sequenceno - b._sequenceno
+            );
+            messageArray = sequencedOrchSteps.map((x) => {
+              return x._name + "   " + x._status;
+            });
+            div.style.display = "block";
+            div.innerHTML = "";
+            messageArray.forEach((x) => {
+              const [name, status] = x.split("   ");
+              div.innerHTML += `<div style="display:flex; flex-direction:row; justify-content: space-between;"><p style="font-size: 15px; margin:1px; padding-left:5px">${name}</p><p style="font-size: 15px; margin:1px; padding-right:5px">${status}</p></div>`;
+            });
+            break;
+
+          case "ERROR":
+            console.error("Error message", status.orchrunsteps[0]._statusmsg);
+            clearInterval(map_orch_timer);
+            div.style.display = "block";
+            div.innerHTML =
+              "Setup did not Complete, An error occured during setup!";
+            div.style.color = "red";
+            break;
+
+          default:
+            div.style.display = "block";
+            div.innerHTML = "Setup is in progress, please wait...";
+            break;
+        }
+      }, 10000);
+    }
   };
 
   render() {
@@ -207,91 +357,115 @@ export default class SetUpProject extends React.Component {
                   <div style={{ margin: "9px 0" }}>
                     <label>Short Name</label>
 
-                <mobiscroll.Input
-                  style={{ width: "100%" }}
-                  id="_shortName"
-                  type="text"
-                  placeholder="Short Name"
-                  name="_shortName"
-                  required={true}
-                  value={this.state.project._shortName}
-                  onChange={this.handleInputChange}
-                ></mobiscroll.Input>
-              </div>
-              <div style={{ margin: "9px 0" }}>
-                <label>Description</label>
+                    <mobiscroll.Input
+                      style={{ width: "100%" }}
+                      id="_shortName"
+                      type="text"
+                      placeholder="Short Name"
+                      name="_shortName"
+                      required={true}
+                      value={this.state.project._shortName}
+                      onChange={this.handleInputChange}
+                    ></mobiscroll.Input>
+                  </div>
+                  <div style={{ margin: "9px 0" }}>
+                    <label>Description</label>
 
-                <mobiscroll.Input
-                  style={{ width: "100%" }}
-                  id="_description"
-                  type="text"
-                  placeholder="Name"
-                  name="_description"
-                  required={true}
-                  value={this.state.project._description}
-                  onChange={this.handleInputChange}
-                ></mobiscroll.Input>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                  padding: "0 3em",
-                }}
-              >
-                {this.state.click ? (
-                <div style={{ display: "flex", alignItems: "center", marginLeft: "-3em" }}>
-                  <button
-                    id="donebtn"
-                    style={{ display: "none", marginRight: "40px" }}
-                    onClick={() => this.props.restartApp()}
-                    className="done"
+                    <mobiscroll.Input
+                      style={{ width: "100%" }}
+                      id="_description"
+                      type="text"
+                      placeholder="Name"
+                      name="_description"
+                      required={true}
+                      value={this.state.project._description}
+                      onChange={this.handleInputChange}
+                    ></mobiscroll.Input>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                      padding: "0 3em",
+                    }}
                   >
-                    Done
-                  </button>
-                  <p id="msg" style={{ marginLeft: "10px",width:"300px",marginTop:"20px" }}>
-                    Fetching Script...
-                  </p>
-                </div>
-                ):(
-                  <>
+                    {this.state.click ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          margin: "auto",
+                        }}
+                      >
+                        <div
+                          id="msg"
+                          style={{
+                            display: "none",
+                            minWidth: "400px",
+                            marginTop: "10px",
+                            padding: "15px",
+                            overflowY: "auto",
+                            maxHeight: "95px",
+                            backgroundColor: "#EEEEEE",
+                          }}
+                        ></div>
+
+                        <button
+                          id="donebtn"
+                          style={{ display: "none", minWidth: "100px" }}
+                          onClick={() => this.props.restartApp()}
+                          className="done"
+                        >
+                          Done
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => this.props.restartApp()}
+                          className="load"
+                        >
+                          Cancel
+                        </button>
+                        <button type="submit" className="load">
+                          Set up
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </form>
+              )}
+              {this.state.open && !this.state.isDeleting ? (
+                <div style={{ float: "left" }}>
+                  By Clicking on Agree button you are confirming that, All
+                  previously created projects and invited projects will get
+                  deleted from your account.
+                  <div>
                     <button
                       onClick={() => this.props.restartApp()}
-                      className="load"
+                      style={{ float: "left" }}
                     >
-                      Cancel
+                      Disagree
                     </button>
-                    <button type="submit" className="load">
-                      Set up
+                    <button
+                      onClick={this.handleProjectSetUp}
+                      style={{ float: "left" }}
+                      autoFocus
+                    >
+                      Agree
                     </button>
-                  </>
-                )}
-              </div>
-            </form>
-           )}
-           {this.state.open && !this.state.isDeleting ? (
-             <div style={{ float: "left" }}>
-               By Clicking on Agree button you are confirming that, All
-               previously created projects and invited projects will get
-               deleted from your account.
-               <div>
-               <button onClick={() => this.props.restartApp()} style={{ float: "left" }}>
-                 Disagree
-               </button>
-               <button onClick={this.handleProjectSetUp} style={{ float: "left" }} autoFocus>
-                 Agree
-               </button>
-               </div>
-             </div>
-           ) : (
-             <div></div>
-           )}
-         </div>
-       }
-     />
-   </div>
- );
-}
+                  </div>
+                </div>
+              ) : (
+                <div></div>
+              )}
+            </div>
+          }
+        />
+      </div>
+    );
+  }
 }
