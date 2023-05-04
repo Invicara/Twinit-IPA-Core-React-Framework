@@ -280,7 +280,6 @@ export default class SetUpProject extends React.Component {
         status = status.find((f) => f._usertype == "setup_runner");
         console.log("SetupProject Run Status", status);
         switch (status._status) {
-          
           case "COMPLETED":
             console.log("COMPLETED SetupProject", status);
             clearInterval(map_orch_timer);
@@ -388,7 +387,6 @@ export default class SetUpProject extends React.Component {
                       justifyContent: "space-between",
                       alignItems: "center",
                       width: "100%",
-                      padding: "0 3em",
                     }}
                   >
                     {this.state.click ? (
@@ -398,13 +396,14 @@ export default class SetUpProject extends React.Component {
                           flexDirection: "column",
                           alignItems: "center",
                           margin: "auto",
+                          width: "100%",
                         }}
                       >
                         <div
                           id="msg"
                           style={{
                             display: "none",
-                            minWidth: "400px",
+                            minWidth: "100%",
                             marginTop: "10px",
                             padding: "15px",
                             overflowY: "auto",
