@@ -41,15 +41,12 @@ export default class SetUpProject extends React.Component {
     const { projects } = this.props;
     this.setState({ isDeleting: true });
     try {
-    if (projects !== undefined) {
-      // for (let index = 0; index < projects.length; index++) {
-        await IafProj.delete(projects[0]);
-      //}
-    }
-  }
-  catch (error){
+      if (projects !== undefined) {
+          await IafProj.delete(projects[0]);
+      }
+    }catch (error){
     console.log("Some items being deleted in the old project do not exist.")
-  }
+    }
     this.setState({ isDeleting: false });
   }
 

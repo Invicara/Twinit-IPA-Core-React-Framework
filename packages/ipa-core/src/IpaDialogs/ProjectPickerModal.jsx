@@ -319,11 +319,12 @@ export default class ProjectPickerModal extends React.Component {
           </div>
           <div className='button-container'>
           {this.props.referenceAppConfig?.refApp &&
-          <button onClick={()=>this.props.userLogout()} className={
-              this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"
-            }>
-                  Logout
-                </button>
+          <button 
+            onClick={()=>this.props.userLogout()} 
+            className={this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"}
+          >
+            Logout
+          </button>
           }
           <button
             onClick={onCancel}
