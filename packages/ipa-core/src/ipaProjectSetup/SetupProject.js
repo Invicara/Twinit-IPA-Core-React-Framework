@@ -27,6 +27,7 @@ export default class SetUpProject extends React.Component {
       scripts: undefined,
       open: false,
       isDeleting: false,
+      isDoneButtonClicked: false
     };
     this.ref = React.createRef();
   }
@@ -39,11 +40,16 @@ export default class SetUpProject extends React.Component {
   async deletePreviousProject() {
     const { projects } = this.props;
     this.setState({ isDeleting: true });
+    try {
     if (projects !== undefined) {
-      for (let index = 0; index < projects.length; index++) {
-        await IafProj.delete(projects[index]);
-      }
+      // for (let index = 0; index < projects.length; index++) {
+        await IafProj.delete(projects[0]);
+      //}
     }
+  }
+  catch (error){
+    console.log("Some items being deleted in the old project do not exist.")
+  }
     this.setState({ isDeleting: false });
   }
 
@@ -176,7 +182,7 @@ export default class SetUpProject extends React.Component {
             // the ordered list of steps that are a part of the orchestrator
             {
               _sequenceno: 1,
-              _name: "Uploading user Scripts.",
+              _name: "Uploading User Scripts:",
               _orchcomp: "default_script_target",
               _actualparams: {
                 userType: "uploadRunnableScripts",
@@ -185,7 +191,7 @@ export default class SetUpProject extends React.Component {
             },
             {
               _sequenceno: 2,
-              _name: "Creating User Configurations.",
+              _name: "Creating User Configurations:",
               _orchcomp: "default_script_target",
               _actualparams: {
                 userType: "configUpload",
@@ -194,7 +200,7 @@ export default class SetUpProject extends React.Component {
             },
             {
               _sequenceno: 3,
-              _name: "Uploding BIMPK file",
+              _name: "Uploading Model File:",
               _orchcomp: "default_script_target",
               _actualparams: {
                 userType: "uploadBimpk",
@@ -203,7 +209,7 @@ export default class SetUpProject extends React.Component {
             },
             {
               _sequenceno: 4,
-              _name: "Creating required collections.",
+              _name: "Creating Collections:",
               _orchcomp: "default_script_target",
               _actualparams: {
                 userType: "createCollections",
@@ -212,7 +218,7 @@ export default class SetUpProject extends React.Component {
             },
             {
               _sequenceno: 5,
-              _name: "Importing file attributes.",
+              _name: "Importing File Attributes:",
               _orchcomp: "default_script_target",
               _actualparams: {
                 userType: "fileAttributesImport",
@@ -221,7 +227,7 @@ export default class SetUpProject extends React.Component {
             },
             {
               _sequenceno: 6,
-              _name: "Imporiting api config.",
+              _name: "Importing OMAPI Configurations:",
               _orchcomp: "default_script_target",
               _actualparams: {
                 userType: "apiConfigImport",
@@ -415,7 +421,10 @@ export default class SetUpProject extends React.Component {
                         <button
                           id="donebtn"
                           style={{ display: "none", minWidth: "100px" }}
-                          onClick={() => this.props.restartApp()}
+                          onClick={() => {
+                            this.setState({isDoneButtonClicked: true});
+                            this.props.restartApp();
+                          }}
                           className="done"
                         >
                           Done
@@ -437,11 +446,11 @@ export default class SetUpProject extends React.Component {
                   </div>
                 </form>
               )}
-              {this.state.open && !this.state.isDeleting ? (
+              {this.state.open && !this.state.isDeleting && !this.state.isDoneButtonClicked && 
                 <div style={{ float: "left" }}>
                   By Clicking on Agree button you are confirming that, All
                   previously created projects and invited projects will get
-                  deleted from your account.
+                  deleted, and your new project will be created. 
                   <div>
                     <button
                       onClick={() => this.props.restartApp()}
@@ -458,9 +467,7 @@ export default class SetUpProject extends React.Component {
                     </button>
                   </div>
                 </div>
-              ) : (
-                <div></div>
-              )}
+              }
             </div>
           }
         />
