@@ -319,11 +319,12 @@ export default class ProjectPickerModal extends React.Component {
           </div>
           <div className='button-container'>
           {this.props.referenceAppConfig?.refApp &&
-          <button onClick={()=>this.props.userLogout()} className={
-              this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"
-            }>
-                  Logout
-                </button>
+          <button 
+            onClick={()=>this.props.userLogout()} 
+            className={this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"}
+          >
+            Logout
+          </button>
           }
           <button
             onClick={onCancel}
@@ -390,11 +391,16 @@ export default class ProjectPickerModal extends React.Component {
                 You are not yet a member of any projects, please
                 {(!currentInvites || currentInvites.length === 0) && <span> contact your project admin for an invite</span>}
 
-                {/* {this.props.referenceAppConfig?.refApp && (
+                {this.props.referenceAppConfig?.refApp && this.state.user?.has_access && (
+                  <div>
             <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
               Create Project
             </button>
-          )} */}
+            <button onClick={()=>this.props.userLogout()}>
+            Logout
+          </button>
+          </div>
+          )}
                 {(currentInvites && currentInvites.length > 0) && <span> accept an invite</span>}
               </div>
             }
@@ -408,8 +414,8 @@ export default class ProjectPickerModal extends React.Component {
                 <br />
                 <div>
                   <span className="text-danger">
-                    You don't have permission to create a project in Platform
-                    Reference App, please contact the Admin.
+                    You don't have permission to create a project in the Reference App.
+                    Please contact the Admin.
                   </span>
                 </div>
                 <button onClick={()=>this.props.userLogout()}>
@@ -420,7 +426,7 @@ export default class ProjectPickerModal extends React.Component {
               <></>
             )}
 
-             {this.props.referenceAppConfig?.refApp &&
+             {/* {this.props.referenceAppConfig?.refApp &&
               !showLoadButton &&
               !this.state.loadingModal && (
                 <>
@@ -440,7 +446,7 @@ export default class ProjectPickerModal extends React.Component {
                     Create Project
                   </button>
                 </>
-              )}
+              )} */}
 
 
             <div>
