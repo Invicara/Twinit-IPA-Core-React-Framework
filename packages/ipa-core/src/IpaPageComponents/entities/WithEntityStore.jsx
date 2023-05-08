@@ -135,7 +135,10 @@ const withEntityStore = (WrappedComponent) => {
 
         render() {
             const wrappedProps = {...this.props/*, ...this.state*/}
-            return this.props.currentEntityType == null ? null : this.getWrappedComponent(wrappedProps)
+            const derivedEntityType = this.deriveInitialEntityType(this.props.queryParams);
+            const storeHasCorrectEntity = this?.props?.currentEntityType?.singular == derivedEntityType?.singular;
+            const storeHasAllowedEntity = _.includes(this.props.allowedEntityTypes, this?.props?.currentEntityType?.singular)
+            return (storeHasCorrectEntity || storeHasAllowedEntity) ? this.getWrappedComponent(wrappedProps) : null;
         }
     }
     const mapStateToProps = state => ({
