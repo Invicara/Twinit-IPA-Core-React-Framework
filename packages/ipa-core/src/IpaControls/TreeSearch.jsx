@@ -210,6 +210,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
             parentNames ? {input} : undefined
         )
 
+        const rawNodesCopy = rawNodes.filter(node => node.name !== '' )
         /**
          *  This assumes a tree no deeper than two levels. Ultimately, we need to get persistent ids from the platform for each node, 
          *  or to improve the stringifying/parsing functions.
@@ -219,8 +220,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
         
         // const parentInfo = {displayName: input.Level, level:}
 
-        const levelNodes = rawNodes.map((node, position) => {
-
+        const levelNodes = rawNodesCopy.map((node, position) => {
 
             const displayName = node.name || node;
             const nameKey = stringifyNodeWithParent(parentBaseName, {displayName: displayName, level, position});
