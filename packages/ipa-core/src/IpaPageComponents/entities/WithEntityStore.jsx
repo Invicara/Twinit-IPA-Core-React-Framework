@@ -24,14 +24,14 @@ import {
 import {connect} from "react-redux";
 import withEntityConfig from "./WithEntityConfig";
 
+const storeCacheMap = {};
+const lastEntityTypeCacheMap = {};
+
 const withEntityStore = (WrappedComponent) => {
     const EntityStoreHOC =  class extends React.Component {
         constructor(props) {
             super(props);
-            this.state = {
-                //when entity changes we will switch between the "stores", kind of
-                storeCacheMap: {}
-            };
+            this.handerPath = props?.handler?.path || '_default_';
         }
 
         initStoreValues = (initialEntityType) => {
@@ -50,14 +50,22 @@ const withEntityStore = (WrappedComponent) => {
             }
         }
 
-        componentDidMount() {
-            const initialEntityType = this.deriveInitialEntityType(this.props.queryParams, this.props.handler);
+        UNSAFE_componentWillMount(){
+            this.alignEntityStoreToHandlerEntity();
+        }
+
+        componentWillMount(){
+            this.alignEntityStoreToHandlerEntity();
+        }
+
+        alignEntityStoreToHandlerEntity() {
+            const initialEntityType = this.deriveInitialEntityType(this.props.queryParams);
             if(this.props.currentEntityType){
                 //store is already populated, check if we need to change entity
                 let {queryParams} = this.props;
-                const storeSwitchRequired = queryParams
-                    && queryParams.entityType !== this.props.currentEntityType.singular
-                    && initialEntityType.entityType !== this.props.currentEntityType.singular;
+                const storeSwitchRequired = (queryParams
+                    && queryParams.entityType !== this.props.currentEntityType.singular)
+                    || initialEntityType.entityType !== this.props.currentEntityType.singular;
                 if(storeSwitchRequired){
                     //change store (yes for all components using this HOC)
                     this.switchStore(initialEntityType);
@@ -71,7 +79,7 @@ const withEntityStore = (WrappedComponent) => {
         }
 
         componentWillUnmount() {
-            //this.saveStore();
+            this.saveStore();
             //TODO Once filters are moved to store, refactor the queryParam logic so that it can identify when URL applied
             // filters and entity match the current ones in the store and this cleaning (and the later refetching) of the entities
             // can be removed for being unnecessary and only done when needed
@@ -93,7 +101,19 @@ const withEntityStore = (WrappedComponent) => {
                 // dealing with another type of entities, that means we can't use the query from the source page so we
                 // run a query to select those ids directly and keep the original sender ...
             }
-            //if we don't have query, or it should not influence entity type, we assume we are going to use first entity from the handler config
+            //if we don't have query, or it should not influence entity type:
+            //a. if we have last used entity in this handler - and it's allowed - we will use it
+            const lastEntity = lastEntityTypeCacheMap[this.handerPath];
+            const cacheForHandler = storeCacheMap[this.handerPath] || {};
+            const lastEntityType = cacheForHandler[lastEntity]?.currentEntityType;
+            if(lastEntityType && _.includes(this.props.allowedEntityTypes, lastEntityType.singular) ){
+                return lastEntityType;
+            }
+            //b. if we have entity in store for this handler - and it's allowed - we will use it
+            if(this.props.currentEntityType && _.includes(this.props.allowedEntityTypes, this.props.currentEntityType?.singular) ){
+                return this.props.currentEntityType;
+            }
+            // else we assume we are going to use first entity from the handler config
             return _.values(this.props.perEntityConfig)[0];
         }
 
@@ -110,12 +130,14 @@ const withEntityStore = (WrappedComponent) => {
 
         switchStore = ({singular, plural, ...rest}) => {
             //if we change entities check if we have previously saved store
-            if(this.state.storeCacheMap[singular]){
-                this.props.loadSnapshot(this.state.storeCacheMap[singular])
+            if(storeCacheMap?.[this.handerPath]?.[singular]){
+                this.props.loadSnapshot(storeCacheMap[this.handerPath][singular])
             } else {
                 //if we haven't previously saved store for new entity, use current store, make sure we clear current store
                 this.props.clearForNewEntityType({singular, plural, ...rest});
             }
+            //update last used entity
+            lastEntityTypeCacheMap[this.handerPath] = singular;
         }
 
         saveStore = () => {
@@ -123,8 +145,13 @@ const withEntityStore = (WrappedComponent) => {
                 console.error(`tried to save store for wrong entity type: ${this.props.currentEntityType}`)
                 return;
             }
-            const storeCacheMap = {...this.state.storeCacheMap, [this.props.currentEntityType.singular] : this.props.storeSnapshot};
-            this.setState({storeCacheMap : storeCacheMap});
+            //const storeCacheMap = {...storeCacheMap, [this.props.currentEntityType.singular] : this.props.storeSnapshot};
+            //this.setState({storeCacheMap : storeCacheMap});
+            const cacheForHandler = storeCacheMap[this.handerPath] || {};
+            cacheForHandler[this.props.currentEntityType.singular] = this.props.storeSnapshot;
+            storeCacheMap[this.handerPath]=cacheForHandler;
+            //update last used entity
+            lastEntityTypeCacheMap[this.handerPath] = this.props.currentEntityType.singular;
         }
 
         getWrappedComponent = (wrappedProps) => <WrappedComponent
@@ -135,7 +162,10 @@ const withEntityStore = (WrappedComponent) => {
 
         render() {
             const wrappedProps = {...this.props/*, ...this.state*/}
-            return this.props.currentEntityType == null ? null : this.getWrappedComponent(wrappedProps)
+            const derivedEntityType = this.deriveInitialEntityType(this.props.queryParams);
+            const storeHasCorrectEntity = this?.props?.currentEntityType?.singular == derivedEntityType?.singular;
+            //const storeHasAllowedEntity = _.includes(this.props.allowedEntityTypes, this?.props?.currentEntityType?.singular)
+            return (storeHasCorrectEntity) ? this.getWrappedComponent(wrappedProps) : null;
         }
     }
     const mapStateToProps = state => ({
