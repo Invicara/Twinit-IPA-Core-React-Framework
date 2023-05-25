@@ -29,10 +29,12 @@ import {
 } from "./TreeHelpers";
 import {usePrevious} from "./usePrevious";
 import {getEntityFromModel, getFilteredEntitiesBy} from "./entities";
+import {applyFilters} from '../IpaControls/FilterControl'
 
 const IpaUtils = {
     //AppContext,
     AdvSearchQueryBuilder,
+    applyFilters,
     AttributeHelpers,
     formatBytes,
     listEquals,
