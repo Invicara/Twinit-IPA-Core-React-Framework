@@ -117,7 +117,6 @@ export default class SetUpProject extends React.Component {
       .catch((error) => {
         console.error(error);
       });
-      console.log("zip", endPointConfig.setupZipFileOrigin)
     let zipFileObj = {
       //object of zip file to passed on _loadZipFile
       fileObj: myZipFile,
@@ -172,12 +171,8 @@ export default class SetUpProject extends React.Component {
     this.setState({ createdProject: project });
     console.log("project", project);
     let ctx = { _namespaces: project._list[0]._namespaces };
-    console.log("ctx", ctx)
     ctx.authToken = IafSession.getAuthToken();
     const div = document.getElementById("msg"); //div selector
-    let configUrl = IafSession.getConfig()
-    let restConnectorUrl = configUrl.itemServiceOrigin + "/itemsvc/api/v1/nameduseritems?nsfilter=" + ctx._namespaces[0];
-    console.log("restConnectorUrl", restConnectorUrl)
     await IafProj.switchProject(project._list[0]._id); //switch project using ID
     // get setupScript.js
     await this.createScripts(project, ctx);
@@ -227,9 +222,6 @@ export default class SetUpProject extends React.Component {
               _actualparams: {
                 userType: "createCollections",
                 _scriptName: "createCollections", // the named script to run in the file above
-                params: {
-                  restConnectorUrl: restConnectorUrl,
-                },
               },
             },
             {
