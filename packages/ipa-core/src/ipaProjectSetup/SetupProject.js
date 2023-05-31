@@ -1,5 +1,5 @@
 import React from "react";
-import { IafProj, IafSession, IafScripts } from "@invicara/platform-api";
+import { IafProj, IafSession, IafScripts, IafPassSvc } from "@invicara/platform-api";
 import * as PlatformApi from "@invicara/platform-api";
 import { IafScriptEngine } from "@invicara/iaf-script-engine";
 import _ from "lodash";
@@ -40,9 +40,20 @@ export default class SetUpProject extends React.Component {
   async deletePreviousProject() {
     const { projects } = this.props;
     this.setState({ isDeleting: true });
+    let user = await IafPassSvc.getCurrentUser();
     try {
       if (projects !== undefined) {
-          await IafProj.delete(projects[0]);
+        for (let i = 0; i < projects.length; i++) {
+          if (
+            projects[i]._metadata._createdById === user._id
+          ) {
+            console.log("Delete project:", projects[i]);
+            await IafProj.delete(projects[i]);
+          }
+          else {
+            console.log("Cannot delete invited project")
+          }
+        }
       }
     }catch (error){
     console.log("Some items being deleted in the old project do not exist.")
@@ -106,6 +117,7 @@ export default class SetUpProject extends React.Component {
       .catch((error) => {
         console.error(error);
       });
+      console.log("zip", endPointConfig.setupZipFileOrigin)
     let zipFileObj = {
       //object of zip file to passed on _loadZipFile
       fileObj: myZipFile,
@@ -160,8 +172,12 @@ export default class SetUpProject extends React.Component {
     this.setState({ createdProject: project });
     console.log("project", project);
     let ctx = { _namespaces: project._list[0]._namespaces };
+    console.log("ctx", ctx)
     ctx.authToken = IafSession.getAuthToken();
     const div = document.getElementById("msg"); //div selector
+    let configUrl = IafSession.getConfig()
+    let restConnectorUrl = configUrl.itemServiceOrigin + "/itemsvc/api/v1/nameduseritems?nsfilter=" + ctx._namespaces[0];
+    console.log("restConnectorUrl", restConnectorUrl)
     await IafProj.switchProject(project._list[0]._id); //switch project using ID
     // get setupScript.js
     await this.createScripts(project, ctx);
@@ -211,6 +227,9 @@ export default class SetUpProject extends React.Component {
               _actualparams: {
                 userType: "createCollections",
                 _scriptName: "createCollections", // the named script to run in the file above
+                params: {
+                  restConnectorUrl: restConnectorUrl,
+                },
               },
             },
             {
