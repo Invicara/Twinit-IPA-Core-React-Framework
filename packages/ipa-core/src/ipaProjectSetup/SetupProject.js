@@ -1,5 +1,5 @@
 import React from "react";
-import { IafProj, IafSession, IafScripts } from "@invicara/platform-api";
+import { IafProj, IafSession, IafScripts, IafPassSvc } from "@invicara/platform-api";
 import * as PlatformApi from "@invicara/platform-api";
 import { IafScriptEngine } from "@invicara/iaf-script-engine";
 import _ from "lodash";
@@ -40,9 +40,20 @@ export default class SetUpProject extends React.Component {
   async deletePreviousProject() {
     const { projects } = this.props;
     this.setState({ isDeleting: true });
+    let user = await IafPassSvc.getCurrentUser();
     try {
       if (projects !== undefined) {
-          await IafProj.delete(projects[0]);
+        for (let i = 0; i < projects.length; i++) {
+          if (
+            projects[i]._metadata._createdById === user._id
+          ) {
+            console.log("Delete project:", projects[i]);
+            await IafProj.delete(projects[i]);
+          }
+          else {
+            console.log("Cannot delete invited project")
+          }
+        }
       }
     }catch (error){
     console.log("Some items being deleted in the old project do not exist.")
