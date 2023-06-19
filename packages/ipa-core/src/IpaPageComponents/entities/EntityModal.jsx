@@ -166,7 +166,7 @@ class EntityModal extends React.Component {
   isBulkEdit = () => _.isArray(this.props.entity) && this.props.entity.length > 1
 
   getBulkEntity = entities => ({
-    'Entity Name': entities.map(entity => entity['Entity Name']),
+    'Entity Name': entities.map(entity => entity['Entity Name'] || entity['Name']),
     properties: this.getBulkEntityProperties(entities)
   })
 

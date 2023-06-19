@@ -26,17 +26,17 @@ const FUNCTIONS = [
 
   // these funcs take text input - all comparisons are case insensitive
   {name: "starts with", input: "text", types: "|text|",
-    test: (propVal, filterVal) => propVal.toLowerCase().startsWith(filterVal.toLowerCase()) },
+    test: (propVal, filterVal) => propVal.toLowerCase().startsWith((new String(filterVal)).toLowerCase()) },
   {name: "ends with", input: "text", types: "|text|",
-    test: (propVal, filterVal) => propVal.toLowerCase().endsWith(filterVal.toLowerCase()) },
+    test: (propVal, filterVal) => propVal.toLowerCase().endsWith((new String(filterVal)).toLowerCase()) },
   {name: "contains", input: "text", types: "|text|",
-    test: (propVal, filterVal) => propVal.toLowerCase().indexOf(filterVal.toLowerCase()) >= 0},
+    test: (propVal, filterVal) => propVal.toLowerCase().indexOf((new String(filterVal)).toLowerCase()) >= 0},
   {name: "does not start with", input: "text", types: "|text|",
-    test: (propVal, filterVal) => !propVal.toLowerCase().startsWith(filterVal.toLowerCase()) },
+    test: (propVal, filterVal) => !propVal.toLowerCase().startsWith((new String(filterVal)).toLowerCase()) },
   {name: "does not end with", input: "text", types: "|text|",
-    test: (propVal, filterVal) => !propVal.toLowerCase().endsWith(filterVal.toLowerCase()) },
+    test: (propVal, filterVal) => !propVal.toLowerCase().endsWith((new String(filterVal)).toLowerCase()) },
   {name: "does not contain", input: "text", types: "|text|",
-    test: (propVal, filterVal) => propVal.toLowerCase().indexOf(filterVal.toLowerCase()) < 0 },
+    test: (propVal, filterVal) => propVal.toLowerCase().indexOf((new String(filterVal)).toLowerCase()) < 0 },
 
   // these funcs take one or two numeric or date or datetime inputs
   {name: "less than", input: "single", types: "|number|date|datetime|",
