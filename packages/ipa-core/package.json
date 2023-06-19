@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-core",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Invicara platform application frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "@invicara/expressions": "^3.1.0",
+    "@invicara/iaf-doc-viewer": "^3.1.0",
     "@invicara/iaf-script-engine": "^3.1.0",
     "@invicara/invicara-lib": "^3.1.0",
     "@invicara/platform-api": "^3.1.0",
@@ -27,7 +28,6 @@
     "@invicara/script-iaf": "^3.1.0",
     "@invicara/script-ui": "^3.1.0",
     "@invicara/ui-utils": "^3.1.0",
-    "@invicara/iaf-doc-viewer": "^3.1.0",
     "@material-ui/core": "^4.8.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.36",
@@ -40,6 +40,7 @@
     "classnames": "^2.2.6",
     "codemirror": "^5.59.4",
     "file-saver": "^2.0.2",
+    "history": "^4.10.1",
     "immer": "^9.0.17",
     "interactjs": "^1.9.20",
     "json-schema-faker": "^0.5.0-rcv.24",
@@ -68,8 +69,7 @@
     "react-touch": "^0.4.4",
     "react-transition-group": "^2.2.1",
     "sass": "^1.53.0",
-    "uid": "^2.0.0",
-    "history": "^4.10.1"
+    "uid": "^2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "~7.18.0",
