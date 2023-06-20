@@ -1013,10 +1013,11 @@ class EntityModal extends React.Component {
       </div>
     )
 
-    let title = <span>{this.props.action.name + ' ' + entityType}</span>
+    const title = this.props.action.title || this.props.action.name + ' ' + entityType
+    const titleEl = <span>{title}</span>
 
     return <GenericModal
-      title={title}
+      title={titleEl}
       customClasses={'ipa-modal ipa-modal-no-x-close'}
       modalBody={modalBody}
     />
