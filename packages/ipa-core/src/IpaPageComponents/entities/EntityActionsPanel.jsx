@@ -95,7 +95,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
           <ActionButton 
             key={"icon-"+actionName} 
             icon={action.icon} 
-            title={actionName} 
+            title={action.title || actionName} 
             onClick={e=>doAction(actionName)}
           />
         )
