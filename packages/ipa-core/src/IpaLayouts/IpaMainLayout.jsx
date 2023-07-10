@@ -15,7 +15,7 @@ import {Provider} from "react-redux";
 import {enableMapSet} from "immer"
 import { IfefBody } from '@invicara/react-ifef';
 import { getPlatform } from '../IpaUtils/helpers';
-import * as qs from 'query-string';
+import * as qs from 'querystring';
 
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
