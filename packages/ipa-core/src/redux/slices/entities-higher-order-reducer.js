@@ -184,7 +184,7 @@ export const entitiesSliceFactory = (identifier = '') => {
             }));
 
             const filteredToSelect = entitiesToSelect.filter(e => e)
-            if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, ({modelData}) => modelData.id)) {
+            if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, (e) => (e?.modelData?.id || e?._id))) {
                 dispatch(setEntities({entities: filteredToSelect, shouldIsolate: false}))
             }
             dispatch(setSelectedEntities(filteredToSelect))
