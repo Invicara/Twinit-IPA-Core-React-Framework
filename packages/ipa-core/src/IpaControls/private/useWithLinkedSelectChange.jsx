@@ -18,10 +18,10 @@ const clearSelectsOptions = selectsToBeCleared => {
 };
 
 const handleChange = (selectId, selectedOption, select) => {
-    const selectedValues = selectedOption ? (select.multi ? selectedOption : [selectedOption]).map(opt => (getSelectedValue(opt))) : [];
+    const selectedValues = selectedOption ? (select.multi ? selectedOption : [selectedOption]).map(opt => (getSelectedValue(opt))) : [''];
     const newValue = {...currentValue, [selectId]: selectedValues};
     const subsequentSelects = getSubsequentSelects(select);
-    onChange({...newValue, ..._.mapValues(subsequentSelects, () => [])})
+    onChange({...newValue, ..._.mapValues(subsequentSelects, () => [''])})
     clearSelectsOptions(subsequentSelects)
     if(selectedOption){
         fetchOptions(select, newValue)
