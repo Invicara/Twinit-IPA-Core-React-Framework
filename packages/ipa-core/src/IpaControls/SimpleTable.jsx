@@ -57,9 +57,15 @@ const SimpleTable = ({header, rows, objects, columns, className}) => {
         </thead>
       }
       {
-        rows &&
+        rows && _.isArray(rows) &&
         <tbody>
-          {rows.map(r => <tr key={key()}>{r.map(c => <td key={key()}>{isValidUrl(c) ? <a href={c} target="_blank">{c}</a> : c}</td>)}</tr>)}
+          {
+            rows.map(r => <tr key={key()}>{
+              _.isArray(r) ?
+              r.map(c => <td key={key()}>{isValidUrl(c) ? <a href={c} target="_blank">{c}</a> : c}</td>) :
+              <td>Wrong data shape</td>
+            }</tr>)
+          }
         </tbody>
       }
     </table>

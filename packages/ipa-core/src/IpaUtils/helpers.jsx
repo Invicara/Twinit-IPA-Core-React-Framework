@@ -106,6 +106,26 @@ const isValidUrl = (testString) => {
     
   }
 
+
+const makePromiseIgnorable = (promise) => {
+  let hadIgnored = false;
+
+  const wrappedPromise = new Promise((resolve, reject) => {
+    promise.then((val) =>
+      hadIgnored ? reject({isIgnored: true}) : resolve(val)
+    ).catch((error) =>
+      hadIgnored ? reject({isIgnored: true}) : reject(error)
+    );
+  });
+
+  return {
+    promise: wrappedPromise,
+    ignore() {
+      hadIgnored = true;
+    },
+  };
+};
+
 export {
   getPlatform,
   parseQuery,
@@ -113,5 +133,6 @@ export {
   getRandomString,
   group,
   nestedGroup,
-  isValidUrl
+  isValidUrl,
+  makePromiseIgnorable,
 };
