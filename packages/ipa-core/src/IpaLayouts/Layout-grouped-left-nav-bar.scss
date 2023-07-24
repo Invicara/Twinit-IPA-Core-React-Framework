@@ -99,7 +99,8 @@ $navExpanded-width: 300px;
             }
 
             .inv-icon-svg {
-                background-position-y: -5px;
+                mask-position: 0px -5px;
+                -webkit-mask-position: -5px -5px;
             }
 
             .inv-icon-smartBuilding {
@@ -118,8 +119,10 @@ $navExpanded-width: 300px;
             margin-bottom: 10px;
 
             i {
-                background-size: 105px;
-                background-position-x: center;
+                mask-size: 64px;
+                -webkit-mask-size: 64px;
+                mask-position: center;
+                -webkit-mask-position: center;
                 width: 105px;
                 height: 80px;
                 margin-right: 0;
