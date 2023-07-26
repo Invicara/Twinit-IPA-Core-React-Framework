@@ -288,6 +288,7 @@ class AppProvider extends React.Component {
     throw error;
   }
 
+  // Updated handleRequestError with a condition if authType is pkce then using refresh token generate a new access token
   async handleRequestError(error) {
     console.error(error)
     if (_.get(error,'errorResult.status') === 401) {
@@ -316,7 +317,7 @@ class AppProvider extends React.Component {
     let  sessionManage = sessionStorage.manage;
     let token, user;
     let inviteId;
-    sessionManage = this.props.authService.getAuthTokens();
+    sessionManage = this.props.authService.getAuthTokens();         //Storing token in session
     if (sessionManage && Object.keys(sessionManage).length === 0) {
       sessionManage = undefined;
     }
