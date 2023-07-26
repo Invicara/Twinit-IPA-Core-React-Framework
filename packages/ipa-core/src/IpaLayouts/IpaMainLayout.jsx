@@ -68,7 +68,7 @@ class IpaMainLayout extends React.Component {
         LocalFilePlugins.initScriptPlugins();
         DataPlugins.initScriptPlugins();
         ScriptHelper.initExpressionExecCtx(); // bringing back this cause the page was not loading
-        this.authService = new AuthService({
+        this.authService = new AuthService({        //Added authService for rotated refresh token
           clientId: endPointConfig.appId,
           location: window.location,
           //provider: process.env.REACT_APP_PROVIDER || 'provider',

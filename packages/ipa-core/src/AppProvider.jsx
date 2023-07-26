@@ -332,8 +332,6 @@ class AppProvider extends React.Component {
       const parsed = parseQuery(window.location.search);
       if (parsed.hasOwnProperty('inviteId')) {
         inviteId = parsed.inviteId;
-        // window.location = this.authUrl + '&inviteId=' + parsed.inviteId;
-        // return;
       }
     }
 
@@ -361,7 +359,6 @@ class AppProvider extends React.Component {
     // if we don't have a valid token at this point redirect to login page
     if (!token) {
       //go to login page
-      // window.location = this.authUrl;
       this.props.authService.authorize(inviteId);
     } else {
 
