@@ -46,6 +46,7 @@ import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
 import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
 import {AppContext, withAppContext} from "./appContext";
+import withAuthHoc from './withAuthHoc';
 
 class AppProvider extends React.Component {
   constructor(props) {
@@ -287,20 +288,42 @@ class AppProvider extends React.Component {
     throw error;
   }
 
-  handleRequestError(error) {
+  // Updated handleRequestError with a condition if authType is pkce then using refresh token generate a new access token
+  async handleRequestError(error) {
     console.error(error)
     if (_.get(error,'errorResult.status') === 401) {
       if (!this.isSigningOut) {
         this.isSigningOut = true;
-        this.state.actions.userLogout();
+        if (endPointConfig.authType === 'implicit') {           //If authType is implicit it user will logout
+          this.state.actions.userLogout();
+        } else if (endPointConfig.authType === 'pkce') {        //If authType is pkce, fetch auth token
+          const tokens = await this.props.authService.getAuthTokens();
+          const refreshToken = tokens && Object.keys(tokens).length > 0 ? tokens.refresh_token : '';
+          if (refreshToken) {
+            let updatedToken = await this.props.authService.fetchToken(refreshToken, true);   //Fetch new token using refresh token
+            console.log("updatedToken", updatedToken)
+            if (updatedToken) {
+              let user = await IafSession.setAuthToken(updatedToken.access_token,undefined);    //Updated token in session storage
+              this.setState({token: updatedToken.access_token})         //Set updated token 
+            }
+          }
+        }
       }
     }
   }
 
   async initialize(loadConfigFromCache = true, showProjectPicker = true) {
     const self = this;
-    const sessionManage = sessionStorage.manage;
+    let  sessionManage = sessionStorage.manage;
     let token, user;
+    let inviteId;
+    sessionManage = this.props.authService.getAuthTokens();         //Storing token in session
+    if (sessionManage && Object.keys(sessionManage).length === 0) {
+      sessionManage = undefined;
+    }
+    if (this.props.authService.isPending()) {
+      return;
+    }
 
     store.dispatch({type: "PROJECT_SWITCHED"})
     //console.log(store.getState())
@@ -309,8 +332,7 @@ class AppProvider extends React.Component {
     if (window.location.search) {
       const parsed = parseQuery(window.location.search);
       if (parsed.hasOwnProperty('inviteId')) {
-        window.location = this.authUrl + '&inviteId=' + parsed.inviteId;
-        return;
+        inviteId = parsed.inviteId;
       }
     }
 
@@ -327,8 +349,8 @@ class AppProvider extends React.Component {
 
     // if we don't have a token yet and we have something in the session then
     // check that the token in the session is valid
-    if (token === undefined && sessionManage !== undefined) {
-      const temp_token = JSON.parse(sessionManage).token;
+    if (token === undefined && sessionManage && sessionManage !== undefined) {
+      const temp_token = sessionManage.access_token;
       user = await IafSession.setSessionData(temp_token);
       if (user !== undefined) {
         token = temp_token;
@@ -338,7 +360,7 @@ class AppProvider extends React.Component {
     // if we don't have a valid token at this point redirect to login page
     if (!token) {
       //go to login page
-      window.location = this.authUrl;
+      this.props.authService.authorize(inviteId);
     } else {
 
       if (this.props.ipaConfig) self.setSelectedItems({ipaConfig: this.props.ipaConfig})
@@ -911,4 +933,4 @@ AppProvider.contextTypes = {
   ifefShowModal: PropTypes.func
 };
 
-export default AppProvider;
+export default withAuthHoc(AppProvider);
