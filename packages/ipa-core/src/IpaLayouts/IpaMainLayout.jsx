@@ -69,7 +69,7 @@ class IpaMainLayout extends React.Component {
         DataPlugins.initScriptPlugins();
         ScriptHelper.initExpressionExecCtx(); // bringing back this cause the page was not loading
         this.authService = new AuthService({        //Added authService for rotated refresh token
-          clientId: endPointConfig.appId,
+          clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,
           location: window.location,
           //provider: process.env.REACT_APP_PROVIDER || 'provider',
           redirectUri: endPointConfig.baseRoot,
@@ -93,7 +93,9 @@ class IpaMainLayout extends React.Component {
                         <AppProvider location={location} history={history} ipaConfig={this.props.ipaConfig} onConfigLoad={this.props.onConfigLoad}> 
                             <AppContext.Consumer>
                                 {
-                                    (contextProps) => contextProps.isLoading ?
+                                    (contextProps) => {
+                                      console.log("AppContext contextProps", contextProps)
+                                      return contextProps.isLoading ?
                                         <div>{contextProps.loadingText}</div>
                                         :
                                         <Layout pageList={contextProps.router.pageList}
@@ -114,7 +116,8 @@ class IpaMainLayout extends React.Component {
                                             </TransitionGroup>
 
                                         </Layout>
-                                }
+                                    }
+                              }
                             </AppContext.Consumer>
                         </AppProvider>
                         </AuthProvider>
