@@ -291,12 +291,17 @@ class AppProvider extends React.Component {
   // Updated handleRequestError with a condition if authType is pkce then using refresh token generate a new access token
   async handleRequestError(error) {
     console.error(error)
+    let requiredAuthenticationErrorMessage = "401: Full authentication is required to access this resource";
     if (_.get(error,'errorResult.status') === 401) {
       if (!this.isSigningOut) {
         this.isSigningOut = true;
         if (endPointConfig.authType === 'implicit') {           //If authType is implicit it user will logout
           this.state.actions.userLogout();
         } else if (endPointConfig.authType === 'pkce') {        //If authType is pkce, fetch auth token
+          if (error.message == requiredAuthenticationErrorMessage) {
+            this.state.actions.userLogout();
+            return
+          }
           const tokens = await this.props.authService.getAuthTokens();
           const refreshToken = tokens && Object.keys(tokens).length > 0 ? tokens.refresh_token : '';
           if (refreshToken) {
