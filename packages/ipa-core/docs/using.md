@@ -1,11 +1,11 @@
 ---
-title: Use the Twinit.io UI Framework
+title: Use the UI Framework
 sidebar_position: 200
 ---
 
 ## index.js
 
-To use the Twinit.io UI framework, render the `IpaMainLayout` component in the client application's `index.js` and pass a framework configuration to it.
+To use the UI framework, render the `IpaMainLayout` component in the client application's `index.js` and pass a framework configuration to it.
 
 ```jsx
 import { IpaMainLayout } from '@invicara/ipa-core'
