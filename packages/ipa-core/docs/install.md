@@ -2,13 +2,14 @@
 title: Install Node.JS and Set Up Client Application Structure
 sidebar_position: 100
 ---
+
+import { InstallCodeBlock } from './docComponents/InstallCodeBlock'
+
 # Installation
 
 To install Node.js in your project:
 
-```bash
-npm install @invicara/ipa-core
-```
+<InstallCodeBlock />
 
 ##  Client application Structure
 
