@@ -28,4 +28,4 @@ rootFolderOfApp/
 You may have any other folders and organize your client code any way you
 wish, but the framework will require this structure for any content you
 wish to use to extend the pages, components, and state management
-handled by the Twinit.io UI framework.
+handled by the UI framework.

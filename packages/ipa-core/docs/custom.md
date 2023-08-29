@@ -23,7 +23,7 @@ The Application Name can be provided by configuring it in the `IpaConfig.js`.
 
 ```jsx
 const ipaConfig = {
-  appName: "My Twinit.io Application"
+  appName: "My Application"
 }
 ```
 
@@ -33,7 +33,7 @@ Your own css files can be provided in ipaCore/css to modify the default theme.
 
 ```jsx
 const ipaConfig = {
-  appName: "My Twinit.io Application",
+  appName: "My Application",
   css: ['myCustomTheme.css']
 }
 ```

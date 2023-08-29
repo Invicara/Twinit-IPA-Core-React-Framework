@@ -3,7 +3,7 @@ title: Required Configurations
 sidebar_position: 300
 ---
 
-The Twinit.io UI framework requires two types of configuration:
+The UI framework requires two types of configuration:
 `endPointConfig` and `ipaConfig`. These configurations can be combined
 or managed separately.
 
