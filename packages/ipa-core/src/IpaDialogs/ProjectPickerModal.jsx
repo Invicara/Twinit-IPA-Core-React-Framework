@@ -268,6 +268,9 @@ export default class ProjectPickerModal extends React.Component {
         appContextProps.actions.setSelectedItems({selectedProject: currProject, selectedUserGroupId: this.state.selectedUserGroupId});
         window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
 
+        if (this.props.referenceAppConfig?.refApp) {
+          window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+        }
         return;
       }
     }
