@@ -35,14 +35,14 @@ export const entitiesSliceFactory = (identifier = '') => {
         name: sliceName,
         initialState,
         reducers: {
-            setEntities: (state, {payload: {entities}}) => {
+            setEntities: (state, {payload: {entities, shouldIsolate = true}}) => {
                 state.allCurrent = entities;
+                //Whenever we fetch entities we want to isolate them unless specified otherwise.
+                //Maybe this will change over time as requirements get more specific
+                state.isolatedIds = shouldIsolate ? mapIds(entities) : []
             },
             setIsolatedEntities: (state, {payload: entities}) => {
                 state.isolatedIds = mapIds(entities)
-            },
-            setIsolatedEntitiesIds: (state, {payload: ids}) => {
-                state.isolatedIds = ids
             },
             setSelectedEntities: (state, {payload: entities}) => {
                 state.selectedIds = mapIds(entities)
@@ -182,9 +182,11 @@ export const entitiesSliceFactory = (identifier = '') => {
                 const foundEntity = getAllCurrentEntities(getState()).find(e => modelEntity.id === e.modelViewerIds[0])
                 return !_.isEmpty(foundEntity)  ? new Promise((resolve)=>resolve(foundEntity)) : getEntityFromModel(entityFromModelScript, modelEntity)
             }));
+
             const filteredToSelect = entitiesToSelect.filter(e => e)
-            if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, ({_id}) => _id))
+            if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, (e) => (e?.modelData?.id || e?._id))) {
                 dispatch(setEntities({entities: filteredToSelect, shouldIsolate: false}))
+            }
             dispatch(setSelectedEntities(filteredToSelect))
             dispatch(setSelecting(false))
         } catch (e) {

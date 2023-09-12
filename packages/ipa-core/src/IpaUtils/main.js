@@ -4,7 +4,7 @@ import FileHelpers, {downloadDocuments, getFileUrl, getFileUrlForFilename} from 
 import ScriptHelper from './ScriptHelper'
 import TreeRendererHelper, {branchNodeRenderer, leafNodeRenderer} from './TreeRendererHelper'
 import ScriptCache from './script-cache'
-//import {AppContext} from './../AppProvider'
+import {AppContext} from "../appContext";
 import AdvSearchQueryBuilder from "./AdvSearchQueryBuilder";
 import AttributeHelpers from "./AttributeHelpers";
 import {formatBytes} from "./bytesunit";
@@ -29,7 +29,7 @@ import {
 } from "./TreeHelpers";
 import {usePrevious} from "./usePrevious";
 import {getEntityFromModel, getFilteredEntitiesBy} from "./entities";
-import {applyFilters} from '../IpaControls/FilterControl'
+import {applyFilters} from "../IpaControls/FilterControl";
 
 const IpaUtils = {
     //AppContext,
@@ -68,8 +68,10 @@ const IpaUtils = {
     branchNodeRendererOld: branchNodeRenderer,
     usePrevious,
     getFilteredEntitiesBy,
+    applyFilters : applyFilters,
     getEntityFromModel,
-    TreeNodeStatus, TreeNodeActionName
+    TreeNodeStatus, TreeNodeActionName,
+    AppContext
 }
 
 export default IpaUtils

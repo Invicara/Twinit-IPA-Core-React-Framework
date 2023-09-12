@@ -28,7 +28,7 @@ export const getSnapshot = selectors.getSnapshot
 
 //Action creators
 export const {
-    setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setIsolatedEntitiesIds, setSelectedEntities, setCurrentEntityType, setSelecting,
+    setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setSelectedEntities, setCurrentEntityType, setSelecting,
     applyFiltering, resetFiltering, applyGrouping, resetGrouping, resetForFilteringAndGrouping, addEntity, deleteEntity, updateEntity, clearEntities, loadSnapshot, clearForNewEntityType
 } = actionCreators;
 

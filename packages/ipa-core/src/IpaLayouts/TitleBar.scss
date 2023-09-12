@@ -59,6 +59,7 @@ $item-color: white;  //color of the text menu items
                 align-items: center;
                 color: $item-color;
                 width: 100%;
+                text-decoration: none;
 
                 &:hover {
                     text-decoration: none;

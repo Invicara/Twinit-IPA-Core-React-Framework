@@ -3,7 +3,7 @@ title: Overview
 sidebar_position: 600
 ---
 
-The Twinit.io framework is highly configurable. The user configuration defines the user group, related UI components, scripts that are invoked for the user’s actions, on a given resource. Applications built on Twinit.io are role-based and each user can have access to more than one role. The user chooses their role when they select which project they’re working with. Depending on which role is selected, the application will present only the features that have been configured for that role.  Each role is supported by its own User Config file.  
+The UI framework is highly configurable. The user configuration defines the user group, related UI components, scripts that are invoked for the user’s actions, on a given resource. Applications built on <PlatformName/> are role-based and each user can have access to more than one role. The user chooses their role when they select which project they’re working with. Depending on which role is selected, the application will present only the features that have been configured for that role.  Each role is supported by its own User Config file.  
 
 This topic documents all the possible contents of a User Config, but not all features are needed for every User Config.
 

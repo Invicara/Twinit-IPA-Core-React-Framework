@@ -8,12 +8,15 @@ import { getEntityDataComponent } from '../../redux/slices/entityUI'
 import clsx from 'clsx'
 import _, { rest } from 'lodash'
 import EntityDataGroupContainer from './EntityDataGroupContainer'
+import { makePromiseIgnorable } from '../../IpaUtils/helpers'
+
 
 export const useEntityData = (collapsable, collapsed, entity, config, getData, dataGroupName) => {
   const [fetching, setFetching] = useState(false)
   const [error, setError] = useState(null)
   const [data, setData] = useState(null)
   const [reloadToken, setReloadToken] = useState(false)
+  const [ignorable, setIgnorable] = useState()
   const myIntervals = useRef([])
 
   const isDataVisible = !collapsable || !collapsed 
@@ -33,16 +36,21 @@ export const useEntityData = (collapsable, collapsed, entity, config, getData, d
         data = entity?.properties
       } else if(isDataVisible && dataGroupName) {
         setFetching(true)
-        data = await getData(dataGroupName, entity)
+        //makePromiseIgnorable is necessary to avoid data from a previous promise of another dataGroup to resolve and input it's data into the wrong component
+        const ignorable = makePromiseIgnorable(getData(dataGroupName, entity))
+        setIgnorable(ignorable); //necessary to be able to ignore the promise if another has been thrown.
+        data = await ignorable.promise;
       }
 
       setData(data)
       setError(undefined)
-    } catch(err) {
-      console.error(err);
-      setError(err)
-    } finally {
       setFetching(false)
+    } catch(err) {
+      if(!err?.isIgnored) {
+        console.error(err);
+        setError(err)
+        setFetching(false)
+      }
     }
   }
 
@@ -90,6 +98,10 @@ export const useEntityData = (collapsable, collapsed, entity, config, getData, d
     setFetching(false)
     setData(null)
     setError(null)
+    if(ignorable) {
+      ignorable.ignore()
+      setIgnorable(undefined)
+    }
     //setReloadToken(false)
   }
 
@@ -145,7 +157,7 @@ const EntityDataContainer = props => {
             'entity-data-content-collapsed': false
           })}
         >
-          <EntityDataGroupContainer config={props.config} fetching={fetching} data={data}/>
+          <EntityDataGroupContainer config={props.config} fetching={fetching} data={data} context={props.entity}/>
         </div>
       )}
     </div>

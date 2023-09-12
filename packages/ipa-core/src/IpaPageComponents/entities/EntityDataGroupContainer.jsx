@@ -43,7 +43,8 @@ const EntityDataGroupContainer = (props) => {
       }
       const component = factory.create({
         config: props.config.component,
-        data: getEntityData(props.config)
+        data: getEntityData(props.config),
+        context: props.context
       })
     
       return <>{component}</>

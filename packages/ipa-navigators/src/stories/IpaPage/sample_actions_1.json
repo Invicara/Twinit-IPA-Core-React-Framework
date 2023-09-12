@@ -1,0 +1,210 @@
+{
+  "Navigator": {
+    "allow": true,
+    "icon": "inv-icon-svg inv-icon-nav",
+    "type": "navigate",
+    "showOnTable": true,
+    "showOnRowCell": true,
+    "navigateTo": "navigator"
+  },
+  "Spaces": {
+    "allow": true,
+    "icon": "inv-icon-svg inv-icon-spaces",
+    "type": "navigate",
+    "showOnTable": true,
+    "script": "assetsToSpaces",
+    "scriptResultType": "Space",
+    "navigateTo": "spaces"
+  },
+  "Relate": {
+    "allow": true,
+    "icon": "fas fa-link",
+    "type": "relate",
+    "showOnTable": true,
+    "showOnRowCell": true,
+    "getScript": "getEntityRelatedItems",
+    "updateScript": "updateRelations",
+    "relatedTypes": [
+      {
+        "singular": "Asset",
+        "plural": "Assets",
+        "isChild": true
+      },
+      {
+        "singular": "File",
+        "plural": "Files",
+        "isChild": true
+      },
+      {
+        "singular": "Space",
+        "plural": "Spaces",
+        "isParent": true
+      },
+      {
+        "singular": "Collection",
+        "plural": "Collection",
+        "isParent": true
+      },
+      {
+        "singular": "BMS Equipment",
+        "plural": "BMS Equipment",
+        "isChild": true
+      }
+    ],
+    "component": {
+      "name": "RelationsModal"
+    }
+  },
+  "Edit": {
+    "allow": true,
+    "icon": "fas fa-edit",
+    "type": "edit",
+    "script": "editAsset",
+    "showOnTable": true,
+    "component": {
+      "name": "EntityModal",
+      "hierarchySelects": {
+        "id": "edithierarchyselects",
+        "query": "<<SCRIPTED_LINKED_SELECTS>>",
+        "display": "Category",
+        "selects": [
+          {
+            "display": "dtCategory",
+            "script": "getDtCategories",
+            "multi": false
+          },
+          {
+            "display": "dtType",
+            "script": "getDtTypes",
+            "multi": false
+          }
+        ]
+      },
+      "showGroupNames": true,
+      "hidden": [
+        "dtCategory",
+        "dtType",
+        "Revit Blob"
+      ],
+      "disabledInMulti": [
+        "Revit Family",
+        "Revit Type"
+      ],
+      "groups": {
+        "Asset Properties": [
+          "Containing Floor",
+          "Mark",
+          "Room Number",
+          "BA Name"
+        ],
+        "Product": [
+          "Manufacturer",
+          "Model"
+        ],
+        "Classification": [
+          "Revit Type",
+          "Revit Family"
+        ],
+        "General": [
+          "Date",
+          "Image Url",
+          "Matterport Url"
+        ]
+      },
+      "okButtonText": "Save"
+    }
+  },
+  "Create": {
+    "allow": true,
+    "icon": "fas fa-plus",
+    "type": "create",
+    "script": "createAsset",
+    "preActionScript": "createAssetFromSchema",
+    "showOnTable": true,
+    "component": {
+      "name": "EntityModal",
+      "hierarchySelects": {
+        "id": "edithierarchyselects",
+        "query": "<<SCRIPTED_LINKED_SELECTS>>",
+        "display": "Category",
+        "selects": [
+          {
+            "display": "dtCategory",
+            "script": "getDtCategories"
+          },
+          {
+            "display": "dtType",
+            "script": "getDtTypes",
+            "multi": false
+          }
+        ]
+      },
+      "showGroupNames": true,
+      "groups": {
+        "Asset Properties": [
+          "Containing Floor",
+          "Mark",
+          "Room Number",
+          "BA Name"
+        ],
+        "Product": [
+          "Manufacturer",
+          "Model"
+        ],
+        "Classification": [
+          "Revit Family",
+          "Revit Type",
+          "dtCategory",
+          "dtType"
+        ],
+        "General": [
+          "Date",
+          "Image Url",
+          "Matterport Url"
+        ]
+      },
+      "okButtonText": "Save"
+    }
+  },
+  "Upload": {
+    "allow": true,
+    "icon": "icofont-upload-alt",
+    "type": "navigate",
+    "showOnTable": true,
+    "navigateTo": "fileUpload"
+  },
+  "Collections": {
+    "allow": true,
+    "icon": "icofont-cubes",
+    "showOnRowCell": true,
+    "type": "collect",
+    "showOnTable": true,
+    "script": "addAssetsToCollections",
+    "component": {
+      "name": "EntityCollectionModal",
+      "okButtonText": "Apply",
+      "scripts": {
+        "getCollectionTypes": "getCollectionTypes",
+        "getCollectionNames": "getCollectionNames"
+      }
+    }
+  },
+  "Export": {
+    "allow": true,
+    "icon": "fas fa-file-export",
+    "script": "exportAssets",
+    "showOnTable": true
+  },
+  "Delete": {
+    "allow": true,
+    "icon": "fas fa-trash-alt",
+    "type": "delete",
+    "script": "deleteAsset",
+    "showOnTable": true,
+    "component": {
+      "name": "EntityModal",
+      "disableAll": true,
+      "okButtonText": "Delete"
+    }
+  }
+}

@@ -26,6 +26,8 @@ import { expression } from '@invicara/expressions';
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 
+import DefaultStyleVars from "./IpaStyles/styleVars.json";
+
 import ProjectPickerModal from "./IpaDialogs/ProjectPickerModal";
 import ScriptHelper from './IpaUtils/ScriptHelper'
 
@@ -38,11 +40,12 @@ import ScriptCache from './IpaUtils/script-cache'
 import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
-
+import SetUpProject from "./ipaProjectSetup/SetupProject";
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
 import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
 import {AppContext, withAppContext} from "./appContext";
+import withAuthHoc from './withAuthHoc';
 
 class AppProvider extends React.Component {
   constructor(props) {
@@ -56,7 +59,7 @@ class AppProvider extends React.Component {
     let authRoot = endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot
     if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/'
 
-    
+
     let appId = endPointConfig?.applicationId ? endPointConfig.applicationId : this.props.ipaConfig?.applicationId
     if (!appId) console.error('Application ID missing from endPointConfig or ipaConfig')
 
@@ -65,6 +68,7 @@ class AppProvider extends React.Component {
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
     this.state = {
+      isshowProjectPickerModal: false,
       userConfig: this.props.initialConfig || EmptyConfig,
       user: undefined,
       token: undefined,
@@ -82,8 +86,8 @@ class AppProvider extends React.Component {
         pageGroups: []
       },
       selectedItems: localStorage.ipadt_selectedItems
-        ? JSON.parse(localStorage.ipadt_selectedItems)
-        : {},
+          ? JSON.parse(localStorage.ipadt_selectedItems)
+          : {},
       actions: {
         reloadConfig: this.initialize.bind(this, false),
         restartApp: this.initialize.bind(this),
@@ -108,6 +112,12 @@ class AppProvider extends React.Component {
   componentDidMount() {
     IafSession.setErrorCallback(this.handleRequestError);
     this.state.actions.restartApp();
+  }
+  handleClick() {
+    console.log("here");
+    this.setState((prev) => {
+      return { ...prev, isshowProjectPickerModal: true };
+    });
   }
 
   async sisenseLogout() {
@@ -184,8 +194,8 @@ class AppProvider extends React.Component {
     // end
 
     document.getElementById('BottomPanel').style.display = wasOpen
-      ? 'none'
-      : 'block';
+        ? 'none'
+        : 'block';
     document.getElementById('BottomPanel').style.height = this.defaultBottomPanelHeight;
 
     this.context.ifefSnapper.toggle('bottom');
@@ -226,11 +236,11 @@ class AppProvider extends React.Component {
     let pagesHavePositions = pagesConfig[pageNames[0]].position;
 
     if (page.endsWith('#') && config.homepage && config.homepage.handler) {
-      return config.handlers[config.homepage.handler];
+      handler = config.handlers[config.homepage.handler];
     }
     else if (page.endsWith('#')){
       if (!pagesHavePositions)
-          return config.handlers[actualPage(config, pageNames[0]).handler];
+        handler = config.handlers[actualPage(config, pageNames[0]).handler];
       else {
         let lowestPos = pagesConfig[pageNames[0]].position;
         let lowestHandler = actualPage(config, pageNames[0]).handler;
@@ -240,7 +250,7 @@ class AppProvider extends React.Component {
             lowestHandler = actualPage(config, pn).handler;
           }
         })
-        return config.handlers[lowestHandler];
+        handler = config.handlers[lowestHandler];
       }
 
     }
@@ -267,9 +277,9 @@ class AppProvider extends React.Component {
       const requestPathAsArray = this.getPageArray();
       const lastButOnePathElement = requestPathAsArray[requestPathAsArray.length - 2]; //For detail components where the last element is the pathParam
       const allHandlers = Object.values(config.handlers);
-      return allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
+      handler = allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
     }
-
+    
     return handler;
   };
 
@@ -277,20 +287,47 @@ class AppProvider extends React.Component {
     throw error;
   }
 
-  handleRequestError(error) {
+  // Updated handleRequestError with a condition if authType is pkce then using refresh token generate a new access token
+  async handleRequestError(error) {
     console.error(error)
+    let requiredAuthenticationErrorMessage = "401: Full authentication is required to access this resource";
     if (_.get(error,'errorResult.status') === 401) {
       if (!this.isSigningOut) {
         this.isSigningOut = true;
-        this.state.actions.userLogout();
+        if (endPointConfig.authType === 'implicit') {           //If authType is implicit it user will logout
+          this.state.actions.userLogout();
+        } else if (endPointConfig.authType === 'pkce') {        //If authType is pkce, fetch auth token
+          if (error.message == requiredAuthenticationErrorMessage) {
+            this.state.actions.userLogout();
+            return
+          }
+          const tokens = await this.props.authService.getAuthTokens();
+          const refreshToken = tokens && Object.keys(tokens).length > 0 ? tokens.refresh_token : '';
+          if (refreshToken) {
+            let updatedToken = await this.props.authService.fetchToken(refreshToken, true);   //Fetch new token using refresh token
+            console.log("updatedToken", updatedToken)
+            if (updatedToken) {
+              let user = await IafSession.setAuthToken(updatedToken.access_token,undefined);    //Updated token in session storage
+              this.setState({token: updatedToken.access_token})         //Set updated token 
+            }
+          }
+        }
       }
     }
   }
 
   async initialize(loadConfigFromCache = true, showProjectPicker = true) {
     const self = this;
-    const sessionManage = sessionStorage.manage;
+    let  sessionManage = sessionStorage.manage;
     let token, user;
+    let inviteId;
+    sessionManage = this.props.authService.getAuthTokens();         //Storing token in session
+    if (sessionManage && Object.keys(sessionManage).length === 0) {
+      sessionManage = undefined;
+    }
+    if (this.props.authService.isPending()) {
+      return;
+    }
 
     store.dispatch({type: "PROJECT_SWITCHED"})
     //console.log(store.getState())
@@ -299,8 +336,7 @@ class AppProvider extends React.Component {
     if (window.location.search) {
       const parsed = parseQuery(window.location.search);
       if (parsed.hasOwnProperty('inviteId')) {
-        window.location = this.authUrl + '&inviteId=' + parsed.inviteId;
-        return;
+        inviteId = parsed.inviteId;
       }
     }
 
@@ -317,8 +353,8 @@ class AppProvider extends React.Component {
 
     // if we don't have a token yet and we have something in the session then
     // check that the token in the session is valid
-    if (token === undefined && sessionManage !== undefined) {
-      const temp_token = JSON.parse(sessionManage).token;
+    if (token === undefined && sessionManage && sessionManage !== undefined) {
+      const temp_token = sessionManage.access_token;
       user = await IafSession.setSessionData(temp_token);
       if (user !== undefined) {
         token = temp_token;
@@ -328,7 +364,7 @@ class AppProvider extends React.Component {
     // if we don't have a valid token at this point redirect to login page
     if (!token) {
       //go to login page
-      window.location = this.authUrl;
+      this.props.authService.authorize(inviteId);
     } else {
 
       if (this.props.ipaConfig) self.setSelectedItems({ipaConfig: this.props.ipaConfig})
@@ -344,7 +380,7 @@ class AppProvider extends React.Component {
       if (scriptPlugins) {
         scriptPlugins.forEach((filename) => {
           try {
-            let funcs = require('../../../../../app/ipaCore/scriptPlugins/' + filename)
+            let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
             for (let fnName in funcs) {
               addScriptFunction(funcs[fnName])
             }
@@ -370,7 +406,7 @@ class AppProvider extends React.Component {
       if (this.props.ipaConfig && this.props.ipaConfig.redux && this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
         this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
           try {
-            let slice = require('../../../../../app/ipaCore/redux/' + sliceFile.file).default
+            let slice = require('../../../../app/ipaCore/redux/' + sliceFile.file).default
             let newReducer = addReducerSlice({name: sliceFile.name, slice: slice})
             store.replaceReducer(newReducer)
           } catch(e) {
@@ -397,7 +433,7 @@ class AppProvider extends React.Component {
           let dashComponents = []
           this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
             try {
-              let dashComp = require('../../../../../app/ipaCore/components/' + dashCompFile.file).default
+              let dashComp = require('../../../../app/ipaCore/components/' + dashCompFile.file).default
               dashComponents.push({name: dashCompFile.name, component: dashComp})
             } catch(e) {
               console.error(e)
@@ -420,7 +456,7 @@ class AppProvider extends React.Component {
           let entityActionComponents = []
           this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
             try {
-              let actComp = require('../../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
+              let actComp = require('../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
               entityActionComponents.push({name: actionCompFile.name, component: actComp})
             } catch(e) {
               console.error(e)
@@ -434,7 +470,7 @@ class AppProvider extends React.Component {
           let entityDataComponents = []
           this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
             try {
-              let dataComp = require('../../../../../app/ipaCore/components/'+ dataCompFile.file)
+              let dataComp = require('../../../../app/ipaCore/components/'+ dataCompFile.file)
               let dataCompFactory = dataComp[dataCompFile.name+'Factory']
               entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
             } catch(e) {
@@ -458,8 +494,27 @@ class AppProvider extends React.Component {
           let projects = await IafProj.getProjects({_pageSize: 1000});
           if (showProjectPicker)
             self.context.ifefShowModal(
-              <ProjectPickerModal configUserType={this.props.ipaConfig.configUserType} appContextProps={this.state} defaultConfig={EmptyConfig} onAcceptInvite={this.state.actions.restartApp}
-                projects={projects} testConfig={self.testConfig} onConfigLoad={callback} onCancel={() => self.context.ifefShowModal(false)}/>);
+                <ProjectPickerModal
+                    configUserType={this.props.ipaConfig.configUserType}
+                    referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
+                    appContextProps={this.state}
+                    defaultConfig={EmptyConfig}
+                    onAcceptInvite={this.state.actions.restartApp}
+                    projects={projects}
+                    testConfig={self.testConfig}
+                    userLogout = {this.state.actions.userLogout}
+                    onConfigLoad={callback}
+                    onCancel={() => self.context.ifefShowModal(false)}
+                    referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
+                        restartApp={this.state.actions.restartApp}
+                        projects={projects}
+                        onCancel={() => {
+                          this.setState((prev) => {
+                            return { ...prev, isshowProjectPickerModal: true };
+                          });
+                        }}
+                    />) }
+                />);
         } catch (error) {
           console.log(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
@@ -469,7 +524,7 @@ class AppProvider extends React.Component {
       if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
         this.props.ipaConfig.css.forEach((styleSheet) => {
           try {
-            let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
+            let customCss = require('../../../../app/ipaCore/css/'+ styleSheet)
           } catch(e) {}
         })
       }
@@ -486,26 +541,26 @@ class AppProvider extends React.Component {
   }
 
   async onConfigLoad(config, routes, token, user) {
-    
+
     function hasSisenseConnectors(config) {
       if (config.connectors) {
-  
+
         let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
         if (sisenseConnector) {
-  
+
           let sisUrl = sisenseConnector.config.url
           let lastChar = sisUrl.slice(-1)
           if (lastChar === '/' || lastChar === '\\')
             sisUrl = sisUrl.slice(0, -1)
-  
+
           sessionStorage.setItem('sisenseBaseUrl', sisUrl)
           return sisUrl
         }
         else return false
-  
+
       } else return false
     }
-    
+
     //console.log(config, routes)
     //console.log("APP PROVIDER WILL SET USER CONFIG",{...config});
 
@@ -558,16 +613,16 @@ class AppProvider extends React.Component {
           const orchId = sisenseSSOOrch.id;
 
           const params = {
-              orchestratorId: orchId,
-              _actualparams: [
-                  {
-                      sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
-                      params: {
-                          userGroupId: this.state.selectedItems.selectedUserGroupId,
-                          projectNamespace: this.state.selectedItems.selectedProject._namespaces[0]
-                      }
-                  }
-              ]
+            orchestratorId: orchId,
+            _actualparams: [
+              {
+                sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
+                params: {
+                  userGroupId: this.state.selectedItems.selectedUserGroupId,
+                  projectNamespace: this.state.selectedItems.selectedProject._namespaces[0]
+                }
+              }
+            ]
           }
 
           const orchResult = await IafDataSource.runOrchestrator(orchId, params);
@@ -619,20 +674,30 @@ class AppProvider extends React.Component {
 
       this.setState({isLoading: false});
 
-    // Eval the "autoeval" script for any bootstrap setup of app.
-    if (config.scripts && config.scripts.autoeval) {
-      if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
-    }
-    
+      // Eval the "autoeval" script for any bootstrap setup of app.
+      if (config.scripts && config.scripts.autoeval) {
+        if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
+      }
+
+      let rootStyles =  config.settings?.styles || this.props.ipaConfig.styleVars || DefaultStyleVars;
+
+      //Load all custom styles from userConfig
+      if(rootStyles) {
+        var r = document.querySelector(':root');
+        Object.entries(rootStyles).map(([key, value]) => {
+          r.style.setProperty(key, value)
+        })
+      }
+
     } else {
-        //This is state where the user has an account but no accepted invites
-        if (routes)
-          this.setState({
-            router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
-          });
+      //This is state where the user has an account but no accepted invites
+      if (routes)
         this.setState({
-          isLoading: false
+          router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
         });
+      this.setState({
+        isLoading: false
+      });
     }
 
 
@@ -651,7 +716,7 @@ class AppProvider extends React.Component {
     window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
   }
 
-  
+
 
   render() {
     //console.log("APP PROVIDER RE-RENDERS");
@@ -694,12 +759,12 @@ async function calculateRoutes(config, ipaConfig) {
 
     let component
     try {
-      component = require('../../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
+      component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
       component = asIpaPage(component, pageComponentProps)
       console.log(pageComponent + ' loaded from application')
     } catch(e) {
 
-      component = InternalPages[pageComponent] ? InternalPages[pageComponent] : null
+      component = InternalPages[pageComponent] || null
 
       if (component) {
         component = asIpaPage(component, pageComponentProps)
@@ -813,6 +878,8 @@ async function calculateRoutes(config, ipaConfig) {
     pages.sort();
   }
 
+  let alreadyRoutedPages = []
+
   // Add the component for each page (dynamically requires the JSX)
   pages.forEach(key => {
     if(usingGroupedConfig){
@@ -820,6 +887,7 @@ async function calculateRoutes(config, ipaConfig) {
       pagesConfig[key].pages.forEach(page => {
         if (page.handler) {
           let handler = config.handlers[page.handler];
+          alreadyRoutedPages.push(page.handler);
           addRoute(page.handler, handler, true, undefined, key);
         }
       })
@@ -827,11 +895,23 @@ async function calculateRoutes(config, ipaConfig) {
       let page = config.pages[key];
       if (page.handler) {
         let handler = config.handlers[page.handler];
-
+        alreadyRoutedPages.push(page.handler);
         addRoute(page.handler, handler, true);
       }
     }
   });
+
+
+  //Add handlers that are not present in pages or groupedPages
+  // We also skip the homepage as it's handled differently later
+  Object.entries(config.handlers)
+    .forEach(([key, value]) => {
+      const isAlreadyRouted = alreadyRoutedPages.includes(key)
+      const isHomepage = key === config.homepage?.handler
+      if(!isAlreadyRouted && !isHomepage) {
+        addRoute(key, value, true);
+      }
+    })
 
   // Add homepage
   let homePageHandler
@@ -857,4 +937,4 @@ AppProvider.contextTypes = {
   ifefShowModal: PropTypes.func
 };
 
-export default AppProvider;
+export default withAuthHoc(AppProvider);
