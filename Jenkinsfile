@@ -28,16 +28,15 @@ pipeline {
             // set authorization for this job
             authorizationMatrix(
               [
-                'com.cloudbees.plugins.credentials.CredentialsProvider.View:authenticated',
-                'hudson.model.Item.Build:authenticated',
-                'hudson.model.Item.Cancel:authenticated',
-                'hudson.model.Item.Discover:authenticated',
-                'hudson.model.Item.Read:authenticated',
-                'hudson.model.Item.Workspace:authenticated',
-                'hudson.model.Run.Delete:authenticated',
-                'hudson.model.Run.Replay:authenticated',
-                'hudson.model.Run.Update:authenticated',
-                'hudson.scm.SCM.Tag:authenticated'
+                group(name: 'authenticated', permissions: ['com.cloudbees.plugins.credentials.CredentialsProvider.View']),
+                group(name: 'authenticated', permissions: ['Job/Read']),
+                group(name: 'authenticated', permissions: ['Job/Workspace']),
+                group(name: 'authenticated', permissions: ['Job/Build']),
+                group(name: 'authenticated', permissions: ['Job/Cancel']),
+                group(name: 'authenticated', permissions: ['Run/Replay']),
+                group(name: 'authenticated', permissions: ['Run/Delete']),
+                group(name: 'authenticated', permissions: ['Run/Update']),
+                group(name: 'authenticated', permissions: ['SCM/Tag'])
               ]
             )
           ])
