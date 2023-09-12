@@ -132,7 +132,12 @@ export const getFileUrlForFilename = async (filename) => {
   let project = IafProj.getCurrent()
   return IafFile.getFileItems(project.rootContainer, { name: filename }).then((fileItems) => {
 
-    let fileItem = _.find(fileItems._list, { name: filename })
+    let fileItem = _.find(fileItems?._list, { name: filename })
+
+    if(!fileItem) {
+      return null
+    }
+
     let fileVersion = _.find(fileItem.versions, { versionNumber: fileItem.tipVersionNumber })
     return IafFileSvc.getFileVersionUrl(fileItem._fileId, fileVersion._fileVersionId).then((result) => {
       return result._url
