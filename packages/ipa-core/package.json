@@ -17,7 +17,7 @@
     "/dist",
     "/modules"
   ],
-  "dependencies": {
+  "dependencies": { 
     "@invicara/expressions": "~4.0.0",
     "@invicara/iaf-script-engine": "~4.0.0",
     "@invicara/invicara-lib": "~4.0.0",
