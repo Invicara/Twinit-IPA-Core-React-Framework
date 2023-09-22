@@ -2,7 +2,7 @@
 title: Select
 sidebar_position: 2200
 ---
-A generic and easy to use select control that encompasses common behaviour and style across all invicara apps.
+A generic and easy to use select control that encompasses common behaviour and style across all apps.
 It uses the `react-select` library and it supports multi selects and creatable selects.
 
 ### Properties
