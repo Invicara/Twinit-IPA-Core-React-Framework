@@ -10,7 +10,7 @@ You can provide your own logo to appear in the top left corner of the applicatio
 settings: {
     appImage: { 
         url: "url to an image online",
-        filename: "name fo a file uploaded to project"
+        filename: "name of a file uploaded to project"
     }
 }
 ```

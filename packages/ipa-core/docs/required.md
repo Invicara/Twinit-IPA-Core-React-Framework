@@ -17,13 +17,12 @@ to use on the platform.
 
 ```jsx
 const endPointConfig = {
-  itemServiceOrigin: 'https://dt-dev.invicara.com',
-  passportServiceOrigin: 'https://dt-dev.invicara.com',
-  fileServiceOrigin: 'https://dt-dev.invicara.com',
-  datasourceServiceOrigin: 'https://dt-dev.invicara.com',
-  graphicsServiceOrigin: 'https://dt-dev.invicara.com',
-  pluginBaseUrl: 'http://dt-dev.invicara.com/downloads/IPAPlugins/',
-  baseRoot: 'http://localhost:8083/digitaltwin'
+  itemServiceOrigin: 'https://api.platform.com',
+  passportServiceOrigin: 'https://api.platform.com',
+  fileServiceOrigin: 'https://api.platform.com',
+  datasourceServiceOrigin: 'https://api.platform.com',
+  graphicsServiceOrigin: 'https://api.platform.com',
+  baseRoot: 'http://localhost:8083/app'
 };
 ```
 
@@ -41,7 +40,7 @@ This configuration must be loaded and provided globally by your application.
 </head>
 
 <body>
-  <script type="application/javascript" src="/digitaltwin/config.js"></script>
+  <script type="application/javascript" src="/app/config.js"></script>
   <div id="app"></div>
 </body>
 ```
