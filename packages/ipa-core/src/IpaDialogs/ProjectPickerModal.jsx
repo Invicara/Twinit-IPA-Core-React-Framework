@@ -33,6 +33,12 @@ export default class ProjectPickerModal extends React.Component {
   componentDidMount = async () => {
     this.checkUserAccess();
     this.loadModal();
+    const root = document.documentElement
+    if(this.props.referenceAppConfig?.refApp) {               
+      root.style.setProperty('--app-accent-color', this.props.referenceAppConfig.style.appColor);       // Set app accent color
+      root.style.setProperty('--fancytree-one-color',  this.props.referenceAppConfig.style.fancyTreeOneColor); 
+      root.style.setProperty('--fancytree-one-channel-color',  this.props.referenceAppConfig.style.fancyTreeOneChannelColor); 
+    }
 
   }
 
