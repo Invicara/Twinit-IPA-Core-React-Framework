@@ -11,7 +11,11 @@ const Logo = ({appName, children, homepage, contextProps}) => {
   useEffect(() => {
     const getImgSrc = async (settings) => {
       if (!settings)
+      if (contextProps.selectedItems.ipaConfig.referenceAppConfig?.refApp) {
+        setImgSrc(contextProps.selectedItems.ipaConfig.referenceAppConfig.logo.url);
+      } else {
         setImgSrc(require('../img/invicara-logo_white.svg'))
+      }
       else if (imgSettings && imgSettings.url)
         setImgSrc(imgSettings.url)
       else if (imgSettings && imgSettings.filename) {

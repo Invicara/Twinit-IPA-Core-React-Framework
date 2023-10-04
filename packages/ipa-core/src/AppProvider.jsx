@@ -345,7 +345,9 @@ class AppProvider extends React.Component {
     if (window.location.hash) {
       const temp_token = IafSession.extractToken(window.location.hash);
       if (temp_token) {
+        console.log("before setSessionData 1")
         user = await IafSession.setSessionData(temp_token);
+        console.log("after setSessionData 1", user)
         if (user !== undefined) {
           token = temp_token;
         }
