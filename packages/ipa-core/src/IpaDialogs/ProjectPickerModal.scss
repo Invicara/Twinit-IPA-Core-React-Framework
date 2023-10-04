@@ -106,13 +106,3 @@ $light-grey: #6d6e70;
     justify-content: flex-start;
   }
 }
-.basic-single .select__option:hover, 
-.basic-single .select__option--is-focused,
-.basic-single .select__option--is-selected {
-  background-color: var(--app-accent-color);;
-  color: white
-}
-/* Change the box shadow color */
-.basic-single .select__control--is-focused  {
-  box-shadow: 0 0 0 1px var(--app-accent-color);; /* Change the color and opacity as needed */
-}
