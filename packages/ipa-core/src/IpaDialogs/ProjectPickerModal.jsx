@@ -33,6 +33,7 @@ export default class ProjectPickerModal extends React.Component {
   componentDidMount = async () => {
     this.checkUserAccess();
     this.loadModal();
+    this.setCssVariables();
 
   }
 
@@ -56,6 +57,19 @@ export default class ProjectPickerModal extends React.Component {
       } catch (err) {
         console.error(err);
       }
+    }
+  };
+  setCssVariables() {
+    const { referenceAppConfig } = this.props;
+
+    // Check if referenceAppConfig is defined and refApp is true
+    if (referenceAppConfig?.refApp) {
+      const root = document.documentElement;
+
+      // Set CSS variables with the provided colors
+      root.style.setProperty('--app-accent-color', referenceAppConfig.style.appColor);
+      root.style.setProperty('--fancytree-one-color', referenceAppConfig.style.fancyTreeOneColor);
+      root.style.setProperty('--fancytree-one-channel-color', referenceAppConfig.style.fancyTreeOneChannelColor);
     }
   };
 
