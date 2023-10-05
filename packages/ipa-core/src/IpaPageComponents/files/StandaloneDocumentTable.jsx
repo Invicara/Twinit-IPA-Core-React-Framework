@@ -105,14 +105,11 @@ let StandaloneDocumentTable = props => {
             const _fileVersionId = v._fileVersionId
             docIds.push({ _fileId, _fileVersionId })})
         })
-        docIds.forEach(doc => {
-          let docIds = [doc]
           let query = {
             entityType: 'file',
             queryParams: { docIds }
           }
           props.onNavigate('documentviewer', query, { newTab: true })
-        })
       },
       bulk: {
         disabled: !props.config.canView

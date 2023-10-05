@@ -2,6 +2,9 @@
 title: Generic Modal
 sidebar_position: 2100
 ---
+
+import { ImportModulesCodeBlock } from '../docComponents/ImportModulesCodeBlock'
+
 A generic modal dialog with a title bar and a close button. All other content is supplied via a “modal body” component. GenericModal is often wrapped by a HOC to create a specific template.  
   
 Dialogs are displayed using: `props.actions.showModal(<SomeDialogComponent />)`
@@ -26,9 +29,9 @@ Dialogs can be hidden programmatically by using: `props.actions.showModal(false)
 
 ### Example
 
+<ImportModulesCodeBlock modules={['IpaDialogs', 'IpaControls']} />
+
 ```jsx
-import React, {useEffect} from "react"
-import {IpaDialogs, IpaControls} from "@invicara/ipa-core"
 const {GenericModal} = IpaDialogs
 const {IpaButton} = IpaControls
 

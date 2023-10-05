@@ -7,8 +7,6 @@ import { InstallCodeBlock } from './docComponents/InstallCodeBlock'
 
 # Installation
 
-To install Node.js in your project:
-
 <InstallCodeBlock />
 
 ##  Client application Structure

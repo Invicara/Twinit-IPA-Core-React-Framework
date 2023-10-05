@@ -2,7 +2,7 @@
 title: ControlLabel
 sidebar_position: 1900
 ---
-A generic and easy to use label that encompasses common behaviour and style across all invicara apps. It should be used in every control that uses a label, or as a base to create control label variants.
+A generic and easy to use label that encompasses common behaviour and style across all apps. It should be used in every control that uses a label, or as a base to create control label variants.
 
 ### Properties
 
