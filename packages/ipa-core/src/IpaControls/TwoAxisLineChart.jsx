@@ -25,8 +25,7 @@ const getColoredAxis = (color) => {
   }
 }
 
-const TwoAxisLineChart = ({data, line1, line2}) => {
-
+const TwoAxisLineChart = ({data, line1, line2, style}) => {
   console.log(data, line1, line2)
 
   const [graphContainerStyle, setGraphContainerStyle] = useState({})
@@ -41,7 +40,7 @@ const TwoAxisLineChart = ({data, line1, line2}) => {
      * the styles when the data prop udpates, the two charts line up nicely
     */
 
-    setGraphContainerStyle({position: 'absolute', width: '100%'})
+    setGraphContainerStyle({position: 'absolute', width: '100%', height: style.height})
   }, [data])
 
   const SecondGraph = () => {
@@ -50,62 +49,64 @@ const TwoAxisLineChart = ({data, line1, line2}) => {
     let line2DataForTooltip = data.line2.filter(d => d.id === line2.displayInTooltip)
 
     return (
-      <ResponsiveLine
-        {...line2}
-        data={data.line2}
-        margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
-        axisRight={{
-          legend: line2.axisLabel,
-          legendPosition: line2.axisLabelPosition,
-          legendOffset: 40
-        }}
-        axisLeft={null}
-        axisTop={null}
-        enableGridY={false}
-        axisBottom={null}
-        theme={getColoredAxis(line2.colors[0])}
-        /* Add this for tooltip */
-        useMesh={true}
-        enableSlices="x"
-        sliceTooltip={({ slice }) => {
-          let slicePoints = slice.points.filter((sp) => {
-            return sp.serieId === line1.displayInTooltip || sp.serieId === line2.displayInTooltip
-          })
-          return (
-            <div
-              style={{
-                background: "white",
-                padding: "9px 12px",
-                border: "1px solid #ccc"
-              }}
-            >
-              {/* making the tooltip recognise both data points */}
-              <div>"{slicePoints[0].data.x}"</div>
-              {slicePoints.map((point) => (
-                <div key={point.id}>
-                  <div
-                    style={{
-                      color: line1.colors[0],
-                      padding: "3px 0"
-                    }}
-                  >
-                    <strong>{line1DataForTooltip[0].id}</strong> [{line1DataForTooltip[0].data[point.index].y}]
+       <div  style={{height: style.height}}>
+        <ResponsiveLine
+          {...line2}
+          data={data.line2}
+          margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
+          axisRight={{
+            legend: line2.axisLabel,
+            legendPosition: line2.axisLabelPosition,
+            legendOffset: 40
+          }}
+          axisLeft={null}
+          axisTop={null}
+          enableGridY={false}
+          axisBottom={null}
+          theme={getColoredAxis(line2.colors[0])}
+          /* Add this for tooltip */
+          useMesh={true}
+          enableSlices="x"
+          sliceTooltip={({ slice }) => {
+            let slicePoints = slice.points.filter((sp) => {
+              return sp.serieId === line1.displayInTooltip || sp.serieId === line2.displayInTooltip
+            })
+            return (
+              <div
+                style={{
+                  background: "white",
+                  padding: "9px 12px",
+                  border: "1px solid #ccc"
+                }}
+              >
+                {/* making the tooltip recognise both data points */}
+                <div>"{slicePoints[0].data.x}"</div>
+                {slicePoints.map((point) => (
+                  <div key={point.id}>
+                    <div
+                      style={{
+                        color: line1.colors[0],
+                        padding: "3px 0"
+                      }}
+                    >
+                      <strong>{line1DataForTooltip[0].id}</strong> [{line1DataForTooltip[0].data[point.index].y}]
+                    </div>
+                    <div
+                      style={{
+                        color: line2.colors[0],
+                        padding: "3px 0"
+                      }}
+                    >
+                      <strong>{line2DataForTooltip[0].id}</strong> [{line2DataForTooltip[0].data[point.index].y}
+                      ]
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      color: line2.colors[0],
-                      padding: "3px 0"
-                    }}
-                  >
-                    <strong>{line2DataForTooltip[0].id}</strong> [{line2DataForTooltip[0].data[point.index].y}
-                    ]
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        }}
-      />
+                ))}
+              </div>
+            );
+          }}
+        />
+      </div>
     )
   }
 

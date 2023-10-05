@@ -21,9 +21,8 @@ import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
 import {IafSession, IafProj, IafDataSource} from '@invicara/platform-api';
-import {IafScriptEngine} from '@invicara/iaf-script-engine';
-console.log("IafScriptEngine", IafScriptEngine)
-import { expression } from '@invicara/expressions'
+import {IafScriptEngine} from "@invicara/iaf-script-engine";
+import { expression } from '@invicara/expressions';
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 

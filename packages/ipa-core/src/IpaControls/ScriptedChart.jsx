@@ -51,7 +51,7 @@ const ScriptedChart = ({script, scriptArgs, chart, chartConfig, onClick, scripte
   useEffect(() => {
     const loadData = async () => {
       setChartData("fetching")
-      setChartData(scriptedData || await ScriptHelper.executeScript(script, scriptArgs))
+      setChartData(await ScriptHelper.executeScript(script, scriptArgs) || scriptedData)
    }    
    loadData()
   }, [script, chart])
@@ -69,8 +69,7 @@ const ScriptedChart = ({script, scriptArgs, chart, chartConfig, onClick, scripte
     //if chartData.data is provided we do not translate the data so it needs to be in the correct form
     let data = !chartData?.data && ci.translate ? ci.translate(chartData) : (chartData?.data ? chartData.data : chartData)
     let otherData = chartData?.data ? _.omit(chartData, ['data']) : {}
-    
-    component = <Chart data={data} {...otherData} style={{border: "dashed gray 1px"}} {...CHART_GLOBALS} {...ci.defaultConfig} {...chartConfig} />
+    component = <Chart data={data} {...otherData} style={{border: "dashed gray 1px", ...style}} {...CHART_GLOBALS} {...ci.defaultConfig} {...chartConfig} />
     extensions = getChartExtensions(chartConfig, data)
   } 
 

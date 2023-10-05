@@ -34,6 +34,7 @@ import {applyFilters} from "../IpaControls/FilterControl";
 const IpaUtils = {
     //AppContext,
     AdvSearchQueryBuilder,
+    applyFilters,
     AttributeHelpers,
     formatBytes,
     listEquals,
