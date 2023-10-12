@@ -93,6 +93,30 @@ $light-grey: #6d6e70;
     background-color: var(--app-accent-color);
   }
 
+.custom-single-class .select__control:hover {
+  border-color: var(--app-accent-color);
+  box-shadow: 0 0 0 0px var(--app-accent-color); 
+}
+
+.custom-single-class .select__option {
+  color: black;
+  background-color: white;
+}
+
+.custom-single-class .select__option--is-focused {
+  background-color: var(--app-accent-color) !important;
+  color: white;
+}
+
+.custom-single-class .select__control {
+  border-color: #b0b0b0;
+  box-shadow: 0 0 0 0px #b0b0b0;
+}
+
+.custom-single-class .select__indicator-separator {
+  display: none; /* Hide the separator between the indicator and the input */
+}
+
 }
 
 .button-container {
