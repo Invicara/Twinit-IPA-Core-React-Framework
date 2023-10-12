@@ -488,7 +488,7 @@ export default class ProjectPickerModal extends React.Component {
                     name="projectSelect"
                     options={selectProjectOptions}
                     defaultValue={defaultProjectOption}
-                    className="basic-single"
+                    className={this.props.referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
                     classNamePrefix="select"
                     placeholder={'Select Project...'}
                     onChange={this.onProjectPicked.bind(this)}
@@ -505,7 +505,7 @@ export default class ProjectPickerModal extends React.Component {
                         name="userGroupSelect"
                         options={this.state.userGroupOptions}
                         value={this.state.userGroupValue}
-                        className="basic-single"
+                        className={this.props.referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
                         classNamePrefix="select"
                         placeholder={'Select User Group...'}
                         onChange={this.onUserGroupPicked.bind(this)}
