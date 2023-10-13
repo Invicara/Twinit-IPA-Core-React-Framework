@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-core",
-  "version": "2.3.17",
+  "version": "2.3.18",
   "description": "Invicara Platform application frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
