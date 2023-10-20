@@ -12,7 +12,7 @@ sidebar_position: 1000
 
 ## `pageComponent`
 
-Use `'pageComponent: ‘users/UserGroupView’` in a handler to activate the Datasources View.
+Use `'pageComponent: ‘datasources/DatasourcesView’` in a handler to activate the Datasources View.
 
 This view is designed to allow managing the datasources within a project.
 

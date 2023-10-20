@@ -11,9 +11,6 @@ sidebar_position: 1500
 |`allowUserGroupInvite`|Whether the user should be able to invites new and existing user’s the User Groups of which the user is a member.|
 |`allowManageInvites`|Whether the user should be able to perform actions on existing invites like deleting and resending.|
 |`allowManageUser`|Whether the user should be able to remove user’s from UserGroups.|
-|`allowViewPermissions`|Whether the user should be able to view the permissions on UserGroups.  **Currently not yet implemented**|
-|`allowManagePermissions`|Whether the user should be able to manage UserGroup permissions. **Currently not yet implemented**|
-|`scripts.itemFetchScript`|A script to use to determine the NamedUserItems for which the user can manage permissions. If not provided all the NamedUserItems the UserGroup has access to will be able to be manage.  **Currently not yet implemented**|
 
 ---
 
@@ -79,37 +76,6 @@ allowManageUsers: false,
 
 Whether the user should be able to remove user’s from UserGroups.
 
-### `allowViewPermissions`
-
-(optional, default = false) 
-
-```jsx
-allowViewPermissions: false,
-```
-
-Whether the user should be able to view the permissions on UserGroups.
-
-### `allowManagePermissions`
-
-(optional, default = false) 
-
-```jsx
-allowManagePermissions: false,
-```
-
-Whether the user should be able to manage UserGroup permissions.
-
-### `scripts.itemFetchScript`
-
-(optional, default = false) 
-
-```jsx
-scripts: {
-  itemFetchScript: 'fetchNonSystemCollections'
-}
-```
-
-A script to use to determine the NamedUserItems for which the user can manage permissions. If not provided all the NamedUserItems the UserGroup has access to will be able to be manage.
 
 ## Example
 
@@ -125,12 +91,7 @@ userGroup: {
      allowUserGroupEdit: true,
      allowUserGroupInvite: true,
      allowManageInvites: true,
-     allowManageUsers: true,
-     allowViewPermissions: true,
-     allowManagePermissions: true
-     scripts: {
-      itemFetchScript: 'fetchNonSystemCollections'
-     }
+     allowManageUsers: true
    }
 }
 ```
