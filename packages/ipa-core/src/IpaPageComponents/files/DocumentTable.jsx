@@ -275,9 +275,12 @@ const DocumentTable = props => {
                 </div>
                 <div className={`document-table__version_dropdown v${fileId}`}>
                   {doc.documentData.versions.length > 1 ? doc.documentData.versions.map(v => {
+                    let vdate
+                    if(v.hasOwnProperty('metadata')){
+                    vdate = moment(v.metadata[props.tableConfig.dateField])}
                     return <div><PinkCheckbox onChange={() => setSelectedVersion(v, doc)}
                       checked={doc.currentVersion?.includes(v)} />
-                      {v.versionNumber} {date.format('DD/MM/YYYY kk:mm:ss a')}</div>
+                      {v.versionNumber} {vdate ? vdate.format('DD/MM/YYYY kk:mm:ss a') : date.format('DD/MM/YYYY kk:mm:ss a')}</div>
                   })
                     : null}
                 </div>
