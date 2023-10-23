@@ -75,9 +75,9 @@ const DocumentTable = props => {
   }, [sort, props.documents])
 
   const toogleVersionDrop = (fileId) => {
-    if (!document.querySelector(`.${fileId}`).classList.contains("document-table__version_dropdown_show"))
-      document.querySelector(`.${fileId}`).classList.add("document-table__version_dropdown_show")
-    else document.querySelector(`.${fileId}`).classList.remove("document-table__version_dropdown_show")
+    if (!document.querySelector(`.v${fileId}`).classList.contains("document-table__version_dropdown_show"))
+      document.querySelector(`.v${fileId}`).classList.add("document-table__version_dropdown_show")
+    else document.querySelector(`.v${fileId}`).classList.remove("document-table__version_dropdown_show")
   }
   const setSelectedVersion = (version, doc) => {
     let newDocuments = [...documents]
@@ -273,7 +273,7 @@ const DocumentTable = props => {
                     <i className={`fas fa-caret-down`} onClick={() => toogleVersionDrop(fileId)}></i>
                   </span>
                 </div>
-                <div className={`document-table__version_dropdown ${fileId}`}>
+                <div className={`document-table__version_dropdown v${fileId}`}>
                   {doc.documentData.versions.length > 1 ? doc.documentData.versions.map(v => {
                     return <div><PinkCheckbox onChange={() => setSelectedVersion(v, doc)}
                       checked={doc.currentVersion?.includes(v)} />
