@@ -108,7 +108,7 @@ export const fetchNamedUserItems = createAsyncThunk(
 export const fetchAllNamedUserItems = createAsyncThunk(
     'allNamedUserItems/fetchStatus',
     async (args, thunkAPI) => {
-      const {scriptName, rowsPerPage, page} = args
+      const {scriptName} = args
       
       if(!scriptName) { 
         /**
@@ -121,7 +121,7 @@ export const fetchAllNamedUserItems = createAsyncThunk(
         const options = args.options;
         return IafItemSvc.getAllNamedUserItems(criteria, ctx, options);
       } else {
-        return await ScriptHelper.executeScript(scriptName, {rowsPerPage, page} )
+        return await ScriptHelper.executeScript(scriptName)
       }
   }
 );
