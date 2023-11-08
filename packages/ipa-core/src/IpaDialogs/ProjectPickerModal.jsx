@@ -68,8 +68,6 @@ export default class ProjectPickerModal extends React.Component {
 
       // Set CSS variables with the provided colors
       root.style.setProperty('--app-accent-color', referenceAppConfig.style.appColor);
-      root.style.setProperty('--fancytree-one-color', referenceAppConfig.style.fancyTreeOneColor);
-      root.style.setProperty('--fancytree-one-channel-color', referenceAppConfig.style.fancyTreeOneChannelColor);
     }
   };
 
