@@ -4,10 +4,12 @@ import BaseTextInput from "../BaseTextInput";
 import './AlertTable.scss'
 import { Tooltip } from '@material-ui/core';
 import {withGenericPageContext} from "../../IpaPageComponents/genericPageContext";
+import ScriptHelper from '../../IpaUtils/ScriptHelper';
 
 const getHeaders = columns => {
   let headers = columns.filter(c => c.active === true).map(c => c.name)
   headers.push('')
+  headers.splice(1, 0, '')
   return headers
 }
 
@@ -17,18 +19,43 @@ const URGENCY_CLASSNAMES = {
   "Low": "cell--urgency cell--urgency-low",
 }
 
-const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate) => {
-  console.log('getRowFromAlert alert', alert)
-  console.log('getRowFromAlert activeColumns', activeColumns)
+const inactivateAlert = (alert, setAcknowledgedAlert, scriptName) => {
+  const result = alert
+  result.properties.Acknowledged.val = true
+  setAcknowledgedAlert(true)
+  return ScriptHelper.executeScript(scriptName, {data: result})
+}
+
+const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate, setAcknowledgedAlert, scriptName) => {
   const row = activeColumns.map(c => {
     let className = undefined;
     let property = _.get(alert, c.accessor);
-    if(property.dname === "Urgency") {
+    if(property?.dname === "Urgency") {
       className = URGENCY_CLASSNAMES[property.val];
     }
     return {..._.get(alert, c.accessor), className}
   })
-  console.log('getRowFromAlert row', row)
+
+  row.unshift({
+    type: "action", 
+    val: alert.properties.Acknowledged.val ? 
+      <Tooltip key="cell-tooltip" title="Alert has been acknowledged" enterDelay={500}>
+        <button className='alert-table__row-action-button'>
+          <i className="fa fa-check" style={{color: '#1A8817'}} aria-hidden="true"></i>
+        </button>
+      </Tooltip> 
+    :
+      <Tooltip key="cell-tooltip" title="Inactivate alert" enterDelay={500}>
+        <button 
+          className='alert-table__row-action-button'
+          onClick={() => { inactivateAlert(alert, setAcknowledgedAlert, scriptName) }}
+        >
+          <i className="fa fa-times" aria-hidden="true"></i>
+        </button>
+      </Tooltip>
+    , 
+    className: "alert-table__row-action"
+  })
 
   //TODO create and push the action menu
   row.push({
@@ -65,16 +92,14 @@ const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate) => 
   return row
 }
 
-const getRowsFromAlerts = (alerts, columns, navigationConfig, onNavigate) => {
+const getRowsFromAlerts = (alerts, columns, navigationConfig, onNavigate, setAcknowledgedAlert, scriptName) => {
   let activeColumns = columns.filter(c => c.active === true)
 
-  let rows = alerts.map(a => getRowFromAlert(a, activeColumns, navigationConfig, onNavigate))
-
+  let rows = alerts.map(a => getRowFromAlert(a, activeColumns, navigationConfig, onNavigate, setAcknowledgedAlert, scriptName))
   return rows
 }
 
 const AlertTable = (props) => {
-  console.log('AlertTable props', props)
   const [filterInput, setFilterInput] = useState(null);
 
   return (
@@ -95,7 +120,7 @@ const AlertTable = (props) => {
         <Table
           className="alert-table__table"
           headers={getHeaders(props.columns)}
-          rows={getRowsFromAlerts(props.alerts, props.columns, props.navigateTo, props.onNavigate)}
+          rows={getRowsFromAlerts(props.alerts, props.columns, props.navigateTo, props.onNavigate, props.setAcknowledgedAlert, props.scriptName)}
           options={{ emptyMessage: 'No data', emptyMessageClassName: 'alert-table__empty-message' }}
         />
       </div>

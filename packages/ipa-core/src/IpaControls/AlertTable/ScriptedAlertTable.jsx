@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AlertTable from './AlertTable'
 
 export default function ScriptedAlertTable (props) {
+  const [acknowledgedAlert, setAcknowledgedAlert] = useState(false)
 
 	console.log("ScriptedAlertTable props", props)
 
@@ -12,6 +13,8 @@ export default function ScriptedAlertTable (props) {
 			columns={props.config.columns} 
       navigateTo={props.config.navigateTo}
 			alerts={props.data._list}
+      scriptName={props.config.scriptName}
+      setAcknowledgedAlert={setAcknowledgedAlert}
 		/>
   )
 }
