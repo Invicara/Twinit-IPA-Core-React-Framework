@@ -92,7 +92,7 @@ export default {
     'react-autosuggest', 'react-click-outside', 'react-css-modules',
     'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
     'react-inspector', 'react-select', 'react-table',
-    '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
+    '@invicara/expressions', '@invicara/platform-api',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path'
   ]
