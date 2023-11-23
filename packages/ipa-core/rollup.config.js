@@ -25,6 +25,7 @@ import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
 import image from '@rollup/plugin-image';
 import fs from 'fs';
+import alias from 'rollup-plugin-alias';
 //import pkg from './package.json'
 
 //We use a function and not a variable bc multi-module bundle can have trouble with shared plugin instances as per https://github.com/rollup/rollupjs.org/issues/69#issuecomment-306062235
@@ -33,6 +34,10 @@ const getPlugins = () => [
     resolve({
         mainFields: ['main'],
         extensions: ['.js', '.jsx', '.css', '.scss', '.svg']
+    }),
+    
+    alias({
+        "remote-component.config.js": __dirname + "/remote-component.config.js"
     }),
     postcss(),
     image({include:['src/IpaIcons/**/*']}),

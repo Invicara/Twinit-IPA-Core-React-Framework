@@ -25,6 +25,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import {getPlatformPath} from '../IpaPaths'
+import RemoteComponentWrapper from "./RemoteComponentWrapper";
 
 class DownloadsView extends React.Component {
     constructor(props) {
@@ -120,6 +121,8 @@ class DownloadsView extends React.Component {
                 {!this.state.isPageLoading && !!this.state.error && <div>{this.state.error}</div>}
                 {!this.state.isPageLoading && !this.state.error  ? <div style={{padding: '40px'}}>
                     <div style={{marginLeft: '20%', marginRight: '20%'}}>
+
+                        <RemoteComponentWrapper config={{url: "https://github.com/cesar-f-invicara/remote-component-starter/blob/master/dist/main.js"}}/>
 
                         {this.state.manifests.map((mani) => {
 
