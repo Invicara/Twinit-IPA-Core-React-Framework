@@ -23,7 +23,6 @@
     "@invicara/invicara-lib": "~4.0.0",
     "@invicara/platform-api": "~4.0.0",
     "@invicara/platform-ui-components": "~4.0.0",
-    "@invicara/react-ifef": "~4.0.0",
     "@invicara/script-data": "~4.0.0",
     "@invicara/script-iaf": "~4.0.0",
     "@invicara/script-ui": "~4.0.0",

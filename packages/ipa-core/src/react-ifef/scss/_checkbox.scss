@@ -1,0 +1,203 @@
+
+/**
+ * Checkbox
+ * --------------------------------------------------
+ */
+
+.asf-checkbox {
+  // set the color defaults
+  @include checkbox-style($checkbox-off-border-default, $checkbox-on-bg-default, $checkbox-on-border-default);
+
+  position: relative;
+  display: inline-block;
+  padding: ($checkbox-height / 4) ($checkbox-width / 4);
+  cursor: pointer;
+}
+.asf-checkbox-light  {
+  @include checkbox-style($checkbox-off-border-light, $checkbox-on-bg-light, $checkbox-off-border-light);
+}
+.asf-checkbox-stable  {
+  @include checkbox-style($checkbox-off-border-stable, $checkbox-on-bg-stable, $checkbox-off-border-stable);
+}
+.asf-checkbox-positive  {
+  @include checkbox-style($checkbox-off-border-positive, $checkbox-on-bg-positive, $checkbox-off-border-positive);
+}
+.asf-checkbox-calm  {
+  @include checkbox-style($checkbox-off-border-calm, $checkbox-on-bg-calm, $checkbox-off-border-calm);
+}
+.asf-checkbox-assertive  {
+  @include checkbox-style($checkbox-off-border-assertive, $checkbox-on-bg-assertive, $checkbox-off-border-assertive);
+}
+.asf-checkbox-balanced  {
+  @include checkbox-style($checkbox-off-border-balanced, $checkbox-on-bg-balanced, $checkbox-off-border-balanced);
+}
+.asf-checkbox-energized{
+  @include checkbox-style($checkbox-off-border-energized, $checkbox-on-bg-energized, $checkbox-off-border-energized);
+}
+.asf-checkbox-royal  {
+  @include checkbox-style($checkbox-off-border-royal, $checkbox-on-bg-royal, $checkbox-off-border-royal);
+}
+.asf-checkbox-dark  {
+  @include checkbox-style($checkbox-off-border-dark, $checkbox-on-bg-dark, $checkbox-off-border-dark);
+}
+
+.asf-checkbox input:disabled:before,
+.asf-checkbox input:disabled + .asf-checkbox-icon:before {
+  border-color: $checkbox-off-border-light;
+}
+
+.asf-checkbox input:disabled:checked:before,
+.asf-checkbox input:disabled:checked + .asf-checkbox-icon:before {
+  background: $checkbox-on-bg-light;
+}
+
+
+.asf-checkbox.asf-checkbox-input-hidden input {
+  display: none !important;
+}
+
+.asf-checkbox input,
+.asf-checkbox-icon {
+  position: relative;
+  width: $checkbox-width;
+  height: $checkbox-height;
+  display: block;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+
+  &:before {
+    // what the checkbox looks like when its not checked
+    display: table;
+    width: 100%;
+    height: 100%;
+    border-width: $checkbox-border-width;
+    border-style: solid;
+    border-radius: $checkbox-border-radius;
+    background: $checkbox-off-bg-color;
+    content: ' ';
+    @include transition(background-color 20ms ease-in-out);
+  }
+}
+
+.asf-checkbox input:checked:before,
+input:checked + .asf-checkbox-icon:before {
+  border-width: $checkbox-border-width + 1;
+}
+
+// the checkmark within the box
+.asf-checkbox input:after,
+.asf-checkbox-icon:after {
+  @include transition(opacity .05s ease-in-out);
+  @include rotate(-45deg);
+  position: absolute;
+  top: 33%;
+  left: 25%;
+  display: table;
+  width: ($checkbox-width / 2);
+  height: ($checkbox-width / 4) - 1;
+  border: $checkbox-check-width solid $checkbox-check-color;
+  border-top: 0;
+  border-right: 0;
+  content: ' ';
+  opacity: 0;
+}
+
+.platform-android .asf-checkbox-platform input:before,
+.platform-android .asf-checkbox-platform .asf-checkbox-icon:before,
+.asf-checkbox-square input:before,
+.asf-checkbox-square .asf-checkbox-icon:before {
+  border-radius: 2px;
+  width: 72%;
+  height: 72%;
+  margin-top: 14%;
+  margin-left: 14%;
+  border-width: 2px;
+}
+
+.platform-android .asf-checkbox-platform input:after,
+.platform-android .asf-checkbox-platform .asf-checkbox-icon:after,
+.asf-checkbox-square input:after,
+.asf-checkbox-square .asf-checkbox-icon:after {
+  border-width: 2px;
+  top: 19%;
+  left: 25%;
+  width: ($checkbox-width / 2) - 1;
+  height: 7px;
+}
+
+.grade-c .asf-checkbox input:after,
+.grade-c .asf-checkbox-icon:after,
+.platform-browser .asf-checkbox input:after,
+.platform-browser .asf-checkbox-icon:after {
+  @include rotate(0);
+  top: 1px;     // tuned for $checkbox-height = 24px
+  left: 3px;    // ditto
+  border: none;
+  color: $checkbox-check-color;   // does not work in browser; jl 09/23/2015
+  content: '\2713';
+  font-weight: bold;
+  font-size: 20px;
+}
+
+// what the checkmark looks like when its checked
+.asf-checkbox input:checked:after,
+input:checked + .asf-checkbox-icon:after {
+  opacity: 1;
+}
+
+// make sure item content have enough padding on left to fit the checkbox
+.item-checkbox {
+  padding-left: ($item-padding * 2) + $checkbox-width;
+
+  &.active {
+    box-shadow: none;
+  }
+}
+
+// Slight tweaks for inline
+.asf-checkbox-inline .item-checkbox {
+  border-width: 0px;              // no border on asf jl 09/23/2015
+  padding: ($item-padding / 2) - 3px;   // half the normal - 3px to fit 3 across on iPhone
+  padding-left: ($item-padding * 2) + $checkbox-width - 22px; // nudge back a bit
+  max-width: initial;             // gets rid of ellipsis on status buttons
+  font-size: 14px;                // shrink to fit 3 inline on iphone
+}
+
+// position the checkbox to the left within an item
+.item-checkbox .asf-checkbox {
+  position: absolute;
+  top: 50%;
+  right: $item-padding / 2;
+  left: 0;  //$item-padding / 2; squeeze down to left
+  z-index: $z-index-item-checkbox;
+  margin-top: (($checkbox-height + ($checkbox-height / 2)) / 2) * -1;
+}
+
+
+.item-checkbox.item-checkbox-right {
+  padding-right: ($item-padding * 2) + $checkbox-width;
+  padding-left: $item-padding;
+}
+
+.item-checkbox-right .asf-checkbox input,
+.item-checkbox-right .asf-checkbox-icon {
+  float: right;
+}
+
+// Augments the ones found in Bootstrap (less padding-left)...jl 09/23/2015
+.asf-radio-inline,
+.asf-checkbox-inline {
+  display: inline-flex;
+  //padding-left: 10px;
+  margin-bottom: 0;
+  font-weight: 400;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asf-radio-inline input,
+.asf-checkbox-inline input {
+  margin-right: 5px;
+}
