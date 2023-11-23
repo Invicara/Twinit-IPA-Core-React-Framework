@@ -89,6 +89,7 @@ export default {
         'IpaRedux':'src/redux/main.js',
         'IpaLayouts':'src/IpaLayouts/main.js',
         'IpaMock':'src/IpaMock/main.js',
+        'react-ifef':'src/react-ifef/main.js',
     },
     output: {
         dir: 'modules',

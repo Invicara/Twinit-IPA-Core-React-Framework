@@ -22,6 +22,7 @@ import IpaUtils from './IpaUtils/main'
 import IpaPageComponents from './IpaPageComponents/main'
 import IpaRedux from './redux/main'
 import IpaMocks from './IpaMock/main'
+import ReactIfef from './react-ifef/main'
 
 module.exports = {
     IpaMainLayout,
@@ -30,5 +31,6 @@ module.exports = {
     IpaUtils,
     IpaPageComponents,
     IpaRedux,
-    IpaMocks
+    IpaMocks,
+    ReactIfef,
 };
