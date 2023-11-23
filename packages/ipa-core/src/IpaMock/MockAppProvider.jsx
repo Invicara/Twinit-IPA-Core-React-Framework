@@ -55,7 +55,7 @@ class MockAppProvider extends AppProvider {
     if(this.props.history.entries.length) {
       currentPath = this.props.history.entries[this.props.history.entries.length - 1].pathname
     }
-    let path = 'http://localhost:8083/digitaltwin/#' + currentPath;
+    let path = 'http://localhost:8083/#' + currentPath;
     return path.split('?')[0].split('/');
   }
 

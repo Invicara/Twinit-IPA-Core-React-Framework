@@ -16,7 +16,7 @@ const BigButtonBar = (props) => {
     let buttons = Object.entries(props.actions).map(([key,a]) =>
       <div key={key} className={btnClass}>
         <div>
-          <img onClick={e=>doAction(key)} src={"/digitaltwin/" + a.icon}/>
+          <img onClick={e=>doAction(key)} src={"/" + a.icon}/>
         </div>
         <div onClick={e=>doAction(key)}><h1>{a.title}</h1></div>
         <div>{/* empty div to make grid work */}</div>

@@ -29,7 +29,7 @@ This view is designed to allow managing the users in UserGroups and invites to t
 (required)
 
 ```jsx
-appUrl: '/digitaltwin',
+appUrl: '/',
 ```
 
 The url path from the basepath for any invite links.
@@ -87,7 +87,7 @@ userGroup: {
    pageComponent: "users/UserGroupView",
    path: '/UserGroupView',
    config: {
-     appUrl: '/digitaltwin',
+     appUrl: '/',
      allowUserGroupEdit: true,
      allowUserGroupInvite: true,
      allowManageInvites: true,
