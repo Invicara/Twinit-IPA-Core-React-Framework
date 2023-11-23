@@ -1,5 +1,5 @@
 import React from "react";
-import { RemoteComponent } from "@paciolan/remote-component";
+import { RemoteComponent } from "./RemoteComponent";
 
 const RemoteComponentWrapper = props => <RemoteComponent {...props} url={props.config.url} />;
 
