@@ -23,6 +23,10 @@ import Layout from './Layout';
 import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
+import {IafAuth} from '@invicara/platform-ui-components';
+
+const {AuthProvider, AuthService} = IafAuth;
+
 
 enableMapSet()
 
@@ -64,6 +68,18 @@ class IpaMainLayout extends React.Component {
         LocalFilePlugins.initScriptPlugins();
         DataPlugins.initScriptPlugins();
         ScriptHelper.initExpressionExecCtx(); // bringing back this cause the page was not loading
+        this.authService = new AuthService({        //Added authService for rotated refresh token
+          clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,
+          location: window.location,
+          //provider: process.env.REACT_APP_PROVIDER || 'provider',
+          redirectUri: endPointConfig.baseRoot,
+          scopes: ["read write"],
+          tokenEndpoint:
+            `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/token`,
+          authorizeEndpoint:
+            `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/authorize`,
+          authType: endPointConfig.authType, // Tells about which authentication process/type we're using. It can be "implicit" or "pkce".
+        });
     }
 
     render() {
@@ -73,10 +89,13 @@ class IpaMainLayout extends React.Component {
               <Provider store={store}>
                 <HashRouter>
                     <App history={history} location={location}>
+                    <AuthProvider authService={this.authService}>
                         <AppProvider location={location} history={history} ipaConfig={this.props.ipaConfig} onConfigLoad={this.props.onConfigLoad}> 
                             <AppContext.Consumer>
                                 {
-                                    (contextProps) => contextProps.isLoading ?
+                                    (contextProps) => {
+                                      console.log("AppContext contextProps", contextProps)
+                                      return contextProps.isLoading ?
                                         <div>{contextProps.loadingText}</div>
                                         :
                                         <Layout pageList={contextProps.router.pageList}
@@ -97,9 +116,11 @@ class IpaMainLayout extends React.Component {
                                             </TransitionGroup>
 
                                         </Layout>
-                                }
+                                    }
+                              }
                             </AppContext.Consumer>
                         </AppProvider>
+                        </AuthProvider>
                     </App>
                 </HashRouter>
             </Provider>

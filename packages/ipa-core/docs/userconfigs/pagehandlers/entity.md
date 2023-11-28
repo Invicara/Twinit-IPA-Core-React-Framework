@@ -46,6 +46,7 @@ The property name must match `type.singular`. The script must also return Entiti
 
 ```jsx
 {
+  id: <unique string>
   "Entity Name": <string>
   properties: [
     <array of properties>
@@ -339,10 +340,6 @@ data: {
 - `name`: the name to display at the top of the column in the header.
 - `accessor`: how to find the value to display in the cell on the objects in the array.
 - `download`: whether to use this cell as a download cell for the document.
-
-### Notes
-
-The column objects were patterned directly off of React-Tables column objects.
 
 ## `entitySelectionPanel`
 

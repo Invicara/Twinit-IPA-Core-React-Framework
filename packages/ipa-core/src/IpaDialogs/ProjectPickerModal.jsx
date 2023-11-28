@@ -33,6 +33,7 @@ export default class ProjectPickerModal extends React.Component {
   componentDidMount = async () => {
     this.checkUserAccess();
     this.loadModal();
+    this.setCssVariables();
 
   }
 
@@ -56,6 +57,29 @@ export default class ProjectPickerModal extends React.Component {
       } catch (err) {
         console.error(err);
       }
+    }
+  };
+  setCssVariables = async() => {
+    const { referenceAppConfig } = this.props;
+
+    // Check if referenceAppConfig is defined and refApp is true
+    if (referenceAppConfig?.refApp) {
+      const result = await IafPassSvc.getConfigs();
+      const root = document.documentElement;
+      console.log(result.themes.login);
+
+      const accentColor = result.themes.login === "mirrana" ? "#E04F29" : "#4bade8";
+      const fancytreeOneColor =
+        result.themes.login === "mirrana" ? "#E04F29" : "#4bade8";
+      const fancytreeOneChannelColor =
+        result.themes.login === "mirrana" ? "#e98469" : "#dbecee";
+
+      root.style.setProperty("--app-accent-color", accentColor);
+      root.style.setProperty("--fancytree-one-color", fancytreeOneColor);
+      root.style.setProperty(
+        "--fancytree-one-channel-color",
+        fancytreeOneChannelColor
+      );
     }
   };
 
@@ -268,6 +292,9 @@ export default class ProjectPickerModal extends React.Component {
         appContextProps.actions.setSelectedItems({selectedProject: currProject, selectedUserGroupId: this.state.selectedUserGroupId});
         window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
 
+        if (this.props.referenceAppConfig?.refApp) {
+          window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+        }
         return;
       }
     }
@@ -471,7 +498,7 @@ export default class ProjectPickerModal extends React.Component {
                     name="projectSelect"
                     options={selectProjectOptions}
                     defaultValue={defaultProjectOption}
-                    className="basic-single"
+                    className={this.props.referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
                     classNamePrefix="select"
                     placeholder={'Select Project...'}
                     onChange={this.onProjectPicked.bind(this)}
@@ -488,7 +515,7 @@ export default class ProjectPickerModal extends React.Component {
                         name="userGroupSelect"
                         options={this.state.userGroupOptions}
                         value={this.state.userGroupValue}
-                        className="basic-single"
+                        className={this.props.referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
                         classNamePrefix="select"
                         placeholder={'Select User Group...'}
                         onChange={this.onUserGroupPicked.bind(this)}

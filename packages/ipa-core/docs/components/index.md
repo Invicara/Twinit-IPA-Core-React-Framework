@@ -3,6 +3,8 @@ title: Overview
 sidebar_position: 1700
 ---
 
+import { ImportModulesCodeBlock } from '../docComponents/ImportModulesCodeBlock'
+
 The UI Framework exports the following components:
 
 ```jsx
@@ -35,9 +37,9 @@ const IpaControls = {
 
 Example Usage:
 
+<ImportModulesCodeBlock modules={['IpaDialogs', 'IpaControls']} />
+
 ```jsx
-import React, {useEffect} from "react"
-import {IpaDialogs, IpaControls} from "@invicara/ipa-core"
 const {GenericModal} = IpaDialogs
 const {IpaButton} = IpaControls
 

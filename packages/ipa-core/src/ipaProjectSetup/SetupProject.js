@@ -456,9 +456,7 @@ export default class SetUpProject extends React.Component {
               )}
               {this.state.open && !this.state.isDeleting && !this.state.isDoneButtonClicked && 
                 <div style={{ float: "left" }}>
-                  By Clicking on Agree button you are confirming that, All
-                  previously created projects and invited projects will get
-                  deleted, and your new project will be created. 
+                  By Clicking on Agree button, the previously created project by you would be deleted and this new project would be created.
                   <div>
                     <button
                       onClick={() => this.props.restartApp()}

@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-navigators",
-  "version": "1.0.25",
+  "version": "1.0.39",
   "description": "Invicara platform application frontend and scripting framework",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -20,7 +20,7 @@
   "dependencies": {
     "@invicara/iaf-viewer": "2.2.6",
     "@invicara/invicara-lib": "^2.1.0",
-    "@invicara/ipa-core": "2.2.82",
+    "@invicara/ipa-core": "2.2.89",
     "@material-ui/core": "^4.8.0",
     "@material-ui/icons": "^4.9.1",
     "@reduxjs/toolkit": "^1.3.6",

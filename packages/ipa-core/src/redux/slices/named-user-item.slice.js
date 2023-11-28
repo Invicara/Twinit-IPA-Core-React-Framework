@@ -60,8 +60,8 @@ export const fetchNamedUserItemItems = createAsyncThunk(
 export const fetchNamedUserTotalAmountOfItems = createAsyncThunk( 
   'namedUserItemTotalItems/fetchStatus',
   async (args, thunkAPI) => {
-    const {originalPromiseResult, ctx} = args
-    const resultArr = originalPromiseResult.map((item) => {
+    const {collectionsArray, ctx} = args
+    const resultArr = collectionsArray.map((item) => {
       return {
         query: {},
         _userItemId: item._userItemId,
@@ -121,7 +121,7 @@ export const fetchAllNamedUserItems = createAsyncThunk(
         const options = args.options;
         return IafItemSvc.getAllNamedUserItems(criteria, ctx, options);
       } else {
-        return ScriptHelper.executeScript(scriptName ) 
+        return await ScriptHelper.executeScript(scriptName)
       }
   }
 );
@@ -181,7 +181,7 @@ export const namedUserItemSlice = createSlice({
         state.loadingStatus = 'loaded';
       })
       .addCase(fetchAllNamedUserItems.fulfilled, (state, action) => {
-        namedUserItemAdapter.setAll(state, action.payload);
+        namedUserItemAdapter.setAll(state, action.payload._list);
         state.loadingStatus = 'loaded';
       })
       .addCase(fetchNamedUserTotalAmountOfItems.fulfilled, (state, action) => { 
