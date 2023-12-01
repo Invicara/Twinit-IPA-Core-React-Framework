@@ -27,7 +27,7 @@
   z-index: $z-index-popover;
   display: block;
   margin-top: 12px;
-  margin-left: -$popover-width / 2;
+  margin-left: calc(($popover-width / 2) * -1);
   //height: $popover-height;
   //width: $popover-width;
   max-height: $popover-height;
