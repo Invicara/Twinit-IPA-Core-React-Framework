@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "@invicara/expressions": "~4.0.0",
+    "@invicara/iaf-doc-viewer": "~4.0.0",
     "@invicara/iaf-script-engine": "~4.0.0",
     "@invicara/invicara-lib": "~4.0.0",
     "@invicara/platform-api": "~4.0.0",
