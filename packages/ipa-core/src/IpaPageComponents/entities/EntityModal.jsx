@@ -624,6 +624,7 @@ class EntityModal extends React.Component {
   getControl = prop => {
     let { newEntity } = this.state
     
+    const showUOMProperty = !this.props.action.component.isUOMHidden && !!this.state.newEntity.properties[prop].uom
 
     let propInfo = this.state.newEntity.properties[prop]
     let propType = propInfo && propInfo.type ? propInfo.type : 'missing'
@@ -687,7 +688,7 @@ class EntityModal extends React.Component {
                     }
                     disabled={disableControl}
                   />
-                  {!!this.state.newEntity.properties[prop].uom && (
+                  {showUOMProperty && (
                     <span className='property-uom'>
                       {this.state.newEntity.properties[prop].uom}
                     </span>
@@ -719,7 +720,7 @@ class EntityModal extends React.Component {
                 }}
                 hasMultipleValues={propInfo.hasMultipleValues}
               />
-              {!!this.state.newEntity.properties[prop].uom && (
+              {showUOMProperty && (
                 <span className='property-uom'>
                   {this.state.newEntity.properties[prop].uom}
                 </span>
