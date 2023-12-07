@@ -4,7 +4,7 @@ import {OrDivider} from "../../IpaControls/OrDivider";
 import GenericMatButton from "../../IpaControls/GenericMatButton";
 import _ from 'lodash'
 
-export const ChooseFiles = ({onAddFiles, display}) => {
+export const ChooseFiles = ({onAddFiles, display, iconName }) => {
     const [dragging, isDragging] = useState(false)
     const fileInput = useRef();
 
@@ -24,7 +24,9 @@ export const ChooseFiles = ({onAddFiles, display}) => {
              onDragEnter={() => isDragging(true)}
              onDragLeave={() => isDragging(false)} onDragOver={e => e.preventDefault()}
         >
-            <i className={`fas fa-cloud-upload-alt cloud-icon`}/>
+            <div className="icon-wrapper">
+                <i className={iconName ?? "fas fa-cloud-upload-alt cloud-icon"}/>
+            </div>
             <div className="dropzone-legend">Drag and drop files here</div>
             <OrDivider width="260px"/>
             <GenericMatButton customClasses="main-button"
