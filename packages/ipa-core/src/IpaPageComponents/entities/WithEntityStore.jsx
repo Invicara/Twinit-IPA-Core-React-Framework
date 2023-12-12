@@ -63,9 +63,9 @@ const withEntityStore = (WrappedComponent) => {
             if(this.props.currentEntityType){
                 //store is already populated, check if we need to change entity
                 let {queryParams} = this.props;
-                const storeSwitchRequired = (queryParams
-                    && queryParams.entityType !== this.props.currentEntityType.singular)
-                    || initialEntityType.entityType !== this.props.currentEntityType.singular;
+                const storeSwitchRequired = queryParams
+                && queryParams.entityType !== this.props.currentEntityType.singular
+                && initialEntityType.entityType !== this.props.currentEntityType.singular;
                 if(storeSwitchRequired){
                     //change store (yes for all components using this HOC)
                     this.switchStore(initialEntityType);

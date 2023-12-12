@@ -7,7 +7,7 @@ import {ChooseFiles} from "./ChooseFiles";
 import {PanelToggle} from "./misc";
 import _ from 'lodash'
 
-export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles}) => {
+export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName}) => {
     const [panelOpen, setPanelOpen] = useState(selectedStep === 1)
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -40,7 +40,7 @@ export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUplo
         <div className={clsx('wizard-panel', panelOpen && 'wizard-panel-expanded')}>
             <WizardTimeline steps={steps.map(({name}) => name)}
                             selectedStep={selectedStep}/>
-            {<ChooseFiles onAddFiles={handleFilesAdded} display={panelOpen}/>}
+            {<ChooseFiles iconName={uploadIconName} onAddFiles={handleFilesAdded} display={panelOpen}/>}
             {!panelOpen && <PanelToggle disabled={selectedStep > 2} onClick={togglePanel}/>}
         </div>
         <div className={clsx('files-area', panelOpen && 'extra-margin')}>
