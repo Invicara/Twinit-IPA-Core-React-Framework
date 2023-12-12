@@ -161,7 +161,7 @@ export default class EntityCollectionModal extends React.Component {
 
     render() {
  
-      let title = <span><i style={{fontSize: '1.5em'}} className="icofont-cubes"></i> Add to Collection</span>;
+      let title = <span><i style={{fontSize: '1.5em'}} className={this.props.action.component.icon || "icofont-cubes"}></i> Add to Collection</span>;
       let body = this.state.showBody ? <div className="entity-collection-modal-body">
           <CreatableScriptedSelects
             currentValue={this.state.selectedType}
