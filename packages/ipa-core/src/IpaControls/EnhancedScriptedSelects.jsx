@@ -13,6 +13,7 @@ import './EnhancedScriptedSelects.scss'
 export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compact, horizontal, selectOverrideStyles, onFetch, multi, placeholder, highlightedOptions, isClearable, script, disabled}) => {
     const [selects, setSelects] = useState({});
 
+    const fetchdisabled = !currentValue || _.isEmpty(_.values(currentValue).flatMap(_.identity))
     useEffect(() => {
         const value = (currentValue || {})
         const fetchOptions = async () => {
@@ -60,7 +61,7 @@ export const ScriptedSelects = ({currentValue, onChange, touched, noFetch, compa
                     />
                 </Fragment>
             }))}
-            {!noFetch && <FetchButton disabled={disabled} onClick={onFetch}
-                         customClasses={touched && !disabled && 'attention'}>Fetch</FetchButton>}
+            {!noFetch && <FetchButton disabled={fetchdisabled} onClick={onFetch}
+                         customClasses={touched && !fetchdisabled && 'attention'}>Fetch</FetchButton>}
         </div>
 };
