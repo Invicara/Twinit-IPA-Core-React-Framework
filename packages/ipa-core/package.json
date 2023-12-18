@@ -65,7 +65,7 @@
     "react-router": "^5.3.3",
     "react-router-dom": "^5.3.3",
     "react-select": "^3.0.8",
-    "react-table": "^7.8.0", "react-touch": "^0.4.4",
+    "react-table": "^7.8.0",
     "react-transition-group": "^2.2.1",
     "sass": "^1.53.0",
     "uid": "^2.0.0"
