@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react"
 import _ from 'lodash'
-import {ResponsivePie} from "@nivo/pie"
-import {ResponsiveBar} from "@nivo/bar"
-import {ResponsiveLine} from "@nivo/line"
+// import {ResponsivePie} from "@nivo/pie"
+// import {ResponsiveBar} from "@nivo/bar"
+// import {ResponsiveLine} from "@nivo/line"
 import TwoAxisLineChart from './TwoAxisLineChart'
 
 import {getChartExtensions} from "./ChartExtensions"

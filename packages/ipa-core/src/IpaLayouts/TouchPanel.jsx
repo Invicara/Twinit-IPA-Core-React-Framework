@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
 
-const { Swipeable, defineSwipe, Draggable } = require( 'react-touch' );
+// const { Swipeable, defineSwipe, Draggable } = require( 'react-touch' );
 
 
 function SwipeablePanel(props) {
