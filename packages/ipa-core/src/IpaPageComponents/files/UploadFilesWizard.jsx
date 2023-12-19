@@ -23,6 +23,7 @@ import {
     addFilesToUpload,
     cleanFiles, fetchColumnConfig, getAssociatedEntities, getColumnConfig,
     getFilesToUpload, getRejectedFiles,
+    setRejectedFiles,
     isComplete, isReadyFor,
     loadAssociatedEntities, updateFileAttribute, updateMultipleFileAttribute,
     uploadFiles
@@ -39,7 +40,7 @@ import './UploadFilesWizard.scss'
 import { CropLandscapeOutlined } from "@material-ui/icons";
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
-                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig}) => {
+                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles}) => {
 
     const [selectedStep, setSelectedStep] = useState(1);
     const [uploadContainer, setUploadContainer] = useState(selectedItems.selectedProject.rootContainer)
@@ -70,6 +71,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         cleanFiles();
         setSelectedStep(1)
     };
+    const removeRejectedFiles = () => setRejectedFiles([])
 
     const startUpload = () => {
         setSelectedStep(3);
@@ -136,6 +138,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     return <UploadFilesWizardSteps steps={steps} selectedStep={selectedStep} associatedEntities={associatedEntities}
                                    addFiles={addFiles} cancel={cancel} startUpload={startUpload} rejectedFiles={rejectedFiles}
                                    uploadIconName={config?.uploadIconName}
+                                   removeRejectedFiles={removeRejectedFiles}
                                    hideDefaultError={config.hideDefaultRejectedError}
     />
 }
@@ -148,9 +151,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, fetchColumnConfig
+    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, fetchColumnConfig, setRejectedFiles
 }
 
 export default compose(
     connect(mapStateToProps, mapDispatchToProps),
 )(UploadFilesWizard)
+
