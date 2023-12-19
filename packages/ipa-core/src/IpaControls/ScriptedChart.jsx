@@ -34,12 +34,12 @@ const CHART_GLOBALS = {
   colors: ["#C71784", "#00A693", "#FF99F1", "#58f5e3", "#83004B"]
 }
 
-const CHARTS = {
-  "Donut": {component: ResponsivePie, defaultConfig: {innerRadius: 0.75}, translate: standard},
-  "Bar": {component: ResponsiveBar, translate: standard},
-  "Line": {component: ResponsiveLine, translate: line},
-  "TwoAxisLine": {component: TwoAxisLineChart}
-}
+// const CHARTS = {
+//   "Donut": {component: ResponsivePie, defaultConfig: {innerRadius: 0.75}, translate: standard},
+//   "Bar": {component: ResponsiveBar, translate: standard},
+//   "Line": {component: ResponsiveLine, translate: line},
+//   "TwoAxisLine": {component: TwoAxisLineChart}
+// }
 
 const ScriptedChart = ({script, scriptArgs, chart, chartConfig, onClick, scriptedData, style}) => {
 
