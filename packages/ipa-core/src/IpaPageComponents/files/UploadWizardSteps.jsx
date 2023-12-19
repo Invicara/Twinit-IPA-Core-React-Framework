@@ -7,12 +7,17 @@ import {ChooseFiles} from "./ChooseFiles";
 import {PanelToggle} from "./misc";
 import _ from 'lodash'
 
-export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName, hideDefaultError}) => {
+export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName, hideDefaultError = false, removeRejectedFiles}) => {
     const [panelOpen, setPanelOpen] = useState(selectedStep === 1)
     const [dialogOpen, setDialogOpen] = useState(false);
 
     //TODO if this gets more complex, make panelOpen calculable from actual state and selected step
-    useEffect(() => {if(selectedStep === 1) setPanelOpen(true)}, [selectedStep])
+    useEffect(() => {
+        if (selectedStep === 1) {
+          setPanelOpen(true);
+          removeRejectedFiles()
+        }
+      }, [selectedStep]);
 
     const togglePanel = () => setPanelOpen(open => !open)
 
