@@ -136,6 +136,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     return <UploadFilesWizardSteps steps={steps} selectedStep={selectedStep} associatedEntities={associatedEntities}
                                    addFiles={addFiles} cancel={cancel} startUpload={startUpload} rejectedFiles={rejectedFiles}
                                    uploadIconName={config?.uploadIconName}
+                                   hideDefaultError={config.hideDefaultRejectedError}
     />
 }
 
