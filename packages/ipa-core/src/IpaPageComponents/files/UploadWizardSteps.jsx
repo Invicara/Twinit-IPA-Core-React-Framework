@@ -7,7 +7,7 @@ import {ChooseFiles} from "./ChooseFiles";
 import {PanelToggle} from "./misc";
 import _ from 'lodash'
 
-export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName}) => {
+export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName, hideDefaultError}) => {
     const [panelOpen, setPanelOpen] = useState(selectedStep === 1)
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -50,9 +50,11 @@ export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUplo
             </div>}
             {steps.map(({component}) => component)[selectedStep - 1]}
         </div>
-        {!_.isEmpty(rejectedFiles) && <div className={'rejected-files'}>*The following files were rejected and will not be uploaded: {
-            rejectedFiles.map(f => f.name).join(' ,')
-        }</div>}
+        {!_.isEmpty(rejectedFiles) && 
+        <div className={'rejected-files'}>
+            {!hideDefaultError && `*The following files were rejected and will not be uploaded: ${rejectedFiles.map(f => f.name).join(' ,')}`}
+            {rejectedFiles.map(f =>  f.errorMessage ? <p>{f.errorMessage}</p> : null)}
+        </div>}
         {Buttons && <Buttons optionsOverride={selectedStep === 2 && hasEntities ? {onPrimaryClick: () => setDialogOpen(true)} : {}}/>}
         <Dialog onClose={closeDialog}  open={dialogOpen}>
             <div className={'dialog-content with-buttons'}>
