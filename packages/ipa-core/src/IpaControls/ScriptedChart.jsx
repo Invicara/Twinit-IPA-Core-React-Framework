@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react"
 import _ from 'lodash'
-import {ResponsivePie} from "@nivo/pie"
-import {ResponsiveBar} from "@nivo/bar"
-import {ResponsiveLine} from "@nivo/line"
+// import {ResponsivePie} from "@nivo/pie"
+// import {ResponsiveBar} from "@nivo/bar"
+// import {ResponsiveLine} from "@nivo/line"
 import TwoAxisLineChart from './TwoAxisLineChart'
 
 import {getChartExtensions} from "./ChartExtensions"
@@ -34,12 +34,12 @@ const CHART_GLOBALS = {
   colors: ["#C71784", "#00A693", "#FF99F1", "#58f5e3", "#83004B"]
 }
 
-const CHARTS = {
-  "Donut": {component: ResponsivePie, defaultConfig: {innerRadius: 0.75}, translate: standard},
-  "Bar": {component: ResponsiveBar, translate: standard},
-  "Line": {component: ResponsiveLine, translate: line},
-  "TwoAxisLine": {component: TwoAxisLineChart}
-}
+// const CHARTS = {
+//   "Donut": {component: ResponsivePie, defaultConfig: {innerRadius: 0.75}, translate: standard},
+//   "Bar": {component: ResponsiveBar, translate: standard},
+//   "Line": {component: ResponsiveLine, translate: line},
+//   "TwoAxisLine": {component: TwoAxisLineChart}
+// }
 
 const ScriptedChart = ({script, scriptArgs, chart, chartConfig, onClick, scriptedData, style}) => {
 
