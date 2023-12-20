@@ -119,10 +119,14 @@ export const fetchColumnConfig = (config) => async dispatch => {
 };
 
 export const addFilesToUpload = (newFileBlobs, container, preProcessScript) => async (dispatch, getState) => {
-    const {accepted, rejected} = await preProcess(newFileBlobs, preProcessScript)
+    const uploadedFiles = getState().files.toUpload
+    const payload = {
+        uploadedFiles,
+      };
+    const {accepted, rejected} = await preProcess(newFileBlobs, preProcessScript, payload)
     const columnNames = getColumnConfig(getState()).map(({name}) => name);
     const files = accepted.map(acc => buildFile(newFileBlobs.find(b => b.name === acc.name), acc.overrideName, acc.fileAttributes, columnNames));
-    dispatch(setRejectedFiles(rejected.map(f => ({name: f.name}))));
+    dispatch(setRejectedFiles(rejected.map(f => ({name: f.name, errorMessage: f?.errorMessage || ""}))));
     await dispatch(addFiles(files));
     const fileVersions = await Promise.all(files.map(withVersion(container)))
     fileVersions.forEach(fv => dispatch(updateFile(fv)));
@@ -222,9 +226,9 @@ const asValuePair = (attrName, attrValue) => {
     return  _.values(attrValue).map((selectValue, i) => [(attrNames[i]), selectValue[0]])
 }
 
-const preProcess = async (files, script) => {
+const preProcess = async (files, script, payload = {}) => {
     if(script){
-        const result = await ScriptHelper.executeScript(script, {files: files})
+        const result = await ScriptHelper.executeScript(script, {files: files, payload: payload})
         return {
             accepted: (result.accepted || []).map(file => ({..._.omit(file, 'fileItem'), fileAttributes: file.fileItem.fileAttributes})),
             rejected: result.rejected || []
