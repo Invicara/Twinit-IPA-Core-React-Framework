@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
 
 // const { Swipeable, defineSwipe, Draggable } = require( 'react-touch' );
-
+import { Swipeable, Draggable} from 'react-swipeable' 
 
 function SwipeablePanel(props) {
     const swipe = defineSwipe({swipeDistance: 25});
