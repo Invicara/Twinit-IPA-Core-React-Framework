@@ -55,7 +55,7 @@ export default {
       ],
       plugins: [
         require("@babel/plugin-proposal-object-rest-spread"),
-        require("fast-async"),
+        // require("fast-async"),
         ["@babel/plugin-proposal-class-properties", { "loose": true }]
       ]
     }),
