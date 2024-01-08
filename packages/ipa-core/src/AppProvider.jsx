@@ -85,8 +85,8 @@ class AppProvider extends React.Component {
         pageRoutes: [],
         pageGroups: []
       },
-      selectedItems: localStorage.ipadt_selectedItems
-          ? JSON.parse(localStorage.ipadt_selectedItems)
+      selectedItems: localStorage[`ipadt_selectedItems${appId}`]
+          ? JSON.parse(localStorage[`ipadt_selectedItems${appId}`])
           : {},
       actions: {
         reloadConfig: this.initialize.bind(this, false),
@@ -217,7 +217,7 @@ class AppProvider extends React.Component {
     const {selectedItems} = this.state;
     //save items to session
     let newSelecteds = Object.assign(selectedItems, newItems);
-    localStorage.ipadt_selectedItems = JSON.stringify(newSelecteds);
+    localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] = JSON.stringify(newSelecteds);
     this.setState({selectedItems: newSelecteds});
   }
   getPageArray = () => window.location.href.split('?')[0].split('/');
