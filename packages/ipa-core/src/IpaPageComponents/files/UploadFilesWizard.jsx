@@ -113,7 +113,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
             component: <FileUploadTable files={files}/>,
             buttons: WizardButtons({
                 primaryContent: files.every(isComplete) ?
-                    <span className={'button-content'}>Review<i className="fas fa-angle-right"/></span> :
+                    <span className={'button-content'}>Next<i className="fas fa-angle-right"/></span> :
                     <span className={'button-content'}><i className="fas fa-sync"/>Uploading</span>,
                 primaryDisabled: !files.every(isComplete),
                 onPrimaryClick: () => setSelectedStep(4),
@@ -126,7 +126,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
                 <FileTable columns={columnConfig} files={files} onFileChange={handleFileChange}
                            readonly/> : 'Loading...',
             buttons: WizardButtons({
-                primaryContent: <span className={'button-content'}>Return<i className="fas fa-angle-right"/></span>,
+                primaryContent: <span className={'button-content'}>Upload again<i className="fas fa-angle-right"/></span>,
                 onPrimaryClick: cancel,
                 secondaryContent: 'Report',
                 hideSecondary: !config.scripts.downloadReport,

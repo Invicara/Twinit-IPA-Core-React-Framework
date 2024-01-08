@@ -55,15 +55,16 @@ export const WizardButtons = (originalOptions) => ({optionsOverride}) => {
     const options = {...originalOptions, ...optionsOverride}
 
     return <div className={'file-wizard-actions'}>
+        {_.get(options, 'hideSecondary') || <GenericMatButton customClasses="cancel-button"
+                                                            disabled={_.get(options, 'secondaryDisabled', false)}
+                                                            onClick={_.get(options, 'onSecondaryClick', _.noop)}>
+            {_.get(options, 'secondaryContent', 'Previous')}
+        </GenericMatButton>}
         {_.get(options, 'hidePrimary') || <GenericMatButton customClasses="main-button"
                                                             disabled={_.get(options, 'primaryDisabled', false)}
                                                             onClick={_.get(options, 'onPrimaryClick', _.noop)}>
             {_.get(options, 'primaryContent', 'Next')}
         </GenericMatButton>}
-        {_.get(options, 'hideSecondary') || <GenericMatButton customClasses="cancel-button"
-                                                              disabled={_.get(options, 'secondaryDisabled', false)}
-                                                              onClick={_.get(options, 'onSecondaryClick', _.noop)}>
-            {_.get(options, 'secondaryContent', 'Previous')}
-        </GenericMatButton>}
+
     </div>
 }
