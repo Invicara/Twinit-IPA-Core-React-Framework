@@ -149,7 +149,9 @@ $black: black;
 .with-buttons{
   .button-content{
     > * {
-      margin: 0 5px;
+      margin: 0;
+      margin-left: 5px;
+      padding: 0;
     }
   }
 
@@ -171,7 +173,7 @@ $black: black;
     color: $cancel-grey;
     border: 2px solid ;
     background: $white;
-    margin-left: 20px;
+    margin-right: 24px;
   }
 }
 
