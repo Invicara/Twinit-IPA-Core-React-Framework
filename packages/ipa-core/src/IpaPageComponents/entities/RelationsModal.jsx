@@ -33,12 +33,13 @@ import GenericModal from '../../IpaDialogs/GenericModal'
 import { Overlay } from '../../IpaControls/Overlay'
 import { useChecked } from '../../IpaControls/Checkboxes'
 
+import * as modal from '../../redux/slices/modal'
+
 const RawRelationsModal = ({
   entity: originalParentEntities,
   action,
   parentEntities,
   retrieveRelated,
-  close,
   entitySelectConfig,
   fetchingRelated,
   searchEntities,
@@ -53,13 +54,18 @@ const RawRelationsModal = ({
   entitiesChanged,
   applySearchFiltering,
   setSelectedSearchedEntities,
-  recoverRelated
+  recoverRelated,
+  destroyModal
 }) => {
   const [selectedEntityType, setSelectedEntityType] = useState('')
   const { handleCheck, items: checkedEntities, resetChecked } = useChecked(
     parentEntities
   )
   const [overlay, setOverlay] = useState({ show: false })
+
+  close = () => {
+    destroyModal()
+  }
 
   useEffect(() => {
     //Since the modal gets reused and is not disposed of, we need to reset everything
@@ -269,7 +275,8 @@ const mapStateToProps = state => ({
   appliedFilters: getAppliedSearchFilters(state),
   selectedEntities: getSelectedSearchedEntities(state),
   fetchingRelated: getFetchingRelatedEntities(state),
-  entitiesChanged: getEntitiesChanged(state)
+  entitiesChanged: getEntitiesChanged(state),
+  modal: state.modal
 })
 
 const mapDispatchToProps = {
@@ -281,24 +288,26 @@ const mapDispatchToProps = {
   addRelated,
   applyRelationChanges,
   removeRelated,
-  recoverRelated
+  recoverRelated,
+  destroyModal: modal.actions.destroy
 }
 
 export const RelationsModal = compose(
   connect(mapStateToProps, mapDispatchToProps)
 )(RawRelationsModal)
 
+const ConnectedRelationsModal =  connect(mapStateToProps, mapDispatchToProps)(RawRelationsModal)
+export default ConnectedRelationsModal
+
 export const RelationsModalFactory = {
-  create: ({ type, action, entity, context }) => {
-    let modal = (
-      <RelationsModal
-        action={action}
-        entity={entity}
-        type={type}
-        close={() => context.ifefShowModal(false)}
-        context={context}
-      />
-    )
+  create: ({ type, action, entity, context, reduxStore}) => {
+
+    reduxStore.dispatch(modal.actions.setModal({
+      component: ConnectedRelationsModal, 
+      props: {action, entity, type}, 
+      open: true
+    }))
+
     context.ifefShowModal(modal)
     return modal
   }
