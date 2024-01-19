@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-core",
-  "version": "3.0",
+  "version": "2.4.0-cloudflare.0",
   "description": "Invicara Platform application frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
