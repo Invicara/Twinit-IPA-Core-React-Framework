@@ -59,17 +59,27 @@ export default class ProjectPickerModal extends React.Component {
       }
     }
   };
-  setCssVariables() {
+  setCssVariables = async() => {
     const { referenceAppConfig } = this.props;
 
     // Check if referenceAppConfig is defined and refApp is true
     if (referenceAppConfig?.refApp) {
+      const result = await IafPassSvc.getConfigs();
       const root = document.documentElement;
+      console.log(result.themes.login);
 
-      // Set CSS variables with the provided colors
-      root.style.setProperty('--app-accent-color', referenceAppConfig.style.appColor);
-      root.style.setProperty('--fancytree-one-color', referenceAppConfig.style.fancyTreeOneColor);
-      root.style.setProperty('--fancytree-one-channel-color', referenceAppConfig.style.fancyTreeOneChannelColor);
+      const accentColor = result.themes.login === "mirrana" ? "#E04F29" : "#4bade8";
+      const fancytreeOneColor =
+        result.themes.login === "mirrana" ? "#E04F29" : "#4bade8";
+      const fancytreeOneChannelColor =
+        result.themes.login === "mirrana" ? "#e98469" : "#dbecee";
+
+      root.style.setProperty("--app-accent-color", accentColor);
+      root.style.setProperty("--fancytree-one-color", fancytreeOneColor);
+      root.style.setProperty(
+        "--fancytree-one-channel-color",
+        fancytreeOneChannelColor
+      );
     }
   };
 

@@ -24,9 +24,13 @@ import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
 import {IafAuth} from '@invicara/platform-ui-components';
+import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 
 const {AuthProvider, AuthService} = IafAuth;
 
+const generateClassName = createGenerateClassName({
+  productionPrefix: 'ipa-',
+});
 
 enableMapSet()
 
@@ -98,24 +102,26 @@ class IpaMainLayout extends React.Component {
                                       return contextProps.isLoading ?
                                         <div>{contextProps.loadingText}</div>
                                         :
-                                        <Layout pageList={contextProps.router.pageList}
-                                                pageGroups={contextProps.router.pageGroups}
-                                                userLogout={contextProps.actions.userLogout}
-                                                contextProps={contextProps}
-                                                bottomPanelContent={this.props.bottomPanelContent}
-                                                ipaConfig={this.props.ipaConfig}>
+                                       <StylesProvider generateClassName={generateClassName}> 
+                                          <Layout pageList={contextProps.router.pageList}
+                                                  pageGroups={contextProps.router.pageGroups}
+                                                  userLogout={contextProps.actions.userLogout}
+                                                  contextProps={contextProps}
+                                                  bottomPanelContent={this.props.bottomPanelContent}
+                                                  ipaConfig={this.props.ipaConfig}>
 
-                                            <TransitionGroup>
-                                                <CSSTransition key={location.pathname}
-                                                               timeout={500} classNames="nav-view"
-                                                               onEnter={this.transitionEnter}>
-                                                    <Switch>
-                                                        {contextProps.router.pageRoutes}
-                                                    </Switch>
-                                                </CSSTransition>
-                                            </TransitionGroup>
+                                              <TransitionGroup>
+                                                  <CSSTransition key={location.pathname}
+                                                                timeout={500} classNames="nav-view"
+                                                                onEnter={this.transitionEnter}>
+                                                      <Switch>
+                                                          {contextProps.router.pageRoutes}
+                                                      </Switch>
+                                                  </CSSTransition>
+                                              </TransitionGroup>
 
-                                        </Layout>
+                                          </Layout>
+                                       </StylesProvider>
                                     }
                               }
                             </AppContext.Consumer>

@@ -93,9 +93,10 @@ $bar-height: 60px;
      border: 1px solid #E6E6E6;
      border-right: none;
      height: 100%;
-     overflow-x: hidden;
-     overflow-y: auto;
+     overflow: hidden;
      position: relative;
+     display: flex;
+     flex-direction: column;
      &:first-child{
        border-left: none;
      }
@@ -112,18 +113,25 @@ $bar-height: 60px;
   
   .inner-panel{
     padding: 20px;
-    height:  calc(100% - #{$entity-select-height} - #{$panel-title-height});
-    margin-top: $entity-select-height;
+    height:  auto;
+    width: auto;
     overflow: auto;
+    position: relative;
+    flex-grow: 1;
+
+    .enhanced-fetch-control {
+
+      position: absolute;
+      top: 0;
+    }
   }
+
 
   .entity-select{
     padding: 0 20px;
-    position: absolute;
     height: $entity-select-height;
     width: 100%;
     border-bottom: 1px solid $light-grey;
-    top: $bar-height;
   }
 
   .buttons{
@@ -169,7 +177,7 @@ $bar-height: 60px;
   }
 
   .tree-container{
-    overflow: scroll;
+    overflow: auto;
     height: calc(100% - #{$panel-title-height});
     padding: 20px 20px 45px 20px;
   }
@@ -197,6 +205,14 @@ $bar-height: 60px;
 
 .panel.relations-modal-summary{
   padding: 0 0 20px 20px;
+
+
+  & > div:last-child {
+    display: flex;
+    flex-direction: column;
+  }
+
+
 
   .parent-entity{
     display: flex;

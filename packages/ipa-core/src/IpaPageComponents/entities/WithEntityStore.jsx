@@ -83,7 +83,7 @@ const withEntityStore = (WrappedComponent) => {
             //TODO Once filters are moved to store, refactor the queryParam logic so that it can identify when URL applied
             // filters and entity match the current ones in the store and this cleaning (and the later refetching) of the entities
             // can be removed for being unnecessary and only done when needed
-            //this.props.resetEntities();
+            // this.props.resetEntities();
         }
 
         deriveInitialEntityType = (queryParams) => {
