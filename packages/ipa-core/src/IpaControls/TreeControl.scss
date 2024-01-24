@@ -68,6 +68,13 @@
   ul {
     list-style: none;
     display: none;
+
+    .ReactVirtualized__Grid.ReactVirtualized__List{
+      .ReactVirtualized__Grid__innerScrollContainer{
+        height: 100% !important;
+        max-height: 100% !important;
+      }
+    }
   }
 
   > ul,

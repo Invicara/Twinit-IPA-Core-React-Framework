@@ -4,7 +4,8 @@ import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel
 import _ from 'lodash'
 import clsx from "clsx";
 
-import './TreeControl.scss'
+import './TreeControl.scss';
+import {List} from "react-virtualized"
 
 
 const fancyTreeControlSelectAllReducer = (state, action) => {
@@ -149,21 +150,20 @@ const FancyTreeControl = ({
     }
   }
 
-  const getNodes = (nodes, depth) => {
+  const getNodes = (nodes, depth, virtualizedEvent) => {
     if (!nodes) return
     let children
     if (Array.isArray(nodes)) {
-      children = nodes.map((n) => {
-        let cn = "leaf"
-        if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
-        if (expandedNodeNames.includes(n.name)) cn += " expanded"
-        if (partialNodeNames.includes(n.name)) cn += " partial"
-        return (
-          <li onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
-            <a>
-              <span>{renderLeafNode(n)}</span>
-            </a>
-          </li>)})
+      let n = nodes[virtualizedEvent?.index]
+      let cn = "leaf"
+      if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
+      if (expandedNodeNames.includes(n.name)) cn += " expanded"
+      if (partialNodeNames.includes(n.name)) cn += " partial"
+      return <li onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
+        <a>
+          <span>{renderLeafNode(n)}</span>
+        </a>
+      </li>
     }
     else {
       children = []
@@ -171,17 +171,27 @@ const FancyTreeControl = ({
       Object.entries(nodes).forEach(([nodeName, nodeValue]) => {
         children.push(
           <li className={clsx(
-              'branch',selectedNodeNames.includes(nodeName) && "selected",
-              expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
+            'branch', selectedNodeNames.includes(nodeName) && "selected",
+            expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
           )}
-              onClick={e => selectNode(e, nodeName, nodeValue)} key={nodeName} data-branch-name={nodeName} >
+            onClick={e => selectNode(e, nodeName, nodeValue)} key={nodeName} data-branch-name={nodeName} >
             <a>
               <span>
                 <i className="fa fa-angle-down branch-expander" onClick={e => expandBranch(e, nodeName, nodeValue)} />
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-            <ul key={nodeName+"_children"}>{getNodes(nodeValue, depth)}</ul>
+            <ul key={nodeName + "_children"}>
+              {Array.isArray(nodeValue) ?
+                <List
+                  width={300}
+                  height={800}
+                  rowHeight={1.7}
+                  rowRenderer={(virtualizedEvent) => getNodes(nodeValue, depth, virtualizedEvent)}
+                  rowCount={nodeValue.length}
+                  overscanRowCount={3}
+                />
+                : getNodes(nodeValue, depth)}</ul>
           </li>)
       })
     }
@@ -196,7 +206,16 @@ const FancyTreeControl = ({
         {selectAllState.selectAllActivated && selectAllState.previouslySelectedIds.length>0 ? <span className="fancy-tree__count--action" onClick={onUndoSelectAllAction}>Undo</span> : undefined }
       </div> : undefined}
       <ul>
-        {getNodes(tree, 1)}
+        {Array.isArray(tree) ?
+          <List
+            width={300}
+            height={800}
+            rowHeight={10}
+            rowRenderer={(virtualizedEvent) => getNodes(tree, 1, virtualizedEvent)}
+            rowCount={tree.length}
+            autoHeight
+          /> : getNodes(tree, 1)
+        }
       </ul>
     </div>
   )

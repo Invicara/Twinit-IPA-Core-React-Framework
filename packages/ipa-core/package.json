@@ -68,6 +68,7 @@
     "react-table": "^6.8.6",
     "react-touch": "^0.4.4",
     "react-transition-group": "^2.2.1",
+    "react-virtualized": "^9.22.5",
     "sass": "^1.53.0",
     "uid": "^2.0.0"
   },
