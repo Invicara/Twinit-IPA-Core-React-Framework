@@ -249,7 +249,9 @@ const withEntitySearch = WrappedComponent => {
                 console.error(reason);
                 return Promise.reject();
             }
-            await this.props.fetchEntities(script, selector, value, runScriptOptions);
+            // ObservabilityView is setting the selected entity (Redux entity slice -> setSelectedEntity)
+            // fetchEntities is then calling setSelectedEntity and passing through an empty array and resetting the selected entity
+            if(this.props.handler.pageComponent !== "observability/ObservabilityView") await this.props.fetchEntities(script, selector, value, runScriptOptions);
             //in case of initial query triggered by this page, this callback will still use old query
             if(onInitialFetchComplete)onInitialFetchComplete();
             const fetchedQuery = {
