@@ -55,6 +55,8 @@ const withEntityStore = (WrappedComponent) => {
         }
 
         componentWillMount(){
+             // Temporarily adding this in to reset any selected Entities when a user moves away from the navigator until we have clearer requirements on how the navigator should operate.
+            storeCacheMap['/navigator'] = {}
             this.alignEntityStoreToHandlerEntity();
         }
 
@@ -83,7 +85,7 @@ const withEntityStore = (WrappedComponent) => {
             //TODO Once filters are moved to store, refactor the queryParam logic so that it can identify when URL applied
             // filters and entity match the current ones in the store and this cleaning (and the later refetching) of the entities
             // can be removed for being unnecessary and only done when needed
-            // this.props.resetEntities();
+            if(!this.props.NavigatorSource) this.props.resetEntities()
         }
 
         deriveInitialEntityType = (queryParams) => {
