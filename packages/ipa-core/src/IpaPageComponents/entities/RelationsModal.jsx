@@ -300,7 +300,7 @@ const ConnectedRelationsModal =  connect(mapStateToProps, mapDispatchToProps)(Ra
 export default ConnectedRelationsModal
 
 export const RelationsModalFactory = {
-  create: ({ type, action, entity, context, reduxStore}) => {
+  create: ({ type, action, entity, reduxStore}) => {
 
     reduxStore.dispatch(modal.actions.setModal({
       component: ConnectedRelationsModal, 
@@ -308,7 +308,6 @@ export const RelationsModalFactory = {
       open: true
     }))
 
-    context.ifefShowModal(modal)
     return modal
   }
 }
