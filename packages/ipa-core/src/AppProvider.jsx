@@ -515,14 +515,15 @@ class AppProvider extends React.Component {
                     onConfigLoad={callback}
                     onCancel={() => self.context.ifefShowModal(false)}
                     referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
-                        restartApp={this.state.actions.restartApp}
-                        projects={projects}
-                        onCancel={() => {
-                          this.setState((prev) => {
-                            return { ...prev, isshowProjectPickerModal: true };
-                          });
-                        }}
-                    />) }
+                      allowMultipleProjects={this.props.ipaConfig.referenceAppConfig.allowMultipleProjects}
+                      restartApp={this.state.actions.restartApp}
+                      projects={projects}
+                      onCancel={() => {
+                        this.setState((prev) => {
+                          return { ...prev, isshowProjectPickerModal: true };
+                        });
+                      }}
+                  />) }
                 />);
         } catch (error) {
           console.log(error);
