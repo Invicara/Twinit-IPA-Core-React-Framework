@@ -8,7 +8,7 @@ import * as modal from '../../redux/slices/modal'
 import { useStore } from "react-redux";
 import ReorderColumnsModal from './ReorderColumnsModal'
 import moment from 'moment';
-import { ControlPointSharp } from '@material-ui/icons';
+import { ControlPointSharp } from '@mui/icons-material';
 
 const DocumentTable = props => {
   const initialSelectedDocuments = []

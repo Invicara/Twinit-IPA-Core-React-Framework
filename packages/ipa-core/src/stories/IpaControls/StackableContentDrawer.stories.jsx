@@ -19,15 +19,14 @@ export default {
 const Template = (args) => {
   return <>
   <div>
-      <Skeleton variant="circle" width={40} height={40} animation={false} />
-      <Skeleton variant="rect" width={210} height={118} animation={false} />
+      <Skeleton variant="circular" width={40} height={40} animation={false} />
+      <Skeleton variant="rectangular" width={210} height={118} animation={false} />
       <Skeleton animation={false} />
   </div>
     {args.drawersLeft && args.drawersLeft.length>0 && generateDrawersInContainer(args,args.drawersLeft,"left", true)}
 
     {args.drawersRight && args.drawersRight.length>0 && generateDrawersInContainer(args,args.drawersRight,"right", true)}
-  </>
-  ;
+  </>;
 };
 
 export const Left = Template.bind({});

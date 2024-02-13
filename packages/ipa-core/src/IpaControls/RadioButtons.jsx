@@ -19,13 +19,13 @@ const RadioButtons = ({options, value, onChange, labelPlacement='end'}) => {
 
     return (
         <div className='ipa-radio-btns'>
-            <FormControl component="fieldset">
+            <FormControl variant="standard" component="fieldset">
                 <RadioGroup row value={value} onChange={onChange}>
                     {options.map(o => <FormControlLabel key={o} value={o} control={<AccentRadio />} label={o} labelPlacement={labelPlacement} />)}
                 </RadioGroup>
             </FormControl>
         </div>
-    )
+    );
 
 }
 

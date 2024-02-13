@@ -19,8 +19,8 @@ export default {
 const Template = (args) => {
   return <>
   <div>
-      <Skeleton variant="circle" width={40} height={40} animation={false} />
-      <Skeleton variant="rect" width={210} height={118} animation={false} />
+      <Skeleton variant="circular" width={40} height={40} animation={false} />
+      <Skeleton variant="rectangular" width={210} height={118} animation={false} />
       <Skeleton animation={false} />
   </div>
     <StackableDrawerContainer anchor="left">
@@ -29,8 +29,7 @@ const Template = (args) => {
     <StackableDrawerContainer anchor="right">
     {args.drawersRight && args.drawersRight.length>0 && generateDrawers(args,args.drawersRight,"right")}
     </StackableDrawerContainer>
-  </>
-  ;
+  </>;
 };
 
 export const Left = Template.bind({});
