@@ -1,6 +1,6 @@
 import React, {useCallback} from "react";
 import {FetchButton} from "./FetchButton";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import {FetchingLegend} from "./FetchingLegend";
 
 import './TextSearch.scss'

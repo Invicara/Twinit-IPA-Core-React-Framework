@@ -6,7 +6,7 @@ import _ from 'lodash'
 import './EntityListView.scss'
 import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
 import {isValidUrl} from '../../IpaUtils/helpers'
-import {Box, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core";
+import {Box, TableCell, TableHead, TableRow, TableSortLabel} from "@mui/material";
 //import { visuallyHidden } from '@material-ui/utils';
 
 const visuallyHidden = {

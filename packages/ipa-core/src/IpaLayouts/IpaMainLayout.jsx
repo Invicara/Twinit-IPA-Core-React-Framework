@@ -24,7 +24,7 @@ import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
 import {IafAuth} from '@invicara/platform-ui-components';
-import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
+import { StylesProvider, createGenerateClassName } from '@mui/material/styles';
 
 const {AuthProvider, AuthService} = IafAuth;
 

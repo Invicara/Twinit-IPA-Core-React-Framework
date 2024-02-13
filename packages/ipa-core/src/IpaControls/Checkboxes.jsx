@@ -1,11 +1,11 @@
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import CheckIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import {withStyles} from "@material-ui/core";
+import Checkbox from "@mui/material/Checkbox/Checkbox";
+import CheckIcon from "@mui/material/SvgIcon/SvgIcon";
+import {withStyles} from "@mui/material";
 import produce from "immer";
 import React, {useEffect, useState} from "react";
 import {usePrevious} from "../IpaUtils/usePrevious";
 import _ from "lodash";
-import {CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBoxRounded, CheckCircle as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from "@material-ui/icons";
+import {CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBoxRounded, CheckCircle as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from "@mui/icons-material";
 
 const iconStyle = {fontSize: 18};
 
@@ -25,7 +25,7 @@ export const RoundCheckbox = ({...props}) => <Checkbox
 export const PinkCheckbox = withStyles({
     root: {
         color: "#B8B8B8",
-        '&$checked': {
+        '&.Mui-checked': {
             color: 'var(--app-accent-color)'
         },
     },

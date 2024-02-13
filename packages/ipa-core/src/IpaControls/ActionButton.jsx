@@ -1,7 +1,7 @@
 
 import React from 'react';
 import './ActionButton.scss';
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 
 
 export default function ActionButton(props) {

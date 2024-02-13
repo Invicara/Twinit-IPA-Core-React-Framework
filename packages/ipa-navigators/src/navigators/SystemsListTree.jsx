@@ -9,7 +9,7 @@ import './SystemsListTree.scss'
 import sortSystemElementIdsAsDisplayedInTree, {getElementId} from "./sortSystemElements";
 import {useDispatch, useSelector} from "react-redux";
 import * as Systems from "../redux/slices/systems";
-import Switch from "@material-ui/core/Switch/Switch";
+import Switch from '@mui/material/Switch';
 import {getFilteredSystemElementEntitiesBy, selectAppliedSystemElementIsolationFilters} from "../redux/slices/systems";
 
 const treeReducer = (state, action) => {
@@ -109,10 +109,10 @@ export const SystemsListTree = ({system, selectedElements, onSelect, title, defa
 
     const toggleStyle = {
         switchBase: {
-            '&$checked': {
+            '&.Mui-checked': {
                 color: "#00A693",
             },
-            '&$checked + $track': {
+            '&.Mui-checked + $track': {
                 backgroundColor: "#efefef",
             },
         },

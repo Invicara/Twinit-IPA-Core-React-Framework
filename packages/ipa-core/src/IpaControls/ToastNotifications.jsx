@@ -1,5 +1,5 @@
 import React from "react"
-import { Cancel, CheckCircleRounded, Warning} from "@material-ui/icons";
+import { Cancel, CheckCircleRounded, Warning} from "@mui/icons-material";
 
 export const Toast = ({children, className}) => {
     return <div className={`toast-notification ${className}`}>{children}</div>  

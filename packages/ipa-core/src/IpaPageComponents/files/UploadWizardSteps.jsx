@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import clsx from "clsx";
 import GenericMatButton from "../../IpaControls/GenericMatButton";
-import Dialog from "@material-ui/core/Dialog/Dialog";
+import Dialog from "@mui/material/Dialog/Dialog";
 import {WizardTimeline} from "./WizardTimeline";
 import {ChooseFiles} from "./ChooseFiles";
 import {PanelToggle} from "./misc";

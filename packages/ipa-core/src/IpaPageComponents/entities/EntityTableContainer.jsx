@@ -15,7 +15,7 @@ import {
     TableSortLabel,
     Toolbar,
     Typography
-} from "@material-ui/core";
+} from "@mui/material";
 import useSortEntities, {usePaginateEntities} from "./sortEntities";
 import {EntityTableHead} from "./EntityTableHead";
 //import { visuallyHidden } from '@material-ui/utils';

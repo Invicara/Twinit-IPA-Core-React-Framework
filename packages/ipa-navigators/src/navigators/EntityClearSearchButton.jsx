@@ -25,7 +25,7 @@ import EntityDetailBottomPanelContent from "./EntityDetailBottomPanelContent";
 import NavigatorSource from "./NavigatorSource";
 import {compose} from "redux";
 import {connect, useDispatch, useSelector} from "react-redux";
-import {Button, ButtonGroup} from "@material-ui/core";
+import {Button, ButtonGroup} from "@mui/material";
 
 const EntityClearSearchButton = ({buttonStyle, viewerMode, onClearSearchAndFilters, onGroupOrFilterChange}) => {
 

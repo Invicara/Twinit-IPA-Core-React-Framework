@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import SimpleSelect from "../../IpaControls/SimpleSelect"
-import LinkTwoToneIcon from '@material-ui/icons/LinkTwoTone';
-import LinkOff from '@material-ui/icons/LinkOff';
+import LinkTwoToneIcon from '@mui/icons-material/LinkTwoTone';
+import LinkOff from '@mui/icons-material/LinkOff';
 import {FetchingLegend} from "../../IpaControls/FetchingLegend";
 import clsx from "clsx";
 import {produce} from "immer";
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import _ from 'lodash';
 import {PinkCheckbox} from "../../IpaControls/Checkboxes";
 

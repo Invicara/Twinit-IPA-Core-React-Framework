@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import {StackableDrawer} from "../../IpaDialogs/StackableDrawer";
 import StackableDrawerContainer from "../../IpaDialogs/StackableDrawerContainer";
 import './StackableDrawer.stories.scss'
-import {Typography} from "@material-ui/core";
-import {Skeleton} from "@material-ui/lab";
+import {Typography} from "@mui/material";
+import {Skeleton} from "@mui/lab";
 import {StackableContentDrawer} from "../../IpaDialogs/StackableContentDrawer";
 
 export default {

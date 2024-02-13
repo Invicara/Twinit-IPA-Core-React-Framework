@@ -22,7 +22,7 @@ import {SimpleSelect} from "@invicara/ipa-core/modules/IpaControls";
 import {
     setIsolatedSystemElementEntities,
 } from "../redux/slices/systems";
-import {Divider, List, ListItem, ListItemText} from "@material-ui/core";
+import {Divider, List, ListItem, ListItemText} from "@mui/material";
 import {Systems} from "@invicara/ipa-core/modules/IpaRedux";
 import {SystemsListTree} from "./SystemsListTree";
 import SystemAlertsList from "./SystemAlertsList";
