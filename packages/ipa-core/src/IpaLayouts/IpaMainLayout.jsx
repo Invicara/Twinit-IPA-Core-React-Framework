@@ -24,7 +24,7 @@ import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
 import {IafAuth} from '@invicara/platform-ui-components';
-import { StylesProvider, createGenerateClassName } from '@mui/material/styles';
+import { StyledEngineProvider, StylesProvider, createGenerateClassName } from '@mui/material/styles';
 
 const {AuthProvider, AuthService} = IafAuth;
 
@@ -91,6 +91,7 @@ class IpaMainLayout extends React.Component {
         return (
             <div>
               <Provider store={store}>
+
                 <HashRouter>
                     <App history={history} location={location}>
                     <AuthProvider authService={this.authService}>
@@ -102,7 +103,7 @@ class IpaMainLayout extends React.Component {
                                       return contextProps.isLoading ?
                                         <div>{contextProps.loadingText}</div>
                                         :
-                                       <StylesProvider generateClassName={generateClassName}> 
+                                       <StyledEngineProvider injectFirst generateClassName={generateClassName}> 
                                           <Layout pageList={contextProps.router.pageList}
                                                   pageGroups={contextProps.router.pageGroups}
                                                   userLogout={contextProps.actions.userLogout}
