@@ -122,7 +122,7 @@ class IpaMainLayout extends React.Component {
                                               </TransitionGroup>
 
                                           </Layout>
-                                       </StylesProvider>
+                                       </StyledEngineProvider>
                                     }
                               }
                             </AppContext.Consumer>
