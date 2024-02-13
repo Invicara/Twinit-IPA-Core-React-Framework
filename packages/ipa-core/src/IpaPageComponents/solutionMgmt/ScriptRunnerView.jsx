@@ -36,7 +36,7 @@ import GenericMatButton from '../../IpaControls/GenericMatButton';
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import {StackableDrawer} from '../../IpaDialogs/StackableDrawer'
 
-import {Controlled as CodeMirror} from 'react-codemirror2'
+import {Controlled as CodeMirror} from '@uiw/react-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/fold/foldgutter.css'
 import 'codemirror/mode/javascript/javascript.js'
