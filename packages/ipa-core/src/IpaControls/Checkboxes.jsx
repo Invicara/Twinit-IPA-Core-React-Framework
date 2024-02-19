@@ -1,11 +1,11 @@
 import Checkbox from "@mui/material/Checkbox/Checkbox";
 import CheckIcon from "@mui/material/SvgIcon/SvgIcon";
-import {withStyles} from "@mui/material";
 import produce from "immer";
 import React, {useEffect, useState} from "react";
 import {usePrevious} from "../IpaUtils/usePrevious";
 import _ from "lodash";
 import {CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBoxRounded, CheckCircle as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from "@mui/icons-material";
+import withStyles from "../IpaUtils/withStyles";
 
 const iconStyle = {fontSize: 18};
 
@@ -21,8 +21,21 @@ export const RoundCheckbox = ({...props}) => <Checkbox
     {...props}
 />;
 
+// const StyledMenuButton = useEmotionStyledComponent<typeof Fab, FabProps>(
+//     (theme: Theme) => ({
+//       root: {
+//         position: 'fixed',
+//         top: theme.spacing(2),
+//         left: theme.spacing(4)
+//       }
+//     }),
+//     Fab,
+//     props
+//   )
+//   return <StyledMenuButton {...props} />
 
-export const PinkCheckbox = withStyles({
+
+export const PinkCheckbox = withStyles(() => ({
     root: {
         color: "#B8B8B8",
         '&.Mui-checked': {
@@ -33,14 +46,16 @@ export const PinkCheckbox = withStyles({
         color: 'var(--app-accent-color)'
     },
     checked: {},
-})((props) => <Checkbox
+  }),
+  (props) => <Checkbox
     icon={<CheckBoxOutlineBlank/>}
     indeterminateIcon={<IndeterminateCheckBoxRounded/>}
     checkedIcon={<CheckBox/>}
     
-    {...produce(props, props => {delete props.classes.icon})} />);
+    {...produce(props, props => {delete props.classes.icon})} />
+);
 
-export const SquareInSquareCheckbox = withStyles({
+export const SquareInSquareCheckbox = withStyles(() => ({
     icon: {
 
         width: 18,
@@ -64,10 +79,12 @@ export const SquareInSquareCheckbox = withStyles({
         height: 8,
         backgroundColor: 'var(--app-accent-color)',
     }
-})((props) => <Checkbox
+  }),
+  (props) => <Checkbox
     icon={<span className={props.classes.icon}/>}
     checkedIcon={<span className={props.classes.checkedIcon}><div className={props.classes.innerCheckedIcon}/></span>}
-    {...produce(props, props => {delete props.classes.icon; delete props.classes.checkedIcon; delete props.classes.innerCheckedIcon})} />);
+    {...produce(props, props => {delete props.classes.icon; delete props.classes.checkedIcon; delete props.classes.innerCheckedIcon})} />
+);
 
 export const useChecked = (inputItems, checkCallback, allCheckCallback) => {
     const [items, setItems] = useState([]);
