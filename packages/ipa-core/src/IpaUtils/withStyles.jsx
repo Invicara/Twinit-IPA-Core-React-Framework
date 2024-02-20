@@ -25,7 +25,7 @@ import styled from '@emotion/styled/macro'
 //     {...produce(props, props => {delete props.classes.icon})} />
 // );
 
-function withStyles(
+function useStyledComponent(
     styles, //MUI styles function
     WrappedComponent, //Component to style
     props //props to inject into the component
@@ -38,4 +38,15 @@ function withStyles(
     }, [WrappedComponent, props, styles, theme])
 }
 
-export default withStyles
+export default function withStyles(
+    styles, //MUI styles function
+    WrappedComponent, //Component to style
+) {
+
+    return function Component(props) {
+        const StyledComponent = useStyledComponent(styles, WrappedComponent, props);
+
+        return <StyledComponent {...props}/>
+
+    }
+}

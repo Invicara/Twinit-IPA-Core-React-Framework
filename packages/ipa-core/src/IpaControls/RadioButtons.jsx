@@ -3,19 +3,23 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import {withStyles} from "@mui/material";
+
 import './RadioButtons.scss'
+import withStyles from '../IpaUtils/withStyles';
 
 const RadioButtons = ({options, value, onChange, labelPlacement='end'}) => {
 
-    const AccentRadio = withStyles({
+    const AccentRadio = withStyles(
+      {
         root: {
           '&.Mui-checked': {
             color: 'var(--app-accent-color)',
           },
         },
         checked: {},
-      })((props) => <Radio color="default" {...props} />);
+      },
+      (props) => <Radio color="default" {...props} />
+    );
 
     return (
         <div className='ipa-radio-btns'>

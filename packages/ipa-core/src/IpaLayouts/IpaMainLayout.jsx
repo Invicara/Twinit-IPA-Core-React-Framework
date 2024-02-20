@@ -24,13 +24,11 @@ import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
 import {IafAuth} from '@invicara/platform-ui-components';
-import { StyledEngineProvider, StylesProvider, createGenerateClassName } from '@mui/material/styles';
+import { StyledEngineProvider } from '@mui/material/styles';
 
 const {AuthProvider, AuthService} = IafAuth;
 
-const generateClassName = createGenerateClassName({
-  productionPrefix: 'ipa-',
-});
+// import '../MuiClassNameSetup';
 
 enableMapSet()
 
@@ -103,7 +101,7 @@ class IpaMainLayout extends React.Component {
                                       return contextProps.isLoading ?
                                         <div>{contextProps.loadingText}</div>
                                         :
-                                       <StyledEngineProvider injectFirst generateClassName={generateClassName}> 
+                                       <StyledEngineProvider injectFirst> 
                                           <Layout pageList={contextProps.router.pageList}
                                                   pageGroups={contextProps.router.pageGroups}
                                                   userLogout={contextProps.actions.userLogout}

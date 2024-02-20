@@ -5,7 +5,6 @@ import _ from 'lodash'
 import clsx from 'clsx'
 import Switch from '@mui/material/Switch';
 
-import { withStyles } from "@mui/material";
 import Select from 'react-select'
 
 import { IafItemSvc, IafPermission, IafFileSvc } from '@invicara/platform-api'
@@ -15,6 +14,7 @@ import { RoundCheckbox } from "../../IpaControls/Checkboxes";
 import SimpleTextThrobber from "../../IpaControls/SimpleTextThrobber"
 
 import './UserGroupPermissionTable.scss'
+import withStyles from "../../IpaUtils/withStyles";
 
 const itemClassPermObjMap = {
     NamedFileCollection: 'namedUserColls',
@@ -36,7 +36,7 @@ const AccentSwitch = withStyles({
     },
     checked: {},
     track: {}
-  })(Switch);
+  }, Switch);
 
 export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, itemFetchScript}) => {
 
