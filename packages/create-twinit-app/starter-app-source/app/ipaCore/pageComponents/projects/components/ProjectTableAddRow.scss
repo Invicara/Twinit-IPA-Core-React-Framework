@@ -1,0 +1,32 @@
+tr {
+   font-size: 1.25em;
+}
+
+td {
+   padding: 10px !important;
+}
+
+.even-row {
+   background-color: lightgray;
+}
+
+.row-control-cell {
+   color: var(--app-accent-color);
+   cursor: pointer;
+}
+
+.new-input-text {
+   width: 100%;
+   background-color: transparent;
+   border: none;
+   border-bottom: 2px solid var(--app-accent-color);
+   padding: 0 1em 0 0;
+}
+
+.editing-controls {
+   display: flex;
+
+   div {
+      margin-right: 5px;
+   }
+}

@@ -1,0 +1,44 @@
+.entities-view {
+
+    /*react select style*/
+    .css-ca0k19-container {
+      .css-1tm8zlz-control ,.css-1ko4u72-control {
+        border-color: #e6e6e6;
+        border-width: 2px;
+        margin: 0 0 25px 0; /*makes it consistent with other input controls*/
+      }
+      &:hover {
+        z-index: 5;
+      }
+    }
+
+}
+
+.navigator-view {
+
+  /*react select style*/
+  .css-ca0k19-container {
+    .css-1tm8zlz-control ,.css-1ko4u72-control {
+      border-color: #e6e6e6;
+      border-width: 2px;
+      margin: 0 0 25px 0; /*makes it consistent with other input controls*/
+    }
+    &:hover {
+      z-index: 5;
+    }
+  }
+}
+
+/*old navigator*/
+.navigator-modless-content {
+
+  /*react select style*/
+  .css-ca0k19-container {
+    .css-1tm8zlz-control ,.css-1ko4u72-control {
+      border-color: #e6e6e6;
+      border-width: 2px;
+      margin: 0 0 25px 0; /*makes it consistent with other input controls*/
+    }
+  }
+
+}

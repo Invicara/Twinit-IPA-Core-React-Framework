@@ -1,0 +1,54 @@
+$react-blue: #00d8ff;
+$bar-dark-text: $react-blue;
+$dark: #000000;
+$positive: $react-blue;
+$ios-statusbar-height: 20px;
+$stable: f8f8f8;
+
+:root {
+    --app-accent-color: #C71784;
+    --app-accent-invert-color: white;
+}
+
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~@invicara/react-ifef/dist/styles/react-ifef-styles.css';
+/*overwrite styles from react-ifef
+1. update font  - react-ifef-styles.css' which is using faricy
+*/
+* {
+    font-family: 'Lato', sans-serif;
+}
+/*1. clear "i" right padding - react-ifef-styles.css' is forcing 10px which breaks spinning wheel*/
+i.fa-spin {
+    padding-right: 0px;
+    margin-right: 10px;/*this is to create same space as the padding did*/
+}
+@import "abstracts/variables";
+@import "utils/utils";
+@import "icons";
+
+@import "components/tree";
+@import "components/navigator-modless";
+@import "components/modless-search-tab";
+@import "components/systems/system-builder";
+@import "components/service-request-modal";
+@import "components/controls/scriptedmatterportviewer";
+@import "components/controls/genericiframe";
+@import "components/controls/sisensewidgets";
+@import "components/controls/simpletextthrobber";
+@import "components/controls/haystackpointreadingtable";
+@import "components/controls/haystackpointreadingtablegroup";
+@import "components/controls/filtercontrol";
+@import "components/controls/fancytree";
+@import "components/drawers";
+@import "reset90width";
+@import "viewer";
+
+
+.filter-pink {
+    filter: invert(61%) sepia(11%) saturate(1134%) hue-rotate(214deg) brightness(95%) contrast(87%) !important;
+}
+
+.file-table {
+  width: unset;
+}

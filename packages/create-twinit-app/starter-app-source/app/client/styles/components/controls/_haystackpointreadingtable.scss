@@ -1,0 +1,32 @@
+.haystack-point-reading-table {
+  
+  .refresh-notice {
+    
+    margin-bottom: 10px;
+    margin-left: 5px;
+    
+    .refresh-notice-text {
+      font-style: italic;
+      margin-left: 3px;
+    }
+  }
+  
+  .point-icon {
+    margin-right: 3px;
+  }
+  
+  .point-ok {
+      color: green;
+  }
+  
+  .point-error {
+      color: red;
+  }
+  
+  .point-warn {
+      color: orange;
+  }
+  
+  
+  
+}
