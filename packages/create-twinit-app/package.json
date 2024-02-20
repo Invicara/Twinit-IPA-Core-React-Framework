@@ -1,6 +1,6 @@
 {
   "name": "create-twinit-app",
-  "version": "2.2.85",
+  "version": "2.2.86",
   "description": "npx cmd to create a scaffloded Twinti react app",
   "bin": {
     "create-twinit-app": "bin/index.js"
