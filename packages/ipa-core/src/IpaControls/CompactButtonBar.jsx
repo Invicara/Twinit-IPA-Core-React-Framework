@@ -32,7 +32,7 @@ const CompactButtonBar = (props) => {
 
     let barStyle = {}    
     return (
-      <div className={barClass} style={barStyle}>
+      <div className={barClass} style={props.styles? props.styles : barStyle}>
         {buttons}
       </div>
 
