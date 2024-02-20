@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-core",
-  "version": "3.0.0-react18.5",
+  "version": "3.0.0-react18.6",
   "description": "Invicara Platform application frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -147,7 +147,9 @@
       "@babel/preset-env",
       "@babel/preset-react"
     ],
-    "plugins": ["macros"]
+    "plugins": [
+      "macros"
+    ]
   },
   "xxxjest": {
     "moduleNameMapper": {
