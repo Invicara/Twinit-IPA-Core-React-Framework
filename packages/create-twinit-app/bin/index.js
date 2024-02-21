@@ -31,7 +31,7 @@ read(nameOptions).then((appName) => {
                      decompress(path.join(__dirname, 'starter-app-source.zip'), './', {strip: 1}).then(() => {
                         console.log(' extraction complete')
          
-                        package.name = appName.toLowerCase()
+                        package.name = appName.replaceAll(' ', '-').toLowerCase()
                         package.description = desc
                         package.version = version
                         package.author = author

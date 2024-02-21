@@ -1,31 +1,25 @@
-# hOurs
-Application for employee time sheet submittal, approval, and export built internally on Twinit.
+# create-twinit-app react application scaffold
 
-## Detailed Application Information
+create-twinit-app scaffolds a basic React application that uses ipa-core and the Twinit platform api node modules.
+It is intended to be a starting point and as such will likely not meet your needs 100% out of the box, may include
+more libraries than you require, or use tools that you don't use. It is expected that you will make the
+changes you need to this scaffolded client.
 
-More detailed information regarding hOurs including its data model can be found on Confluence [here](https://invicara.atlassian.net/wiki/spaces/PDSD/pages/3663921197/hOurs)
+There are three files you will most likely to adjust further:
+
+- package.json: edit as you would for any react client application
+- app/public/config.js: edit if you need to point your client to another Twinit instance or change your applciation id
+- app/ipaCore/ipaConfig.js: edit as outlined in the ipa-core documentation to configure your client application
 
 ## Run Local Development
+
+If you have provided to correct information when running create-twinit-app then to run the client all you need to do is:
 
 1. npm install
 2. npm run watch
 
-Note: You must have access to the hours application and a project in order to log in to this client.
+## Build Deployable Client
 
-## How to Set Up hOurs for the First Time
+The following command will build the client and wirte it to the build folder.
 
-0. Create a project on an instance of Twinit
-1. Add the 1.0.0_new_project_setup script to the project
-2. Run Step 1 to create the item service collections
-3. Run Step 2 to create the user groups, add their user configs, and set user group permissions
-4. Create a new script named 'hOurs Orchestrator Scripts' with _userType 'hours-orch'
-5. Populate it with the script from app-setup/scripts/1.0.0_hours_orch_scripts.mjs
-6. Commit the script to Twinit
-7. Run Step 3 to create the orchestrator which continue to create new month collections in the item service
-8. Run Step 4 and select the './app-setup/Initial Projects.xlsx' spreadsheet to pre-populate projects (optionally)
-9. Run Step 5 to add the OMAPI and the user group permissions for users to access the OMAPI script and endpoints
-10. Create a new script named 'hOurs OMAPI Scripts' with _userType 'hours-omapi'
-11. Populate it with the script from app-setup/scripts/1.0.0_hours_omapi_scripts.mjs
-12. Commit the script to Twinit
-13. If this will be a production project of hOurs then run Step 6a to mark the project as Production
-14. Login as Admin and invite users to the admin, reporter, and managers user groups
+1. npm run build
