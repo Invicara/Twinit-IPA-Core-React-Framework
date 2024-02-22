@@ -5,7 +5,7 @@ import _ from 'lodash'
 import clsx from "clsx";
 
 import './TreeControl.scss';
-import {List} from "react-virtualized"
+import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 
 
 const fancyTreeControlSelectAllReducer = (state, action) => {
@@ -33,6 +33,10 @@ const FancyTreeControl = ({
   const [selectAllState, dispatch] = useReducer(fancyTreeControlSelectAllReducer, initialSelectAllState);
 
   const treeDOMRef = useRef();
+  const reactVirtualizedCache = useRef(new CellMeasurerCache({
+    fixedWidth:true,
+    defaultHeight:100
+  }))
 
   const onSelectAllAction = useCallback(()=>{
     dispatch({type: 'select_all', previouslySelectedIds : selectedIds});//set selectAllState before onSelectAll
@@ -159,7 +163,7 @@ const FancyTreeControl = ({
       if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
       if (expandedNodeNames.includes(n.name)) cn += " expanded"
       if (partialNodeNames.includes(n.name)) cn += " partial"
-      return <li onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
+      return <li style={virtualizedEvent.style} onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
         <a>
           <span>{renderLeafNode(n)}</span>
         </a>
@@ -181,16 +185,26 @@ const FancyTreeControl = ({
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-            <ul key={nodeName + "_children"}>
+            <ul style={{ height: "60vh", width: "100%" }} key={nodeName + "_children"}>
               {Array.isArray(nodeValue) ?
-                <List
-                  width={300}
-                  height={800}
-                  rowHeight={1.7}
-                  rowRenderer={(virtualizedEvent) => getNodes(nodeValue, depth, virtualizedEvent)}
-                  rowCount={nodeValue.length}
-                  overscanRowCount={3}
-                />
+                <AutoSizer>
+                  {({ width, height }) => {
+                    <List
+                      width={width}
+                      height={height}
+                      rowHeight={reactVirtualizedCache.current.rowHeight}
+                      deferredMeasurementCache={reactVirtualizedCache.current}
+                      rowRenderer={(virtualizedEvent) => {
+                        return (
+                          <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
+                            {getNodes(nodeValue, depth, virtualizedEvent)}
+                          </CellMeasurer>
+                        )
+                      }}
+                      rowCount={nodeValue.length}
+                    />
+                  }}
+                </AutoSizer>
                 : getNodes(nodeValue, depth)}</ul>
           </li>)
       })
@@ -205,16 +219,26 @@ const FancyTreeControl = ({
         {!allSelected ? <span className="fancy-tree__count--action" onClick={onSelectAllAction}>Select All</span> : (onSelectNoneAction ? <span className="fancy-tree__count--action" onClick={onSelectNoneAction}>Deselect All</span> : undefined) }
         {selectAllState.selectAllActivated && selectAllState.previouslySelectedIds.length>0 ? <span className="fancy-tree__count--action" onClick={onUndoSelectAllAction}>Undo</span> : undefined }
       </div> : undefined}
-      <ul>
+      <ul style={{ height: "60vh", width: "100%" }}>
         {Array.isArray(tree) ?
-          <List
-            width={300}
-            height={800}
-            rowHeight={10}
-            rowRenderer={(virtualizedEvent) => getNodes(tree, 1, virtualizedEvent)}
-            rowCount={tree.length}
-            autoHeight
-          /> : getNodes(tree, 1)
+          <AutoSizer>
+            {({ width, height }) => (
+              <List
+                width={width}
+                height={height}
+                rowHeight={reactVirtualizedCache.current.rowHeight}
+                deferredMeasurementCache={reactVirtualizedCache.current}
+                rowRenderer={(virtualizedEvent) => {
+                  return (
+                    <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
+                      {getNodes(tree, 1, virtualizedEvent)}
+                    </CellMeasurer>
+                  )
+                }}
+                rowCount={tree.length}
+              />
+            )}
+          </AutoSizer> : getNodes(tree, 1)
         }
       </ul>
     </div>
