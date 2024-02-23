@@ -7,7 +7,7 @@ import ScriptHelper from "../IpaUtils/ScriptHelper"
 
 import './Image.scss'
 
-const Image = ({script, url, filename, styles, navigateTo, query, dashboard}) => {
+const Image = ({script, url, filename, styles, navigateTo, query, dashboard, padding}) => {
 
   const [imageUrl, setImageUrl] = useState(null)
 
@@ -58,7 +58,7 @@ const Image = ({script, url, filename, styles, navigateTo, query, dashboard}) =>
   }
 
   return (
-    <div style={{padding: '15px', width: '100%', height: '100%'}}>
+    <div style={{padding: padding? padding : '15px', width: '100%', height: '100%'}}>
       <div className="configured-image-component">
         {component}
       </div>

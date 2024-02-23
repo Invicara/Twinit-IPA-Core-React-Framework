@@ -150,12 +150,12 @@ $black: black;
   .button-content{
     > * {
       margin: 0 5px;
+      padding: 0;
     }
   }
 
   .main-button{
     font-size: 17px;
-    width: 170px;
     height: 44px;
     color: white;
     background: var(--app-accent-color);
@@ -172,7 +172,7 @@ $black: black;
     color: $cancel-grey;
     border: 2px solid ;
     background: $white;
-    margin-left: 20px;
+    margin-right: 24px;
   }
 }
 
