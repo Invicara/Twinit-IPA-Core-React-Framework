@@ -1,6 +1,6 @@
 {
   "name": "@invicara/create-twinit-app",
-  "version": "2.2.88",
+  "version": "2.2.89",
   "description": "npx cmd to create a scaffloded Twinti react app",
   "bin": {
     "create-twinit-app": "bin/index.js"
