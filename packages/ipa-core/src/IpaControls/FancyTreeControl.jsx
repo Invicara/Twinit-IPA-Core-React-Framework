@@ -185,27 +185,8 @@ const FancyTreeControl = ({
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-            <ul style={{ height: "60vh", width: "100%" }} key={nodeName + "_children"}>
-              {Array.isArray(nodeValue) ?
-                <AutoSizer>
-                  {({ width, height }) => {
-                    <List
-                      width={width}
-                      height={height}
-                      rowHeight={reactVirtualizedCache.current.rowHeight}
-                      deferredMeasurementCache={reactVirtualizedCache.current}
-                      rowRenderer={(virtualizedEvent) => {
-                        return (
-                          <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                            {getNodes(nodeValue, depth, virtualizedEvent)}
-                          </CellMeasurer>
-                        )
-                      }}
-                      rowCount={nodeValue.length}
-                    />
-                  }}
-                </AutoSizer>
-                : getNodes(nodeValue, depth)}</ul>
+            <ul key={nodeName + "_children"}>
+              {getNodes(nodeValue, depth)}</ul>
           </li>)
       })
     }

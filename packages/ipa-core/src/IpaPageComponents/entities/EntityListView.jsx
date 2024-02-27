@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useEffect, useCallback} from "react";
+import React, {useState, useMemo, useEffect, useCallback,useRef} from "react";
 import clsx from "clsx";
 import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
@@ -7,9 +7,13 @@ import './EntityListView.scss'
 import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
 import {isValidUrl} from '../../IpaUtils/helpers'
 import useSortEntities from "./sortEntities";
+import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 
 export const EntityListView = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity'}) => {
-
+    const reactVirtualizedCache = useRef(new CellMeasurerCache({
+        fixedWidth:true,
+        defaultHeight:100
+      }))
 
     let checkableEntities = useMemo(()=>entities.map((entity) => {
         let checked = !_.isEmpty(selectedEntities) && 
@@ -78,6 +82,10 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         plural: entityPlural
     }},[entitySingular,entityPlural]);
 
+    const buildRow = () =>{
+        
+    }
+
     return <div className={`entity-list-view-root entity-table ${config?.className || ""}`}>
         {actions && <div className='actions-panel'>
             <EntityActionsPanel
@@ -96,15 +104,33 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
             </div>}
             {config?.columns.map(col => buildHeader(col))}
         </div>
-        {_.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order).map(instance => {
-            const handleChange = () => handleCheck(instance)
-            return <div key={instance._id} className='content-row'>
-                {config?.multiselect && <div className='content-column checkbox'>
-                    <RoundCheckbox checked={instance.checked} onChange={handleChange}/>
-                </div>}
-                {config?.columns.map(buildCell(instance))}
-            </div>})
-        }
+        <div style={{ height: "69vh", width: "100%" }}>
+            <AutoSizer>
+                {({ width, height }) => (
+                    <List
+                        width={width}
+                        height={height}
+                        rowHeight={reactVirtualizedCache.current.rowHeight}
+                        deferredMeasurementCache={reactVirtualizedCache.current}
+                        rowRenderer={(virtualizedEvent) => {
+                            const instance = _.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order)[virtualizedEvent.index]
+                            const handleChange = () => handleCheck(instance)
+                            return (
+                                <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
+                                    <div style={virtualizedEvent.style} key={instance._id} className='content-row'>
+                                        {config?.multiselect && <div className='content-column checkbox'>
+                                            <RoundCheckbox checked={instance.checked} onChange={handleChange} />
+                                        </div>}
+                                        {config?.columns.map(buildCell(instance))}
+                                    </div>
+                                </CellMeasurer>
+                            )
+                        }}
+                        rowCount={_.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order).length}
+                    />
+                )}
+            </AutoSizer>
+        </div>
     </div>
 }
 

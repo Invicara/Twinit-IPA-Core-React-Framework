@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import _ from 'lodash'
 import clsx from "clsx";
 import {produce} from "immer";
@@ -9,9 +9,15 @@ import {
     withoutPropagation
 } from "../IpaUtils/TreeHelpers";
 import {curriedFlip} from "../IpaUtils/function";
-import './TreeControl.scss'
+import './TreeControl.scss';
+import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 
 const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = defaultBranchRenderer, renderLeafNode = defaultLeafRenderer}) => {
+
+    const reactVirtualizedCache = useRef(new CellMeasurerCache({
+        fixedWidth:true,
+        defaultHeight:100
+      }))
 
     const getNodeClasses = (node, baseClasses = '') => {
         return clsx(baseClasses,
@@ -46,13 +52,17 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
             <ul key={node.id + "_children"}>{renderNodes(getNodeChildren(node))}</ul>
         </li>
 
-    const renderLeaf = (node) =>
-        <li className={getNodeClasses(node, 'leaf')} key={node.id} onClick={withoutPropagation(() => toggleNode('selectedStatus')(node))} >
+    const renderLeaf = (node, virtualizedEvent) =>
+        <li style={virtualizedEvent ? virtualizedEvent.style : {}} className={getNodeClasses(node, 'leaf')} key={node.id} onClick={withoutPropagation(() => toggleNode('selectedStatus')(node))} >
             <a>
                 <span>{renderLeafNode(node, curriedFlip(toggleNode)(node))}</span>
             </a>
         </li>
 
+
+    const renderNode = (node, virtualizedEvent) => {
+        return node.isLeaf ? renderLeaf(node, virtualizedEvent) : renderBranch(node)
+    }
 
     const renderNodes = (treeNodes) => treeNodes.map(node => {
 
@@ -60,12 +70,32 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
             return <p>No node to render</p>
         }
 
-        return node.isLeaf ? renderLeaf(node) : renderBranch(node)
+        return renderNode(node)
     })
 
     return (
         <div className={"fancy-tree"}>
-            {!_.isEmpty(nodeIndex) ? <ul>{renderNodes(_.values(nodeIndex).filter(node => node.level === 0))}</ul> : null}
+            {!_.isEmpty(nodeIndex) ? <ul style={{ height: "50vh", width: "100%" }}>
+                <AutoSizer>
+                    {({ width, height }) => (
+                        <List
+                            width={width}
+                            height={height}
+                            rowHeight={reactVirtualizedCache.current.rowHeight}
+                            deferredMeasurementCache={reactVirtualizedCache.current}
+                            rowRenderer={(virtualizedEvent) => {
+                                const node = _.values(nodeIndex).filter(node => node.level === 0)[virtualizedEvent.index]
+                                return (
+                                    <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
+                                        {renderNode(node, virtualizedEvent)}
+                                    </CellMeasurer>
+                                )
+                            }}
+                            rowCount={_.values(nodeIndex).filter(node => node.level === 0).length}
+                        />
+                    )}
+                </AutoSizer>
+            </ul> : null}
         </div>
     )
 }
