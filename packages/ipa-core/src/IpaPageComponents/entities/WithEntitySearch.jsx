@@ -222,9 +222,12 @@ const withEntitySearch = WrappedComponent => {
                 let docIds = []
                 entityInfo.original.forEach(d => {
                   const _fileId = d._fileId
-                  d.versions.forEach(v => {
-                    const _fileVersionId = v._fileVersionId
-                    docIds.push({ _fileId, _fileVersionId })})
+                  if(d.versions) {
+                    d.versions.forEach(v => {
+                      const _fileVersionId = v._fileVersionId
+                      docIds.push({ _fileId, _fileVersionId })
+                    })
+                  } else docIds.push({ _fileId })
                 })
                 docIds.forEach(doc => {
                   let docIds = [doc]
