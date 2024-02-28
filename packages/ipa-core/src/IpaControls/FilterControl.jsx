@@ -632,7 +632,14 @@ export const applyFilters = (array, filters, getProperty) => {
           return true;
         }
         else
-          return f.test(propVal, filter.value)
+        {
+          if(_.isArray(propVal)) {
+            return f.test(propVal[0], filter.value)
+          } else {
+            return f.test(propVal, filter.value)
+          }
+        }
+          
       })
     })
   }
