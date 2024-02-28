@@ -82,10 +82,6 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         plural: entityPlural
     }},[entitySingular,entityPlural]);
 
-    const buildRow = () =>{
-        
-    }
-
     return <div className={`entity-list-view-root entity-table ${config?.className || ""}`}>
         {actions && <div className='actions-panel'>
             <EntityActionsPanel
@@ -117,7 +113,7 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
                             const handleChange = () => handleCheck(instance)
                             return (
                                 <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                                    <div style={virtualizedEvent.style} key={instance._id} className='content-row'>
+                                    <div style={virtualizedEvent?.style || {}} key={instance._id} className='content-row'>
                                         {config?.multiselect && <div className='content-column checkbox'>
                                             <RoundCheckbox checked={instance.checked} onChange={handleChange} />
                                         </div>}

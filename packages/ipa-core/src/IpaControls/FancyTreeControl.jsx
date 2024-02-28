@@ -163,7 +163,7 @@ const FancyTreeControl = ({
       if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
       if (expandedNodeNames.includes(n.name)) cn += " expanded"
       if (partialNodeNames.includes(n.name)) cn += " partial"
-      return <li style={virtualizedEvent.style} onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
+      return <li style={virtualizedEvent?.style || {}} onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
         <a>
           <span>{renderLeafNode(n)}</span>
         </a>
@@ -174,7 +174,7 @@ const FancyTreeControl = ({
       depth++
       Object.entries(nodes).forEach(([nodeName, nodeValue]) => {
         children.push(
-          <li className={clsx(
+          <li style={virtualizedEvent?.style || {}} className={clsx(
             'branch', selectedNodeNames.includes(nodeName) && "selected",
             expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
           )}
@@ -185,8 +185,28 @@ const FancyTreeControl = ({
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-            <ul key={nodeName + "_children"}>
-              {getNodes(nodeValue, depth)}</ul>
+            <ul key={nodeName + "_children"} style={{ height: "60vh", width: "100%" }}>
+              {Array.isArray(nodeValue) ?
+                <AutoSizer>
+                  {({ width, height }) => (
+                    <List
+                      width={width}
+                      height={height}
+                      rowHeight={reactVirtualizedCache.current.rowHeight}
+                      deferredMeasurementCache={reactVirtualizedCache.current}
+                      rowRenderer={(virtualizedEvent) => {
+                        return (
+                          <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
+                             {getNodes(nodeValue, depth, virtualizedEvent)}
+                          </CellMeasurer>
+                        )
+                      }}
+                      rowCount={nodeValue.length}
+                    />
+                  )}
+                </AutoSizer> : getNodes(nodeValue, 1)
+              }
+            </ul>
           </li>)
       })
     }
