@@ -1,0 +1,9 @@
+.projects-table-wrapper {
+   display: flex;
+   justify-content: center;
+
+   .projects-table {
+      width: 50%;
+      margin: 50px;
+   }
+}

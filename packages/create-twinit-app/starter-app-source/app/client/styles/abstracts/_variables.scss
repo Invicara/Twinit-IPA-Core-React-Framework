@@ -1,0 +1,47 @@
+/**
+ * ****************************************************************************
+ *
+ * INVICARA INC CONFIDENTIAL __________________
+ *
+ * Copyright (C) [2012] - [2018] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
+ * PVT LTD All Rights Reserved.
+ *
+ * NOTICE: All information contained herein is, and remains the property of
+ * Invicara Inc and its suppliers, if any. The intellectual and technical
+ * concepts contained herein are proprietary to Invicara Inc and its suppliers
+ * and may be covered by U.S. and Foreign Patents, patents in process, and are
+ * protected by trade secret or copyright law. Dissemination of this information
+ * or reproduction of this material is strictly forbidden unless prior written
+ * permission is obtained from Invicara Inc.
+ */
+
+/* config vars*/
+
+/* main colors */
+$main-color: #026bfd;
+$light-grey: #6d6e70;
+
+/* web colors */
+$invicara-primary: $main-color;
+$invicara-text: $light-grey;
+
+/* Main fonts */
+$font-base: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+/*$font-contrast:;*/
+$font-size: 18px;
+
+/* Inside components */
+
+/* border radius */
+$radius-principal: 10px;
+$radius-btn: 10px;
+
+/* shadows */
+$shadow-soft:  0px 2px 10px #000;
+$shadow-mid:  0px 2px 20px #000;
+$shadow-hard:  5px 5px 15px #000;
+
+$blueColor: #3369ff;
+$borderRadiusSize: 0.2em;
+
+$alertIndicatorDangerColor:  #CD2026;

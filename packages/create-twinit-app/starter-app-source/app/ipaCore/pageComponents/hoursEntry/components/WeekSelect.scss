@@ -1,0 +1,30 @@
+
+
+.week-wrapper {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+
+   .week-header {
+      font-weight: bold;;
+   }
+}
+
+
+.week-radios{
+   display:flex;
+   flex-direction: column;
+   margin-top: 15px;
+
+   label {
+
+      input {
+         margin-right: 7px;
+         accent-color: var(--app-accent-color)
+      }
+   }
+
+   .selected {
+      border-bottom: 2px solid var(--app-accent-color);
+   }
+}

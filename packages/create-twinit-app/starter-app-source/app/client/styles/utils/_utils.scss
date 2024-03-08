@@ -1,0 +1,36 @@
+@mixin ipa_padding_util {
+    .p-h-0 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .p-h-5 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .p-h-10 {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .p-v-0 {
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+
+    .p-v-5 {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .p-v-10 {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .p-10 {
+        padding: 10px;
+    }
+}
+@include ipa_padding_util;

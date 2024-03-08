@@ -1,0 +1,112 @@
+.entities-view {
+
+    .cross-entity-search .entity-types,
+    .scripted-selects-control .select-element,
+    .ipa-select .select-element,
+    .text-search .search-term input,
+    .ipa-modal .bar.bar-dark,
+    .ipa-modal .simple-select-element
+    {
+        width: 100%;
+    }
+
+    .filter-container {
+        width: 100%;
+        max-width: 100%;
+
+        .control {
+            width: 100%;
+        }
+
+        .filter-multi-select-value {
+            width: auto; /*it's 75% in ipa-core, a bit too small*/
+        }
+    }
+
+    /*react select*/
+    .css-ca0k19-container {
+        width: 100%;
+        .css-1tm8zlz-control ,.css-1ko4u72-control {
+            width: 100%;
+        }
+    }
+
+}
+
+/*new navigator*/
+.navigator-view {
+
+    .cross-entity-search .entity-types,
+    .scripted-selects-control .select-element,
+    .ipa-select .select-element,
+    .text-search .search-term input,
+    .ipa-modal .bar.bar-dark,
+    .ipa-modal .simple-select-element
+    {
+        width: 100%;
+    }
+
+    .enhanced-fetch-control {
+        width: 100%;
+        max-width: 100%;
+
+        .control {
+            width: 100%;
+        }
+
+        .filter-multi-select-value {
+            width: auto; /*it's 75% in ipa-core, a bit too small*/
+        }
+    }
+
+    .filter-container {
+        width: 100%;
+        max-width: 100%;
+
+        .control {
+            width: 100%;
+        }
+
+        .filter-multi-select-value {
+            width: auto; /*it's 75% in ipa-core, a bit too small*/
+        }
+    }
+
+    /*react select*/
+    .css-ca0k19-container {
+        width: 100%;
+        .css-1tm8zlz-control ,.css-1ko4u72-control {
+            width: 100%;
+        }
+    }
+}
+
+/*old navigator*/
+.navigator-modless-content {
+
+    .filter-container {
+        width: 90%;
+        max-width: 100%;
+
+        .control {
+            width: 100%;
+        }
+
+        .filter-multi-select-value {
+            width: auto; /*it's 75% in ipa-core, a bit too small*/
+        }
+    }
+
+    /*react select*/
+    .css-ca0k19-container {
+        /*width: 100%;*/
+        .css-1tm8zlz-control ,.css-1ko4u72-control {
+            width: 100%;
+        }
+    }
+}
+
+
+.text-search .search-term .clear {
+    background: white;
+}

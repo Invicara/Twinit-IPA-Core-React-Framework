@@ -1,0 +1,12 @@
+
+.project-select {
+   select {
+      margin-left: 15px;
+      background-color: transparent;
+      border: none;
+      border-bottom: 2px solid var(--app-accent-color);
+      padding: 0 1em 0 0;
+      cursor: pointer;
+      width: 100%;
+   }
+}

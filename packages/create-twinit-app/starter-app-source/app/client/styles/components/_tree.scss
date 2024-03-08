@@ -1,0 +1,115 @@
+/*TODO check if these styles are actually being used by some tree component and move them to ipa-core or else delete them*/
+/* Nodes */
+.tree ul {
+    margin-left: 5px;
+    padding-inline-start: 40px;
+}
+
+.tree li {
+    list-style-type: none;
+    margin:10px;
+    margin-left: -20px;
+    position: relative;
+    display: none;
+}
+
+.tree li.expanded {
+  display: inherit;
+}
+
+.tree li a {
+    border: 1px #ccc solid;
+    border-radius: 5px;
+    padding:2px 5px;
+    white-space: nowrap;
+}
+
+/* Connectors */
+.tree li::before {
+    content: "";
+    position: absolute;
+    top:-7px;
+    left:-10px;
+    border-left: 1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    border-radius:0 0 0 0px;
+    width:10px;
+    height:15px;
+}
+
+.tree li::after {
+    position:absolute;
+    content:"";
+    top:8px;
+    left:-10px;
+    border-left: 1px solid #ccc;
+    border-top:1px solid #ccc;
+    border-radius:0px 0 0 0;
+    width:10px;
+    height:100%;
+}
+
+.tree .description {
+  margin: 0 20px 0 20px;
+}
+
+.tree .child-count {
+  font-style: italic;
+}
+
+.tree li:last-child::after  {
+    display:none;
+}
+
+.tree li:last-child:before{
+    border-radius: 0 0 0 5px;
+}
+
+ul.tree>li:first-child::before {
+    display:none;
+}
+
+ul.tree>li:first-child::after {
+    border-radius:5px 0 0 0;
+}
+
+/* Current node */
+.tree li a:hover,
+.tree li a:focus {
+    border: 1px solid #000;
+}
+
+.tree li a:hover+ul li a,
+.tree li a:focus+ul li a {
+    border: 1px solid #000;
+}
+
+.tree li a:not(.selected):hover,
+.tree li a:not(.selected):focus {
+    background: #ccc; color: #000;
+}
+
+/* current node's children */
+.tree li a:not(.selected):hover+ul li a:not(.selected),
+.tree li a:not(.selected):focus+ul li a:not(.selected) {
+    background: #eee; color: #000;
+}
+
+/*selected node*/
+.tree li a.selected {
+  background-color: lightyellow;
+}
+
+.tree li a.selected:hover,
+.tree li a.selected:focus {
+    background: #ffffb3; color: black;
+}
+
+.tree li a.selected:hover+ul li a,
+.tree li a.selected:focus+ul li a {
+    background: #ffffb3; color: black;
+}
+
+.tree i.empty {
+  padding-left: 9px;
+}

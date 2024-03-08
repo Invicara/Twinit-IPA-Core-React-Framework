@@ -1,0 +1,36 @@
+.drawer-toggle-open {
+  opacity: 0.5;
+}
+
+.navigator-view {
+
+  .drawer-content {
+    .fetch-container, .tree-container,
+    .navigator-drawer-content,
+    .css-ca0k19-container .css-1tm8zlz-control ,
+    .css-ca0k19-container .css-1ko4u72-control {
+      /*min-width prevents drawer content to reflow downwards on drawer close*/
+      /*value is consistent with .control max-width in ipa-core*/
+      min-width: 265px;
+    }
+  }
+}
+
+.entities-view {
+
+  .drawer-content {
+    .fetch-container, .tree-container,
+    .navigator-drawer-content,
+    .css-ca0k19-container .css-1tm8zlz-control ,
+    .css-ca0k19-container .css-1ko4u72-control {
+      /*min-width prevents drawer content to reflow downwards on drawer close*/
+      /*value is consistent with .control max-width in ipa-core*/
+      min-width: 265px;
+    }
+  }
+
+  > .content {
+    min-width: 500px;
+  }
+
+}

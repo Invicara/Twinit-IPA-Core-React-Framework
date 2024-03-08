@@ -1,0 +1,33 @@
+
+.sisense-widget-container {
+ display: flex;
+ flex-direction: column;
+ 
+ .widget-header {
+   .widget-title {
+     font-size: 1.25em;
+     font-weight: 700;
+     color: var(--app-accent-color);
+     margin-top: 10px;
+   }
+   
+   .widget-filter-control {
+     color: lightgrey;
+     &:hover {
+       color: black;
+     }
+   }
+ }
+ 
+ .with-filter {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+ }
+ 
+ .without-filter {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+ }
+}

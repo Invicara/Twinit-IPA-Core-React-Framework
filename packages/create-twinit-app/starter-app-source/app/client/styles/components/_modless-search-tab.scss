@@ -1,0 +1,82 @@
+$pink: var(--app-accent-color);
+
+.modless-search-tab {
+
+  .general-title {
+    margin: 10px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0;
+    color: #333333;
+    display: inline-block;
+  }
+
+  .entity-tab-group {
+    display: flex;
+    flex-wrap: wrap;
+
+    .entity-tab-button {
+      flex-grow: 1;
+      &.active-entity {
+        color: var(--app-accent-color);
+      }
+    }
+
+  }
+
+
+
+  .MuiTabs-flexContainer {
+    width: 90%;
+  }
+
+  .MuiTabs-flexContainer {
+    width: 90%;
+  }
+
+  .fetch-container{
+    margin: 20px 0;
+    height: calc(10% - 50px);
+    /*overflow-y: auto;*/
+
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+      
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+      
+    &::-webkit-scrollbar-thumb {
+    background: #DCDCDC;
+            border-radius: 2rem;
+    }
+      
+    &::-webkit-scrollbar-thumb:hover {
+        background: #B8B8B8;
+    }
+  }
+
+  .MuiTab-root{
+    min-width: 40px;
+    font-weight:bold;
+    font-size: 20px;
+    padding: 6px 0;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #B2B2B2;
+
+    &.Mui-selected{
+      color: $pink
+    }
+  }
+
+  .MuiTabs-flexContainer{
+    justify-content: space-between;
+  }
+
+  .MuiTabs-indicator{
+    background-color: $pink;
+  }
+}

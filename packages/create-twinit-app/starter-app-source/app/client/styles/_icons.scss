@@ -1,0 +1,51 @@
+.inv-icon-svg
+{
+  width: 42px;
+  height: 42px;
+  display: inline-block;
+  background-size: 42px;
+  background-position: -7px;
+  background-repeat: no-repeat;
+}
+
+.entity-actions-panel .inv-icon-svg {
+  display: inline-block;
+  background-size: 40px;
+  background-position: -1px;
+  background-repeat: no-repeat;
+}
+
+.inv-icon-assets   { background-image: url(../../public/icons/icon-assets.svg); }
+.inv-icon-docs     { background-image: url(../../public/icons/icon-docs.svg); }
+.inv-icon-download { background-image: url(../../public/icons/icon-download.svg); }
+.inv-icon-logout   { background-image: url(../../public/icons/icon-logout.svg); }
+.inv-icon-reports  { background-image: url(../../public/icons/icon-reports.svg); }
+.inv-icon-spaces   { background-image: url(../../public/icons/icon-spaces.svg); }
+.inv-icon-user     { background-image: url(../../public/icons/icon-user.svg); }
+.inv-icon-smartBuilding { background-image: url(../../public/icons/icon-smartBuilding.svg); }
+
+.inv-icon-assets.purple { background-image: url(../../public/icons/icon-assets-purple.svg); }
+.inv-icon-docs.purple { background-image: url(../../public/icons/icon-docs-purple.svg); }
+.inv-icon-download.purple { background-image: url(../../public/icons/icon-download-purple.svg); }
+.inv-icon-logout.purple { background-image: url(../../public/icons/icon-logout-purple.svg); }
+.inv-icon-reports.purple { background-image: url(../../public/icons/icon-reports-purple.svg); }
+.inv-icon-spaces.purple { background-image: url(../../public/icons/icon-spaces-purple.svg); }
+.inv-icon-user.purple { background-image: url(../../public/icons/icon-user-purple.svg); }
+.inv-icon-smartBuilding.purple { background-image: url(../../public/icons/icon-smartBuilding-purple.svg); }
+
+.inv-icon-nav      {
+  /* tweaked size and position to avoid clipping*/
+  background-image: url(../../public/icons/icon-nav.svg);
+  background-size: 40px;
+  background-position: -5px;
+}
+
+.inv-icon-smartBuilding {
+  background-image: url(../../public/icons/icon-smartBuilding.svg);
+  background-size: 36px;
+  background-position-x: -2px;
+}
+
+.inv-icon-nav.purple{
+  background-image: url(../../public/icons/icon-nav-purple.svg);
+}

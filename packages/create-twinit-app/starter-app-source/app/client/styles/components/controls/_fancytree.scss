@@ -1,0 +1,12 @@
+.entities-view {
+
+  .fetch-container .tree-search .fancy-tree ul li:first-child {
+    margin-top: 0px;/*this will equalize first heading space on tree search and filter*/
+  }
+
+  .fetch-container .tree-search .fancy-tree ul li:last-child {
+    margin-bottom: 1em;
+  }
+
+}
+
