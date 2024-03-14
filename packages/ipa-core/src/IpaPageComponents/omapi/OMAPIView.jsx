@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react"
-import { IafItemSvc } from "@invicara/platform-api"
+import { IafItemSvc } from "@dtplatform/platform-api"
 
 import { OMAPICard } from './OMAPICard'
 import './OMAPIView.scss'

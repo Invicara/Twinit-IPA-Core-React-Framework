@@ -21,7 +21,6 @@ import {EntityTableHead} from "./EntityTableHead";
 //import { visuallyHidden } from '@material-ui/utils';
 import PropTypes from 'prop-types';
 import produce from "immer";
-import pagination from "react-table/lib/pagination";
 
 const visuallyHidden = {
     border: 0,

@@ -6,9 +6,9 @@ import {CSSTransition, TransitionGroup} from 'react-transition-group';
 import AppProvider from "../AppProvider";
 import {AppContext} from "../appContext";
 
-import {LocalFilePlugins} from '@invicara/script-ui';
-import {DataPlugins} from '@invicara/script-data';
-import {IafPlugins} from '@invicara/script-iaf';
+// import {LocalFilePlugins} from '@invicara/script-ui';
+// import {DataPlugins} from '@invicara/script-data';
+// import {IafPlugins} from '@invicara/script-iaf';
 
 import store from "../redux/store";
 import {Provider} from "react-redux";
@@ -23,7 +23,7 @@ import Layout from './Layout';
 import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
-import {IafAuth} from '@invicara/platform-ui-components';
+import {IafAuth} from '@dtplatform/platform-ui-components';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 
 const {AuthProvider, AuthService} = IafAuth;
@@ -68,9 +68,9 @@ class App extends React.Component {
 class IpaMainLayout extends React.Component {
     constructor(props) {
         super(props);
-        IafPlugins.BAM_Script.initBAMScriptPlugins();
-        LocalFilePlugins.initScriptPlugins();
-        DataPlugins.initScriptPlugins();
+        // IafPlugins.BAM_Script.initBAMScriptPlugins();
+        // LocalFilePlugins.initScriptPlugins();
+        // DataPlugins.initScriptPlugins();
         ScriptHelper.initExpressionExecCtx(); // bringing back this cause the page was not loading
         this.authService = new AuthService({        //Added authService for rotated refresh token
           clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,

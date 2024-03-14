@@ -1,13 +1,13 @@
 import React from "react";
-import { IafProj, IafSession, IafScripts, IafPassSvc } from "@invicara/platform-api";
-import * as PlatformApi from "@invicara/platform-api";
-import { IafScriptEngine } from "@invicara/iaf-script-engine";
+import { IafProj, IafSession, IafScripts, IafPassSvc } from "@dtplatform/platform-api";
+import * as PlatformApi from "@dtplatform/platform-api";
+import { IafScriptEngine } from "@dtplatform/iaf-script-engine";
 import _ from "lodash";
 import GenericModal from "../IpaDialogs/GenericModal";
 import "../IpaDialogs/ProjectPickerModal.scss";
-import * as UiUtils from "@invicara/ui-utils";
-import { mobiscroll } from "@invicara/invicara-lib";
-import { IafDataSource } from "@invicara/platform-api";
+import * as UiUtils from "@dtplatform/ui-utils";
+import { mobiscroll } from "@dtplatform/invicara-lib";
+import { IafDataSource } from "@dtplatform/platform-api";
 
 export default class SetUpProject extends React.Component {
   constructor(props) {
@@ -165,7 +165,8 @@ export default class SetUpProject extends React.Component {
   handleProjectSetUp = async (e, restartApp) => {
     console.log("called"); // console to know function is called
     e.preventDefault();
-    await this.deletePreviousProject();
+     //check multiple projects are allowed, if not delete previous project
+     !this.props.allowMultipleProjects && await this.deletePreviousProject();
     this.setState({ click: true, open: false });
     let project = await IafProj.createProject(this.state.project); //Create Project
     this.setState({ createdProject: project });
@@ -353,7 +354,7 @@ export default class SetUpProject extends React.Component {
           modalBody={
             <div className="project-picker-modal">
               {!this.state.open && (
-                <form style={{ width: "100%" }} onSubmit={this.handleClickOpen}>
+                <form style={{ width: "100%" }} onSubmit={!this.props.allowMultipleProjects? this.handleClickOpen : this.handleProjectSetUp}>
                   <div style={{ margin: "9px 0" }}>
                     <label>Name</label>
                     <mobiscroll.Input
@@ -456,7 +457,7 @@ export default class SetUpProject extends React.Component {
               )}
               {this.state.open && !this.state.isDeleting && !this.state.isDoneButtonClicked && 
                 <div style={{ float: "left" }}>
-                  By Clicking on Agree button, the previously created project by you would be deleted and this new project would be created.
+                  By Clicking on Agree button, the previously created projects by you would be deleted and this new project would be created.
                   <div>
                     <button
                       onClick={() => this.props.restartApp()}

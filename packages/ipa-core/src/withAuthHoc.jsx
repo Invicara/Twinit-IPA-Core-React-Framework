@@ -1,5 +1,5 @@
 import React from 'react';
-import {IafAuth} from '@invicara/platform-ui-components';
+import {IafAuth} from '@dtplatform/platform-ui-components';
 
 const {useAuth} = IafAuth;
 

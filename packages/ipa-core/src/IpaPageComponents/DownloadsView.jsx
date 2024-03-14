@@ -19,7 +19,7 @@ import React from "react";
 
 import * as PropTypes from "prop-types";
 
-import {IafProj} from '@invicara/platform-api';
+import {IafProj} from '@dtplatform/platform-api';
 
 import _ from 'lodash';
 import moment from 'moment';

@@ -5,13 +5,13 @@ The IafViewer component enables a user to interact with a digital twin model in 
 ## Install
 
 ```js
-npm install @invicara/iaf-viewer
+npm install @dtplatform/iaf-viewer
 ```
 
 ## Import 
 
 ```js
-import { IafViewer } from "@invicara/iaf-viewer";
+import { IafViewer } from "@dtplatform/iaf-viewer";
 ```
 
 ## Props
@@ -42,7 +42,7 @@ import { IafViewer } from "@invicara/iaf-viewer";
 
 ```js
 import React, {useEffect} from "react";
-import { IafViewer } from "@invicara/iaf-viewer";
+import { IafViewer } from "@dtplatform/iaf-viewer";
 
 const ViewerPage = () => {
 
