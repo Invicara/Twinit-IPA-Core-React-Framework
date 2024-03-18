@@ -2,8 +2,7 @@ import React from 'react'
 import {default as ReactSelect} from 'react-select'
 import CreatableSelect from 'react-select/creatable';
 import { selectStyles } from './private/selectStyles'
-import clsx from "clsx";
-import _, { functionsIn } from 'lodash';
+import _ from 'lodash';
 
 import './Select.scss'
 import ControlLabel from './ControlLabel';

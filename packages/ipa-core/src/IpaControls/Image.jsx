@@ -47,7 +47,6 @@ const Image = ({script, url, filename, styles, navigateTo, query, dashboard, pad
   
   let component = <div>Loading</div>
   
-  let pic = {}
   if (imageUrl) {
     
     styles = styles ? styles : {maxWidth: "100%", maxHeight: "100%"}

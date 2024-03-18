@@ -1,5 +1,4 @@
 import React from 'react'
-import { propsEqual } from '../../IpaUtils/compare'
 import Cell from './Cell'
 import './Table.scss'
 

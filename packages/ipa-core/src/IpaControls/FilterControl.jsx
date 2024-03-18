@@ -4,11 +4,9 @@ import Select from 'react-select';
 import enhanceWithClickOutside from 'react-click-outside'
 import DatePicker from 'react-date-picker';
 import DateTimePicker from 'react-datetime-picker';
-import {produce} from "immer";
 
 import GenericMatButton from "./GenericMatButton"
 import {getRandomString} from "../IpaUtils/helpers"
-import AdvSearchQueryBuilder from "../IpaUtils/AdvSearchQueryBuilder"
 
 import './FilterControl.scss'
 
@@ -56,8 +54,6 @@ const FUNCTIONS = [
 
 const isNumericOp = (op) => {
   return (
-    // op == "equals" ||
-    // op == "does not equal" ||
     op == "less than" ||
     op == "less than or equal to" ||
     op == "greater than" ||

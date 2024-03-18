@@ -4,8 +4,6 @@ import AlertTable from './AlertTable'
 export default function ScriptedAlertTable (props) {
   const [acknowledgedAlert, setAcknowledgedAlert] = useState(false)
 
-	console.log("ScriptedAlertTable props", props)
-
 
   return (
     <AlertTable 

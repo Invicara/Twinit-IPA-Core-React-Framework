@@ -1,6 +1,6 @@
 import React from "react";
 import {OrDivider} from "./OrDivider";
-import _, { set } from "lodash";
+import _ from "lodash";
 
 import './EnhancedFetchControl.scss'
 import {ControlProvider} from "./ControlProvider";
