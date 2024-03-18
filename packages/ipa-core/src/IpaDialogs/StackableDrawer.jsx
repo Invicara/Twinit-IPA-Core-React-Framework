@@ -27,7 +27,6 @@ export const StackableDrawer = ({level = 1, iconKey, children, onOpen=_.noop, on
       edges: { left: anchor=='right', right: anchor=='left', bottom: false, top: false },
       listeners: {
         move (event) {
-          let target = event.target;
           event.target.style['width'] = `${event.rect.width}px`;//this line allows the drawer to be minimized manually
         },
         start(event){
