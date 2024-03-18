@@ -6,7 +6,6 @@ import _ from "lodash";
 import {loadPlainInitialValueWithScriptedSelectFormat} from "../IpaUtils/ScriptedSelectsHelpers";
 import ScriptCache from "../IpaUtils/script-cache";
 import { useWithLinkedSelectChange } from "./private/useWithLinkedSelectChange";
-import {selectStyles} from "./private/selectStyles";
 import {asSelectOptions} from "../IpaUtils/controls";
 
 const flattenIfNotMulti = (selectValues, selects) => {//This is necessary bc script helper does not handle single-option select values as a list

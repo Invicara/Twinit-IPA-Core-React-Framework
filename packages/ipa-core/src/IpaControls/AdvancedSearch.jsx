@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import React, { useState} from "react";
 import {FetchButton} from "./FetchButton";
 import FilterControl from "./FilterControl";
 import {FILTER2OP} from "./private/filter";

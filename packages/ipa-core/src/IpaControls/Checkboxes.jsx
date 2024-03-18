@@ -3,7 +3,6 @@ import CheckIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import {withStyles} from "@material-ui/core";
 import produce from "immer";
 import React, {useEffect, useState} from "react";
-import {usePrevious} from "../IpaUtils/usePrevious";
 import _ from "lodash";
 import {CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBoxRounded, CheckCircle as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from "@material-ui/icons";
 
@@ -71,7 +70,6 @@ export const SquareInSquareCheckbox = withStyles({
 
 export const useChecked = (inputItems, checkCallback, allCheckCallback) => {
     const [items, setItems] = useState([]);
-    //const previousItems = usePrevious(inputItems);
 
     useEffect(() => {
         setItems(previousItems => {

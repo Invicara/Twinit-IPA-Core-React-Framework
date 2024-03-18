@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import clsx from "clsx";
 import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
