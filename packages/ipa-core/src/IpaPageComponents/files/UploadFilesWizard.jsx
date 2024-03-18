@@ -1,20 +1,3 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2019] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React, {useEffect, useState} from "react";
 
 import {compose} from "redux";
@@ -25,7 +8,7 @@ import {
     getFilesToUpload, getRejectedFiles,
     setRejectedFiles,
     isComplete, isReadyFor,
-    loadAssociatedEntities, updateFileAttribute, updateMultipleFileAttribute,
+    loadAssociatedEntities, updateMultipleFileAttribute,
     uploadFiles
 } from "../../redux/slices/files";
 import {UploadFilesWizardSteps} from "./UploadWizardSteps";
@@ -37,7 +20,6 @@ import _ from 'lodash'
 
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import './UploadFilesWizard.scss'
-import { CropLandscapeOutlined } from "@material-ui/icons";
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
                                addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles}) => {

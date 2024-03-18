@@ -3,7 +3,6 @@ import React from "react";
 import FileHelpers from '../../IpaUtils/FileHelpers';
 import _ from "lodash";
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
-import ScriptCache from "../../IpaUtils/script-cache";
 import withEntityStore from './WithEntityStore';
 
 //TODO Most of this logic (probably all) should be gradually moved to thunks and the reducer in the entities store
@@ -14,7 +13,6 @@ const withEntitySearch = WrappedComponent => {
             let queryParamsPerEntityType = this.initQueryParamsValues(props,props.currentEntityType.singular);
             this.state = {
                 isPageLoading: true,
-                //groups: _.get(this, 'props.queryParams.groups'),
                 //when entity changes, we will switch between "queries", kind of
                 queryParamsPerEntityType
             };
@@ -27,8 +25,6 @@ const withEntitySearch = WrappedComponent => {
             const merged = {...current, ...queryParamsPartial};
             let queryParamsPerEntityType = {...this.state.queryParamsPerEntityType, [entityType] : merged}
             this.setState({queryParamsPerEntityType}, callback || _.noop);
-            //no need to send that up to state, as selectionInfo.queryParams will have all the info
-            //this.props.setQueryParams(queryParamsPartial);
         }
 
         async componentDidMount() {
@@ -182,23 +178,11 @@ const withEntitySearch = WrappedComponent => {
                         senderEntityType: this.props.entitySingular,
                         entityType: (type || this.props.entitySingular)
                     }
-                    /* domi: commenting this out - not needed - we can do that below without triggering async state update
-                    this.setQueryParams(emptyQueryParams);
-                    */
 
                     //overwrite GenericPage current queryParams by sending empty ones
                     selectionInfo = {entityType, selectedEntities: selectedIds, queryParams : emptyQueryParams}
 
                 } else {
-
-                    /* domi: commenting this out -
-                    1. we can do that below without triggering async state update
-                    2. also this might be wrong now as type can be now an array
-                    this.setQueryParams({
-                       entityType: this.getCurrentConfig().type.singular,
-                       senderEntityType: this.getCurrentConfig().type.singular
-                    })
-                    */
                     selectionInfo['senderEntityType'] = this.props.entitySingular;
                     selectionInfo['queryParams'] = {...this.state.queryParamsPerEntityType[this.props.entitySingular], selector : undefined};
                     selectionInfo['entityType'] = ((typeof type === 'string' ? type : type?.singular) || this.props.entitySingular);

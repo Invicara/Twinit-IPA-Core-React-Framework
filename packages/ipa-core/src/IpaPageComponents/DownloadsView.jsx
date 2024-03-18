@@ -1,26 +1,4 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2019] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React from "react";
-
-import * as PropTypes from "prop-types";
-
-import {IafProj} from '@invicara/platform-api';
-
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -57,7 +35,7 @@ class DownloadsView extends React.Component {
 
                   ver.showDetails = false;
                   let resp = await fetch(getPlatformPath('PLUGIN_BASE', ver.manifest)).catch((err) => {
-                      console.log(err);
+                      console.error(err);
                   });
                   ver.details = await resp.json();
              };
@@ -66,7 +44,7 @@ class DownloadsView extends React.Component {
 
           this.setState({manifests: manifests});
         }).catch((err) => {
-            console.log('-->', err);
+            console.error('-->', err);
             this.setState({isPageLoading: false, error: err.toString()});
         });
     }
@@ -106,8 +84,6 @@ class DownloadsView extends React.Component {
         await this._loadAsyncData();
 
         this.setState({isPageLoading: false}, this.props.onLoadComplete);
-        console.log('props', this.props);
-        console.log('state', this.state);
     }
 
     render() {

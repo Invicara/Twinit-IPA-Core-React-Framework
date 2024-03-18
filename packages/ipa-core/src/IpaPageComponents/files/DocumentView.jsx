@@ -4,7 +4,6 @@ import IafDocViewer from '@invicara/iaf-doc-viewer';
 import './DocumentView.scss';
 
 const DocumentView = (props) => {
-    console.log('DocumentView props', props)
     if (props.isPageLoading) return null;
 
     const docIds = props.docIds || props.queryParams.docIds || [];

@@ -1,25 +1,10 @@
-import React, {useState, useMemo, useEffect, useCallback} from "react";
+import React, {useMemo} from "react";
 import clsx from "clsx";
-import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
 
 import './EntityListView.scss'
-import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
-import {isValidUrl} from '../../IpaUtils/helpers'
+import {RoundCheckbox} from "../../IpaControls/Checkboxes";
 import {Box, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core";
-//import { visuallyHidden } from '@material-ui/utils';
-
-const visuallyHidden = {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: '1px',
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    whiteSpace: 'nowrap',
-    width: '1px',
-}
 
 export const EntityTableHead = ({allChecked, handleAllCheck, columns, multiselect, lastColumnSticky, currentSort, sortEntitiesBy }) => {
 
@@ -33,14 +18,13 @@ export const EntityTableHead = ({allChecked, handleAllCheck, columns, multiselec
         return <TableCell
         key={col.name}
         onClick={handleColumnClick}
-        className='header-column'
+        // className='header-column'
         className={clsx({
             'header-column': true,
             ' first' : first,
             ' sticky': first,
             ' sticky sticky-end': lastColumn && lastColumnSticky
         })}
-        //align={col.numeric ? 'right' : 'left'}
         padding={'none'}
         sortDirection={col.accessor == currentSort.property ? currentSort.order : false}
     >

@@ -1,20 +1,3 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React from "react";
 import _ from 'lodash'
 import EntityDataStack from "./EntityDataStack"
@@ -45,7 +28,6 @@ class EntityDetailPanel extends React.Component {
     // make a keyed name so we can retain display order
     let index = Object.keys(this.props.config.data).findIndex(n => n==name) + 1
     let keyedName = `${(index/100).toFixed(2)}${name}` // make it one based and divide by 100 so all keys are the same length
-    //let selectedDataGroups = new Set([...this.state.selectedDataGroups]) removed as creating a new set everytime was causing a race condition
     let {selectedDataGroups} = this.state;
     if (selected) selectedDataGroups.add(keyedName)
     else          selectedDataGroups.delete(keyedName)
@@ -55,9 +37,9 @@ class EntityDetailPanel extends React.Component {
   render() {
     let availableDataGroups = this.props.availableDataGroups[this.props.entityType];
     let dataGroups = [...this.state.selectedDataGroups]
-    // sort and then remove keys then make sure the type of extended ahas availableData
-    // if a config had a typ eof data as selected, but the entity didn;t have that type of extended
-    // the DataStack was showing data the GroupSelector wasn;t wasnt.
+    // sort and then remove keys then make sure the type of extended has availableData
+    // if a config had a type of data as selected, but the entity didn't have that type of extended
+    // the DataStack was showing data the GroupSelector wasn't.
 
     dataGroups = dataGroups.sort().map(n => n.substring(4)).filter(n => availableDataGroups && availableDataGroups[n])
     return (

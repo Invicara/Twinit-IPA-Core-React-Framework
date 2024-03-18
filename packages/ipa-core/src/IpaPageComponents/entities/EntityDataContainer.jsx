@@ -1,12 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { compose } from 'redux'
-import { connect } from 'react-redux'
-import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
-
-//import ENTITY_DATA_COMPONENTS from "./EntityDataComponents"
-import { getEntityDataComponent } from '../../redux/slices/entityUI'
 import clsx from 'clsx'
-import _, { rest } from 'lodash'
+import _ from 'lodash'
 import EntityDataGroupContainer from './EntityDataGroupContainer'
 import { makePromiseIgnorable } from '../../IpaUtils/helpers'
 
@@ -102,7 +96,6 @@ export const useEntityData = (collapsable, collapsed, entity, config, getData, d
       ignorable.ignore()
       setIgnorable(undefined)
     }
-    //setReloadToken(false)
   }
 
   return {data, fetching, error, reset, reload}
@@ -163,17 +156,5 @@ const EntityDataContainer = props => {
     </div>
   )
 }
-
-/*
-const mapStateToProps = state => ({})
-
-const mapDispatchToProps = {
-  getEntityDataComponent
-}
-
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  EntityDataContainer
-)
-*/
 
 export default EntityDataContainer
