@@ -1,20 +1,3 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import _ from 'lodash'
@@ -22,7 +5,7 @@ import {SimpleSelect} from "@invicara/ipa-core/modules/IpaControls";
 import {
     setIsolatedSystemElementEntities,
 } from "../redux/slices/systems";
-import {Divider, List, ListItem, ListItemText} from "@material-ui/core";
+import {Divider} from "@material-ui/core";
 import {Systems} from "@invicara/ipa-core/modules/IpaRedux";
 import {SystemsListTree} from "./SystemsListTree";
 import SystemAlertsList from "./SystemAlertsList";
@@ -60,8 +43,6 @@ const SystemSearchPanel = ({rootEntity, rootEntityType, viewerMode, isSystemDraw
     }, [dispatch, rootEntity, rootEntityType]);
 
     useEffect(() => {
-        console.log("systems changed",systems);
-        console.log("or systems selectedSystemName changed",systems);
         if(!systems){
             if(system) setSystem(undefined);
             return;
@@ -73,14 +54,12 @@ const SystemSearchPanel = ({rootEntity, rootEntityType, viewerMode, isSystemDraw
         if(!newSystem) {
             newSystem = Object.values(systems)[0];
         }
-        console.log("new system",newSystem);
         if(newSystem!==system) {
             setSystem(newSystem);
         }
     }, [systems,selectedSystemName]);
 
     useEffect(() => {
-        console.log("system dispatch",system);
         if(system && selectedSystemName!=system['System Name']){
             setSelectedSystemName(system['System Name']);
         }

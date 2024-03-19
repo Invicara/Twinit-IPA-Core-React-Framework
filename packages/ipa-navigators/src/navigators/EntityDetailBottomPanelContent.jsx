@@ -1,35 +1,14 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
-import React, {useEffect, useState, useCallback, useMemo, useContext, useRef, useReducer} from "react";
+import React, {useEffect, useReducer} from "react";
 
 import {
     EntityDataContainer,
     EntityDataGroupContainer
 } from "@invicara/ipa-core/modules/IpaPageComponents";
 import _ from 'lodash'
-import clsx from "clsx";
 import { ScriptHelper } from "@invicara/ipa-core/modules/IpaUtils";
 import { AlertIndicator } from "@invicara/ipa-core/modules/IpaControls";
 
 const groupAlertsReducer = (state, action) => {
-    console.log("groupAlertsReducer")
-    console.log("state", state)
-    console.log("action", action)
     switch(action.type) {
         case "START_FETCHING":
             return {...state, [action.payload.key]: {loading: true}}
@@ -63,7 +42,6 @@ const EntityDetailBottomPanelContent = ({config, getData, loadingDataGroups, det
                     }
                 )
                 .then((response) => {
-                    console.log("RESPONSE", response)
                     let alerts = undefined;
                     if(_.isArray(response) && response.length > 0) {
                         alerts = [...response];
@@ -77,7 +55,7 @@ const EntityDetailBottomPanelContent = ({config, getData, loadingDataGroups, det
     }, [filteredDataGroups, config, detailedEntity])
 
     const {data,error,fetching,reset} = EntityDataContainer.useEntityData(false, false, detailedEntity, groupConfig, getData, selectedDataGroup);
-    //console.log("EntityDetailBottomPanelContent render config", config)
+
     return <React.Fragment>
         <div className="bottom-panel-content-left">
             {!loadingDataGroups && filteredDataGroups.map(dg => {
