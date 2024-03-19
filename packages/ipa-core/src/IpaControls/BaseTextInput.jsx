@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
-import { any, bool, element, func, node, object, shape, string } from 'prop-types';
+import { any, bool, element, func, object, shape, string } from 'prop-types';
 import './BaseTextInput.scss'
 import ControlLabel from './ControlLabel';
-import { components } from 'react-select';
 
 const BaseTextInput = (props) => {
 

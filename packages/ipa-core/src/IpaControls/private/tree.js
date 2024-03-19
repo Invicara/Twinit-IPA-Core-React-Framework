@@ -1,4 +1,4 @@
-import _, { parseInt } from "lodash";
+import _ from "lodash";
 
 export const NODE_SEPARATOR = "_";
 export const NODE_PROPERTY_SEPARATOR = "-";

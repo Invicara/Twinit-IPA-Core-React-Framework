@@ -218,7 +218,6 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
 
         const parentBaseName = level !== 0 ? parentNames[parentNames.length - 1] : undefined
         
-        // const parentInfo = {displayName: input.Level, level:}
 
         const levelNodes = rawNodesCopy.map((node, position) => {
 

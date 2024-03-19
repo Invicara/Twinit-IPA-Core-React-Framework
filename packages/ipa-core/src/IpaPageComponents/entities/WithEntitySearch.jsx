@@ -222,17 +222,21 @@ const withEntitySearch = WrappedComponent => {
                 let docIds = []
                 entityInfo.original.forEach(d => {
                   const _fileId = d._fileId
-                  d.versions.forEach(v => {
-                    const _fileVersionId = v._fileVersionId
-                    docIds.push({ _fileId, _fileVersionId })})
+                if(d.versions) {
+                    const versionLength = d.versions.length
+                    const newestVersion = d.versions[versionLength - 1]
+                    const _fileVersionId = newestVersion._fileVersionId
+                    docIds.push({ _fileId, _fileVersionId })
+                } else {
+                    docIds.push({_fileId})
+                }
                 })
-                docIds.forEach(doc => {
-                  let docIds = [doc]
-                  let query = {
+
+                let query = {
                     entityType: 'file',
                     queryParams: { docIds }
                   }
-                this.props.onNavigate('documentviewer', query, { newTab: true })})
+                  this.props.onNavigate('documentviewer', query, { newTab: true })
                 return {success: true};
             } else {
                 let scriptName = actions[action].script;

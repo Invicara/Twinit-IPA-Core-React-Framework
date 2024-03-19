@@ -624,7 +624,7 @@ class EntityModal extends React.Component {
   getControl = prop => {
     let { newEntity } = this.state
     
-    const showUOMProperty = !this.props.action.component.isUOMHidden && !!this.state.newEntity.properties[prop].uom
+    const showUOMProperty = !this.props.action?.component?.isUOMHidden && !!this.state.newEntity?.properties[prop]?.uom
 
     let propInfo = this.state.newEntity.properties[prop]
     let propType = propInfo && propInfo.type ? propInfo.type : 'missing'
