@@ -21,7 +21,7 @@ const URGENCY_CLASSNAMES = {
 
 const inactivateAlert = (alert, setAcknowledgedAlert, scriptName) => {
   const result = alert
-  const hello = '1';
+  const hello = '2';
   result.properties.Acknowledged.val = true
   setAcknowledgedAlert(true)
 
