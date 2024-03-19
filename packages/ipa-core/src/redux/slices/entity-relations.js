@@ -166,8 +166,6 @@ export const applyRelationChanges = (script, relatedTypes) => async (dispatch, g
                 parentEntitiesWithDeletedChildren: parentEntitiesWithDeletedChildren.filter(p => p.entityType === parentType && !_.isEmpty(p.childrenMap[childrenType])),
                 childrenEntityType: childrenType,
             };
-            console.log("applyRelationChanges script", script)
-            console.log("applyRelationChanges params", params)
             return ScriptHelper.executeScript(script, params)
         })
     ))
