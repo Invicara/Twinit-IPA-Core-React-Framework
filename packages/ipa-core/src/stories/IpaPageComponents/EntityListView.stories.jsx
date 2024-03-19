@@ -1,6 +1,5 @@
 import React from 'react';
 import { Provider } from 'react-redux'
-import PropTypes from 'prop-types';
 import {EntityListView} from "../../IpaPageComponents/entities/EntityListView";
 import "./EntityListView.stories.scss";
 import entitiesArray from "./sample_entities_1.json";

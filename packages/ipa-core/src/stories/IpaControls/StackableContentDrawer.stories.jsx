@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {StackableDrawer} from "../../IpaDialogs/StackableDrawer";
 import StackableDrawerContainer from "../../IpaDialogs/StackableDrawerContainer";
 import './StackableDrawer.stories.scss'

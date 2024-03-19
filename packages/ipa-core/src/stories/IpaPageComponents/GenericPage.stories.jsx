@@ -1,5 +1,4 @@
-import React, {useState,useEffect} from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import sampleUserConfig from "./sample_user_config.json";
 import sampleSelectedItems from "./sample_selectedItems.json";
 import GenericPage from "../../IpaPageComponents/GenericPage";
