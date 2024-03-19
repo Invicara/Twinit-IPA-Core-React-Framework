@@ -21,13 +21,16 @@ const URGENCY_CLASSNAMES = {
 
 const inactivateAlert = (alert, setAcknowledgedAlert, scriptName) => {
   const result = alert
+  const hello = '1';
   result.properties.Acknowledged.val = true
   setAcknowledgedAlert(true)
+
   return ScriptHelper.executeScript(scriptName, {data: result})
 }
 
 const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate, setAcknowledgedAlert, scriptName) => {
   const row = activeColumns.map(c => {
+
     let className = undefined;
     let property = _.get(alert, c.accessor);
     if(property?.dname === "Urgency") {
