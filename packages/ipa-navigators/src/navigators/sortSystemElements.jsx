@@ -15,15 +15,10 @@ const sortedAsDisplayed = aNodeIndex => _.sortBy(_.values(aNodeIndex).filter(nod
     //.flatMap(getSortedChildren(aNodeIndex))
     .flatMap(flatMapCallbackFnFactory(aNodeIndex));
 
-//const getSortedChildren = aNodeIndex => node => [node, ..._.sortBy(getNodeChildren(node, aNodeIndex), node => node.order).flatMap(getSortedChildren(aNodeIndex))];
-
 const flatMapCallbackFnFactory = function(fullTree) {
     return function(currentValue, index, array) {
-        //console.log("flatMapCallbackFnFactory currentValue", currentValue['Entity Name']);
         const step1 = _.sortBy(getNodeChildren(currentValue, fullTree), node => node.order || 0);
-        //console.log(`flatMapCallbackFnFactory step1 for ${currentValue['Entity Name']}`, step1.map(n=>n['Entity Name']));
         const step2 = step1.flatMap(flatMapCallbackFnFactory(fullTree));
-        //console.log(`flatMapCallbackFnFactory step2 for ${currentValue['Entity Name']}` , step2);
         return [currentValue,...step2];
     };
 }

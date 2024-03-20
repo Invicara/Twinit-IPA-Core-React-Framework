@@ -1,21 +1,4 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
-import React, {useState, useMemo, useEffect, useRef, useCallback, useContext} from "react";
+import React, {useState, useMemo, useEffect} from "react";
 import PropTypes from "prop-types";
 import {
     withEntityConfig
@@ -38,20 +21,15 @@ const selectEntitiesFromIds = async (dispatch, spaceIdsArray, assetsIdsArray, se
         const spaceEntities = !!spaceIdsArray ? await getEntities(spaceIdsArray,"Space") : [];
         const assetEntities = !!assetsIdsArray ? await getEntities(assetsIdsArray,"Asset") : [];
         const entities = (spaceEntities || []).concat(assetEntities || []);
-        console.log('entitiesGeneral dispatching entities: ', entities)
         dispatch(Entities.setEntities({entities: entities, shouldIsolate: true}));
         const filteredToSelect = entities.filter(e => entityIdsToSelect.includes( e._id) );
         dispatch(Entities.setSelectedEntities(filteredToSelect));
-        console.log('entitiesGeneral dispatching setSelectedEntities: ', filteredToSelect)
-
     } catch (e) {
         console.error("There was an error selecting the model entity:", e)
     }
 }
 
 const getEntities = async (idsArray, singular) => {
-    console.log('idsArray', idsArray);
-
     let collections = await IafScriptEngine.getCollections(null);
     collections = collections._list;
 
@@ -111,7 +89,6 @@ const DevsNavigatorView =  (props) => {
     const isolatedEntities = useSelector(Entities.getIsolatedEntities);
     const allEntities = useSelector(Entities.getAllCurrentEntities);
     const selectedEntities = useSelector(Entities.getSelectedEntities);
-    const isolatedEntitiesColored = isolatedEntities;
 
 
     useEffect(()=>{
