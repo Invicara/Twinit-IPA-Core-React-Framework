@@ -150,8 +150,6 @@ const withEntityStore = (WrappedComponent) => {
                 console.error(`tried to save store for wrong entity type: ${this.props.currentEntityType}`)
                 return;
             }
-            //const storeCacheMap = {...storeCacheMap, [this.props.currentEntityType.singular] : this.props.storeSnapshot};
-            //this.setState({storeCacheMap : storeCacheMap});
             const cacheForHandler = storeCacheMap[this.handerPath] || {};
             cacheForHandler[this.props.currentEntityType.singular] = this.props.storeSnapshot;
             storeCacheMap[this.handerPath]=cacheForHandler;
@@ -166,10 +164,9 @@ const withEntityStore = (WrappedComponent) => {
             {...wrappedProps}/>
 
         render() {
-            const wrappedProps = {...this.props/*, ...this.state*/}
+            const wrappedProps = {...this.props}
             const derivedEntityType = this.deriveInitialEntityType(this.props.queryParams);
             const storeHasCorrectEntity = this?.props?.currentEntityType?.singular == derivedEntityType?.singular;
-            //const storeHasAllowedEntity = _.includes(this.props.allowedEntityTypes, this?.props?.currentEntityType?.singular)
             return (storeHasCorrectEntity) ? this.getWrappedComponent(wrappedProps) : null;
         }
     }

@@ -104,7 +104,6 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
   return renderIcons(icons);
 }
 
-//export default EntityActionsPanel
 const mapStateToProps = state => ({});
 
 const mapDispatchToProps = {

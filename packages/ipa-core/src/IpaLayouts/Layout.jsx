@@ -1,5 +1,5 @@
 import * as PropTypes from 'prop-types';
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import FlexContainer from "./FlexContainer"
 import FlexContent from "./FlexContent"
 import FlexLeftNav from "./FlexLeftNav"

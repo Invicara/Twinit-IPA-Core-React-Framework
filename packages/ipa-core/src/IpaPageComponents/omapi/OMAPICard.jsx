@@ -3,7 +3,6 @@ import clsx from "clsx";
 import _ from 'lodash'
 
 import GenericButton from '../../IpaControls/GenericButton'
-//import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
 
 import { JSONEditor } from './JSONEditor'
 import { OMAPICardError } from './OMAPICardError'

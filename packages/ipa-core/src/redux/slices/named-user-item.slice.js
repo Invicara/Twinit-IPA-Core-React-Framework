@@ -16,23 +16,7 @@ export const namedUserItemAdapter = createEntityAdapter({
   // Keep the "all IDs" array sorted based on names
   sortComparer: (a, b) => a._name.localeCompare(b._name),
 });
-/**
- * Export an effect using createAsyncThunk from
- * the Redux Toolkit: https://redux-toolkit.js.org/api/createAsyncThunk
- *
- * e.g.
- * ```
- * import React, { useEffect } from 'react';
- * import { useDispatch } from 'react-redux';
- *
- * // ...
- *
- * const dispatch = useDispatch();
- * useEffect(() => {
- *   dispatch(fetchNamedUserItem())
- * }, [dispatch]);
- * ```
- */
+
 export const fetchNamedUserItemItems = createAsyncThunk( 
   'namedUserItem/fetchStatus',
   async (args, thunkAPI) => {
@@ -94,28 +78,12 @@ export const fetchAssocitedFileSvcData = createAsyncThunk(
   }
 );
 
-/*
-export const fetchNamedUserItems = createAsyncThunk(
-    'namedUserItems/fetchStatus',
-    async (args, thunkAPI) => {
-      const criteria = {query: {
-                  "_itemClass": {"$in": ["NamedUserCollection","NamedFileCollection"]}
-              }};
-      return IafItemSvc.getNamedUserItems(criteria, args.ctx, args.options);
-    }
-);
-*/
 export const fetchAllNamedUserItems = createAsyncThunk(
     'allNamedUserItems/fetchStatus',
     async (args, thunkAPI) => {
       const {scriptName} = args
       
       if(!scriptName) { 
-        /**
-         * @param {criteria: NamedUserItemCriteria, ctx: Ctx, options: NamedUserItemCriteriaOptions} - args
-         * @returns {Promise<Array<NamedUserItem>>}
-         */
-        //always filter _itemClass
         const criteria = {query : {"_itemClass": {"$in": ["NamedUserCollection","NamedFileCollection"]}}};
         const ctx = {...args.ctx} || {};
         const options = args.options;
@@ -232,39 +200,9 @@ export const namedUserItemSlice = createSlice({
  * Export reducer for store configuration.
  */
 export const namedUserItemReducer = namedUserItemSlice.reducer;
-/*
- * Export action creators to be dispatched. For use with the `useDispatch` hook.
- *
- * e.g.
- * ```
- * import React, { useEffect } from 'react';
- * import { useDispatch } from 'react-redux';
- *
- * // ...
- *
- * const dispatch = useDispatch();
- * useEffect(() => {
- *   dispatch(namedUserItemActions.add({ id: 1 }))
- * }, [dispatch]);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#usedispatch
- */
+
 export const namedUserItemActions = namedUserItemSlice.actions;
-/*
- * Export selectors to query state. For use with the `useSelector` hook.
- *
- * e.g.
- * ```
- * import { useSelector } from 'react-redux';
- *
- * // ...
- *
- * const entities = useSelector(selectAllNamedUserItem);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#useselector
- */
+ 
 const { selectAll, selectEntities, selectById } = namedUserItemAdapter.getSelectors();
 export const getNamedUserItemSlice = (rootState) => rootState[NAMED_USER_ITEM_FEATURE_KEY];
 const getLoadingStatus = (slice) => slice.loadingStatus;

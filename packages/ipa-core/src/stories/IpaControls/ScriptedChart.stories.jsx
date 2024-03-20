@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import ScriptedChart, {ScriptedChartFactory} from "../../IpaControls/ScriptedChart";
+import ScriptedChart from "../../IpaControls/ScriptedChart";
 import {scriptedData1} from './scriptedChartData'
 
 export default {

@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
-
-//import ENTITY_DATA_COMPONENTS from "./EntityDataComponents"
 import { getEntityDataComponent } from '../../redux/slices/entityUI'
-import clsx from 'clsx'
 import _ from 'lodash'
 
 

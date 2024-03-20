@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useEffect, useReducer} from "react";
+import {useState, useEffect, useReducer} from "react";
 import './EntityListView.scss'
 
 export const ASCENDING_ORDER = 'asc';

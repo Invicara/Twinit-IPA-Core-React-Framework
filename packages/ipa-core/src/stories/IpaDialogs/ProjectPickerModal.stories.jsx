@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ProjectPickerModal from "../../IpaDialogs/ProjectPickerModal";
-import {IfefModal} from "@invicara/react-ifef";
 import {createLegacyContextSupport} from "../../IpaMock/util/legacyContext";
 
 export default {
