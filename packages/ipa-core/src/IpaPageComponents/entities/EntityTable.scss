@@ -106,6 +106,27 @@ div.header-row {
 
 }
 
+.virtualized-table > div{
+  width: 100% !important;
+  height: 100% !important;
+}
+.virtualized-table{
+  height: 70vh;
+  width: 100%;
+  .ReactVirtualized__Grid.ReactVirtualized__List {
+      overflow-x: visible !important;
+      overflow-y: auto !important;
+      // width: 800px !important;
+      min-width: 800px !important;
+  
+      .ReactVirtualized__Grid__innerScrollContainer {
+        overflow: visible !important;
+        // width: 800px !important;
+        min-width: 800px !important;
+      }
+    }
+}
+
 div.content-row {
   /* only div - these styles should NOT apply to table elements thead, th or th */
   display: flex;

@@ -94,13 +94,14 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         <div className='entity-list-view-count'>
             {`Showing ${entities.length} ${entities.length > 1 ? entityPlural : entitySingular}`}
         </div>
+        <div style={{width:"100%",overflow:"auto"}}>
         <div className='header-row'>
             {config?.multiselect && <div className='header-column checkbox'>
                 <RoundCheckbox checked={allChecked} onChange={handleAllCheck}/>
             </div>}
             {config?.columns.map(col => buildHeader(col))}
         </div>
-        <div style={{ height: "69vh", width: "100%" }}>
+        <div className="virtualized-table">
             <AutoSizer>
                 {({ width, height }) => (
                     <List
@@ -126,6 +127,7 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
                     />
                 )}
             </AutoSizer>
+        </div>
         </div>
     </div>
 }

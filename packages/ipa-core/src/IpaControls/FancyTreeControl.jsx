@@ -167,17 +167,20 @@ const FancyTreeControl = ({
             <a>
               <span>{renderLeafNode(n)}</span>
             </a>
-          </li>)})
-      let n = nodes[virtualizedEvent?.index]
-      let cn = "leaf"
-      if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
-      if (expandedNodeNames.includes(n.name)) cn += " expanded"
-      if (partialNodeNames.includes(n.name)) cn += " partial"
-      return <li style={virtualizedEvent?.style || {}} onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
-        <a>
-          <span>{renderLeafNode(n)}</span>
-        </a>
-      </li>
+          </li>)
+      })
+      if (virtualizedEvent) {
+        let n = nodes[virtualizedEvent?.index]
+        let cn = "leaf"
+        if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
+        if (expandedNodeNames.includes(n.name)) cn += " expanded"
+        if (partialNodeNames.includes(n.name)) cn += " partial"
+        return <li style={virtualizedEvent?.style || {}} onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
+          <a>
+            <span>{renderLeafNode(n)}</span>
+          </a>
+        </li>
+      }
     }
     else {
       children = []
@@ -195,8 +198,8 @@ const FancyTreeControl = ({
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-            <ul key={nodeName + "_children"} style={{ height: "60vh", width: "100%" }}>
-              {Array.isArray(nodeValue) ?
+            <ul key={nodeName + "_children"} style={{ height: nodeValue?.length > 50 ? "60vh" : "auto", width: "auto" }}>
+              {Array.isArray(nodeValue) && nodeValue?.length > 50 ?
                 <AutoSizer>
                   {({ width, height }) => (
                     <List
@@ -207,7 +210,7 @@ const FancyTreeControl = ({
                       rowRenderer={(virtualizedEvent) => {
                         return (
                           <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                             {getNodes(nodeValue, depth, virtualizedEvent)}
+                            {getNodes(nodeValue, depth, virtualizedEvent)}
                           </CellMeasurer>
                         )
                       }}
@@ -230,8 +233,8 @@ const FancyTreeControl = ({
         {!allSelected ? <span className="fancy-tree__count--action" onClick={onSelectAllAction}>Select All</span> : (onSelectNoneAction ? <span className="fancy-tree__count--action" onClick={onSelectNoneAction}>Deselect All</span> : undefined) }
         {selectAllState.selectAllActivated && selectAllState.previouslySelectedIds.length>0 ? <span className="fancy-tree__count--action" onClick={onUndoSelectAllAction}>Undo</span> : undefined }
       </div> : undefined}
-      <ul style={{ height: "60vh", width: "100%" }}>
-        {Array.isArray(tree) ?
+      <ul style={{ height:tree?.length > 50 ? "60vh" : "auto", width: "auto" }}>
+        {Array.isArray(tree) && tree.length > 50 ?
           <AutoSizer>
             {({ width, height }) => (
               <List
