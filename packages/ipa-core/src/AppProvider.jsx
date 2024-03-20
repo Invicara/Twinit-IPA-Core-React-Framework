@@ -392,19 +392,19 @@ class AppProvider extends React.Component {
         Each script plugin file must be located in ./app/ipaCore/scriptPlugins
       */
       let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
-      if (scriptPlugins) {
-        scriptPlugins.forEach((filename) => {
-          try {
-            let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
-            for (let fnName in funcs) {
-              addScriptFunction(funcs[fnName])
-            }
-          } catch(e) {
-            console.error(e)
-            console.error('Script plugin not able to be loaded: ' + filename)
-          }
-        })
-      }
+      // if (scriptPlugins) {
+      //   scriptPlugins.forEach((filename) => {
+      //     try {
+      //       let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
+      //       for (let fnName in funcs) {
+      //         addScriptFunction(funcs[fnName])
+      //       }
+      //     } catch(e) {
+      //       console.error(e)
+      //       console.error('Script plugin not able to be loaded: ' + filename)
+      //     }
+      //   })
+      // }
 
       /* load redux extended slices provided by the app */
 
@@ -741,53 +741,15 @@ class AppProvider extends React.Component {
   }
 }
 
-export const addScriptFunction = (fn) => {
-  let fnName = "$" + fn.name
-  let fnWrapper = {}
-  fnWrapper[fnName] = {
-    operate: (operator, b, c) => {
-      // The parser now returns arrays of expressions. Handle those here! jl 06/11/2019
-      if (Array.isArray(operator)) {
-        let res = [];
-  
-        for (let i = 0, l = operator.length; i < l; i++) {
-          // We need to special case what used to be handled in the parser.
-          // Namely, if expressions was a single expression, it returned just that one.
-          // Otherwise we have a lot of fix up in a lot of operators. jl 06/11/2019
-  
-          // ALSO
-          // When we get down to simple $val nodes, push just the val
-          // This avoids extra array nesting of results.
-  
-          if (operator.length === 1) {
-            return fnWrapper[fnName].operate(operator[i], b, c);
-          } else {
-            res.push(fnWrapper[fnName].operate(operator[i], b, c));
-          }
-        }
-  
-        return res;
-      }
-  
-      // Let it throw an exception, but use this for debug.
-      if (!operator || typeof operator.o !== "function") {
-        return; // Debug to see what operators are not well formed
-      }
-  
-      return operator.o(operator.a, b, c);
-    }
-  };
-  
-  console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
-  function use(plugin) {
-    if (isFunction(plugin)) return plugin(fnWrapper);
-    for (var key in plugin) {
-      if (key.charCodeAt(0) === 36) operator[key] = plugin[key];
-    }
-  }
-  
-  use(fnWrapper);
-}
+// export const addScriptFunction = (fn) => {
+//   let fnName = "$" + fn.name
+//   let fnWrapper = {}
+//   fnWrapper[fnName] = {
+//     operate: (a,b,c) => fn(expression.operate(a,b,c))
+//   }
+//   console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
+//   expression.use(fnWrapper)
+// }
 
 async function calculateRoutes(config, ipaConfig) {
   const pList = [];
