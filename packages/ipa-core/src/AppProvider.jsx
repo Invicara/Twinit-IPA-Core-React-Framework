@@ -299,13 +299,22 @@ class AppProvider extends React.Component {
 
   async initialize(loadConfigFromCache = true, showProjectPicker = true) {
     const self = this;
-    let  sessionManage = sessionStorage.manage;
+
+    let sessionManage = sessionStorage.getItem('manage');
+
+    if (sessionManage) {
+      sessionManage = JSON.parse(sessionManage);
+    }
+
     let token, user;
     let inviteId;
-    sessionManage = this.props.authService.getAuthTokens();         //Storing token in session
+
+    // sessionManage = this.props.authService.getAuthTokens();         //Storing token in session
+
     if (sessionManage && Object.keys(sessionManage).length === 0) {
       sessionManage = undefined;
     }
+
     if (this.props.authService.isPending()) {
       return;
     }
@@ -334,7 +343,7 @@ class AppProvider extends React.Component {
     // if we don't have a token yet and we have something in the session then
     // check that the token in the session is valid
     if (token === undefined && sessionManage && sessionManage !== undefined) {
-      const temp_token = sessionManage.access_token;
+      const temp_token = sessionManage.token;
       try {
         user = await IafSession.setSessionData(temp_token);
         if (user !== undefined) {
