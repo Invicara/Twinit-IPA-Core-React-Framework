@@ -309,7 +309,11 @@ class AppProvider extends React.Component {
     let token, user;
     let inviteId;
 
-    // sessionManage = this.props.authService.getAuthTokens();         //Storing token in session
+    const auth_token = this.props.authService.getAuthTokens();
+
+    if (auth_token && Object.keys(auth_token).length !== 0) {
+      sessionManage = auth_token;
+    };
 
     if (sessionManage && Object.keys(sessionManage).length === 0) {
       sessionManage = undefined;
@@ -343,7 +347,7 @@ class AppProvider extends React.Component {
     // if we don't have a token yet and we have something in the session then
     // check that the token in the session is valid
     if (token === undefined && sessionManage && sessionManage !== undefined) {
-      const temp_token = sessionManage.token;
+      const temp_token = sessionManage.token || sessionManage.access_token;
       try {
         user = await IafSession.setSessionData(temp_token);
         if (user !== undefined) {
