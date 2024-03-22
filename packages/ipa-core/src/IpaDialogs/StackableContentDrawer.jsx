@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import clsx from "clsx";
 import './StackableDrawer.scss'
 import {DEFAULT_DRAWER_WIDTH} from "./StackableDrawer";

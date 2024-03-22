@@ -90,7 +90,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
     Object.keys(actions).forEach(actionName => {
       let action = actions[actionName];
 
-      if (action.allow)
+      if (action?.allow)
         icons.push(
           <ActionButton 
             key={"icon-"+actionName} 
@@ -104,7 +104,6 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
   return renderIcons(icons);
 }
 
-//export default EntityActionsPanel
 const mapStateToProps = state => ({});
 
 const mapDispatchToProps = {

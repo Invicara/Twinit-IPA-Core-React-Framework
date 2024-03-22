@@ -1,16 +1,13 @@
-import React, {useCallback, useEffect, useMemo, useState, useReducer} from "react";
+import React, {useCallback, useEffect, useMemo, useReducer} from "react";
 import _ from 'lodash'
-import clsx from "clsx";
 import {produce} from "immer";
 import {TreeNodeStatus, TreeNodeActionName} from "@invicara/ipa-core/modules/IpaUtils";
-import {withoutPropagation} from "@invicara/ipa-core/modules/IpaUtils";
 import {ReactiveTreeControl, AlertIndicator} from "@invicara/ipa-core/modules/IpaControls";
 import './SystemsListTree.scss'
 import sortSystemElementIdsAsDisplayedInTree, {getElementId} from "./sortSystemElements";
 import {useDispatch, useSelector} from "react-redux";
 import * as Systems from "../redux/slices/systems";
 import Switch from "@material-ui/core/Switch/Switch";
-import {getFilteredSystemElementEntitiesBy, selectAppliedSystemElementIsolationFilters} from "../redux/slices/systems";
 
 const treeReducer = (state, action) => {
     switch (action.type) {
@@ -80,7 +77,6 @@ const updateNodesAlerts = (aNodeIndex, alerts)=>{
         entityIdsWithAlertsUtilArr = entityIdsWithAlertsUtilArr.concat(_.keys(alertsPerEntityMap));
     }
     let changes = 0;
-    console.log("RECALCULATING nodeIndex due to alerts",aNodeIndex);
     const newNodeIndex = produce(aNodeIndex,(nodeIndex)=>{
         for (const [key, node] of Object.entries(nodeIndex)) {
             const hasAlerts = _.intersection(entityIdsWithAlertsUtilArr, node.entityIds).length > 0;
@@ -124,7 +120,6 @@ export const SystemsListTree = ({system, selectedElements, onSelect, title, defa
 
     const alerts = useSelector(Systems.selectSystemsAlerts);
 
-    const isolatedFilteredEntityIdsBySystem = useSelector(Systems.selectFilteredIsolatedSystemElementEntityIds);
     const systemElementsIsolationFilters = useSelector(Systems.selectAppliedSystemElementIsolationFilters);
 
     const showOnlyCritical = systemElementsIsolationFilters?.['critical']?.['value']=='true';
@@ -182,7 +177,6 @@ export const SystemsListTree = ({system, selectedElements, onSelect, title, defa
         // 0 |  1  |  0
         const hide = (!critical && showOnlyCritical && !hasCriticalChildren);
 
-        //if (_.isEmpty(node.parents)) return true; // top level always visible
         const parent = _.isEmpty(node.parents) ? undefined : _.get(nodeIndex, node.parents[0], {});
         if(hasCriticalChildren){
             return true;
@@ -202,13 +196,6 @@ export const SystemsListTree = ({system, selectedElements, onSelect, title, defa
         // TODO: ? if parent is not expanded but node is critical + show only critical switch is on: show anyway
     },[showOnlyCritical]);
 
-    //const findVisibleParent = node => {
-    //    const nodeParent = nodeIndex[node.parent[0]];
-    //    return isVisible(nodeParent) ? nodeParent : findVisibleParent(nodeParent)
-    //}
-
-    //const getNodeChildren = (node, aNodeIndex) => node.children.map(childId => aNodeIndex[childId]);
-
     const addAllNodeDescendants = (node, aNodeIndex, allDescendants) => {
         if(node.children){
             node.children.forEach(childId => {
@@ -221,14 +208,6 @@ export const SystemsListTree = ({system, selectedElements, onSelect, title, defa
     }
 
     const getNodeName = nodeValue => nodeValue["Entity Name"]
-
-    //const showNode = node => {
-    //    const critical = isCritical(node);
-    //    if (hideNonCritical) {
-    //        return critical
-    //    }
-    //    return true
-    //}
 
     const nodeIndexFromSystemElements = useMemo(() => {
         if(!system){
@@ -263,7 +242,6 @@ export const SystemsListTree = ({system, selectedElements, onSelect, title, defa
             const level = getLevel(node, newBareNodeIndex);
             const expanded = _.get(newBareNodeIndex, `${node.id}.expanded`, level<=defaultExpandedDepth ? true : false);
             const hidden =  !isVisible(node, newBareNodeIndex);
-            console.log("RECALCULATING hidden",node.id,hidden);
             return {
                 ...node,
                 //new node properties that need full nodeIndex to calculate a value
@@ -275,7 +253,6 @@ export const SystemsListTree = ({system, selectedElements, onSelect, title, defa
         const {sortedSystemElementIds} = sortSystemElementIdsAsDisplayedInTree(system?.elements, getElementId);
         const newNodeIndex = {};
         sortedSystemElementIds.forEach(elementId => newNodeIndex[elementId] = unorderedNodeIndex[elementId]);
-        console.log("RECALCULATING nodeIndex",newNodeIndex);
         return newNodeIndex;
 
     },[system,selectedElements]);
@@ -309,22 +286,14 @@ export const SystemsListTree = ({system, selectedElements, onSelect, title, defa
 
     const nodeIndex = treeState.nodeIndex;
 
-    //const [orderedNodeIds, setOrderedNodeIds] = useState({});
-
     const onNodeIndexChange = useCallback((newNodeIndex)=>{
         const selected = _.values(newNodeIndex).filter(node=>node.selectedStatus===TreeNodeStatus.ON).map(node=>node.systemElement._id);
         //sort them so newly selected is last
         //const selectedStatusOnPreviously = _.values(nodeIndex).filter(node=>node.selectedStatus===TreeNodeStatus.ON).map(node=>node.systemElement);
         const changed = _.differenceBy(_.values(newNodeIndex), _.values(nodeIndex), node => node.id+''+node.selectedStatus).map(node=>node.systemElement._id);
-        //const selectedStatusOnSorted = _.sortBy(selectedStatusOn,se=>selectedStatusOnPreviously.find(sep=>sep._id===se._id) ? se.localOrder : Number.MAX_SAFE_INTEGER);
-        console.log("RECALCULATING onNodeIndexChange",newNodeIndex);
         treeDispatcher({type: "update_nodeIndex", nodeIndex: newNodeIndex});
         onSelect && onSelect(selected, changed);
     },[treeState.nodeIndex]);
-
-    //const toggleExpandBranch = (node) => setNodeIndex(produce(nodeIndex, nodeIndex => {
-    //    nodeIndex[node.id].expanded = !nodeIndex[node.id].expanded
-    //}))
 
     const toggleCritical = useCallback(()=> {
         const newFilters = {...systemElementsIsolationFilters};

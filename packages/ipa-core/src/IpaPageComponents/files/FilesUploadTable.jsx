@@ -1,9 +1,8 @@
-import React, {useEffect} from "react";
-import {Star} from "./misc";
+import React from "react";
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import {RadioButtonChecked as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from '@material-ui/icons';
 import mime from "mime-types";
-import {FileStatus, getBlob, isComplete, isInProgress, isPending} from "../../redux/slices/files";
+import {getBlob, isComplete, isInProgress, isPending} from "../../redux/slices/files";
 import {formatBytes} from "../../IpaUtils/bytesunit";
 
 const iconStyle = {fontSize: 18};

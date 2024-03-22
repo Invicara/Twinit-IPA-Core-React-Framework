@@ -3,7 +3,6 @@ import React from "react";
 import FileHelpers from '../../IpaUtils/FileHelpers';
 import _ from "lodash";
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
-import ScriptCache from "../../IpaUtils/script-cache";
 import withEntityStore from './WithEntityStore';
 
 //TODO Most of this logic (probably all) should be gradually moved to thunks and the reducer in the entities store
@@ -14,7 +13,6 @@ const withEntitySearch = WrappedComponent => {
             let queryParamsPerEntityType = this.initQueryParamsValues(props,props.currentEntityType.singular);
             this.state = {
                 isPageLoading: true,
-                //groups: _.get(this, 'props.queryParams.groups'),
                 //when entity changes, we will switch between "queries", kind of
                 queryParamsPerEntityType
             };
@@ -27,8 +25,6 @@ const withEntitySearch = WrappedComponent => {
             const merged = {...current, ...queryParamsPartial};
             let queryParamsPerEntityType = {...this.state.queryParamsPerEntityType, [entityType] : merged}
             this.setState({queryParamsPerEntityType}, callback || _.noop);
-            //no need to send that up to state, as selectionInfo.queryParams will have all the info
-            //this.props.setQueryParams(queryParamsPartial);
         }
 
         async componentDidMount() {
@@ -182,23 +178,11 @@ const withEntitySearch = WrappedComponent => {
                         senderEntityType: this.props.entitySingular,
                         entityType: (type || this.props.entitySingular)
                     }
-                    /* domi: commenting this out - not needed - we can do that below without triggering async state update
-                    this.setQueryParams(emptyQueryParams);
-                    */
 
                     //overwrite GenericPage current queryParams by sending empty ones
                     selectionInfo = {entityType, selectedEntities: selectedIds, queryParams : emptyQueryParams}
 
                 } else {
-
-                    /* domi: commenting this out -
-                    1. we can do that below without triggering async state update
-                    2. also this might be wrong now as type can be now an array
-                    this.setQueryParams({
-                       entityType: this.getCurrentConfig().type.singular,
-                       senderEntityType: this.getCurrentConfig().type.singular
-                    })
-                    */
                     selectionInfo['senderEntityType'] = this.props.entitySingular;
                     selectionInfo['queryParams'] = {...this.state.queryParamsPerEntityType[this.props.entitySingular], selector : undefined};
                     selectionInfo['entityType'] = ((typeof type === 'string' ? type : type?.singular) || this.props.entitySingular);
@@ -222,17 +206,21 @@ const withEntitySearch = WrappedComponent => {
                 let docIds = []
                 entityInfo.original.forEach(d => {
                   const _fileId = d._fileId
-                  d.versions.forEach(v => {
-                    const _fileVersionId = v._fileVersionId
-                    docIds.push({ _fileId, _fileVersionId })})
+                if(d.versions) {
+                    const versionLength = d.versions.length
+                    const newestVersion = d.versions[versionLength - 1]
+                    const _fileVersionId = newestVersion._fileVersionId
+                    docIds.push({ _fileId, _fileVersionId })
+                } else {
+                    docIds.push({_fileId})
+                }
                 })
-                docIds.forEach(doc => {
-                  let docIds = [doc]
-                  let query = {
+
+                let query = {
                     entityType: 'file',
                     queryParams: { docIds }
                   }
-                this.props.onNavigate('documentviewer', query, { newTab: true })})
+                  this.props.onNavigate('documentviewer', query, { newTab: true })
                 return {success: true};
             } else {
                 let scriptName = actions[action].script;
@@ -249,7 +237,9 @@ const withEntitySearch = WrappedComponent => {
                 console.error(reason);
                 return Promise.reject();
             }
-            await this.props.fetchEntities(script, selector, value, runScriptOptions);
+            // ObservabilityView is setting the selected entity (Redux entity slice -> setSelectedEntity)
+            // fetchEntities is then calling setSelectedEntity and passing through an empty array and resetting the selected entity
+            if(this.props.handler.pageComponent !== "observability/ObservabilityView") await this.props.fetchEntities(script, selector, value, runScriptOptions);
             //in case of initial query triggered by this page, this callback will still use old query
             if(onInitialFetchComplete)onInitialFetchComplete();
             const fetchedQuery = {

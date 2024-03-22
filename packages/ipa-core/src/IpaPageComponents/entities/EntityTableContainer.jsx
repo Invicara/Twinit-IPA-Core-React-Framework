@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useEffect, useCallback, useRef} from "react";
+import React, {useMemo, useEffect, useCallback, useRef} from "react";
 import clsx from "clsx";
 import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
@@ -7,33 +7,18 @@ import './EntityTable.scss'
 import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
 import {isValidUrl} from '../../IpaUtils/helpers'
 import {
-    Box, InputLabel, Table, TableBody,
+    InputLabel, Table, TableBody,
     TableCell,
     TableContainer,
-    TableHead, TablePagination,
+    TablePagination,
     TableRow,
-    TableSortLabel,
     Toolbar,
     Typography
 } from "@material-ui/core";
 import useSortEntities, {usePaginateEntities} from "./sortEntities";
 import {EntityTableHead} from "./EntityTableHead";
-//import { visuallyHidden } from '@material-ui/utils';
 import PropTypes from 'prop-types';
 import produce from "immer";
-import pagination from "react-table/lib/pagination";
-
-const visuallyHidden = {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: '1px',
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    whiteSpace: 'nowrap',
-    width: '1px',
-}
 
 const EntityTableToolbar = (props) => {
     const { numSelected, entityPlural, entitySingular } = props;
@@ -274,11 +259,6 @@ export const EntityTableContainer = ({config, actions, rowActions, context, enti
     const handleChangeRowsPerPage = (event) => {
         paginateTableBy({pageSize: parseInt(event.target.value, 10)});
     };
-
-    const [dense, setDense] = useState(false);
-    //const handleChangeDense = (event) => {
-        //setDense(event.target.checked);
-    //};
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = rowsPerPage - count % rowsPerPage;

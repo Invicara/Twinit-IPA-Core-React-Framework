@@ -75,7 +75,6 @@ class IpaMainLayout extends React.Component {
         this.authService = new AuthService({        //Added authService for rotated refresh token
           clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,
           location: window.location,
-          //provider: process.env.REACT_APP_PROVIDER || 'provider',
           redirectUri: endPointConfig.baseRoot,
           scopes: ["read write"],
           tokenEndpoint:

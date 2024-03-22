@@ -14,9 +14,7 @@ export const FILTER2OP = {
     "greater than": AdvSearchQueryBuilder.Operators.greaterThan,
     "greater than or equal to": AdvSearchQueryBuilder.Operators.greaterThanEquals,
     "between": AdvSearchQueryBuilder.Operators.inRange,
-    "outside of": AdvSearchQueryBuilder.Operators.outOfRange,
-    // "in": ,
-    // "is not in": ,
+    "outside of": AdvSearchQueryBuilder.Operators.outOfRange
 }
 
 const isTextOperator = (fop) => {

@@ -1,20 +1,3 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React from 'react';
 import * as PropTypes from 'prop-types';
 import {Route, Redirect} from 'react-router-dom';
@@ -55,7 +38,7 @@ class AppProvider extends React.Component {
 
     //this is a workaround for a platform issue
     //platform needs the url to have a forward slash prior to the ? for query params
-    //so if the baseroot does nto already have one we add it here
+    //so if the baseroot does not already have one we add it here
     let authRoot = endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot
     if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/'
 
@@ -114,7 +97,6 @@ class AppProvider extends React.Component {
     this.state.actions.restartApp();
   }
   handleClick() {
-    console.log("here");
     this.setState((prev) => {
       return { ...prev, isshowProjectPickerModal: true };
     });
@@ -208,7 +190,7 @@ class AppProvider extends React.Component {
 
     // end
 
-    //make sure we always shwo the toolbar in case open3DModelPopupMax above hide it
+    //make sure we always show the toolbar in case open3DModelPopupMax above hide it
     let toolbar = document.getElementsByClassName('model-viewer-toolbar');
     toolbar[0].style.display = 'block';
   }
@@ -305,7 +287,6 @@ class AppProvider extends React.Component {
           const refreshToken = tokens && Object.keys(tokens).length > 0 ? tokens.refresh_token : '';
           if (refreshToken) {
             let updatedToken = await this.props.authService.fetchToken(refreshToken, true);   //Fetch new token using refresh token
-            console.log("updatedToken", updatedToken)
             if (updatedToken) {
               let user = await IafSession.setAuthToken(updatedToken.access_token,undefined);    //Updated token in session storage
               this.setState({token: updatedToken.access_token})         //Set updated token 
@@ -318,19 +299,31 @@ class AppProvider extends React.Component {
 
   async initialize(loadConfigFromCache = true, showProjectPicker = true) {
     const self = this;
-    let  sessionManage = sessionStorage.manage;
+
+    let sessionManage = sessionStorage.getItem('manage');
+
+    if (sessionManage) {
+      sessionManage = JSON.parse(sessionManage);
+    }
+
     let token, user;
     let inviteId;
-    sessionManage = this.props.authService.getAuthTokens();         //Storing token in session
+
+    const auth_token = this.props.authService.getAuthTokens();
+
+    if (auth_token && Object.keys(auth_token).length !== 0) {
+      sessionManage = auth_token;
+    };
+
     if (sessionManage && Object.keys(sessionManage).length === 0) {
       sessionManage = undefined;
     }
+
     if (this.props.authService.isPending()) {
       return;
     }
 
     store.dispatch({type: "PROJECT_SWITCHED"})
-    //console.log(store.getState())
 
     //check for invites. If so - redirect to signup
     if (window.location.search) {
@@ -344,9 +337,7 @@ class AppProvider extends React.Component {
     if (window.location.hash) {
       const temp_token = IafSession.extractToken(window.location.hash);
       if (temp_token) {
-        console.log("before setSessionData 1")
         user = await IafSession.setSessionData(temp_token);
-        console.log("after setSessionData 1", user)
         if (user !== undefined) {
           token = temp_token;
         }
@@ -356,14 +347,14 @@ class AppProvider extends React.Component {
     // if we don't have a token yet and we have something in the session then
     // check that the token in the session is valid
     if (token === undefined && sessionManage && sessionManage !== undefined) {
-      const temp_token = sessionManage.access_token;
+      const temp_token = sessionManage.token || sessionManage.access_token;
       try {
         user = await IafSession.setSessionData(temp_token);
         if (user !== undefined) {
           token = temp_token;
         }
       } catch(e) {
-        console.log("Session token expired")
+        console.error("Session token expired")
       }
 
     }
@@ -523,7 +514,7 @@ class AppProvider extends React.Component {
                     />) }
                 />);
         } catch (error) {
-          console.log(error);
+          console.error(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
         }
       }
@@ -567,9 +558,6 @@ class AppProvider extends React.Component {
 
       } else return false
     }
-
-    //console.log(config, routes)
-    //console.log("APP PROVIDER WILL SET USER CONFIG",{...config});
 
     //clear routes immediately so that the UI removes the last project's routes
     this.setState({
@@ -726,7 +714,6 @@ class AppProvider extends React.Component {
 
 
   render() {
-    //console.log("APP PROVIDER RE-RENDERS");
     const context = {...this.state};
     return <AppContext.Provider value={context}>{this.props.children}</AppContext.Provider>
   }
@@ -738,7 +725,6 @@ export const addScriptFunction = (fn) => {
   fnWrapper[fnName] = {
     operate: (a,b,c) => fn(expression.operate(a,b,c))
   }
-  console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
   expression.use(fnWrapper)
 }
 
@@ -768,19 +754,16 @@ async function calculateRoutes(config, ipaConfig) {
     try {
       component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
       component = asIpaPage(component, pageComponentProps)
-      console.log(pageComponent + ' loaded from application')
     } catch(e) {
 
       component = InternalPages[pageComponent] || null
 
       if (component) {
         component = asIpaPage(component, pageComponentProps)
-        console.log(pageComponent + ' loaded from framework')
       }
       else {
         console.error(e)
         console.error("can't find page component: ", pageComponent)
-        console.log("Skipping", pageComponent)
         component = null
       }
     }
@@ -792,7 +775,6 @@ async function calculateRoutes(config, ipaConfig) {
   function addRoute(handlerName, handler, addPage, pathPrefix, pageGroup) {
     if (!handler.pageComponent) {
       console.error("This version of AppProvider only supports handlers with a pageComponent")
-      console.log("Skipping", handler)
       return
     }
 

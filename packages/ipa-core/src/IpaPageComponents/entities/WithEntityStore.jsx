@@ -55,6 +55,8 @@ const withEntityStore = (WrappedComponent) => {
         }
 
         componentWillMount(){
+             // Temporarily adding this in to reset any selected Entities when a user moves away from the navigator until we have clearer requirements on how the navigator should operate.
+            storeCacheMap['/navigator'] = {}
             this.alignEntityStoreToHandlerEntity();
         }
 
@@ -83,7 +85,10 @@ const withEntityStore = (WrappedComponent) => {
             //TODO Once filters are moved to store, refactor the queryParam logic so that it can identify when URL applied
             // filters and entity match the current ones in the store and this cleaning (and the later refetching) of the entities
             // can be removed for being unnecessary and only done when needed
-            // this.props.resetEntities();
+            if(!this.props.NavigatorSource) {
+                this.props.resetFiltering()
+                this.props.resetEntities()
+            }
         }
 
         deriveInitialEntityType = (queryParams) => {
@@ -145,8 +150,6 @@ const withEntityStore = (WrappedComponent) => {
                 console.error(`tried to save store for wrong entity type: ${this.props.currentEntityType}`)
                 return;
             }
-            //const storeCacheMap = {...storeCacheMap, [this.props.currentEntityType.singular] : this.props.storeSnapshot};
-            //this.setState({storeCacheMap : storeCacheMap});
             const cacheForHandler = storeCacheMap[this.handerPath] || {};
             cacheForHandler[this.props.currentEntityType.singular] = this.props.storeSnapshot;
             storeCacheMap[this.handerPath]=cacheForHandler;
@@ -161,10 +164,9 @@ const withEntityStore = (WrappedComponent) => {
             {...wrappedProps}/>
 
         render() {
-            const wrappedProps = {...this.props/*, ...this.state*/}
+            const wrappedProps = {...this.props}
             const derivedEntityType = this.deriveInitialEntityType(this.props.queryParams);
             const storeHasCorrectEntity = this?.props?.currentEntityType?.singular == derivedEntityType?.singular;
-            //const storeHasAllowedEntity = _.includes(this.props.allowedEntityTypes, this?.props?.currentEntityType?.singular)
             return (storeHasCorrectEntity) ? this.getWrappedComponent(wrappedProps) : null;
         }
     }

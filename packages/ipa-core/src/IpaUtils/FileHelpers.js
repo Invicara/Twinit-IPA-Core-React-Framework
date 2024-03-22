@@ -1,7 +1,6 @@
 
 import { IafFileSvc, IafFile, IafProj, IafSession } from '@invicara/platform-api';
 import {IafScriptEngine} from '@invicara/iaf-script-engine';
-import { file } from 'jszip';
 import _ from 'lodash';
 
 var JSZip = require("jszip");

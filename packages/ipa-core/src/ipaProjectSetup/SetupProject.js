@@ -12,7 +12,6 @@ import { IafDataSource } from "@invicara/platform-api";
 export default class SetUpProject extends React.Component {
   constructor(props) {
     super(props);
-    console.log("endPointConfig", endPointConfig);
     this.state = {
       createdProject: null,
       project: {
@@ -51,12 +50,12 @@ export default class SetUpProject extends React.Component {
             await IafProj.delete(projects[i]);
           }
           else {
-            console.log("Cannot delete invited project")
+            console.error("Cannot delete invited project")
           }
         }
       }
     }catch (error){
-    console.log("Some items being deleted in the old project do not exist.")
+    console.error("Some items being deleted in the old project do not exist.")
     }
     this.setState({ isDeleting: false });
   }
@@ -122,7 +121,6 @@ export default class SetUpProject extends React.Component {
       fileObj: myZipFile,
     };
     let scriptFiles = await UiUtils.IafLocalFile._loadZipFile(zipFileObj); //load all files using scriptFiles
-    console.log("scriptFiles", scriptFiles);
 
     let scripts = [];
     const scriptNames = [

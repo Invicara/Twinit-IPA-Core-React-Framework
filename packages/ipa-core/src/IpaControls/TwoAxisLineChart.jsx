@@ -33,7 +33,6 @@ const TwoAxisLineChart = ({data, line1, line2, style}) => {
   useEffect(() => {
 
     /* 
-     * this is dumb but we have to do it this way as far as I can tell
      * if we simply apply these styles on graphContainer from the start the charts
      * do not correctly overlay each other. One chart will always be slightly
      * wider than the other. However if we let the two charts render, then update

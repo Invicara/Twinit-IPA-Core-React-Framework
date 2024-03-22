@@ -1,4 +1,4 @@
-import React, {useEffect,useState,useCallback,useReducer,useRef} from "react";
+import React, {useEffect,useCallback,useReducer,useRef} from "react";
 
 import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel";
 import _ from 'lodash'
@@ -86,7 +86,6 @@ const FancyTreeControl = ({
 
 
   if (!tree) return null
-  //let treeDOM
 
   const expandBranch = (e, nodeName, nodeValue) => {
     let el = e.target
@@ -155,7 +154,7 @@ const FancyTreeControl = ({
     if (Array.isArray(nodes)) {
       children = nodes.map((n) => {
         let cn = "leaf"
-        if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
+        if (selectedIds.includes(n._id) || selectedNodeNames.includes(n.name)) cn += " selected";
         if (expandedNodeNames.includes(n.name)) cn += " expanded"
         if (partialNodeNames.includes(n.name)) cn += " partial"
         return (
@@ -189,7 +188,7 @@ const FancyTreeControl = ({
   }
 
   return (
-    <div className={"fancy-tree"} ref={treeDOMRef}/*ref={el=>treeDOM=el}*/>
+    <div className={"fancy-tree"} ref={treeDOMRef}>
       {onSelectAll ? <div className="fancy-tree__count">
         <span>{`Refined: ${selectedIds.length}`}</span>
         {!allSelected ? <span className="fancy-tree__count--action" onClick={onSelectAllAction}>Select All</span> : (onSelectNoneAction ? <span className="fancy-tree__count--action" onClick={onSelectNoneAction}>Deselect All</span> : undefined) }

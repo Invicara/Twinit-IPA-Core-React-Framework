@@ -3,7 +3,6 @@ import FileHelpers from '../../IpaUtils/FileHelpers'
 import withPageNavigation from '../withPageNavigation'
 import DocumentTable from './DocumentTable'
 import { useEffect } from 'react'
-import { file } from 'jszip'
 
 let StandaloneDocumentTable = props => {
   const [sorting, setSorting] = useState(props.config.defaultSort)
@@ -62,10 +61,6 @@ let StandaloneDocumentTable = props => {
 
     return document
   }
-
-  // const documentsData = props.data.map(transformFileAttributesToProperties)
-
- 
 
   let actions = [
     {

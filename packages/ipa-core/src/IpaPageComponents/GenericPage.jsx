@@ -1,24 +1,6 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2019] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React from 'react';
 import qs from 'qs';
 import _ from 'lodash'
-import { Redirect } from 'react-router-dom'
 import * as PropTypes from "prop-types";
 import { PopoverMenuView } from "../IpaLayouts/PopoverMenuView";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
@@ -53,9 +35,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       this.handleAction = this.handleAction.bind(this);
       this.onLoadComplete = this.onLoadComplete.bind(this);
       this.onNavigated = this.onNavigated.bind(this);
-
-
-      //console.log("GENERIC PAGE constructor props.userConfig",{...props.userConfig});
     }
 
     async componentDidMount() {
@@ -90,7 +69,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       this.setState({ isLoading: true, isPageLoading: true });
 
       let { handlers } = this.props.userConfig;
-      //console.log("GENERIC PAGE PROPS",this.props);
+
       let handler = undefined;
       try {
         handler = await produce(this.props.actions.getCurrentHandler(), async handler => {
@@ -182,7 +161,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
                   this.props.handlePageHandlerLoadError(error);
                 } else {
                   //else throw error and break handler loading (note errors in lifecycle components will be swallowed)
-                  console.log(error);
+                  console.error(error);
                   throw error;
                 }
               }
@@ -215,7 +194,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         console.error("Error generating handler");
         console.error(e);
       }
-      //console.log("HANDLER PREPARED",handler);
       this.setState({ isLoading: false, handler });
     }
 
@@ -307,7 +285,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
         newPath = userConfig.handlers[destinationHandler].path + '?' + qs.stringify(query);
       }
 
-      // console.log('url sizes: ', urlSizeUtf8Chrome, urlSizeUtf16Chrome, urlLengthEdge);
       if (newPath.length > URL_LENGTH_WARNING)
         console.warn('url length is very large and navigation may not work!');
 
@@ -405,10 +382,7 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       const queryParams = this.parseQueryParams(this.props.location.search, this.isSelectionInfoValid)
       if (!_.isEqual(queryParams, this.state.queryParams)) {
         this.setState({ queryParams });
-      } else {
-        // this.setState({ queryParams: {} }); //commenting this as is breaking queryparams for document viewer
       }
-
     }
 
     toolbar = () => {
