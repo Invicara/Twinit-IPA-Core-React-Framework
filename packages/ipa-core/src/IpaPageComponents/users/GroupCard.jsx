@@ -5,7 +5,7 @@ import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
 
 import './UserGroupView.scss'
 
-export const GroupCard  = ({group, user, disabled=false, selectable=false, isSelected=false, onClick, showActions=false, canRemoveUser, onRemoveUser}) => {
+export const GroupCard  = ({group, disabled=false, selectable=false, isSelected=false, onClick, showActions=false, canRemoveUser, onRemoveUser}) => {
 
     const [isDeleting, setIsDeleting] = useState(false)
     const [actionText, setActionText] = useState('')

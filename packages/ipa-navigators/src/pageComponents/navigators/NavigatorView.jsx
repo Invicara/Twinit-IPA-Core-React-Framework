@@ -1,20 +1,3 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React, {useState, useMemo, useEffect, useRef, useCallback, useContext} from "react";
 import PropTypes from "prop-types";
 
@@ -33,11 +16,9 @@ import * as Systems from "../../redux/slices/systems";
 import NavigatorDetailBottomPanel from "../../navigators/NavigatorDetailBottomPanel";
 import {withEntityStore} from "@invicara/ipa-core/modules/IpaPageComponents";
 import {
-    selectSystemElementsFromModelIds,
     selectSystemElementsFromModels,
-    setSelectedSystemElementEntitiesFromIds,
     clearAll,
-    setFocusedSystemElementEntity, focusedSystemElementEntity, selectFilteredIsolatedSystemElementEntityIds,
+    setFocusedSystemElementEntity
 } from "../../redux/slices/systems";
 
 
@@ -59,7 +40,6 @@ const NavigatorView =  (props) => {
     const searchEntityType = useSelector(Entities.getCurrentEntityType);
 
     const [viewerSelectedEntitiesBySearch, setViewerSelectedEntitiesBySearch] = useState([]);
-    //const [viewerSelectedEntitiesBySystems, setViewerSelectedEntitiesBySystems] = useState([]);
 
     const isolatedEntitiesBySearch = useSelector(Entities.getIsolatedEntities);
     const allEntitiesBySearch = useSelector(Entities.getAllCurrentEntities);
@@ -135,10 +115,8 @@ const NavigatorView =  (props) => {
         initialViewModeRender.current = false;
     },[viewerMode]);
 
-    //const initialDrawerState = useRef(true);
     const prev_allEntitiesBySearch = useRef(allEntitiesBySearch);
     useEffect(()=>{
-        console.log("recalculating drawers: ",selectedEntitiesBySearch);
         let shouldSearchDrawerBeOpened = isSearchDrawerOpen; //|| initialDrawerState.current;
         let shouldFilterDrawerBeOpened = isFilterDrawerOpen;
         let shouldDataDrawerBeOpened = isDataDrawerOpen;
@@ -210,14 +188,6 @@ const NavigatorView =  (props) => {
         if(detailEntity._id !== focusedEntityBySystem?._id) {
             dispatch(setFocusedSystemElementEntity(detailEntity));
         }
-        /*
-        const currentSelectedModelViewerIds = selectedEntitiesBySystem && selectedEntitiesBySystem.reduce((acc,e) => acc.concat(e.modelViewerIds),[]).filter(id => id !== undefined);
-
-        const newModelViewerIds = detailEntity?.modelViewerIds.filter(id=>!currentSelectedModelViewerIds.includes(id))
-        if(!_.isEmpty(newModelViewerIds)){
-            dispatch(setSelectedSystemElementEntitiesFromIds(selectedEntitiesBySystem.map(e=>e._id).concat([detailEntity._id]),[detailEntity._id]));
-        }
-         */
     }
     /*REACT TO ENTITY CHANGED IN BOTTOM PANEL*/
     const onBottomPanelItemChanged = (detail, detailType) => {

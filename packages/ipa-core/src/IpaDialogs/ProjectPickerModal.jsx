@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import {IafProj, IafUserGroup, IafHelper, IafSession, IafPassSvc} from '@invicara/platform-api';
+import {IafProj, IafUserGroup, IafSession, IafPassSvc} from '@invicara/platform-api';
 import _ from 'lodash';
 import GenericModal from "./GenericModal";
 import SimpleTable from "../IpaControls/SimpleTable"
@@ -152,9 +152,7 @@ export default class ProjectPickerModal extends React.Component {
       let projectid, usergroupid;
       if (!this.props.appContextProps.selectedItems.selectedProject || !myUserGroups[this.props.appContextProps.selectedItems.selectedProject._id]){
           IafSession.setSessionStorage('project', {_namespaces: _.get(projects, '0._namespaces')});
-          //res = await this.checkUserConfigs(projects[0]);
           projectid = myProjects[0] ? myProjects[0]._id : null;
-          //usergroupid = res.selectedUserGroupId;
           usergroupid = projectid ? myUserGroups[myProjects[0]._id][0]._id : null
       }
       else {
@@ -166,7 +164,6 @@ export default class ProjectPickerModal extends React.Component {
           }else if (this.props.appContextProps.selectedItems.selectedUserGroupId)
             usergroupid = this.props.appContextProps.selectedItems.selectedUserGroupId;
           else
-            //usergroupid = res.selectedUserGroupId;
             usergroupid = myUserGroups[myProjects[0]._id][0]._id
       }
 
@@ -257,7 +254,6 @@ export default class ProjectPickerModal extends React.Component {
   onProjectPicked = async (selectedOption) => {
     const projectId = selectedOption.value;
     this.setState({showLoadButton: false, projectUserGroups:[], userGroupOptions: []});
-    const {projects} = this.state;
 
     let projectUserGroups = this.state.appUserGroups[projectId]
     let selectedUserGroupId = this.state.appUserGroups[projectId][0]._id
@@ -316,7 +312,7 @@ export default class ProjectPickerModal extends React.Component {
     let inviteStatus = {...this.state.inviteStatus}
     inviteStatus[invite._id] = "Rejecting..."
     this.setState({inviteStatus})
-    // console.log(invite)
+
     IafUserGroup.rejectInvite(invite._usergroup, invite._id)
       .then(r => this.updateInviteStatus(invite, "Rejected"))
       .catch(e => this.inviteFailed(e))
@@ -337,7 +333,7 @@ export default class ProjectPickerModal extends React.Component {
   }
 
   render() {
-    const {appContextProps, onCancel} = this.props;
+    const {onCancel} = this.props;
     const {projects, remember, projectUserGroups, showLoadButton, invites} = this.state;
     const loadBtn = showLoadButton ? (<div>
           <div className='custom-control custom-switch' style={{marginTop: '15px', zIndex: '0'}}>
@@ -452,30 +448,6 @@ export default class ProjectPickerModal extends React.Component {
             ) : (
               <></>
             )}
-
-             {/* {this.props.referenceAppConfig?.refApp &&
-              !showLoadButton &&
-              !this.state.loadingModal && (
-                <>
-                  {" "}
-                  <button
-                    onClick={() => {
-                      if (!this.state.user?.has_access) {
-                        return;
-                      }
-                      this.props.referenceAppCreateProject();
-                    }}
-                    className={
-                      this.state.user?.has_access ? "setup" : "disabled"
-                    }
-                    disabled={!this.state.user?.has_access}
-                  >
-                    Create Project
-                  </button>
-                </>
-              )} */}
-
-
             <div>
               {currentInvites && currentInvites.length > 0 &&
                 <div>

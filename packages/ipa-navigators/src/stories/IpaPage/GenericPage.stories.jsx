@@ -1,18 +1,13 @@
-import React, {useState,useEffect} from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import GenericPage from "@invicara/ipa-core/modules/IpaPageComponents";
 import {decorateWithMockAppProvider} from "@invicara/ipa-core/modules/IpaMock";
-import {IafProj, IafScriptEngine, IafFetch} from "@invicara/platform-api";
+import {IafProj, IafFetch} from "@invicara/platform-api";
 import { Provider } from 'react-keep-alive';
 import RenderHandlerByPath from "../mock/RenderRoute";
 import _ from "lodash";
 
 import sampleUserConfig from "./sample_user_config_Obayashi.json";
-import sampleSelectedItems from "./sample_selectedItems.json";
 import sampleIpaConfig from "../samples/strorybook_ipa_config2.json";
-import {Entities} from "@invicara/ipa-core/modules/IpaRedux";
-import {useDispatch} from "react-redux";
-import {ScriptHelper} from "@invicara/ipa-core/modules/IpaUtils";
 
 
 const ipaConfigStoryOverwrite = {

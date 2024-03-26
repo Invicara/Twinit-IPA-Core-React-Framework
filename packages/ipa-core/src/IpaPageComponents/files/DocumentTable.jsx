@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import SimpleSelect from '../../IpaControls/SimpleSelect';
 import { PinkCheckbox } from "../../IpaControls/Checkboxes";
 import { Tooltip } from "@material-ui/core";
 import './DocumentTable.scss'
-import _, { filter } from 'lodash'
+import _ from 'lodash'
 import * as modal from '../../redux/slices/modal'
 import { useStore } from "react-redux";
 import ReorderColumnsModal from './ReorderColumnsModal'
 import moment from 'moment';
-import { ControlPointSharp } from '@material-ui/icons';
 
 const DocumentTable = props => {
   const initialSelectedDocuments = []

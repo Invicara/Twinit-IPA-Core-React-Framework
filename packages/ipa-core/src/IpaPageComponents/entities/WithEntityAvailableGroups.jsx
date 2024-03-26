@@ -1,10 +1,5 @@
 import React from "react";
-
-import FileHelpers from '../../IpaUtils/FileHelpers';
 import _ from "lodash";
-import ScriptHelper from "../../IpaUtils/ScriptHelper";
-import ScriptCache from "../../IpaUtils/script-cache";
-import withEntityStore from './WithEntityStore';
 
 //TODO Most of this logic (probably all) should be gradually moved to thunks and the reducer in the entities store
 const withEntityAvailableGroups = WrappedComponent => {

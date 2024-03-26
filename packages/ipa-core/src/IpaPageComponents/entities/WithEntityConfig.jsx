@@ -1,11 +1,9 @@
 import React from "react";
 import _ from "lodash";
 import ScriptCache from "../../IpaUtils/script-cache";
-import {AppContext} from "../../appContext";
 import {withAppContext} from "../../appContext";
 import {GenericPageContext} from "../genericPageContext";
 import produce from "immer";
-import {func} from "prop-types";
 
 const withEntityConfig = WrappedComponent => {
     const EntityConfigHOC =  class extends React.Component {
@@ -34,7 +32,6 @@ const withEntityConfig = WrappedComponent => {
         //keeping this method name to avoid too much refactoring :)
         getPerEntityConfig =  _.memoize((currentConfig) => () => this._getPerEntityConfig(currentConfig) );
         _getPerEntityConfig =  _.memoize((currentConfig) => {
-            //console.log("IN ENTITY CONFIG PREP",currentConfig);
             if (this._allowsMultipleEntityTypes(currentConfig)) {
                 const {entityData = {}, entitySelectionPanel = {}, type, selectBy = {}, data, tableView, actions,  panels = {}} = currentConfig;
 
@@ -56,7 +53,6 @@ const withEntityConfig = WrappedComponent => {
                 let result = _.mapValues(consolidatedConfig, (entityConfig, entityName) =>
                     ({...entityConfig, ...currentConfig.type.find(t => t.singular === entityName)})
                 );
-                //console.log("IN ENTITY CONFIG PREP result",result);
                 return result;
             } else {
                 const result = produce(currentConfig, function (currentConfig){
@@ -77,7 +73,6 @@ const withEntityConfig = WrappedComponent => {
                             plural: type.plural
                     }}
                 });
-                //console.log("IN ENTITY CONFIG PREP result2",result);
                 return result;
             }
         });
@@ -85,7 +80,6 @@ const withEntityConfig = WrappedComponent => {
 
         getEntityExtendedDataFetcher = (extendedDataConfig) => {
             if (!extendedDataConfig) {
-                //console.error("Unconfigured extended data");
                 return () => undefined;
             }
             return async (dataType, entityInfo) => {

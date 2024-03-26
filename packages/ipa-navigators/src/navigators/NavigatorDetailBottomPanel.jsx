@@ -1,21 +1,4 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
-import React, {useEffect, useState, useCallback, useMemo, useContext, useRef} from "react";
+import React, {useEffect, useState, useCallback, useMemo, useRef} from "react";
 import interact from "interactjs";
 import _ from 'lodash'
 import clsx from "clsx";
@@ -24,11 +7,10 @@ import NavigatorSource from "./NavigatorSource";
 import EntityDetailBottomPanel from "./EntityDetailBottomPanel";
 import SystemDetailBottomPanel from "./SystemDetailBottomPanel";
 import EntityDetailBottomPanelTitle from "./EntityDetailBottomPanelTitle";
-import {Entities} from "@invicara/ipa-core/modules/IpaRedux";
 import EntityClearSearchButton from "./EntityClearSearchButton";
 import sortSystemElementIdsAsDisplayedInTree, {getElementId} from "./sortSystemElements";
 import { SimpleTextReducer } from "@invicara/ipa-core/modules/IpaControls";
-import {applyFilters, getFilteredEntitiesBy} from "@invicara/ipa-core/modules/IpaUtils";
+import {getFilteredEntitiesBy} from "@invicara/ipa-core/modules/IpaUtils";
 import {getFilteredSystemElementEntitiesBy} from "../redux/slices/systems";
 
 const NavigatorDetailBottomPanel = ({activeItemId, itemType, items, defaultSort, overrideSort,
@@ -53,7 +35,6 @@ const NavigatorDetailBottomPanel = ({activeItemId, itemType, items, defaultSort,
     const sortedItems = useMemo(() => {
         if(viewerMode===NavigatorSource.SYSTEM) {
             const {sortedSystemElementIds} = sortSystemElementIdsAsDisplayedInTree(items, getElementId);
-            console.log("sortedIdsForSystemTree", sortedSystemElementIds);
             return sortedSystemElementIds.map(id=>items.find(item=>getElementId(item)===id));
         } else {
             return _.orderBy(items, currentSort.valueAccessor, currentSort.order);

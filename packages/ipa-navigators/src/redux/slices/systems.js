@@ -4,9 +4,8 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
-import {IafItemSvc, IafScriptEngine} from "@invicara/platform-api";
 import _ from "lodash";
-import {ScriptCache, ScriptHelper, applyFilters} from "@invicara/ipa-core/modules/IpaUtils";
+import {ScriptHelper, applyFilters} from "@invicara/ipa-core/modules/IpaUtils";
 
 export const VIEW_SYSTEMS_KEY = 'viewSystems';
 export const systemsAdapter = createEntityAdapter({
@@ -21,10 +20,8 @@ const interceptFetchError = function(errorResult){
     console.error("Fetch failed",errorResult);
 }
 const getSystemIdsForEntityNextFetchPromise = (scriptName, entityInfo, entityType /*Asset or Space or Model Element*/) =>
-    //ScriptCache.runScript("getSystemIdsForEntity", {entityInfo, entityType}, undefined);
     ScriptHelper.executeScript(scriptName, {entityInfo, entityType, modelInfo: {id: entityInfo[0].modelViewerIds[0]}}, undefined);
 const getSystemsAsEntitiesNextFetchPromise = (scriptName, systemIds, entityInfo) =>
-    //ScriptCache.runScript("getSystemsAsEntities", {systemIds, entityInfo}, undefined);
     ScriptHelper.executeScript(scriptName, {systemIds, entityInfo}, undefined);
 const getAlertsForEntityDataMapNextFetchPromise = (scriptName, entityDataMap) =>
     ScriptHelper.executeScript(scriptName, {entityDataMap}, undefined);
@@ -45,23 +42,7 @@ export const getSystemElementFilterableProperty = (a, p) => {
     }
 };
 export const getFilteredSystemElementEntitiesBy = (entities, filters) => applyFilters(entities, filters, getSystemElementFilterableProperty);
-/**
- * Export an effect using createAsyncThunk from
- * the Redux Toolkit: https://redux-toolkit.js.org/api/createAsyncThunk
- *
- * e.g.
- * ```
- * import React, { useEffect } from 'react';
- * import { useDispatch } from 'react-redux';
- *
- * // ...
- *
- * const dispatch = useDispatch();
- * useEffect(() => {
- *   dispatch(fetchNamedUserItem())
- * }, [dispatch]);
- * ```
- */
+
 export const fetchByEntityTypeAndId = createAsyncThunk(
   'fetchByEntityTypeAndId/fetchStatus',
   async (args, thunkAPI) => {
@@ -180,16 +161,6 @@ export const viewSystemsSlice = createSlice({
         .addCase('focusedSystemElementEntity', (state, action) => {
             const focusedSystemElementEntity = action.payload ? state.isolatedSystemElementEntities.find(e => e._id === action.payload._id) : undefined;
             state.focusedSystemElementEntity = focusedSystemElementEntity;
-            /*if(focusedSystemElementEntity){
-                const indexOfFocused = state.selectedSystemElementEntities.findIndex(selected=>selected._id===focusedSystemElementEntity._id);
-                const lastIndex = state.selectedSystemElementEntities.length-1;
-                if(indexOfFocused>-1 && indexOfFocused !== lastIndex){
-                    const copy = [...state.selectedSystemElementEntities];
-                    copy.push(copy.splice(indexOfFocused, 1)[0]);
-                    console.log("copy",copy);
-                    state.selectedSystemElementEntities = copy;
-                }
-            }*/
         })
         .addCase('clearAll', (state, action) => {
             systemsAdapter.removeAll(state);
@@ -218,24 +189,7 @@ export const viewSystemsSlice = createSlice({
  */
 const viewSystemsReducer = viewSystemsSlice.reducer;
 export default viewSystemsReducer;
-/*
- * Export action creators to be dispatched. For use with the `useDispatch` hook.
- *
- * e.g.
- * ```
- * import React, { useEffect } from 'react';
- * import { useDispatch } from 'react-redux';
- *
- * // ...
- *
- * const dispatch = useDispatch();
- * useEffect(() => {
- *   dispatch(namedUserItemActions.add({ id: 1 }))
- * }, [dispatch]);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#usedispatch
- */
+
 export const viewSystemsActions = viewSystemsReducer.actions;
 
 export const setIsolatedSystemElementEntities = (isolated) => ({
@@ -274,20 +228,6 @@ export const setIsolationFilters = (filters) => ({
     payload : filters
 })
 
-/*
- * Export selectors to query state. For use with the `useSelector` hook.
- *
- * e.g.
- * ```
- * import { useSelector } from 'react-redux';
- *
- * // ...
- *
- * const entities = useSelector(selectAllNamedUserItem);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#useselector
- */
 const { selectAll, selectEntities, selectById } = systemsAdapter.getSelectors();
 export const getSystemsSlice = (rootState) => rootState[VIEW_SYSTEMS_KEY];
 const getLoadingStatus = (slice) => slice.loadingStatus;

@@ -1,20 +1,3 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React from 'react';
 import { Provider } from 'react-redux'
 import * as PropTypes from 'prop-types';
@@ -313,7 +296,7 @@ MockAppProvider.contextTypes = {
 export default MockAppProvider;
 
 export const decorateWithMockAppProvider = (Component, ipaConfig = {}, userConfig = {}, currentPath = "/assets",sampleSelectedItems, optionalProps = {}) => {
-  //console.log("withMockAppProvider props",props)
+
   const history = createMemoryHistory({
     initialEntries: [currentPath], // The initial URLs in the history stack
     initialIndex: 0, // The starting index in the history stack

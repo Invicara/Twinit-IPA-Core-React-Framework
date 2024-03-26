@@ -1,4 +1,4 @@
-import { createSelector, createSlice} from '@reduxjs/toolkit'
+import {createSlice} from '@reduxjs/toolkit'
 
 
 let initialState = {
@@ -6,7 +6,6 @@ let initialState = {
   _lastname: "User",
   _email: "UnknownUser"
 };
-import ScriptHelper from "../../IpaUtils/ScriptHelper";
 
 const userSlice = createSlice({
     name: 'user',

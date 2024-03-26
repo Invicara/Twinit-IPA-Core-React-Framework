@@ -1,9 +1,6 @@
 import {createSelector, createSlice} from '@reduxjs/toolkit'
-//import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import {setIncludesBy} from "../../IpaUtils/compare";
 import _ from "lodash";
-//import {parseNode, parseName} from "../../IpaControls/private/tree";
-//import {queryFromFilter} from "../../IpaControls/private/filter";
 import {getEntityFromModel, getFilteredEntitiesBy} from "../../IpaUtils/entities";
 import ScriptCache from "../../IpaUtils/script-cache";
 import {ControlProvider} from "../../IpaControls/ControlProvider";
