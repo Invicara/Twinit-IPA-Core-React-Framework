@@ -1,8 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux'
 import { useArgs } from '@storybook/client-api';
-import PropTypes from 'prop-types';
-import {EntityListView} from "../../IpaPageComponents/entities/EntityListView";
 import "./EntityListView.stories.scss";
 import entitiesArray from "./sample_entities_1.json";
 import actionsObj from "./sample_actions_1.json";

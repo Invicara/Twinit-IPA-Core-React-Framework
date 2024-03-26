@@ -1,27 +1,9 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2020] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
 import React from "react"
 import * as PropTypes from "prop-types"
 import _ from 'lodash'
 
 import {StackableDrawer} from "../../IpaDialogs/StackableDrawer";
 import EnhancedFetchControl from "../../IpaControls/EnhancedFetchControl";
-import {applyFilters} from "../../IpaControls/FilterControl"
 
 import {EntityListView} from "./EntityListView";
 import EntitySelectionPanel, {TreeSelectMode} from "./EntitySelectionPanel"
@@ -29,7 +11,7 @@ import EntityDetailPanel from "./EntityDetailPanel"
 import {connect} from "react-redux";
 import {
     getAllCurrentEntities,
-    getAppliedFilters, getAppliedGroups,
+    getAppliedFilters,
     getFetchingCurrent,
     getFilteredEntities
 } from "../../redux/slices/entities";
@@ -96,7 +78,7 @@ class EntityView extends React.Component {
     }
 
     render() {
-        const {handler, entitySingular} = this.props;
+        const {handler} = this.props;
 
         if (this.props.isPageLoading) return null;
 

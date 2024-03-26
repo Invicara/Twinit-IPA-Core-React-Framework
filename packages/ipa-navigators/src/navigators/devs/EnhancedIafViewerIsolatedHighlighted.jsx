@@ -2,7 +2,7 @@ import {IafViewerDBM} from "@invicara/iaf-viewer";
 import _ from 'lodash';
 import React, {useCallback, useMemo} from 'react';
 import {bindLifecycle, KeepAlive} from "react-keep-alive";
-import {listIncludes, listEquals} from "@invicara/ipa-core/modules/IpaUtils";
+import {listIncludes} from "@invicara/ipa-core/modules/IpaUtils";
 
 class ViewerWrapper extends React.Component {
     constructor(props) {
@@ -69,7 +69,6 @@ class ViewerWrapper extends React.Component {
 
 
     selectEntities = async () => {
-        console.log("VIEWER CLICKED >>>>",this)
         const modelSelectedEntities = await this.getModelEntities();
         const modelSelectedEntitiesIds = !modelSelectedEntities ? [] : modelSelectedEntities.map(({id}) => id);
 

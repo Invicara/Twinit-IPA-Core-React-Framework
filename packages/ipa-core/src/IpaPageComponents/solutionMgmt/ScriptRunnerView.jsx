@@ -1,36 +1,8 @@
-/**
- * ****************************************************************************
- *
- * INVICARA INC CONFIDENTIAL __________________
- *
- * Copyright (C) [2012] - [2019] INVICARA INC, INVICARA Pte Ltd, INVICARA INDIA
- * PVT LTD All Rights Reserved.
- *
- * NOTICE: All information contained herein is, and remains the property of
- * Invicara Inc and its suppliers, if any. The intellectual and technical
- * concepts contained herein are proprietary to Invicara Inc and its suppliers
- * and may be covered by U.S. and Foreign Patents, patents in process, and are
- * protected by trade secret or copyright law. Dissemination of this information
- * or reproduction of this material is strictly forbidden unless prior written
- * permission is obtained from Invicara Inc.
- */
-
-/*
- * ENHANCEMENTS
- * 
- * 1. Replace text areas with JSON Editor
- * 2. Get editors to work with JSON and javascript objects - DONE
- * 3. Add "Add Operator" sidedrawer that will insert script operators into the script
- * 4. Able to remove individual variables
- * 5. Better variable display
- * 
- */
-
 import React from "react";
 import {ObjectInspector, chromeLight } from 'react-inspector';
 import Select from 'react-select';
 import {IafScripts} from '@invicara/platform-api'
-import _, { times } from 'lodash'
+import _ from 'lodash'
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
@@ -136,7 +108,6 @@ class ScriptRunnerView extends React.Component {
         //Loads data necessary for displaying the page
 
         let handler = this.props.handler;
-        console.log('handler', handler);
 
         this.setState({handler});
 
@@ -651,8 +622,6 @@ class ScriptRunnerView extends React.Component {
         await this._loadAsyncData();
 
         this.setState({isPageLoading: false}, this.props.onLoadComplete);
-        console.log('props', this.props);
-        console.log('state', this.state);
     }
 
     render() {

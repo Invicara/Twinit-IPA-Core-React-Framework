@@ -1,7 +1,4 @@
 import React from "react";
-import SimpleTextThrobber from "../../IpaControls/SimpleTextThrobber"
-
-import clsx from "clsx";
 import _ from 'lodash'
 
 import EntityDataContainer from './EntityDataContainer'
