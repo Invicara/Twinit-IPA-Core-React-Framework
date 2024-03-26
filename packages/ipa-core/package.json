@@ -1,6 +1,6 @@
 {
   "name": "@dtplatform/ipa-core",
-  "version": "3.0.0-papi-v4.3-test.0",
+  "version": "3.0.0-papi-v4.3-test.1.0",
   "description": "Invicara Platform application frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -18,13 +18,13 @@
     "/modules"
   ],
   "dependencies": {
+    "@dtplatform/core-utils": "~4.3.3",
     "@dtplatform/iaf-script-engine": "~4.3.19",
     "@dtplatform/invicara-lib": "~4.3.4",
     "@dtplatform/platform-api": "~4.3.16",
     "@dtplatform/platform-ui-components": "~4.3.16",
     "@dtplatform/react-ifef": "~4.3.5",
     "@dtplatform/ui-utils": "~4.3.5",
-    "@dtplatform/core-utils": "~4.3.3",
     "@material-ui/core": "^4.8.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.36",
