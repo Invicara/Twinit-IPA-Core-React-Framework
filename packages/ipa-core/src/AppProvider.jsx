@@ -741,15 +741,15 @@ class AppProvider extends React.Component {
   }
 }
 
-// export const addScriptFunction = (fn) => {
-//   let fnName = "$" + fn.name
-//   let fnWrapper = {}
-//   fnWrapper[fnName] = {
-//     operate: (a,b,c) => fn(expression.operate(a,b,c))
-//   }
-//   console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
-//   expression.use(fnWrapper)
-// }
+export const addScriptFunction = (fn) => {
+  let fnName = "$" + fn.name
+  let fnWrapper = {}
+  fnWrapper[fnName] = {
+    operate: (a,b,c) => fn(expression.operate(a,b,c))
+  }
+  console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
+  expression.use(fnWrapper)
+}
 
 async function calculateRoutes(config, ipaConfig) {
   const pList = [];
