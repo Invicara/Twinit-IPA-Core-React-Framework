@@ -233,7 +233,7 @@ const FancyTreeControl = ({
         {!allSelected ? <span className="fancy-tree__count--action" onClick={onSelectAllAction}>Select All</span> : (onSelectNoneAction ? <span className="fancy-tree__count--action" onClick={onSelectNoneAction}>Deselect All</span> : undefined) }
         {selectAllState.selectAllActivated && selectAllState.previouslySelectedIds.length>0 ? <span className="fancy-tree__count--action" onClick={onUndoSelectAllAction}>Undo</span> : undefined }
       </div> : undefined}
-      <ul style={{ height:tree?.length > 50 ? "60vh" : "auto", width: "auto" }}>
+      <ul style={{ height: tree?.length > 50 ? "60vh" : "auto", width: "auto" }}>
         {Array.isArray(tree) && tree.length > 50 ?
           <AutoSizer>
             {({ width, height }) => (

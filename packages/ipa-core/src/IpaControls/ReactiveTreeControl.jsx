@@ -49,7 +49,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
                 {renderBranchNode(node, getChildrenCount(node), curriedFlip(toggleNode)(node))}
             </span>
             </a>
-            <ul key={node.id + "_children"} style={{ height:getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 4}vh` : "50vh", width: "auto" }}>
+            <ul key={node.id + "_children"} style={{ height: getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 4}vh` : "50vh", width: "auto" }}>
                 <AutoSizer>
                     {({ width, height }) => (
                         <List
