@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback,useRef} from "react";
+import React, {useMemo, useCallback, useRef} from "react";
 import clsx from "clsx";
 import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
@@ -11,8 +11,8 @@ import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtuali
 
 export const EntityListView = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity'}) => {
     const reactVirtualizedCache = useRef(new CellMeasurerCache({
-        fixedWidth:true,
-        defaultHeight:100
+        fixedWidth: true,
+        defaultHeight: 100
       }))
 
     let checkableEntities = useMemo(()=>entities.map((entity) => {
@@ -94,7 +94,7 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         <div className='entity-list-view-count'>
             {`Showing ${entities.length} ${entities.length > 1 ? entityPlural : entitySingular}`}
         </div>
-        <div style={{width:"100%",overflow:"auto"}}>
+        <div style={{width: "100%", overflow: "auto"}}>
         <div className='header-row'>
             {config?.multiselect && <div className='header-column checkbox'>
                 <RoundCheckbox checked={allChecked} onChange={handleAllCheck}/>

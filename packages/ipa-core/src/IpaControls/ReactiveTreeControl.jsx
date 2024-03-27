@@ -15,8 +15,8 @@ import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtuali
 const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = defaultBranchRenderer, renderLeafNode = defaultLeafRenderer}) => {
 
     const reactVirtualizedCache = useRef(new CellMeasurerCache({
-        fixedWidth:true,
-        defaultHeight:100
+        fixedWidth: true,
+        defaultHeight: 100
       }))
 
     const getNodeClasses = (node, baseClasses = '') => {

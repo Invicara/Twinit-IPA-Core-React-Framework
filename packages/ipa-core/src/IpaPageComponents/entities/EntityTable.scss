@@ -116,12 +116,10 @@ div.header-row {
   .ReactVirtualized__Grid.ReactVirtualized__List {
       overflow-x: visible !important;
       overflow-y: auto !important;
-      // width: 800px !important;
       min-width: 800px !important;
   
       .ReactVirtualized__Grid__innerScrollContainer {
         overflow: visible !important;
-        // width: 800px !important;
         min-width: 800px !important;
       }
     }

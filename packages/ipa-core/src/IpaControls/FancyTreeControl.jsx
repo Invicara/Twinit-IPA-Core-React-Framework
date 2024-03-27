@@ -34,8 +34,8 @@ const FancyTreeControl = ({
 
   const treeDOMRef = useRef();
   const reactVirtualizedCache = useRef(new CellMeasurerCache({
-    fixedWidth:true,
-    defaultHeight:100
+    fixedWidth: true,
+    defaultHeight: 100
   }))
 
   const onSelectAllAction = useCallback(()=>{
@@ -172,7 +172,7 @@ const FancyTreeControl = ({
       if (virtualizedEvent) {
         let n = nodes[virtualizedEvent?.index]
         let cn = "leaf"
-        if ((/*tree.length != selectedIds.length &&*/ selectedIds.includes(n._id)) || selectedNodeNames.includes(n.name)) cn += " selected";
+        if ( selectedIds.includes(n._id) || selectedNodeNames.includes(n.name)) cn += " selected";
         if (expandedNodeNames.includes(n.name)) cn += " expanded"
         if (partialNodeNames.includes(n.name)) cn += " partial"
         return <li style={virtualizedEvent?.style || {}} onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
