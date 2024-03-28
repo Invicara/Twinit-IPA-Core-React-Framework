@@ -675,7 +675,6 @@ Next we must update the config inside the handler for the dashboard in the userC
     }
   }
 ```
-![](./alertTable.png)
 
 ---
 
