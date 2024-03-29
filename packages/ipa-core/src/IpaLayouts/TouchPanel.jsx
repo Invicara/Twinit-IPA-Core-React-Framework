@@ -1,8 +1,10 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
-const { Swipeable, defineSwipe, Draggable } = require( 'react-touch' );
+import * as ReactTouch from '../react-ifef/react-touch/index'
 
+
+const { Swipeable, defineSwipe, Draggable } = ReactTouch
 
 function SwipeablePanel(props) {
     const swipe = defineSwipe({swipeDistance: 25});
