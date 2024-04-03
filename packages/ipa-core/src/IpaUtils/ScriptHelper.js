@@ -78,11 +78,12 @@ async function evalExpressions(str, operand, ctx) {
 
 // Internal function for executing a script and (optionally) retrieving a scriptResVar
 async function _execScript(scriptName, operand, scriptResVar, ctx) {
-  console.log(scriptName);
-  console.log(expression);
-  let scriptRes = expression
-    ? await expression.execScript(scriptName, operand, scriptResVar, ctx)
-    : null;
+  let scriptRes = await expression.execScript(
+    scriptName,
+    operand,
+    scriptResVar,
+    ctx,
+  );
 
   return scriptRes;
 }
@@ -197,9 +198,9 @@ function isProjectNextGenJs() {
   if (sessionProject?._userAttributes?.hasOwnProperty("nextScriptEngine")) {
     console.log(
       "sessionProject._userAttributes.nextScriptEngine",
-      sessionProject._userAttributes.nextScriptEngine,
+      sessionProject?._userAttributes?.nextScriptEngine,
     );
-    return sessionProject._userAttributes.nextScriptEngine;
+    return sessionProject?._userAttributes?.nextScriptEngine;
   } else {
     const currentProject = IafProj.getCurrent();
     console.log("currentProject", currentProject);
