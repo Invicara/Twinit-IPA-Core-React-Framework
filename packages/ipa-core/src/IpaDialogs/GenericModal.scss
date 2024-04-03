@@ -1,0 +1,102 @@
+$light-grey: #6d6e70;
+ $invicara-text: $light-grey;
+
+ .asf-modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+
+@media (min-width: 680px) {
+  .asf-modal {
+    height: 60%;
+  }
+}
+
+div.css-1g6gooi {
+  opacity: 0;
+  height: 40px;
+}
+
+div:not(.ipa-select__value-container).css-1hwfws3 {
+  overflow: unset !important;
+}
+
+.ipa-modal {
+  background: white;
+  border: none;
+  border-radius: 40px;
+
+  .overflow-scroll {
+    margin: 0 40px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+      
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+      
+    &::-webkit-scrollbar-thumb {
+    background: #DCDCDC;
+            border-radius: 2rem;
+    }
+      
+    &::-webkit-scrollbar-thumb:hover {
+        background: #B8B8B8;
+    }
+  }
+
+  .content {
+    border-radius: 40px;
+  }
+
+  .bar.bar-dark {
+    width: 90%;
+    left: 5%;
+    background: transparent;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding-top: 50px;
+    padding: 3% 5%;
+
+    .title {
+      display: inline;
+      color: var(--app-accent-color);
+      font-size: 1.5rem;
+      padding-top: 20px;
+      padding: 0% 3%;
+      height: 100%;
+    }
+  }
+
+  .bar.bar-dark .title,
+  .ion-ios-close-empty {
+    padding: 1% 2%;
+  }
+}
+
+.ipa-modal-small {
+  width: 30%;
+  left: 35%;
+
+  .content {
+    padding: 30px;
+
+    .padding {
+      padding: 0px;
+    }
+  }
+}
+
+.ipa-modal-no-x-close {
+
+  .bar-dark {
+    
+    .button-icon {
+        display: none;
+    }
+  }
+}

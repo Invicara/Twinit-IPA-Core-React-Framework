@@ -1,0 +1,41 @@
+.mbsc-form {
+    padding: 0 10% !important;
+}
+
+.mbsc-form,
+.mbsc-form-group-title,
+.mbsc-divider {
+    background: white !important;
+    border-bottom: none !important;
+}
+
+.mbsc-form-group-title {
+    font-size: 1.5rem !important;
+    padding: 1% 0 !important;
+}
+
+.mbsc-input {
+	display: block !important;
+}
+
+.mbsc-input input,
+.mbsc-textarea textarea {
+    border-radius: 0.5rem !important;
+    padding: .875rem .75rem !important;
+    background-color: #eee !important;
+    border: 0 solid #ced4da !important;
+}
+
+.mbsc-ios.mbsc-ltr .mbsc-input .mbsc-label {
+	 padding-left: 0 !important;
+}
+
+.mbsc-control-w:before, 
+.mbsc-control-w:after {
+    border-top: none !important;
+    content: "" !important;
+}
+
+.mbsc-ios .mbsc-collapsible .mbsc-form-group-title .mbsc-collapsible-icon {
+    margin-top: -.5em; 
+}

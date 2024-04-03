@@ -1,0 +1,81 @@
+
+.model-viewer-toolbar {
+    position: absolute;
+    border-radius: 30px;
+    top: 0;
+    right: 5px;
+  }
+  
+  .model-viewer-toolbar div {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    font-weight: bold;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  
+  .model-viewer-splitter {
+    cursor: row-resize !important;
+  }
+  
+  .model-viewer-splitter i {
+    padding-top: 6px;
+    padding-left: 12px;
+  }
+  
+  .model-viewer-full-screen i {
+    padding-top: 6px;
+    padding-left: 12px;
+  }
+  
+  .model-viewer-default-size i {
+    padding-top: 3px;
+    padding-left: 8px;
+  }
+  
+  .model-viewer-close {
+    padding-top: 6px;
+    padding-left: 8px;
+  }
+  
+  .model-viewer-close::before {
+    content: "X";
+  }
+  
+  .show-model-viewer {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: lightgray;
+    border-radius: 50%;
+    font-weight: bold;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .snapjs-bottom .show-model-viewer {
+    display: none;
+  }
+  
+  .show-model-viewer::after {
+    content: "3D"
+  }
+
+  .no-sidebar {
+    .has-left-nav {
+      margin-left: 0;
+    }
+  }
+  
+  .no-titlebar {
+    #SidePanelContent {
+      height: 100%;
+      top: 0
+    }
+  }
+  

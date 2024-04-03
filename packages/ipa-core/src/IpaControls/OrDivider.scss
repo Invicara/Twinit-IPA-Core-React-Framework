@@ -1,0 +1,15 @@
+.or-divider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: bold;
+  color: #B2B2B2;
+  margin-bottom: 30px;
+
+  .line {
+    height: 2px;
+    width: 40%;
+    background-color: #B2B2B2;
+  }
+}

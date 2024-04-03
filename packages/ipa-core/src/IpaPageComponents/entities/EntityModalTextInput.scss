@@ -1,0 +1,15 @@
+.entity-modal-text-input {
+    position: relative;
+    input {
+        background-color: transparent;
+    }
+}
+
+.entity-modal-text-input--multiple-values {
+        input {
+            color: transparent;
+            :focus {
+                color: initial;
+            }
+        }
+}

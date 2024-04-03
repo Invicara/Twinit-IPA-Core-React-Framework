@@ -1,0 +1,15 @@
+.cm-scripter {
+    height: 800px;
+}
+
+.cm-scripter > .CodeMirror {
+    height: 800px;
+}
+
+.cm-inputer > .CodeMirror {
+    height: 300px;
+}
+
+.CodeMirror-breakpoint {
+    width: .8em;
+}

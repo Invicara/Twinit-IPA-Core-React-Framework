@@ -1,0 +1,98 @@
+.datasource-list-item {
+    list-style-type: none;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 5px 5px 5px 20px;
+    box-shadow: 2px 2px lightgrey;
+    display: flex;
+    flex-direction: column;
+
+    .error {
+        color: var(--app-accent-color)
+    }
+
+    .card-row1 {
+        display: flex;
+        flex-direction: row;
+
+        .datasource-name {
+            flex-basis: 40%;
+
+            .datasource-name {
+                color: var(--app-accent-color)
+            }
+            
+            .datasource-desc {
+                padding-left: 10px;
+                font-size: 0.75rem;
+                font-style: italic;
+            }
+        }
+
+        .datasource-info {
+            flex-basis: 40%;
+            padding-left: 10px;
+
+            .info-point {
+                display: flex;
+                align-items: center;
+            }
+
+            .info-value {
+                margin-left: 2px;
+            }
+        }
+    }
+
+    .card-row2 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        border-top: solid 2px #f2f2f2;
+        padding: 10px;
+        margin-top: 10px;
+        max-height: 150px;
+        overflow-y: auto;
+    
+        .confirm-text {
+            font-weight: bold;
+        }
+    
+        i {
+            padding-right: 5px;
+        }
+    
+        a {
+            display: inline-flex;
+            align-items: center;
+            color: var(--app-accent-color);
+        }
+    }
+    
+    .card-row2:hover {
+        background-color: white;
+        border-radius: 10px;
+        border: 1px solid var(--app-accent-color);
+    }
+
+}
+
+.datasource-list-item:hover {
+    background-color: #f2f2f2;
+}
+
+.datasource-card-options {
+    align-self: center;
+    color: var(--app-accent-color);
+    margin-left: 5px;
+    i {
+        cursor: pointer;
+    }
+}
+
+
+
+
+
+

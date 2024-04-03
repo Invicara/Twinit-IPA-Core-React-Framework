@@ -1,0 +1,19 @@
+{
+    "--app-accent-color": "#C71784",
+
+    "--head-bkg-color": "#333333",
+    "--head-appname-color": "whitesmoke", 
+    "--head-menu-bkg-color": "#666666", 
+    "--head-menu-hover-color": "#999999", 
+
+    "--nav-bkg-color": "#333333", 
+    "--nav-icon-color": "white", 
+    "--nav-hover-color": "#999999", 
+    "--nav-activegrp-bkg-color": "#bfbfbf", 
+    "--fancytree-one-color": "#C71784",
+    "--fancytree-one-channel-color": "#f3d5e4",
+    "--fancytree-two-color": "#f26827",
+    "--fancytree-two-channel-color": "#fde0d7",
+    "--fancytree-three-color": "#00a693",
+    "--fancytree-three-channel-color": "#cdebe8"
+}

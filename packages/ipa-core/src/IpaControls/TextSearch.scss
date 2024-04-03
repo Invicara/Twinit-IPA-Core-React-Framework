@@ -1,0 +1,84 @@
+.text-search {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+
+  .title {
+    margin: 10px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0;
+    color: #333333;
+  }
+
+  .text-fetch-button{
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .search-term{
+    display: flex;
+    margin-bottom: 15px;
+
+    input {
+      width: 90%;
+      border: 2px solid #E6E6E6;
+      border-right: none;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+      padding: 10px 16px;
+    }
+    .clear{
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: #B2B2B2;
+      border: 2px solid #E6E6E6;
+      border-left: none;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      min-width: 5px;
+    }
+  }
+
+  ::placeholder {
+    color: #B2B2B2;
+  }
+
+}
+
+.advanced-search {
+
+  > span {
+    position: relative;
+
+    > label {
+      position: absolute;
+      left: 20px;
+      top: 1px;
+      font-size: 0.9em;
+      font-style: italic;
+    }
+  }
+
+  input[type=checkbox] {
+    margin-top: 5px;
+  }
+
+  .GenericMatButton {
+    margin-top: 20px;
+  }
+}
+
+.fetching-legend{
+  display: flex;
+  align-items: center;
+  > *:first-child {
+    margin: 10px;
+  }
+}
+.MuiCircularProgress-colorPrimary{
+  color: var(--app-accent-color);
+}

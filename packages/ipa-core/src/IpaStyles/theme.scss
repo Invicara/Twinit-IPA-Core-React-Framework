@@ -1,0 +1,37 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
+    font-weight: 100 1000;
+    font-stretch: 25% 151%;
+}
+
+* {
+    font-family: 'Inter', Arial, Helvetica, sans-serif !important;
+}
+
+header {
+    background-color: var(--head-bkg-color) !important;
+}
+
+nav {
+    background-color: var(--nav-bkg-color) !important;
+
+    a {
+        color: var(--nav-icon-color) !important;
+    }
+
+    .main-nav li:hover {
+        background-color: var(--nav-hover-color) !important;
+    }
+
+    .main-nav-active {
+        background-color: var(--nav-activegrp-bkg-color) !important;
+        border-left: 10px solid var(--app-accent-color) !important;
+
+        a {
+            color: var(--app-accent-color) !important;
+        }
+    }
+}
+
+@import "../react-ifef/styles/react_ifef"

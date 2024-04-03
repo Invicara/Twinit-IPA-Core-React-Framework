@@ -1,0 +1,42 @@
+$light-grey: rgb(239, 239, 239);
+$highlight-pink: var(--app-accent-color);
+$white: white;
+
+
+
+.simple-tabbed-table {    
+    .simple-tabbed-table__tabs {
+        display: flex;
+        .simple-tabbed-table__tab {
+            width: 150px;
+            box-shadow: inset 8px 0px 10px -9px #b2b2b2;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: $light-grey;
+            cursor: pointer;
+      
+            &:first-child {
+              border-top-left-radius: 10px;
+              box-shadow: none;
+            }
+            &:last-child {
+              border-top-right-radius: 10px;
+            }
+      
+            &.--selected {
+              background-color: $highlight-pink;
+              color: $white;
+            }
+        }
+    }
+    
+    .simple-tabbed-table__table {
+        width: 100%;
+
+        tr td:first-child {
+            width: 150px;
+        }
+    }
+}

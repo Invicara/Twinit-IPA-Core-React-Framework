@@ -1,0 +1,258 @@
+  .fancy-tree {
+  --invisible-ink: rgba(0, 0, 0, 0);
+
+  --line-height: 2em;
+  --stroke-width: 0.15em;
+
+  --tree-padding-left: 2em;
+
+  --bullet-size: 1em;
+  --bullet-top: 0.3em;
+  --bullet-left: -0.6em;
+
+  --connector-height: 0.6em;
+  --connector-left: -0.15em;
+  --connector-top-before: 0;
+  --connector-top-after: 1.5em;
+
+  --channel-width: 1.85em;
+  --channel-left: -1em;
+  --channel-margin-top: 1em;
+  --channel-height-hack: 29px; // when the span.count has a smaller font size then for some reason the li becomes 1px higher?
+
+  --channel-connector-border-radius: 0 0 0 3em;
+  --channel-connector-width: 2.7em;
+  --channel-connector-height: 2.5em;
+  --channel-connector-top: 1.5em;
+  --channel-connector-left: -0.15em;
+
+  ul {
+    // Level 1 color
+    --stroke-color: var(--fancytree-one-color);
+    --channel-color: var(--fancytree-one-channel-color);
+
+    ul {
+      padding-left: var(--tree-padding-left);
+
+      // Level 2 color
+      --stroke-color: var(--fancytree-two-color);
+      --channel-color: var(--fancytree-two-channel-color);
+
+
+      ul {
+        // Level 3 color
+        --stroke-color: var(--fancytree-three-color);
+        --channel-color: var(--fancytree-three-channel-color);
+
+        ul {
+          // Level 4 color
+          --stroke-color: var(--fancytree-one-color);
+          --channel-color: var(--fancytree-one-channel-color);
+
+          ul {
+            // Level5 color
+            --stroke-color: var(--fancytree-two-color);
+            --channel-color: var(--fancytree-two-channel-color);
+
+            ul {
+              // Level 6 color
+              --stroke-color: var(--fancytree-three-color);
+              --channel-color: var(--fancytree-three-channel-color);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ul {
+    list-style: none;
+    display: none;
+  }
+
+  > ul,
+  li.expanded > ul {
+    display: block;
+  }
+
+  li {
+    position: relative;
+    line-height: var(--line-height);
+    margin-left: 1em;
+  }
+
+  li > a > span {
+    margin-left: 1em;
+    color: black;
+  } 
+
+  li > a > span > div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    &:hover {
+      white-space: normal;
+    }
+  }
+
+  /* Channel */
+  li:before {
+    content: ".";
+    color: var(--invisible-ink);
+    position: absolute;
+    width: var(--channel-width);
+    background-color: var(--channel-color);
+    left: var(--channel-left);
+    height: var(--channel-height-hack);
+  }
+
+  li:first-child:before,
+  li.expanded + li:before {
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+  }
+
+  li ul li:first-child {
+    margin-top: var(--channel-margin-top);
+  }
+
+  li:last-child:before,
+  li.expanded:before {
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+  }
+
+  /* Channel Connector */
+  li.expanded:after {
+    content: ".";
+    color: var(--invisible-ink);
+    position: absolute;
+    border-left: solid var(--stroke-color) var(--stroke-width);
+    border-bottom: solid var(--stroke-color) var(--stroke-width);
+    border-radius: var(--channel-connector-border-radius);
+    width: var(--channel-connector-width);
+    height: var(--channel-connector-height);
+    top: var(--channel-connector-top);
+    left: var(--channel-connector-left);
+  }
+
+  /* Bullet */
+  li > a > span:before {
+    content: "";
+    position: absolute;
+    width: var(--bullet-size);
+    height: var(--bullet-size);
+    left: var(--bullet-left);
+    top: var(--bullet-top);
+    border: solid var(--stroke-color) var(--stroke-width);
+    border-radius: 50%;
+    background-color: white;
+  }
+
+  li.leaf > a > span:before {
+    border-radius: 0;
+    width: calc(var(--bullet-size) - 0.2em);
+    height: calc(var(--bullet-size) - 0.2em);
+    left: calc(var(--bullet-left) + 0.1em);
+    top: calc(var(--bullet-top) + 0.2em);
+  }
+
+  li.selected > a > span:before {
+    background-color: var(--stroke-color);
+  }
+
+  li.branch.partial > a > span:before, li.expanded.partial > a > span:before {
+    background-color: var(--channel-color);
+  }
+
+  li.leaf > a > span:after {
+    height: calc(var(--connector-height) + 0.1em);
+  }
+
+  li:last-child > a:after,
+  li:first-child > a:before,
+  li.expanded > a:after {
+    display: none;
+  }
+
+  li.leaf.selected > a > span:before {
+    background-color: var(--stroke-color);
+  }
+
+  /* Bullet Connector */
+  li {
+    border-left: solid var(--stroke-color) var(--stroke-width);
+  }
+
+  li:last-child {
+    border-left: solid var(--invisible-ink) var(--stroke-width);
+  }
+
+  a:before {
+    content: "";
+    position: absolute;
+    height: var(--connector-height);
+    top: var(--connector-top-before);
+    left: var(--connector-left);
+    border-left: solid var(--stroke-color) var(--stroke-width);
+  }
+
+  a:after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    top: var(--connector-top-after);
+    left: var(--connector-left);
+    border-left: solid var(--stroke-color) var(--stroke-width);
+  }
+
+  /* Content */
+  li > a > span {
+    margin-left: 1.5em;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
+  }
+
+  span.count {
+    margin-left: 0.5em;
+    color: var(--stroke-color);
+    font-weight: bold;
+    // font-size: 0.8em;
+  }
+
+  .tooltip-wrapper{
+    position: absolute;
+    margin-left: 0.3em;
+    display: inline-block;
+    padding-top: 0.5em;
+
+    .dbm-tooltip .dbm-tooltiptext {      
+      width: 200px;
+      margin-left: -150px;   
+      white-space: normal;
+    }
+  }
+
+
+
+    .fancy-tree__count {
+      display: flex;
+      align-items: end;
+      justify-content: start;
+      padding-bottom: 10px;
+
+      span:not(:first-child) {
+        padding-inline-start: 1em;/*length relative to font-size*/
+      }
+
+      &--action {
+        color: var(--app-accent-color);
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+    }
+}

@@ -1,0 +1,18 @@
+.control-text-overlay {
+    .control-text-overlay__text {        
+        color: var(--app-accent-color);
+        pointer-events: none;
+        margin: 0;
+    }
+}
+
+.control-text-overlay--wrapping {
+    position: relative;
+    width: 100%;
+    .control-text-overlay__text {
+        position: absolute;
+        transform: translate(12px, -50%);
+        bottom: 0;
+    }
+}
+

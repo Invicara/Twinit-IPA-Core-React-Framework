@@ -1,0 +1,8 @@
+.base-text-input {
+  display: flex;
+  flex-direction: column;
+  input:focus {
+    border: 2px solid var(--app-accent-color) !important;
+    box-shadow: unset;
+  }
+}

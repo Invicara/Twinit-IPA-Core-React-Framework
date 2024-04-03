@@ -1,0 +1,113 @@
+.filter-container {
+    display: inline-block;
+    position: relative;
+    margin-bottom: 10px;
+    max-width: 400px;
+  
+    .control {
+      background-color: white;
+      display: inline-block;
+      border: solid #e6e6e6 2px;
+      border-radius: 4px;
+      min-width: 265px;
+      min-height: 38px;
+      position: relative;
+  
+      div {
+        display: inline-block;
+      }
+  
+      .placeholder {
+        color: gray;
+        padding: 6px;
+      }
+  
+      .buttons {
+        position: absolute;
+        right: 0;
+        color: lightgray;
+  
+        svg {
+          display: inline-block;
+          fill: currentColor;
+          line-height: 1;
+          stroke: currentColor;
+          stroke-width: 0;
+        }
+  
+        div {
+          margin: 7px 0px;
+          padding: 0 8px;
+          border-left: solid lightgray 1px;
+        }
+  
+        div:first-child {
+          border-left: none;
+        }
+      }
+    }
+  
+    .filter-drop-down-panel.hidden {
+      display: none;
+    }
+  
+    .filter-drop-down-panel {
+      position: absolute;
+      background-color: white;
+      border: solid #e6e6e6 2px;
+      padding: 20px;
+      width: 300px;
+      z-index: 2;
+      margin-top: 10px;
+      border-radius: 4px;
+  
+      .filter-input-value {
+        display: inline-block;
+        width: 256px;
+        height: 38px;
+        border: solid #e6e6e6 2px;
+        border-radius: 2px;
+        margin-bottom: 10px;
+        padding: 10px;
+      }
+      
+      .range {
+        label {
+          display: block;
+        }
+        
+      }
+  
+      .GenericMatButton {
+        display: inline-block;
+        button {
+          width: 105px;
+          margin: 10px;
+        }
+      }
+  
+    }
+  
+    .available-filter {
+      display: grid;
+      grid-template-columns: 150px 100px auto 20px;
+      grid-gap: 10px;
+      margin: 5px;
+    }
+  
+    .filter-multi-select {
+      display: inline-block;
+    }
+  
+    .filter-multi-select-value {
+      display: inline-block;
+      background-color: hsl(0, 0%, 90%);
+      border-radius: 2px;
+      padding: 3px;
+      padding-left: 6px;
+      margin: 4px;
+      color: hsl(0, 0%, 20%);
+      font-size: 85%;
+      width: 75%;
+    }
+  }

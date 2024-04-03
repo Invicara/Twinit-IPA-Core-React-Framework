@@ -1,0 +1,16 @@
+.stackable-drawers-container {
+  background-color: white;
+  position: absolute;
+  width: auto;
+  height: 100%;
+  top: 0px;
+  display: flex;
+
+  &.stackable-drawers-container-fw {
+    width: 100%;
+  }
+
+  &.stackable-drawers-container-a-right {
+    right: 0;
+  }
+}

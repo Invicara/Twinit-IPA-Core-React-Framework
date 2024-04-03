@@ -1,0 +1,48 @@
+
+.entity-collection-modal-body {
+  .scripted-selects-control {
+    width: 100%;
+    margin-bottom: 0px;
+    
+    .select-element {
+      width: 100%;
+    }
+  }
+  
+  .selected-collections {
+    min-height: 100px;
+    width: 100%;
+    margin-left: 10px;
+    
+    .selected-collections-title {
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 0;
+      color: #333333;
+    }
+    
+    .selected-collections-display {
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+      
+      .selected-collections-display-row {
+        
+        margin-bottom: 5px;
+        
+        .selected-collection-name-combo {
+          color: var(--app-accent-color);
+          font-weight: bold;
+        } 
+
+        .clear-selected-collection {
+          color: #B2B2B2;
+          margin-left: 15px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  
+}
+

@@ -1,0 +1,40 @@
+  .toast-notification {
+    position: absolute;
+    right: 0;
+    margin: 24px;
+
+    .icon {
+      margin-right: 15px;
+    }
+
+    .error-toast,
+    .success-toast,
+    .warning-toast {
+      position: relative;
+      padding: 16px;
+      border-radius: 2px;
+      min-width: 208px;
+      max-width: 344px;
+      color: #FFFFFF; 
+      display: flex;
+      align-items: center;
+      animation: movein 0.5s ease forwards;
+
+      @keyframes movein {
+        from { right: -500px; }
+        to   { right: 0px; }
+      }
+    }
+
+    .error-toast {
+      background: #D32F2F;
+    }
+
+    .success-toast{
+      background: #689F38;
+    }
+
+    .warning-toast {
+      background: #E86826
+    }
+  }

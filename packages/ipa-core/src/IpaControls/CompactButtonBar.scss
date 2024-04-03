@@ -1,0 +1,47 @@
+.compact-button-bar {
+    display:flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 100%;  
+  
+    &.horizontal{
+      flex-direction: row;
+      min-height: auto;
+    }
+  
+    .compact-button-bar-button {
+      display: inline-flex;
+      flex-direction: row;    
+      border-radius: 10px;
+      box-shadow: -1px 1px 15px 0px rgba(166, 163, 166, 0.66);
+      padding: 5px 10px;
+      align-items: center;
+      cursor: pointer;
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+  
+      &.horizontal{
+        margin-right: 20px;
+      }
+    }
+  
+    .compact-button-bar-image {
+      flex: 1;
+      margin-left: 10px;
+    }
+  
+    .compact-button-bar-button-text-container{
+      flex: 3;
+      font-size:10px; //TODO This is an h1 that has a 200% fontSize applied in _homepage.scss. So this is actually 20px. We should remove that too broad  200%
+    }
+  
+    img {
+      height: 45px;
+    }
+  
+    .compact-button-text {
+      font-size:13px;
+    }
+  }

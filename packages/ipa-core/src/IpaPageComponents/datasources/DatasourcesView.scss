@@ -1,0 +1,16 @@
+.datasources-view {
+    padding-left: 50px;
+    padding-top: 25px;
+
+    .datasources-header {
+        width: 100%;
+
+        h1 {
+            color: var(--app-accent-color)
+        }
+    }
+
+    .datasources-list {
+        width: 50%;
+    }
+}

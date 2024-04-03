@@ -1,0 +1,68 @@
+.homepage {
+
+    h1 {
+      font-family: "Inter", sans-serif;
+      font-size: 200%;
+      font-weight: bold;
+      color: var(--app-accent-color);
+    }
+    h2 {
+      font-family: "Inter", sans-serif;
+      font-size: 150%;
+      font-weight: normal;
+      margin-bottom: 38px;
+    }
+  
+  }
+
+
+.dashboard {
+  padding: 20px;
+  height: calc(100vh - 80px);
+}
+
+.dashboard.db-grid {
+  display: grid;
+}
+
+.db-panel {
+  padding: 15px;
+  height: 100vh;
+}
+
+.dashboard-header {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: lightgrey 1px solid;
+  padding-bottom: 10px;
+  
+  .title {
+    margin-left: 50px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--app-accent-color);
+  }
+  
+  .nav-button {
+    margin-right: 5%;
+    
+    .main-button{
+      font-size: 13px;
+      min-width: 150px;
+      height: 45px;
+      border-radius: 5px;
+      color: white;
+      background: var(--app-accent-color);      
+      box-shadow: none;
+    }
+  }
+  
+  
+}
+
+.mobile-sample-dash {
+  h1 { font-size: 20px !important; }
+  img { max-height: 100px !important }
+}

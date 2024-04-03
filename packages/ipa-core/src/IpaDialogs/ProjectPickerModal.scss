@@ -1,0 +1,132 @@
+$light-grey: #6d6e70;
+
+.project-picker-modal {
+
+
+  button {
+    text-transform: uppercase;
+    border-radius: 15px;
+    padding: 5px;
+    width: 40%;
+    margin: 5px;
+    margin-top: 20px !important;
+    border: solid black 2px;
+
+  }
+
+  button.default-load {
+    color: white;
+    background-color: var(--app-accent-color);
+    border-color: var(--app-accent-color);
+  }
+
+  button.default-cancel {
+    color: $light-grey;
+    background-color: white;
+    border-color: $light-grey;
+  }
+
+  button.setup {
+    color: white;
+    width: 23% !important;
+    background-color: var(--app-accent-color);
+    border-color: var(--app-accent-color);
+  }
+
+  button.cancel {
+    width: 23% !important;
+    color: $light-grey;
+    background-color: white;
+    border-color: $light-grey;
+  }
+
+  button.load {
+    color: white;
+    width: 23% !important;
+    background-color: var(--app-accent-color);
+    border-color: var(--app-accent-color);
+  }
+
+  button.done {
+    color: white;
+    width: 23% !important;
+    background-color: var(--app-accent-color);
+    border-color: var(--app-accent-color);
+  }
+
+  h4 {
+    font-size: 14px;
+  }
+
+  .invite-table {
+
+    td,
+    th {
+      padding: 5px;
+    }
+
+    td:nth-of-type(2) {
+      min-width: 250px;
+    }
+
+    .invite-action {
+      display: block;
+      margin-left: 20px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      color: var(--app-accent-color);
+
+      i {
+        padding-right: 0px;
+        width: 20px;
+      }
+    }
+  }
+
+  .custom-control.custom-switch {
+    z-index: unset;
+  }
+
+  .custom-control-input:checked~.custom-control-label::before {
+    color: #fff;
+    border-color: var(--app-accent-color);
+    background-color: var(--app-accent-color);
+  }
+
+.custom-single-class .select__control:hover {
+  border-color: var(--app-accent-color);
+  box-shadow: 0 0 0 0px var(--app-accent-color); 
+}
+
+.custom-single-class .select__option {
+  color: black;
+  background-color: white;
+}
+
+.custom-single-class .select__option--is-focused {
+  background-color: var(--app-accent-color) !important;
+  color: white;
+}
+
+.custom-single-class .select__control {
+  border-color: #b0b0b0;
+  box-shadow: 0 0 0 0px #b0b0b0;
+}
+
+.custom-single-class .select__indicator-separator {
+  display: none; /* Hide the separator between the indicator and the input */
+}
+
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 768px) {
+  .button-container {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
