@@ -14,7 +14,7 @@ export const asSelectOption = (option) => ({
   key: option.display,
 });
 
-export const asSelectOptions = (options) => options.map(asSelectOption);
+export const asSelectOptions = (options) => options?.map(asSelectOption);
 
 export const EnhancedPickListSelect = ({
   currentValue,
@@ -66,8 +66,8 @@ export const EnhancedPickListSelect = ({
         ...selects,
         [nextSelect.display]: {
           ...nextSelect,
-          type: selectOptions[0].type,
-          options: selectOptions[0].values.sort((a, b) =>
+          type: selectOptions?.[0].type,
+          options: selectOptions?.[0].values.sort((a, b) =>
             a.display.localeCompare(b.display),
           ),
         },
