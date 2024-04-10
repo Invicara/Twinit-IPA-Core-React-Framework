@@ -1,53 +1,68 @@
 import LinkedSelectsProgressive from "../../IpaControls/LinkedSelectsProgressive";
-import { useArgs } from "@storybook/client-api";
 
 export default {
   title: "Controls/LinkedSelectsProgressive",
   component: LinkedSelectsProgressive,
-  argTypes: { onChange: { action: "changed" } },
+  argTypes: {
+    attributes: { control: "object" },
+    options: { control: "object" },
+    onChange: { action: "onChange" }, // Define action for onChange event
+  },
 };
 
-const Template = (args) => {
-  const [_, updateArgs] = useArgs();
-  const handleClick = (e, f) => {
-    updateArgs({ ...args, defaultSelections: e.target.value });
-  };
-  return (
-    <div onClick={handleClick}>
-      <LinkedSelectsProgressive {...args} />
-    </div>
-  );
-};
+const Template = (args) => <LinkedSelectsProgressive {...args} />;
 
 export const Default = Template.bind({});
-
 Default.args = {
+  attributes: [
+    {
+      name: "Color",
+      isMulti: false,
+      values: ["Red", "Green", "Blue"],
+      placeholder: "Select Color",
+    },
+    {
+      name: "Sizes",
+      isMulti: true,
+      values: ["Small", "Medium", "Large"],
+      placeholder: "Select Size(s)",
+    },
+  ],
+  options: {
+    direction: "horizontal", // Set direction to 'horizontal'
+    hasLabel: true,
+    isRequired: true,
+  },
+  onChange: (values) => console.log("Selected Values:", values), // Log selected values to console
+};
+
+// Additional story to demonstrate component behavior with different props
+export const VerticalLayout = Template.bind({});
+VerticalLayout.args = {
   attributes: [
     {
       name: "Category",
       isMulti: false,
       values: ["Electronics", "Clothing", "Books"],
-      placeholder: "Select category",
+      placeholder: "Select Category",
     },
     {
-      name: "Subcategory",
+      name: "Brand",
       isMulti: true,
-      values: ["Smartphones", "Laptops"],
-      placeholder: "Select subcategory",
+      values: ["Apple", "Nike", "Amazon"],
+      placeholder: "Select Brand(s)",
+    },
+    {
+      name: "Price Range",
+      isMulti: false,
+      values: ["Low", "Medium", "High"],
+      placeholder: "Select Price Range",
     },
   ],
-  onChange: (selectedValues) => {
-    console.log("Selected values:", selectedValues);
-  },
   options: {
-    direction: "vertical",
-    hasLabel: true,
-    isRequired: true,
+    direction: "vertical", // Set direction to 'vertical'
+    hasLabel: false,
+    isRequired: false,
   },
-  defaultSelections: {
-    Category: "Electronics",
-    Subcategory: ["Smartphones", "Laptops"],
-  },
-  btn: <button>Submit</button>,
-  disabled: false,
+  onChange: (values) => console.log("Selected Values:", values), // Log selected values to console
 };

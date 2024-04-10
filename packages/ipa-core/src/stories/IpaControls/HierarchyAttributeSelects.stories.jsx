@@ -1,51 +1,35 @@
+import React from "react";
 import HierarchyAttributeSelects from "../../IpaControls/HierarchyAttributeSelects";
 import { useArgs } from "@storybook/client-api";
 
 export default {
   title: "Controls/HierarchyAttributeSelects",
   component: HierarchyAttributeSelects,
-  argTypes: { onChange: { action: "onChange" } },
 };
 
-const Template = (args) => {
-  const [_, updateArgs] = useArgs();
-  const handleClick = (e, f) => {
-    updateArgs({ ...args, selected: e.target.value });
-  };
+const Template = (args) => <HierarchyAttributeSelects {...args} />;
 
-  return (
-    <div onClick={handleClick}>
-      <HierarchyAttributeSelects {...args} />
-    </div>
-  );
-};
-
-export const Default = Template.bind({});
-
-Default.args = {
+export const DefaultView = Template.bind({});
+DefaultView.args = {
+  hierarchyAttributes: ["Category", "Sub-category", "Item"], // Example hierarchy attributes
   attributeValues: {
-    Country: {
-      USA: {
-        State: {
-          California: ["Los Angeles", "San Francisco"],
-          Texas: ["Houston", "Austin"],
-        },
+    Appliances: {
+      Electronics: {
+        TV: ["LED", "LCD"],
+        Mobile: ["Android", "iOS"],
       },
-      Canada: {
-        Province: {
-          Ontario: ["Toronto", "Ottawa"],
-          Quebec: ["Montreal", "Quebec City"],
-        },
+    },
+    Clothing: {
+      Shoes: {
+        Men: ["Jeans", "Chinos"],
+        Women: ["Leggings", "Linen"],
       },
     },
   },
-  hierarchyAttributes: ["Country", "State", "City"],
-  defaultSelections: {
-    Country: "USA",
-    State: "California",
-    City: "Los Angeles",
+  onChange: (selectedValues) => {
+    console.log("Selected values:", selectedValues);
   },
-  isMulti: true,
-  disabled: false,
-  btn: null,
+  options: {
+    isMulti: true, // Example option to allow multiple selections
+  },
 };
