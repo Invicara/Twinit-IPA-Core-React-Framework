@@ -4,7 +4,7 @@ import { useArgs } from "@storybook/client-api";
 export default {
   title: "Controls/DynamicAttributeInput",
   component: DynamicAttributeInput,
-  argTypes: { onClick: { action: "onClick" } },
+  argTypes: { onChange: { action: "onClick" } },
 };
 
 const Template = (args) => {
@@ -17,8 +17,17 @@ const Template = (args) => {
     });
   };
 
+  const handleClick = (e, f) => {
+    if (e.target.innerHTML.length) {
+      updateArgs({
+        ...args,
+        value: e.target.innerHTML,
+      });
+    }
+  };
+
   return (
-    <div onChange={handleChange}>
+    <div onClick={handleClick} onChange={handleChange}>
       <DynamicAttributeInput {...args} />
     </div>
   );
@@ -52,13 +61,8 @@ const fetchValuesOnFocusMock = async () => {
 Default.args = {
   attribute: "attribute_name", // Define the attribute name
   value: "", // Define the input value
-  onChange: (attribute, newValue) => {},
   fetchValuesOnFocus: fetchValuesOnFocusMock,
   isDisabled: false, // Define whether the input is disabled or not
-  onBlur: () => {
-    // Define onBlur logic if needed
-  },
-  themeOptions: {
-    // Define theme options if needed
-  },
+  onBlur: () => {},
+  themeOptions: {},
 };
