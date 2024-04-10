@@ -8,7 +8,6 @@ storiesOf("Controls/EnhancedPickListSelect", module).add(
   "Dynamic Option Add",
   () => {
     const [currentValue, setCurrentValue] = useState({});
-    const [options, setOptions] = useState([]);
 
     const mockInitialValue = {
       "Input 1": [
