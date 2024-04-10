@@ -18,11 +18,6 @@ export default {
 const Template = (args) => {
   return (
     <>
-      <div>
-        <Skeleton variant="circle" width={40} height={40} animation={false} />
-        <Skeleton variant="rect" width={210} height={118} animation={false} />
-        <Skeleton animation={false} />
-      </div>
       {args.drawersLeft &&
         args.drawersLeft.length > 0 &&
         generateDrawersInContainer(args, args.drawersLeft, "left", true)}
@@ -38,11 +33,11 @@ export const Left = Template.bind({});
 Left.args = {
   drawersLeft: [
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-search",
       minWidth: 200,
     },
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-filter",
       minWidth: 200,
     },
     {
@@ -62,11 +57,11 @@ Right.args = {
       minWidth: "100%",
     },
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-search",
       minWidth: 200,
     },
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-filter",
       minWidth: 200,
     },
   ],
@@ -77,13 +72,13 @@ Both.args = {
   //drawersLeft:[],
   drawersRight: [
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-search",
       minWidth: 200,
     },
   ],
   drawersLeft: [
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-filter",
       minWidth: 200,
     },
     {
@@ -97,7 +92,7 @@ export const Middle = Template.bind({});
 Middle.args = {
   drawersLeft: [
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-filter",
       minWidth: 200,
     },
     {
@@ -105,7 +100,7 @@ Middle.args = {
       minWidth: "100%",
     },
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-search",
       minWidth: 200,
       anchor: "right",
       level: 1,
@@ -149,11 +144,11 @@ const generateDrawer = (d, level, iconKey) => {
 const generateContent = (d) => {
   return (
     <>
-      <Typography variant="h4">
-        <span style={{ padding: 10, color: "white" }}>
+      <Typography>
+        <div style={{ padding: 10, marginTop: 100, color: "white" }}>
           {d.content && `Content min ${d.minChildrenWidth}`} Lorem ipsum dolor
           sit amet, consectetur adipiscing elit.
-        </span>
+        </div>
       </Typography>
       <Typography variant="h1">
         <Skeleton animation={false} />

@@ -18,9 +18,9 @@ const Template = (args) => {
   return (
     <>
       <div>
-        <Skeleton variant="circle" width={40} height={40} animation={false} />
-        <Skeleton variant="rect" width={210} height={118} animation={false} />
-        <Skeleton animation={false} />
+        {/* <Skeleton variant="circle" width={40} height={40} animation={false} />
+      <Skeleton variant="rect" width={210} height={118} animation={false} />
+      <Skeleton animation={false} /> */}
       </div>
       <StackableDrawerContainer anchor="left">
         {args.drawersLeft &&
@@ -40,11 +40,11 @@ export const Left = Template.bind({});
 Left.args = {
   drawersLeft: [
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-search",
       minWidth: 200,
     },
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-filter",
       minWidth: 200,
     },
   ],
@@ -56,11 +56,11 @@ Right.args = {
   //drawersLeft:[],
   drawersRight: [
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-search",
       minWidth: 200,
     },
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-filter",
       minWidth: 200,
     },
   ],
@@ -71,13 +71,13 @@ Both.args = {
   //drawersLeft:[],
   drawersRight: [
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-search",
       minWidth: 200,
     },
   ],
   drawersLeft: [
     {
-      iconKey: "fa-solid fa-grip-lines",
+      iconKey: "fa-filter",
       minWidth: 200,
     },
   ],
@@ -98,35 +98,10 @@ const generateDrawer = (args, level, iconKey) => {
       isDrawerOpen={true}
       tooltip={"Hide elements by file"}
     >
-      <Typography variant="h4">
-        <span style={{ padding: 10, color: "white" }}>
+      <Typography>
+        <div style={{ padding: 20, marginTop: 100, color: "white" }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        </span>
-      </Typography>
-      <Typography variant="h1">
-        <Skeleton animation={false} />
-      </Typography>
-      <Typography variant="h2">
-        <Skeleton animation={false} />
-      </Typography>
-      <Typography variant="h3">
-        <Skeleton animation={false} />
-      </Typography>
-      <Typography variant="h4">
-        <Skeleton animation={false} />
-      </Typography>
-      <Typography variant="h5">
-        <Skeleton animation={false} />
-      </Typography>
-      <Typography variant="h6">
-        <Skeleton animation={false} />
-        <Skeleton animation={false} />
-        <Skeleton animation={false} />
-        <Skeleton animation={false} />
-        <Skeleton animation={false} />
-        <Skeleton animation={false} />
-        <Skeleton animation={false} />
-        <Skeleton animation={false} />
+        </div>
       </Typography>
     </StackableDrawer>
   );
