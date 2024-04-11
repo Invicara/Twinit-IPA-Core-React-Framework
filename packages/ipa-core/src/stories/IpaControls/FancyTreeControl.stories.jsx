@@ -10,6 +10,17 @@ export default {
 const Template = (args) => {
   const [_, updateArgs] = useArgs();
 
+  const cssVariablesStyle = `
+  :root {
+    --fancytree-one-color: #C71784;
+    --fancytree-one-channel-color: #f3d5e4;
+    --fancytree-two-color: #f26827;
+    --fancytree-two-channel-color: #fde0d7;
+    --fancytree-three-color: #00a693;
+    --fancytree-three-channel-color: #cdebe8;
+    /* Define other CSS variables as needed */
+  }
+`;
   const handleChange = (e, f) => {
     updateArgs({
       ...args,
@@ -18,6 +29,7 @@ const Template = (args) => {
   };
   return (
     <div onChange={handleChange}>
+      <style>{cssVariablesStyle}</style>
       <FancyTreeControl {...args} />
     </div>
   );
