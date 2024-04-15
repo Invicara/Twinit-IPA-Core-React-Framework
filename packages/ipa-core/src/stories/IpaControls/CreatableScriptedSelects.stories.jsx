@@ -1,13 +1,22 @@
 import { CreatableScriptedSelects } from "../../IpaControls/CreatableScriptedSelects";
+import { useArgs } from "@storybook/client-api";
 
 export default {
   title: "Controls/CreatableScriptedSelects",
   component: CreatableScriptedSelects,
-  argTypes: { onClick: { action: "onClick" } },
+  argTypes: { onChange: { action: "onChange" } },
 };
 
 const Template = (args) => {
-  return <CreatableScriptedSelects {...args} />;
+  const [_, updateArgs] = useArgs();
+
+  const handleChange = (e) => {
+    updateArgs({
+      ...args,
+      currentValue: e,
+    });
+  };
+  return <CreatableScriptedSelects {...args} onChange={handleChange} />;
 };
 
 export const Default = Template.bind({});
@@ -17,28 +26,21 @@ Default.args = {
     // Define initial current value for each select
     select1: ["value1"],
     select2: ["value2"],
-    // Add more selects as needed
   },
-  onChange: (newValue) => {
-    console.log("New value:", newValue);
-    // Add your onChange logic here if needed
-  },
-  multi: true, // Define whether it's a multi-select or not
-  script: "your-script-here", // Define the script to fetch options
-  disabled: false, // Define whether the selects are disabled or not
+  onChange: (newValue) => {},
+  multi: true,
+  script: "your-script-here",
+  disabled: false,
   filterInfo: {
-    // Define filter info if needed
     filter1: "value1",
     filter2: "value2",
-    // Add more filters as needed
   },
-  compact: false, // Define whether the selects are compact or not
-  horizontal: false, // Define whether the selects are displayed horizontally or not
-  selectOverrideStyles: {
-    // Define select override styles if needed
-  },
-  highlightedOptions: ["value1", "value2"], // Define highlighted options if needed
-  placeholder: "Select...", // Define the placeholder text
-  isClearable: true, // Define whether the selects are clearable or not
-  reloadTrigger: 0, // Define a reload trigger if needed
+  compact: false,
+  horizontal: false,
+  selectOverrideStyles: {},
+  highlightedOptions: ["value1", "value2"],
+  placeholder: "Select...",
+  isClearable: true,
+  reloadTrigger: 0,
+  isTest: true,
 };

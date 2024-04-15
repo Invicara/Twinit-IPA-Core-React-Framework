@@ -7,10 +7,28 @@ export default {
   argTypes: {
     labelProps: { control: "object" },
     inputProps: { control: "object" },
+    onChange: { action: "onChange" },
+    onFocusChange: { action: "onFocusChange" },
   },
 };
 
-const Template = (args) => <CollapsibleTextInput {...args} />;
+const Template = (args) => {
+  const handleChange = (e) => {
+    updateArgs({
+      ...args,
+      inputProps: {
+        ...args.inputProps,
+        value: e.target.value,
+        collapsedText: e.target.value.substring(0, 20) + "...",
+      },
+    });
+  };
+  return (
+    <div>
+      <CollapsibleTextInput {...args} onChange={handleChange} />
+    </div>
+  );
+};
 
 export const Default = Template.bind({});
 Default.args = {
