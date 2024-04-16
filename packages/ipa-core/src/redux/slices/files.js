@@ -1,5 +1,5 @@
 import { createSelector, createSlice} from '@reduxjs/toolkit'
-import {IafFile} from "@invicara/platform-api";
+import {IafFile} from "@dtplatform/platform-api";
 import produce from "immer";
 import FileConfigReader from "../../IpaPageComponents/files/configReader";
 import _ from 'lodash'

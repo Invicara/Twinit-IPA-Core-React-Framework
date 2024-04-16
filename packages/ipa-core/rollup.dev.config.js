@@ -9,7 +9,7 @@ import cleaner from 'rollup-plugin-cleaner';
 import image from '@rollup/plugin-image';
 import pkg from './package.json'
 
-const externals =  [...Object.keys(pkg.dependencies || {}),"clsx","@invicara/ui-utils","uid", "query-string", "redux"];
+const externals =  [...Object.keys(pkg.dependencies || {}),"clsx","@dtplatform/ui-utils","uid", "query-string", "redux"];
 
 export default {
   input: 'src/main.js',
@@ -75,7 +75,7 @@ export default {
     'react-autosuggest', 'react-click-outside', 'react-css-modules',
     'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
     'react-inspector', 'react-select', 'react-table',
-    '@invicara/expressions', '@invicara/platform-api',
+    '@dtplatform/platform-api',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path'
   ]
