@@ -83,6 +83,8 @@ class IpaMainLayout extends React.Component {
             `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/authorize`,
           authType: endPointConfig.authType, // Tells about which authentication process/type we're using. It can be "implicit" or "pkce".
         });
+        this.authService.initialize();
+
     }
 
     render() {
