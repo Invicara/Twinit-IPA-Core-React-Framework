@@ -3,9 +3,8 @@ import * as PropTypes from 'prop-types';
 import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
-import {IafSession, IafProj, IafDataSource} from '@invicara/platform-api';
+import {IafSession, IafProj, IafDataSource} from '@dtplatform/platform-api';
 import {IafScriptEngine} from "@invicara/iaf-script-engine";
-import { expression } from '@invicara/expressions';
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 
@@ -367,28 +366,6 @@ class AppProvider extends React.Component {
 
       if (this.props.ipaConfig) self.setSelectedItems({ipaConfig: this.props.ipaConfig})
 
-      /* load script plugins */
-
-      /*
-        We load all the exported functions from each file listed in ipaConfig.scriptPlugins.
-
-        Each script plugin file must be located in ./app/ipaCore/scriptPlugins
-      */
-      let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
-      if (scriptPlugins) {
-        scriptPlugins.forEach((filename) => {
-          try {
-            let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
-            for (let fnName in funcs) {
-              addScriptFunction(funcs[fnName])
-            }
-          } catch(e) {
-            console.error(e)
-            console.error('Script plugin not able to be loaded: ' + filename)
-          }
-        })
-      }
-
       /* load redux extended slices provided by the app */
 
       /*
@@ -717,15 +694,6 @@ class AppProvider extends React.Component {
     const context = {...this.state};
     return <AppContext.Provider value={context}>{this.props.children}</AppContext.Provider>
   }
-}
-
-export const addScriptFunction = (fn) => {
-  let fnName = "$" + fn.name
-  let fnWrapper = {}
-  fnWrapper[fnName] = {
-    operate: (a,b,c) => fn(expression.operate(a,b,c))
-  }
-  expression.use(fnWrapper)
 }
 
 async function calculateRoutes(config, ipaConfig) {

@@ -1,7 +1,7 @@
 import React from "react";
 import _ from 'lodash'
 
-import {IafPassSvc, IafProj, IafUserGroup} from '@invicara/platform-api'
+import {IafPassSvc, IafProj, IafUserGroup} from '@dtplatform/platform-api'
 import {StackableDrawer} from '../../IpaDialogs/StackableDrawer'
 import RadioButtons from '../../IpaControls/RadioButtons'
 import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
