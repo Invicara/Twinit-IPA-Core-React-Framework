@@ -12,5 +12,6 @@ publishPackages(
         type: "file",
       ]
     ]
-  ]
+  ],
+  pushImage: false
 )
