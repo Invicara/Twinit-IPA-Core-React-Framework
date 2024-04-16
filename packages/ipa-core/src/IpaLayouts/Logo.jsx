@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import FileHelpers from '../IpaUtils/FileHelpers'
-import {IafPassSvc} from '@invicara/platform-api';
+import {IafPassSvc} from '@dtplatform/platform-api';
 import './Logo.scss'
 
 const Logo = ({appName, children, homepage, contextProps}) => {

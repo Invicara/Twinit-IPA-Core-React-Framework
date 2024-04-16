@@ -44,7 +44,7 @@ const getPlugins = () => [
 
 //const external = [...Object.keys(pkg.dependencies), /^node:/];
 let pkg = JSON.parse(fs.readFileSync('./package.json')),
-    external = [...Object.keys(pkg.dependencies || {}),"clsx","@invicara/ui-utils","uid", "query-string", "redux"];
+    external = [...Object.keys(pkg.dependencies || {}),"clsx","@dtplatform/ui-utils","uid", "query-string", "redux"];
 /*
 const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
@@ -56,7 +56,7 @@ const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react-autosuggest', 'react-click-outside', 'react-css-modules',
     'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
     'react-inspector', 'react-select','react-select/creatable', 'react-table',
-    '@invicara/expressions', '@invicara/platform-api',
+    '@dtplatform/platform-api',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path', 'json5',
 

@@ -1,7 +1,7 @@
 import React from "react";
 import _ from 'lodash'
 
-import {IafDataSource} from '@invicara/platform-api'
+import {IafDataSource} from '@dtplatform/platform-api'
 
 import { DatasourceCard } from "./DatasourceCard";
 

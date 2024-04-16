@@ -8,7 +8,7 @@ import { DatasourceScheduleTable } from './DatasourceScheduleTable'
 
 
 import './DatasourceCard.scss'
-import { IafDataSource } from "@invicara/platform-api";
+import { IafDataSource } from "@dtplatform/platform-api";
 
 export const DatasourceCard  = ({
   orchestrator, 
