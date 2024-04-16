@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import _ from 'lodash'
 import clsx from "clsx";
 import {produce} from "immer";
@@ -9,9 +9,15 @@ import {
     withoutPropagation
 } from "../IpaUtils/TreeHelpers";
 import {curriedFlip} from "../IpaUtils/function";
-import './TreeControl.scss'
+import './TreeControl.scss';
+import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 
 const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = defaultBranchRenderer, renderLeafNode = defaultLeafRenderer}) => {
+
+    const reactVirtualizedCache = useRef(new CellMeasurerCache({
+        fixedWidth: true,
+        defaultHeight: 100
+      }))
 
     const getNodeClasses = (node, baseClasses = '') => {
         return clsx(baseClasses,
@@ -35,37 +41,72 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
 
     const getChildrenCount = (node) => _.values(nodeIndex).filter(n => n.isLeaf && n.parents.includes(node.id)).length
 
-    const renderBranch = (node) =>
-        <li className={getNodeClasses(node, 'branch')} onClick={withoutPropagation(() => toggleNode('selectedStatus')(node))} key={node.id}>
+    const renderBranch = (node, virtualizedEvent) =>
+        <li style={virtualizedEvent?.style || {}} className={getNodeClasses(node, 'branch')} onClick={withoutPropagation(() => toggleNode('selectedStatus')(node))} key={node.id}>
             <a>
             <span>
               <i className="fa fa-angle-down branch-expander" onClick={withoutPropagation(() => expandBranch(node))}/>
                 {renderBranchNode(node, getChildrenCount(node), curriedFlip(toggleNode)(node))}
             </span>
             </a>
-            <ul key={node.id + "_children"}>{renderNodes(getNodeChildren(node))}</ul>
+            <ul key={node.id + "_children"} style={{ height: getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 4}vh` : "50vh", width: "auto" }}>
+                <AutoSizer>
+                    {({ width, height }) => (
+                        <List
+                            width={width}
+                            height={height}
+                            rowHeight={reactVirtualizedCache.current.rowHeight}
+                            deferredMeasurementCache={reactVirtualizedCache.current}
+                            rowRenderer={(virtualizedEvent) => {
+                                const node = getNodeChildren(node)[virtualizedEvent.index]
+                                return (
+                                    <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
+                                        {renderNode(node, virtualizedEvent)}
+                                    </CellMeasurer>
+                                )
+                            }}
+                            rowCount={getNodeChildren(node).length}
+                        />
+                    )}
+                </AutoSizer>
+                </ul>
         </li>
 
-    const renderLeaf = (node) =>
-        <li className={getNodeClasses(node, 'leaf')} key={node.id} onClick={withoutPropagation(() => toggleNode('selectedStatus')(node))} >
+    const renderLeaf = (node, virtualizedEvent) =>
+        <li style={virtualizedEvent?.style || {}} className={getNodeClasses(node, 'leaf')} key={node.id} onClick={withoutPropagation(() => toggleNode('selectedStatus')(node))} >
             <a>
                 <span>{renderLeafNode(node, curriedFlip(toggleNode)(node))}</span>
             </a>
         </li>
 
 
-    const renderNodes = (treeNodes) => treeNodes.map(node => {
-
-        if(!node) {
-            return <p>No node to render</p>
-        }
-
-        return node.isLeaf ? renderLeaf(node) : renderBranch(node)
-    })
+    const renderNode = (node, virtualizedEvent) => {
+        return node.isLeaf ? renderLeaf(node, virtualizedEvent) : renderBranch(node, virtualizedEvent)
+    }
 
     return (
         <div className={"fancy-tree"}>
-            {!_.isEmpty(nodeIndex) ? <ul>{renderNodes(_.values(nodeIndex).filter(node => node.level === 0))}</ul> : null}
+            {!_.isEmpty(nodeIndex) ? <ul style={{ height: _.values(nodeIndex).filter(node => node.level === 0).length  < 10 ? `${_.values(nodeIndex).filter(node => node.level === 0).length * 4}vh` : "50vh", width: "auto" }}>
+                <AutoSizer>
+                    {({ width, height }) => (
+                        <List
+                            width={width}
+                            height={height}
+                            rowHeight={reactVirtualizedCache.current.rowHeight}
+                            deferredMeasurementCache={reactVirtualizedCache.current}
+                            rowRenderer={(virtualizedEvent) => {
+                                const node = _.values(nodeIndex).filter(node => node.level === 0)[virtualizedEvent.index]
+                                return (
+                                    <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
+                                        {renderNode(node, virtualizedEvent)}
+                                    </CellMeasurer>
+                                )
+                            }}
+                            rowCount={_.values(nodeIndex).filter(node => node.level === 0).length}
+                        />
+                    )}
+                </AutoSizer>
+            </ul> : null}
         </div>
     )
 }

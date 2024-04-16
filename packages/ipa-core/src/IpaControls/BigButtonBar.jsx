@@ -24,7 +24,7 @@ const BigButtonBar = (props) => {
         <div>
           <img
             onClick={(e) => doAction(key)}
-            src={"/digitaltwin/icons/" + a.icon}
+            src={"/" + a.icon}
           />
         </div>
         <div onClick={(e) => doAction(key)}>

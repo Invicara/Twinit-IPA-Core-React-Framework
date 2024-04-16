@@ -299,13 +299,26 @@ class AppProvider extends React.Component {
 
   async initialize(loadConfigFromCache = true, showProjectPicker = true) {
     const self = this;
-    let  sessionManage = sessionStorage.manage;
+
+    let sessionManage = sessionStorage.getItem('manage');
+
+    if (sessionManage) {
+      sessionManage = JSON.parse(sessionManage);
+    }
+
     let token, user;
     let inviteId;
-    sessionManage = this.props.authService.getAuthTokens();         //Storing token in session
+
+    const auth_token = this.props.authService.getAuthTokens();
+
+    if (auth_token && Object.keys(auth_token).length !== 0) {
+      sessionManage = auth_token;
+    };
+
     if (sessionManage && Object.keys(sessionManage).length === 0) {
       sessionManage = undefined;
     }
+
     if (this.props.authService.isPending()) {
       return;
     }
@@ -317,6 +330,8 @@ class AppProvider extends React.Component {
       const parsed = parseQuery(window.location.search);
       if (parsed.hasOwnProperty('inviteId')) {
         inviteId = parsed.inviteId;
+      } else if (parsed.hasOwnProperty('code')) {
+        await this.props.authService.initialize();
       }
     }
 
@@ -331,17 +346,23 @@ class AppProvider extends React.Component {
       }
     }
 
+    const authTokens = this.props.authService.getAuthTokens();
+    if (authTokens && Object.keys(authTokens).length > 0) {
+      sessionManage = { ...authTokens }
+    }
+
     // if we don't have a token yet and we have something in the session then
     // check that the token in the session is valid
     if (token === undefined && sessionManage && sessionManage !== undefined) {
-      const temp_token = sessionManage.access_token;
+      const temp_token = sessionManage.token || sessionManage.access_token;
       try {
         user = await IafSession.setSessionData(temp_token);
         if (user !== undefined) {
           token = temp_token;
         }
       } catch(e) {
-        console.error("Session token expired")
+        token = temp_token;
+        console.log("Session token expired")
       }
 
     }
@@ -491,14 +512,15 @@ class AppProvider extends React.Component {
                     onConfigLoad={callback}
                     onCancel={() => self.context.ifefShowModal(false)}
                     referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
-                        restartApp={this.state.actions.restartApp}
-                        projects={projects}
-                        onCancel={() => {
-                          this.setState((prev) => {
-                            return { ...prev, isshowProjectPickerModal: true };
-                          });
-                        }}
-                    />) }
+                      allowMultipleProjects={this.props.ipaConfig.referenceAppConfig.allowMultipleProjects}
+                      restartApp={this.state.actions.restartApp}
+                      projects={projects}
+                      onCancel={() => {
+                        this.setState((prev) => {
+                          return { ...prev, isshowProjectPickerModal: true };
+                        });
+                      }}
+                  />) }
                 />);
         } catch (error) {
           console.error(error);

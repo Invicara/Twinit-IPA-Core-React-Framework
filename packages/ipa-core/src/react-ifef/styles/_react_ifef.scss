@@ -1,0 +1,15 @@
+@charset "UTF-8";
+
+// React doesn't like custom properties in JSX, see [JSX Gotchas](https://facebook.github.io/react/docs/jsx-gotchas.html), so we overwrite the transitions with an older class based version
+$ionicons-font-path: "fonts";
+
+@import
+	"../scss/_ifef.scss",
+	"slick-theme",
+	"slick",
+  	"snap",
+	"animations-overwrite",
+	"transitions-overwrite",
+	"styles",
+	"newStyles",
+	"icofont.min";

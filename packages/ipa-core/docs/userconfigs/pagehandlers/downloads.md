@@ -15,7 +15,13 @@ Use `pageComponent: 'DownloadsView'` in a handler to activate the Downloads View
 
 ## `systems`
 
-Valid systems are Autodesk Revit, Autodesk Navisworks, and Autodesk Civil 3D.
+The following list are valid systems supported by the platform:
+
+- Autodesk Revit – 2018, 2019, 2020, 2021, 2022, 2023, & 2024
+- Autodesk Navisworks – 2020 & 2021
+- Autodesk Civil 3D - 2020, 2021 & 2022
+- AutoCAD – 2020, 2021, 2022, 2023, & 2024 and earlier versions of AutoCAD.
+- IFC Extractor
 
 ---
 
@@ -32,7 +38,6 @@ Valid systems are Autodesk Revit, Autodesk Navisworks, and Autodesk Civil 3D.
     "Autodesk Revit", 
     "Autodesk Navisworks", 
     "Autodesk Civil 3D"
-
   ],
   "path": "/downloads"
 }
