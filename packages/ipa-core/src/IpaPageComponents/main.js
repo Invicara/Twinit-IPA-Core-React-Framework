@@ -41,3 +41,23 @@ const IpaPageComponents = {
 }
 
 export default IpaPageComponents
+export {
+    //higher order components
+    withEntityStore, withEntitySearch, withEntityConfig, withEntityAvailableGroups, withGenericErrorBoundary,
+    GenericPageContext, withGenericPageContext, withGenericPageErrorBoundary,
+    //components
+    EntitySelectionPanel,
+    EntityDataStack,
+    EntityDataContainer,
+    EntityDataGroupContainer,
+    useEntityData,
+    TreeSelectMode,
+    EntityActionsPanel,
+    EntityListView,
+    EntityTableContainer,
+    JSONEditor,
+    //custom hooks
+    useSortEntities, usePaginateEntities,
+    //static strings
+    ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE,
+}
