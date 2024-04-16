@@ -165,7 +165,8 @@ export default class SetUpProject extends React.Component {
   handleProjectSetUp = async (e, restartApp) => {
     console.log("called"); // console to know function is called
     e.preventDefault();
-    await this.deletePreviousProject();
+    //check multiple projects are allowed, if not delete previous project
+    !this.props.allowMultipleProjects && await this.deletePreviousProject();
     this.setState({ click: true, open: false });
     let project = await IafProj.createProject(this.state.project); //Create Project
     this.setState({ createdProject: project });
@@ -353,7 +354,7 @@ export default class SetUpProject extends React.Component {
           modalBody={
             <div className="project-picker-modal">
               {!this.state.open && (
-                <form style={{ width: "100%" }} onSubmit={this.handleClickOpen}>
+                <form style={{ width: "100%" }} onSubmit={!this.props.allowMultipleProjects? this.handleClickOpen : this.handleProjectSetUp}>
                   <div style={{ margin: "9px 0" }}>
                     <label>Name</label>
                     <mobiscroll.Input
@@ -456,7 +457,7 @@ export default class SetUpProject extends React.Component {
               )}
               {this.state.open && !this.state.isDeleting && !this.state.isDoneButtonClicked && 
                 <div style={{ float: "left" }}>
-                  By Clicking on Agree button, the previously created project by you would be deleted and this new project would be created.
+                  By Clicking on Agree button, the previously created projects by you would be deleted and this new project would be created.
                   <div>
                     <button
                       onClick={() => this.props.restartApp()}
