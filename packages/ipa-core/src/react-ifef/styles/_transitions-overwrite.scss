@@ -1,0 +1,292 @@
+// Attempt to reduce CSS Animation flickering
+// http://nathanhoad.net/how-to-stop-css-animation-flicker-in-webkit
+.view {
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+// iOS View Transitions
+// -------------------------------
+
+$ios-transition-duration:              450ms !default;
+$ios-transition-timing-function:       cubic-bezier(.3, .9, .4, 1) !default;
+$ios-transition-container-bg-color:    #000 !default;
+$ios-transition-box-shadow:            0px 0px 12px rgba(0,0,0,0.5);
+
+.nav-view-transition-ios {
+
+  &.nav-view-enter-active,
+  &.nav-view-exit-active {
+    @include transition-duration( $ios-transition-duration );
+    @include transition-timing-function( $ios-transition-timing-function );
+    -webkit-transition-property: opacity, -webkit-transform;
+    transition-property: opacity, transform;
+  }
+
+  &.nav-view-direction-forward,
+  &.nav-view-direction-back {
+    background-color: $ios-transition-container-bg-color;
+  }
+
+  &.nav-view-enter-active {
+    z-index: $z-index-view-above;
+  }
+
+  &.nav-view-direction-forward {
+    &.nav-view-enter {
+      box-shadow: $ios-transition-box-shadow;
+      opacity: 1;
+      z-index: $z-index-view-above;      
+      @include translate3d(98%, 0, 0);
+    }
+    
+    &.nav-view-enter.nav-view-enter-active {
+      opacity: 1;
+      @include translate3d(0, 0, 0);
+    }
+
+    &.nav-view-exit {
+      box-shadow: none;
+      opacity: 1;
+      @include translate3d(0, 0, 0);
+    }
+    
+    &.nav-view-exit.nav-view-exit-active {
+      z-index: $z-index-view-below;
+      opacity: 0.9;
+      @include translate3d(-33%, 0, 0);
+    }
+  }
+
+  &.nav-view-direction-back {
+    &.nav-view-enter {
+      z-index: $z-index-view-above;
+      box-shadow: none;
+      opacity: 0.9;
+      @include translate3d(-33%, 0, 0);
+    }
+    &.nav-view-enter.nav-view-enter-active {
+      opacity: 1;
+      @include translate3d(0, 0, 0);
+    }
+
+    &.nav-view-exit {
+      z-index: $z-index-view-below;
+      box-shadow: $ios-transition-box-shadow;
+      opacity: 1;
+      @include translate3d(0, 0, 0);
+    }
+    &.nav-view-exit.nav-view-exit-active {
+      opacity: 0.9;
+      @include translate3d(101%, 0, 0);
+    }
+  }
+
+}
+
+
+
+// iOS Nav Bar Transitions
+// -------------------------------
+
+.nav-bar-transition-ios {
+
+  .title,
+  .button,
+  .back-text {
+    @include transition-duration( $ios-transition-duration );
+    @include transition-timing-function( $ios-transition-timing-function );
+    -webkit-transition-property: opacity, -webkit-transform;
+    transition-property: opacity, transform;
+  }
+
+  .nav-bar-enter-active,
+  .nav-bar-enter {
+    z-index: $z-index-bar-above;
+
+    .bar {
+      background: transparent;
+    }
+  }
+
+  .nav-bar-cached {
+    display: block;
+
+    .header-item {
+      display: none;
+    }
+  }
+
+  &.nav-bar-direction-forward {
+    .title-enter.title-stage {
+      opacity: 0;
+      @include translate3d(98%, 0, 0);
+    }
+    .title-enter.title-enter-active {
+      opacity: 1;
+      @include translate3d(0, 0, 0);
+    }
+    .title-exit.title-stage {
+      opacity: 1;
+      @include translate3d(0, 0, 0);
+    }
+    .title-exit.title-exit-active {
+      opacity: 0;
+      @include translate3d(-33%, 0, 0);
+    }
+  }
+
+  &.nav-bar-direction-back {
+    .title-enter.title-stage {
+      opacity: 0;
+      @include translate3d(-33%, 0, 0);
+    }
+    .title-enter.title-enter-active {
+      opacity: 1;
+      @include translate3d(0, 0, 0);
+    }
+    .title-exit.title-stage {
+      opacity: 1;
+      @include translate3d(0, 0, 0);
+    }
+    .title-exit.title-exit-active {
+      opacity: 0;
+      @include translate3d(98%, 0, 0);
+    }
+  }
+
+  &.nav-bar-direction-forward, &.nav-bar-direction-back {
+    .button-enter.button-stage {
+      opacity: 0;
+    }
+    .button-enter.button-enter-active {
+      opacity: 1;
+    }
+    .button-exit.button-stage {
+      opacity: 1;
+    }
+    .button-exit.button-exit-active {
+      opacity: 0;
+    }
+  }
+
+}
+
+
+
+// Android View Transitions
+// -------------------------------
+
+$android-transition-duration:             320ms !default;
+$android-transition-timing-function:      cubic-bezier(0.4, 0.6, 0.2, 1) !default;
+
+
+.nav-view-transition-android {
+
+  .nav-view-entering,
+  .nav-view-leaving {
+    @include transition-duration( $android-transition-duration );
+    @include transition-timing-function( $android-transition-timing-function );
+    -webkit-transition-property: -webkit-transform;
+    transition-property: transform;
+  }
+
+  &.nav-view-direction-forward {
+    .nav-view-enter {
+      @include translate3d(98%, 0, 0);
+    }
+    .nav-view-enter.nav-view-enter-active {
+      @include translate3d(0, 0, 0);
+    }
+
+    .nav-view-exit {
+      @include translate3d(0, 0, 0);
+    }
+    .nav-view-exit.nav-view-exit-active {
+      @include translate3d(-100%, 0, 0);
+    }
+  }
+
+  &.nav-view-direction-back {
+    .nav-view-enter {
+      @include translate3d(-98%, 0, 0);
+    }
+    .nav-view-enter.nav-view-exit-active {
+      @include translate3d(0, 0, 0);
+    }
+
+    .nav-view-exit {
+      @include translate3d(0, 0, 0);
+    }
+    .nav-view-exit.nav-view-exit-active {
+      @include translate3d(100%, 0, 0);
+    }
+  }
+
+}
+
+
+
+// Android Nav Bar Transitions
+// -------------------------------
+
+.nav-bar-transition-android {
+
+  .title,
+  .button {
+    @include transition-duration( $android-transition-duration );
+    @include transition-timing-function( $android-transition-timing-function );
+    -webkit-transition-property: opacity;
+    transition-property: opacity;
+  }
+
+  &.nav-bar-direction-forward, &.nav-bar-direction-back {
+    .title-enter.title-stage {
+      opacity: 0;
+    }
+    .title-enter.title-enter-active {
+      opacity: 1;
+    }
+    .title-exit.title-stage {
+      opacity: 1;
+    }
+    .title-exit.title-exit-active {
+      opacity: 0;
+    }
+  }
+
+  &.nav-bar-direction-forward, &.nav-bar-direction-back {
+    .button-enter.button-stage {
+      opacity: 0;
+    }
+    .button-enter.button-enter-active {
+      opacity: 1;
+    }
+    .button-exit.button-stage {
+      opacity: 1;
+    }
+    .button-exit.button-exit-active {
+      opacity: 0;
+    }
+  }
+
+  .nav-bar-enter-active,
+  .nav-bar-enter {
+    z-index: $z-index-bar-above;
+
+    .bar {
+      background: transparent;
+    }
+  }
+
+  .nav-bar-cached {
+    display: block;
+
+    .header-item {
+      display: none;
+    }
+  }
+
+}

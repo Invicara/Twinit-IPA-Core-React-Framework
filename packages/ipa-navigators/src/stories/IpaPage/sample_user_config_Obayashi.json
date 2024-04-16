@@ -1460,7 +1460,6 @@
       "pageComponent": "users/UserGroupView",
       "path": "/UserGroupView",
       "config": {
-        "appUrl": "/digitaltwin",
         "allowUserGroupEdit": true,
         "allowUserGroupInvite": true,
         "allowManageInvites": true,

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+import * as PropTypes from 'prop-types';
+
 import { useSwipeable } from 'react-swipeable';
 
 function SwipeablePanel(props) {

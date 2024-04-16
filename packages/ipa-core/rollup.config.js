@@ -48,11 +48,14 @@ const getPlugins = () => [
     copy({
         targets: [
             {src: 'src/img/**/*', dest: 'modules/img'},
-            {src: 'src/*/*.scss', dest: 'modules/styles'},
+            {src: 'src/**/*.scss', dest: 'modules/styles'},
             {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'},
+            {src: 'src/IpaFonts/**/*', dest: 'modules/IpaFonts'},
+            {src: 'src/react-ifef/img/**/*', dest: 'modules/react-ifef/img'},
             {src: 'src/img/**/*', dest: 'esm_modules/img'},
             {src: 'src/*/*.scss', dest: 'esm_modules/styles'},
-            {src: 'src/IpaIcons/**/*', dest: 'esm_modules/IpaIcons'}
+            {src: 'src/IpaIcons/**/*', dest: 'esm_modules/IpaIcons'},
+            {src: 'src/IpaFonts/**/*', dest: 'esm_modules/IpaFonts'},
         ]
     })]
 
@@ -70,7 +73,7 @@ const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react-autosuggest', 'react-click-outside', 'react-css-modules',
     'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
     'react-inspector', 'react-select','react-select/creatable', 'react-table',
-    '@invicara/expressions', '@invicara/platform-api', '@invicara/react-ifef',
+    '@invicara/expressions', '@invicara/platform-api',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path', 'json5',
 
@@ -86,6 +89,7 @@ export default {
         'IpaRedux':'src/redux/main.js',
         'IpaLayouts':'src/IpaLayouts/main.js',
         'IpaMock':'src/IpaMock/main.js',
+        'react-ifef':'src/react-ifef/main.js',
     },
     output: [{
         dir: 'modules',
