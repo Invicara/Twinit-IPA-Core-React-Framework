@@ -1,5 +1,5 @@
 import React from 'react';
-import {IfefModal} from '@invicara/react-ifef';
+import IfefModal from '../react-ifef/components/ifefModal';
 import './GenericModal.scss'
 
 class GenericModal extends React.Component {

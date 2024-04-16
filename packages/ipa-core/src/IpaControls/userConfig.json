@@ -2462,7 +2462,7 @@
       "pageComponent": "users/UserGroupView",
       "path": "/UserGroupView",
       "config": {
-        "appUrl": "/digitaltwin",
+        "appUrl": "/",
         "allowUserGroupEdit": true,
         "allowUserGroupInvite": true,
         "allowManageInvites": true,

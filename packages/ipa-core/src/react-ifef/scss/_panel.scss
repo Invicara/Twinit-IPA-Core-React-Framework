@@ -1,0 +1,77 @@
+
+/**
+ * Side-Panels
+ * --------------------------------------------------
+ * Side panel structure
+ */
+
+.asf-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: $z-index-panel;
+  overflow: hidden;
+
+  min-height: 100%;
+  max-height: 100%;
+
+  background-color: $panel-bg;
+
+  .scroll-content {
+    z-index: $z-index-panel-scroll-content;
+  }
+
+  .bar-header {
+    z-index: $z-index-panel-bar-header;
+  }
+}
+
+.asf-panel-content {
+  @include transform(none);
+  box-shadow: $panel-side-shadow;
+}
+/*
+.panel-open .asf-panel-content .pane,
+.panel-open .asf-panel-content .scroll-content {
+  pointer-events: none;
+}
+*/
+
+.grade-b .asf-panel-content,
+.grade-c .asf-panel-content {
+  @include box-sizing(content-box);
+  right: -1px;
+  left: -1px;
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  box-shadow: none;
+}
+
+.asf-panel-left {
+  left: 0;
+  width: $panel-width;
+}
+
+.asf-panel-right {
+  right: 0;
+  width: $panel-width;
+}
+
+.asf-panel-bottom {
+  bottom: 0;
+  height: $panel-bottom-height;
+  top: auto;
+  min-height: auto;
+  z-index: 1;     // competes with snap-draw z-index
+  width: 100%;
+  box-shadow: $panel-side-shadow;
+}
+
+
+.aside-open.aside-resizing .asf-panel-right {
+  display: none;
+}
+
+.asf-panel-animated {
+  @include transition-transform($panel-animation-speed ease);
+}

@@ -1,0 +1,326 @@
+
+/**
+ * Popovers
+ * --------------------------------------------------
+ * Popovers are independent views which float over content
+ * Named to avoid conflicts with Bootstrap
+ */
+
+.asf-popover-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $z-index-popover;
+  width: 100%;
+  height: 100%;
+  background-color: $popover-backdrop-bg-inactive;
+
+  &.active {
+    background-color: $popover-backdrop-bg-active;
+  }
+}
+
+.asf-popover {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  z-index: $z-index-popover;
+  display: block;
+  margin-top: 12px;
+  margin-left: calc(($popover-width / 2) * -1);
+  //height: $popover-height;
+  //width: $popover-width;
+  max-height: $popover-height;
+  background-color: $popover-bg-color;
+  box-shadow: $popover-box-shadow;
+  opacity: 0;
+
+  .item:first-child {
+    border-top: 0;
+  }
+
+  .item:last-child {
+    border-bottom: 0;
+  }
+
+  &.asf-popover-bottom {
+    margin-top: -12px;
+  }
+}
+
+
+// Set popover border-radius
+.asf-popover,
+.asf-popover .bar-header {
+  border-radius: $popover-border-radius;
+}
+.asf-popover .scroll-content {
+  z-index: 1;
+  margin: 2px 0;
+}
+.asf-popover .bar-header {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.asf-popover .has-header {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+.asf-popover-arrow {
+  display: none;
+}
+
+
+// iOS Popover
+.platform-ios {
+
+  .asf-popover {
+    box-shadow: $popover-box-shadow-ios;
+    border-radius: $popover-border-radius-ios;
+  }
+
+  .asf-popover,
+  .asf-popover .bar-header {
+    border-radius: $popover-border-radius-ios;
+  }
+  .asf-popover .scroll-content {
+    margin: 8px 0;
+    border-radius: $popover-border-radius-ios;
+  }
+  .asf-popover .scroll-content.has-header {
+    margin-top: 0;
+  }
+  .asf-popover-arrow {
+    position: absolute;
+    display: block;
+    top: -17px;
+    width: 30px;
+    height: 19px;
+    overflow: hidden;
+
+    &:after {
+      position: absolute;
+      top: 12px;
+      left: 5px;
+      width: 20px;
+      height: 20px;
+      background-color: $popover-bg-color;
+      border-radius: 3px;
+      content: '';
+      @include rotate(-45deg);
+    }
+  }
+  .asf-popover-bottom .asf-popover-arrow {
+    top: auto;
+    bottom: -10px;
+    &:after {
+      top: -6px;
+    }
+  }
+}
+
+
+// Android Popover
+.platform-android {
+
+  .asf-popover {
+    margin-top: -32px;
+    background-color: $popover-bg-color-android;
+    box-shadow: $popover-box-shadow-android;
+
+    .item {
+      border-color: $popover-bg-color-android;
+      background-color: $popover-bg-color-android;
+      color: #4d4d4d;
+    }
+    &.asf-popover-bottom {
+      margin-top: 32px;
+    }
+  }
+
+  .asf-popover-backdrop,
+  .asf-popover-backdrop.active {
+    background-color: transparent;
+  }
+}
+
+
+// disable clicks on all but the popover
+.popover-open {
+  pointer-events: none;
+
+  .asf-popover,
+  .asf-popover-backdrop {
+    pointer-events: auto;
+  }
+  // prevent clicks on popover when loading overlay is active though
+  &.loading-active {
+    .asf-popover,
+    .asf-popover-backdrop {
+      pointer-events: none;
+    }
+  }
+}
+
+
+// wider popover on larger viewports
+/* Let these auto-size; jl 02/25/15
+@media (min-width: $popover-large-break-point) {
+  .asf-popover {
+    width: $popover-large-width;
+  }
+}
+*/
+
+/* Used with asf-popover menus to separate from Bootstrap asf-popover */
+/* Override some bootstrap asf-popover menu styling
+   Uses our own popover directive, which controls viz, etc. */
+
+// TODO: clean this up to use variables and the above
+
+.asf-popover-menu {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: block;
+  float: left;
+  min-width: 160px;
+  padding: 0 0;
+  margin: 0 0;
+  font-size: 22px;
+  border: 0px;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.asf-popover-menu .item,
+.asf-popover-menu > li > a,
+.asf-popover-menu > div > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.42857143;
+  color: #333;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.asf-popover-menu .item {
+  font-size: 22px;
+}
+
+.asf-popover-menu .item.item-icon-right {
+  padding-right: 54px;
+}
+
+.asf-popover-menu .item:hover,
+.asf-popover-menu .item:focus,
+.asf-popover-menu > li:hover,
+.asf-popover-menu > li:focus,
+.asf-popover-menu > div:hover,
+.asf-popover-menu > div:focus {
+  color: #262626;
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+
+.asf-popover-menu > .active > div,
+.asf-popover-menu > .active > a,
+.asf-popover-menu > .active > a:hover,
+.asf-popover-menu > .active > a:focus {
+  color: #fff;
+  text-decoration: none;
+  background-color: #428bca;
+  outline: 0;
+}
+
+.asf-popover-menu > .disabled > div,
+.asf-popover-menu > .disabled > a,
+.asf-popover-menu > .disabled > a:hover,
+.asf-popover-menu > .disabled > a:focus {
+  color: #777;
+}
+
+
+.asf-popover-menu > .disabled > div:hover,
+.asf-popover-menu > .disabled > a:hover,
+.asf-popover-menu > .disabled > a:focus {
+  text-decoration: none;
+  cursor: not-allowed;
+  background-color: transparent;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.asf-popover-menu .divider {
+  height: 1px;
+  margin: 9px 0;
+  overflow: hidden;
+  background-color: #e5e5e5;
+}
+
+.platform-ios .asf-popover-menu {
+  border-radius: 10px;
+}
+
+.platform-ios .asf-popover-menu .item:first-child,
+.platform-ios .asf-popover-menu .item:first-child:hover,
+.platform-ios .asf-popover-menu>li:first-child:hover,
+.platform-ios .asf-popover-menu>div:first-child:hover {
+  border-radius: 10px 10px 0px 0px;
+}
+
+.platform-ios .asf-popover-menu .item:last-child,
+.platform-ios .asf-popover-menu .item:last-child:hover,
+.platform-ios .asf-popover-menu>li:last-child:hover,
+.platform-ios .asf-popover-menu>div:last-child:hover {
+  border-radius: 0px 0px 10px 10px;
+}
+
+/* These are used as content containers so we can have scrollable popovers
+   jl 08/23/2015 */
+/* Used as a content view container in popovers to make them scrollable inside a popover*/
+.asf-popover-container {
+  display: block;
+  position: absolute;
+  top: 0;
+  z-index: 10;
+  overflow: hidden;
+  min-height: 100%;
+  width: 100%;
+  background-color: #fff;
+}
+
+@media (min-width: $popover-large-break-point) {
+  .asf-popover {
+    max-height: 375px;
+
+    .asf-popover-container {
+      min-height: 350px;
+    }
+  }
+}
+
+
+@media (max-height: $popover-short-break-point) {
+  .asf-popover {
+    max-height: 268px;
+
+    .asf-popover-container {
+      min-height: 250px;
+    }
+  }
+}
+
+.platform-ios .asf-popover-container {
+  border-radius: $popover-border-radius-ios; }
+

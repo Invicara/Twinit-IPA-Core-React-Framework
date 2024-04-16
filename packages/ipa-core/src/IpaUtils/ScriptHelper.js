@@ -14,42 +14,61 @@ async function loadScript(query, ctx) {
   }
   if (isProjectNextGenJs()) {
       const ctx = { _namespaces: IafProj.getCurrent()._namespaces, authToken: IafSession.getAuthToken() }
-      let criteria = { query: {_userType: query._userType }} 
+      let criteria = { query: {_userType: query._userType }}
       console.log('ScriptHelper loadScript criteria', criteria)
+
       let scriptModule = await IafScriptEngine.dynamicImport(criteria, ctx)
+
       if(scriptModule){
         console.log("ScriptHelper loadScript scriptModule", scriptModule)
+
         let loadedScripts = await IafScriptEngine.getVar('loadedScripts')
         console.log("ScriptHelper loadScript loadedScripts", loadedScripts)
+
+        let loadedScriptsByUserTypes = await IafScriptEngine.getVar('loadedScriptsByUserTypes')
+        console.log("ScriptHelper loadScript loadedScriptsByUserTypes", loadedScriptsByUserTypes)
   
-        if (!loadedScripts) loadedScripts = scriptModule.default
-        else loadedScripts = _.assign({}, loadedScripts, scriptModule.default)
+        if (!loadedScripts) {
+          loadedScripts = scriptModule.default
+        }
+        else {
+          loadedScripts = _.assign({}, loadedScripts, scriptModule.default)
+        }
+
+        if (!loadedScriptsByUserTypes) {
+          loadedScriptsByUserTypes = {}
+        }
+        loadedScriptsByUserTypes[query._userType] = scriptModule.default
   
         console.log("ScriptHelper loadScript loadedScripts2", loadedScripts)
         await IafScriptEngine.setVar('loadedScripts', loadedScripts)
+
+        console.log("ScriptHelper loadScriptByUserTypes loadedScripts2", loadedScriptsByUserTypes)
+        await IafScriptEngine.setVar('loadedScriptsByUserTypes', loadedScriptsByUserTypes)
+
       } else {
         console.warn(`ScriptHelper loadScript: No script type ${query._userType} found.`);
       }
-  } else {
+  } //else { // COMMENTING OUT WITH INTENT TO REMOVE IN THE FUTURE NOW THAT WE DON'T SUPPORT OLD EXPRESSIONS SCRIPTS
       // There should only be one, but API gets all, filters and then passes back.  Test return
-      let scripts = await IafProj.getScripts(IafProj.getCurrent(), { query: query });
+      // let scripts = await IafProj.getScripts(IafProj.getCurrent(), { query: query });
 
-      if (!scripts || scripts.length === 0) {
-          console.warn('ScriptHelper loadScript: No scripts found in loadScript.');
-          return;
-      }
-      if (scripts.length > 1) {
-          console.warn("ScriptHelper loadScript: Expecting a unique script in loadScript!");
-          console.log(scripts);
-      }
+      // if (!scripts || scripts.length === 0) {
+      //     console.warn('ScriptHelper loadScript: No scripts found in loadScript.');
+      //     return;
+      // }
+      // if (scripts.length > 1) {
+      //     console.warn("ScriptHelper loadScript: Expecting a unique script in loadScript!");
+      //     console.log(scripts);
+      // }
 
-      let script = scripts[0];
-      let tipScriptVersion = _.find(script._versions, { _version: script._tipVersion })
+      // let script = scripts[0];
+      // let tipScriptVersion = _.find(script._versions, { _version: script._tipVersion })
 
-      let res = await expression.evalExpressions(tipScriptVersion._userData, undefined, ctx || _expressionExecCtx);
+      // let res = await expression.evalExpressions(tipScriptVersion._userData, undefined, ctx || _expressionExecCtx);
 
-      return res;
-  }
+      // return res;
+  //}
 }
 
 async function evalExpressions(str, operand, ctx) {
@@ -68,46 +87,75 @@ async function _execScript(scriptName, operand, scriptResVar, ctx) {
 async function executeScript(scriptName, operand, scriptResVar, ctx, callback){
   if (isProjectNextGenJs()) {
     //execute js script
+
     let loadedScripts = IafScriptEngine.getVar('loadedScripts')
     console.log("ScriptHelper executeScript loadedScripts", loadedScripts)
-    if(!loadedScripts) {
-      console.error(`loadedScripts is undefined`)
-    }else if (!loadedScripts[scriptName]) {
-      //log console error and throw exception
-      console.error(`executeScript "${scriptName}" not found on loadedScripts `)
-    } else {
+
+    let loadedScriptsByUserTypes = IafScriptEngine.getVar('loadedScriptsByUserTypes')
+    console.log("ScriptHelper executeScript loadedScriptsByUserTypes", loadedScriptsByUserTypes)
+
+    if (!scriptName) {
+      console.error('Script information is required!')
+      return 'Script information is required!'
+    }
+
+    let scriptToExecute
+    if (typeof scriptName === 'string') {
+      if (!loadedScripts || !loadedScripts[scriptName]) {
+        console.error(`executeScript "${scriptName}" not found on loadedScripts!`)
+        return `executeScript "${scriptName}" not found on loadedScripts!`
+      } else {
+        scriptToExecute = loadedScripts[scriptName]
+      }
+    }
+    else {
+      if (!scriptName.userType || !scriptName.script) {
+        console.error('Script Info missing userType and/or script!')
+        return 'Script Info missing userType and/or script!'
+      }
+
+      if (!loadedScriptsByUserTypes || !loadedScriptsByUserTypes[scriptName.userType] || !loadedScriptsByUserTypes[scriptName.userType][scriptName.script]) {
+        console.error('Script Info missing userType and/or script!')
+        return 'Script Info missing userType and/or script!'
+      }
+      
+      scriptToExecute = loadedScriptsByUserTypes[scriptName.userType][scriptName.script]
+    }
+
+    if (scriptToExecute) {
       //Now that iaf-script-engine lies outside of PlatformAPI we have to put it back to keep scripts compatible
       const overloadedPlatformApi = {...PlatformApi, IafScriptEngine}
       let libraries = { PlatformApi: overloadedPlatformApi, UiUtils, IafScriptEngine }
       console.log("ScriptHelper executeScript libraries", libraries);
-      let result = loadedScripts[scriptName](operand, libraries, ctx, callback);
+      let result = scriptToExecute(operand, libraries, ctx, callback);
       if (result && result instanceof Promise) {
           result = await result;
       }
       console.log(scriptName+" loadedScript result:", result);
       return result
     }
-  } else {
-      //execute DSL script existing code
-      let dslScriptOutput;
-      //domi 2022/May/03
-      const c = {...(ctx || _expressionExecCtx),
-          //reset previous script local variables (copied from scripRunner)
-          _lV : {},
-          //clear current script operand (copied from scripRunner)
-          _csOP : {},
-          //reset array of previous script promises
-          //if one promise ($wait script) will fail in the script, all other queued promises will be rejected straight away
-          //which is not good for scripts that loads all the project's collections
-          _pSPs: []
-      };
-      try {
-          dslScriptOutput = await _execScript(scriptName, operand, scriptResVar, c);
-      } catch(e){
-          console.error(`executeScript "${scriptName}" rejected`,e);
-      }
-      return dslScriptOutput;
-  }
+
+   } // else { // COMMENTING OUT WITH INTENT TO REMOVE IN THE FUTURE NOW THAT WE DON'T SUPPORT OLD EXPRESSIONS SCRIPTS
+  //     //execute DSL script existing code
+  //     let dslScriptOutput;
+  //     //domi 2022/May/03
+  //     const c = {...(ctx || _expressionExecCtx),
+  //         //reset previous script local variables (copied from scripRunner)
+  //         _lV : {},
+  //         //clear current script operand (copied from scripRunner)
+  //         _csOP : {},
+  //         //reset array of previous script promises
+  //         //if one promise ($wait script) will fail in the script, all other queued promises will be rejected straight away
+  //         //which is not good for scripts that loads all the project's collections
+  //         _pSPs: []
+  //     };
+  //     try {
+  //         dslScriptOutput = await _execScript(scriptName, operand, scriptResVar, c);
+  //     } catch(e){
+  //         console.error(`executeScript "${scriptName}" rejected`,e);
+  //     }
+  //     return dslScriptOutput;
+  // }
 }
 
 async function executeScriptCallback(callbackName, operand, scriptResVar, ctx) {

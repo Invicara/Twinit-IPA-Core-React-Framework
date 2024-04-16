@@ -1,5 +1,5 @@
-import React from "react"
-import {IfefIcon} from '@invicara/react-ifef';
+import React from "react";
+import IfefIcon from '../react-ifef/components/ifefIcon';
 
 export const PopoverMenuView = ({actions}) => <div className="content">
   <ul className="asf-popover-menu">

@@ -13,7 +13,7 @@ import {IafPlugins} from '@invicara/script-iaf';
 import store from "../redux/store";
 import {Provider} from "react-redux";
 import {enableMapSet} from "immer"
-import { IfefBody } from '@invicara/react-ifef';
+import IfefBody from '../react-ifef/components/ifefBody';
 import { getPlatform } from '../IpaUtils/helpers';
 import * as qs from 'querystring';
 
