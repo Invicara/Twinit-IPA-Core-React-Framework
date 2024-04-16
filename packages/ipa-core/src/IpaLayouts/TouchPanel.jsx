@@ -1,22 +1,20 @@
-import React from 'react';
-import * as PropTypes from 'prop-types';
-
-const { Swipeable, defineSwipe, Draggable } = require( 'react-touch' );
-
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useSwipeable } from 'react-swipeable';
 
 function SwipeablePanel(props) {
-    const swipe = defineSwipe({swipeDistance: 25});
+    const handlers = useSwipeable({
+        onSwipedLeft: props.onSwipeLeft,
+        onSwipedRight: props.onSwipeRight,
+        onSwipedUp: props.onSwipeUp,
+        onSwipedDown: props.onSwipeDown,
+    });
+
     return (
-            <Swipeable
-                config={swipe}
-                onSwipeLeft={props.onSwipeLeft}
-                onSwipeRight={props.onSwipeRight}
-                onSwipeUp={props.onSwipeUp}
-                onSwipeDown={props.onSwipeDown}
-                >
-                    {props.children}
-            </Swipeable>
-        );
+        <div {...handlers}>
+            {props.children}
+        </div>
+    );
 }
 
 SwipeablePanel.propTypes = {
@@ -24,45 +22,46 @@ SwipeablePanel.propTypes = {
     onSwipeLeft: PropTypes.func,
     onSwipeUp: PropTypes.func,
     onSwipeDown: PropTypes.func,
-}
+};
 
 class DraggablePanel extends React.Component {
-    constructor( props ) {
-        super( props  );
+    constructor(props) {
+        super(props);
 
         const position = props.position || {};
         this.state = {
             pos: {
                 left: position.left || 100,
-                top: position.top || 100
-            }
-        }
+                top: position.top || 100,
+            },
+        };
 
         this.handleDrag = this.handleDrag.bind(this);
     }
 
     handleDrag(newPos) {
-        this.setState({pos: {left: newPos.left, top: newPos.top}});
+        this.setState({ pos: { left: newPos.left, top: newPos.top } });
     }
 
     render() {
         const { pos } = this.state;
         return (
-            <Draggable
-                position={pos}
-                onDrag={this.handleDrag}
+            <div
+                style={{ ...pos, position: 'absolute' }}
+                draggable="true"
+                onDrag={(e) => {
+                    e.preventDefault();
+                    this.handleDrag({ left: e.clientX, top: e.clientY });
+                }}
                 onDragEnd={() => console.log('drag ended.')}
             >
-                 <div style={{...pos, 'position': 'absolute'}}>
-                    { this.props.children }
-                 </div>
-            </Draggable>
+                {this.props.children}
+            </div>
         );
-
     }
 }
 
 export default {
     SwipeablePanel: SwipeablePanel,
-    DraggablePanel: DraggablePanel
-}
+    DraggablePanel: DraggablePanel,
+};

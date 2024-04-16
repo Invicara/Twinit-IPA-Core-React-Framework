@@ -7,3 +7,8 @@ const mocks = {
     createLegacyContextSupport
 };
 export default mocks;
+export {
+    MockAppProvider,
+    decorateWithMockAppProvider,
+    createLegacyContextSupport
+}

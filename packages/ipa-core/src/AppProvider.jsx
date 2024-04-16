@@ -330,6 +330,8 @@ class AppProvider extends React.Component {
       const parsed = parseQuery(window.location.search);
       if (parsed.hasOwnProperty('inviteId')) {
         inviteId = parsed.inviteId;
+      } else if (parsed.hasOwnProperty('code')) {
+        await this.props.authService.initialize();
       }
     }
 
@@ -344,6 +346,11 @@ class AppProvider extends React.Component {
       }
     }
 
+    const authTokens = this.props.authService.getAuthTokens();
+    if (authTokens && Object.keys(authTokens).length > 0) {
+      sessionManage = { ...authTokens }
+    }
+
     // if we don't have a token yet and we have something in the session then
     // check that the token in the session is valid
     if (token === undefined && sessionManage && sessionManage !== undefined) {
@@ -354,7 +361,8 @@ class AppProvider extends React.Component {
           token = temp_token;
         }
       } catch(e) {
-        console.error("Session token expired")
+        token = temp_token;
+        console.log("Session token expired")
       }
 
     }
@@ -504,14 +512,15 @@ class AppProvider extends React.Component {
                     onConfigLoad={callback}
                     onCancel={() => self.context.ifefShowModal(false)}
                     referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
-                        restartApp={this.state.actions.restartApp}
-                        projects={projects}
-                        onCancel={() => {
-                          this.setState((prev) => {
-                            return { ...prev, isshowProjectPickerModal: true };
-                          });
-                        }}
-                    />) }
+                      allowMultipleProjects={this.props.ipaConfig.referenceAppConfig.allowMultipleProjects}
+                      restartApp={this.state.actions.restartApp}
+                      projects={projects}
+                      onCancel={() => {
+                        this.setState((prev) => {
+                          return { ...prev, isshowProjectPickerModal: true };
+                        });
+                      }}
+                  />) }
                 />);
         } catch (error) {
           console.error(error);
