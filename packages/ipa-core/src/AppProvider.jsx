@@ -123,7 +123,7 @@ class AppProvider extends React.Component {
   async userLogout() {
     try {
       await IafSession.logout();
-    } catch (e) {}
+    } catch (e) {console.error("An unexpected error happened while logging out.")}
 
     this.sisenseLogout()
 
@@ -201,7 +201,7 @@ class AppProvider extends React.Component {
     localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] = JSON.stringify(newSelecteds);
     this.setState({selectedItems: newSelecteds});
   }
-  getPageArray = () => window.location.href.split('?')[0].split('/');
+  getPageArray(){window.location.href.split('?')[0].split('/')}
 
   getCurrentHandler() {
     let config = this.state.userConfig;
@@ -262,7 +262,7 @@ class AppProvider extends React.Component {
     }
     
     return handler;
-  };
+  }
 
   handlePageHandlerLoadError(error) {
     throw error;
@@ -312,7 +312,7 @@ class AppProvider extends React.Component {
 
     if (auth_token && Object.keys(auth_token).length !== 0) {
       sessionManage = auth_token;
-    };
+    }
 
     if (sessionManage && Object.keys(sessionManage).length === 0) {
       sessionManage = undefined;
@@ -327,8 +327,10 @@ class AppProvider extends React.Component {
     //check for invites. If so - redirect to signup
     if (window.location.search) {
       const parsed = parseQuery(window.location.search);
-      if (parsed.hasOwnProperty('inviteId')) {
+      if (Object.prototype.hasOwnProperty.call(parsed, 'inviteId')) {
         inviteId = parsed.inviteId;
+      } else if (Object.prototype.hasOwnProperty.call(parsed, 'code')) {
+        await this.props.authService.initialize();
       }
     }
 
@@ -341,6 +343,11 @@ class AppProvider extends React.Component {
           token = temp_token;
         }
       }
+    }
+
+    const authTokens = this.props.authService.getAuthTokens();
+    if (authTokens && Object.keys(authTokens).length > 0) {
+      sessionManage = { ...authTokens }
     }
 
     // if we don't have a token yet and we have something in the session then
@@ -500,7 +507,9 @@ class AppProvider extends React.Component {
         this.props.ipaConfig.css.forEach((styleSheet) => {
           try {
             let customCss = require('../../../../app/ipaCore/css/'+ styleSheet)
-          } catch(e) {}
+          } catch(e) {
+            console.error("Failed to load custom css styleSheet: ", styleSheet)
+          }
         })
       }
     }
