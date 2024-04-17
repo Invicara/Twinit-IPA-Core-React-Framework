@@ -361,7 +361,6 @@ class AppProvider extends React.Component {
           token = temp_token;
         }
       } catch(e) {
-        token = temp_token;
         console.log("Session token expired")
       }
 
