@@ -32,7 +32,7 @@ class MockAppProvider extends AppProvider {
     console.log('MockAppProvider state', this.state);
   }
 
-  getPageArray = () => {
+  getPageArray() {
     console.log("GET PAGE ARRAY");
     let currentPath = "/";
     if(this.props.history.entries.length) {
@@ -199,7 +199,9 @@ class MockAppProvider extends AppProvider {
         this.props.ipaConfig.css.forEach((styleSheet) => {
           try {
             let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
-          } catch(e) {}
+          } catch(e) {
+            console.error('Failed to load custom css stylesheet: ', styleSheet)
+          }
         })
       }
 

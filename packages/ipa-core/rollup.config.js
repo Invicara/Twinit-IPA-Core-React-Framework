@@ -28,7 +28,20 @@ const getPlugins = () => [
         plugins: [
             require("@babel/plugin-proposal-object-rest-spread"),
             require("fast-async"),
-            ["@babel/plugin-proposal-class-properties", {"loose": true}]
+            ["@babel/plugin-proposal-class-properties", {"loose": true}],
+            //make sure we do not pull the whole material ui
+            //https://github.com/avocadowastaken/babel-plugin-direct-import
+            [
+                "babel-plugin-direct-import",
+                {
+                    "modules": [
+                        "@material-ui/lab",
+                        "@material-ui/core",
+                        "@material-ui/icons",
+                        "@material-ui/system"
+                    ]
+                }
+            ]
         ]
     }),
     commonjs(),
@@ -38,7 +51,11 @@ const getPlugins = () => [
             {src: 'src/**/*.scss', dest: 'modules/styles'},
             {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'},
             {src: 'src/IpaFonts/**/*', dest: 'modules/IpaFonts'},
-            {src: 'src/react-ifef/img/**/*', dest: 'modules/react-ifef/img'}
+            {src: 'src/react-ifef/img/**/*', dest: 'modules/react-ifef/img'},
+            {src: 'src/img/**/*', dest: 'esm_modules/img'},
+            {src: 'src/*/*.scss', dest: 'esm_modules/styles'},
+            {src: 'src/IpaIcons/**/*', dest: 'esm_modules/IpaIcons'},
+            {src: 'src/IpaFonts/**/*', dest: 'esm_modules/IpaFonts'},
         ]
     })]
 
@@ -74,15 +91,22 @@ export default {
         'IpaMock':'src/IpaMock/main.js',
         'react-ifef':'src/react-ifef/main.js',
     },
-    output: {
+    output: [{
         dir: 'modules',
         format: 'cjs',
         name: 'IpaControls',
         sourcemap: false,
         entryFileNames: '[name]/index.js',
-    },
+    },{
+        dir: 'esm_modules',
+        format: 'esm',
+        name: 'IpaControls',
+        sourcemap: false,
+        entryFileNames: '[name]/index.js',
+    }],
     plugins: [
         cleaner({targets: ['./modules']}),
+        cleaner({targets: ['./esm-modules']}),
         cleaner({targets: ['./dist']}),
         ...getPlugins()
     ],

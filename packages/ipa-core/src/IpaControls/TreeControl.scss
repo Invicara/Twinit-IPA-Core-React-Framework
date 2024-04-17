@@ -112,10 +112,6 @@
     border-top-right-radius: 50%;
   }
 
-  li ul li:first-child {
-    margin-top: var(--channel-margin-top);
-  }
-
   li:last-child:before,
   li.expanded:before {
     border-bottom-left-radius: 50%;
