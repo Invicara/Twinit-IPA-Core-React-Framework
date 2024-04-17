@@ -7,8 +7,8 @@ sidebar_position: 1700
 
 To import the `ScriptCache` to your component, use the following import:
 
-import {ScriptCache} from "@invicara/ipa-core/modules/IpaUtils";
 ```jsx
+import {ScriptCache} from "@invicara/ipa-core/modules/IpaUtils";
 ```
 
 ---

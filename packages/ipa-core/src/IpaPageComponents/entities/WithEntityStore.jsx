@@ -164,10 +164,10 @@ const withEntityStore = (WrappedComponent) => {
             {...wrappedProps}/>
 
         render() {
-            const wrappedProps = {...this.props}
-            const derivedEntityType = this.deriveInitialEntityType(this.props.queryParams);
-            const storeHasCorrectEntity = this?.props?.currentEntityType?.singular == derivedEntityType?.singular;
-            return (storeHasCorrectEntity) ? this.getWrappedComponent(wrappedProps) : null;
+            const wrappedProps = {...this.props/*, ...this.state*/}
+            
+            // to render the panels we just need to check if we have selected the current entity - no need to check if it's align with the searched entity
+            return (this?.props?.currentEntityType) ? this.getWrappedComponent(wrappedProps) : null;
         }
     }
     const mapStateToProps = state => ({

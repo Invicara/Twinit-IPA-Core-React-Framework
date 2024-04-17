@@ -406,7 +406,7 @@ Table layout for displaying data
 ##### Configuration
 |Name|Description|
 |---|---|
-|className (optional)| CSS class name that will be applied to the table.  Currently supported values:<br> - Fixed-header:  keep the header visible and scroll just the table body<br>- Simple-doc-table: designed for an array of objects <br>- Simple-property-grid: designed for listing the properties of a single object|
+|className (optional)| CSS class name that will be applied to the table. Use one of the following values: `Fixed-header` keeps the header sticky and the table body scrolls, `Simple-doc-table` is designed for an array of objects, and `Simple-property-grid` is designed for listing the properties of a single object|
 |columns (optional)|When passing in an array of objects use the columns array to identify what object properties to include in the table.  Each entry in the columns array is an object that specifies the name for the column, how to access the data and whether or not the column contains a download link.|
 
 ##### Examples:

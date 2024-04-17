@@ -12,11 +12,14 @@
  */
 /*jslint browser: true*/
 /*global define, module, ender*/
-const snapModule = {};
-(function(win, doc) {
-    'use strict';
-    var Snap = Snap || function(userOpts) {
-      var settings = {
+const snapModule = {
+  Snap: undefined,
+};
+
+const createSnap = function(win, doc) {
+  'use strict';
+  snapModule.Snap = snapModule.Snap || function(userOpts) {
+    var settings = {
           element: null,
           bottomElement: null,
           dragger: null,
@@ -87,8 +90,8 @@ const snapModule = {};
           },
           vendor: function(){
             var tmp = doc.createElement("div"),
-              prefixes = 'webkit Moz O ms'.split(' '),
-              i;
+                prefixes = 'webkit Moz O ms'.split(' '),
+                i;
             for (i in prefixes) {
               if (typeof tmp.style[prefixes[i] + 'Transition'] !== 'undefined') {
                 return prefixes[i];
@@ -167,12 +170,11 @@ const snapModule = {};
           translate: {
             get: {
               matrix: function(index) {
-  
                 if( !utils.canTransform() ){
                   return parseInt(settings.element.style.left, 10);
                 } else {
                   var matrix = win.getComputedStyle(settings.element)[cache.vendor+'Transform'].match(/\((.*)\)/),
-                    ieOffset = 8;
+                      ieOffset = 8;
                   if (matrix) {
                     matrix = matrix[1].split(',');
                     if(matrix.length===16){
@@ -192,34 +194,31 @@ const snapModule = {};
               cache.translation = action.translate.get.matrix(4);
               cache.easing = false;
               clearInterval(cache.animatingInterval);
-  
               if(cache.easingTo===0){
                 utils.klass.remove(doc.body, 'snapjs-right');
                 utils.klass.remove(doc.body, 'snapjs-left');
               }
-  
               utils.dispatchEvent('animated');
               utils.events.removeEvent(settings.element, utils.transitionCallback(), action.translate.easeCallback);
             },
             easeTo: function(n) {
-  
               if( !utils.canTransform() ){
                 cache.translation = n;
                 action.translate.x(n);
               } else {
                 cache.easing = true;
                 cache.easingTo = n;
-  
+
                 settings.element.style[cache.vendor+'Transition'] = 'all ' + settings.transitionSpeed + 's ' + settings.easing;
-  
+
                 if (settings.bottomElement) {
                   settings.bottomElement.style[cache.vendor+'Transition'] = 'all ' + settings.transitionSpeed + 's ' + settings.easing;
                 }
-  
+
                 cache.animatingInterval = setInterval(function() {
                   utils.dispatchEvent('animating');
                 }, 1);
-  
+
                 utils.events.addEvent(settings.element, utils.transitionCallback(), action.translate.easeCallback);
                 action.translate.x(n);
               }
@@ -235,13 +234,13 @@ const snapModule = {};
             easeUp: function(open) {
               cache.easing = true;
               cache.easingUp = true;
-  
+
               settings.element.style[cache.vendor+'Transition'] = 'all ' + settings.transitionSpeed + 's ' + settings.easing;
-  
+
               cache.animatingInterval = setInterval(function() {
                 utils.dispatchEvent('animating');
               }, 1);
-  
+
               utils.events.addEvent(settings.element, utils.transitionCallback(), action.translate.easeCallback);
               if (open) {
                 const elementBottomDimension = settings.elementBottomDimension ?
@@ -251,13 +250,11 @@ const snapModule = {};
                 settings.element.style.bottom = 0;
               }
             },
-  
             adjustContentWidth: function (n) {
               if (!settings.adjustContentWidth) {
                 return;
               } else {
                 var el = settings.element, bottomEl = settings.bottomElement;
-  
                 if (n === 0) {
                   el.style.width = win.innerWidth;  // assume content pane is full width!
                   el.style.left = 0;
@@ -265,7 +262,6 @@ const snapModule = {};
                     bottomEl.style.width = win.innerWidth;  // assume content pane is full width!
                     bottomEl.style.left = 0;
                   }
-  
                 } else if (n > 0 && el.clientWidth > 680) {
                   el.style.left = 0;    // In case right panel was open
                   el.style.width = el.clientWidth - n;
@@ -284,12 +280,12 @@ const snapModule = {};
                 }
               }
             },
-  
+
             x: function(n) {
               if( (settings.disable==='left' && n>0) ||
-                (settings.disable==='right' && n<0)
+                  (settings.disable==='right' && n<0)
               ){ return; }
-  
+
               if( !settings.hyperextensible ){
                 if( n===settings.maxPosition || n>settings.maxPosition ){
                   n=settings.maxPosition;
@@ -297,12 +293,10 @@ const snapModule = {};
                   n=settings.minPosition;
                 }
               }
-  
               n = parseInt(n, 10);
               if(isNaN(n)){
                 n = 0;
               }
-  
               if( utils.canTransform() ){
                 var theTranslate = 'translate3d(' + n + 'px, 0,0)';
                 settings.element.style[cache.vendor+'Transform'] = theTranslate;
@@ -311,7 +305,6 @@ const snapModule = {};
                 }
               } else {
                 settings.element.style.width = (win.innerWidth || doc.documentElement.clientWidth)+'px';
-  
                 settings.element.style.left = n+'px';
                 settings.element.style.right = '';
               }
@@ -333,26 +326,26 @@ const snapModule = {};
             startDrag: function(e) {
               // No drag on ignored elements
               var target = e.target ? e.target : e.srcElement,
-                ignoreParent = utils.parentUntil(target, 'data-snap-ignore');
-  
+                  ignoreParent = utils.parentUntil(target, 'data-snap-ignore');
+
               if (ignoreParent) {
                 utils.dispatchEvent('ignore');
                 return;
               }
-  
-  
+
+
               if(settings.dragger){
                 var dragParent = utils.parentUntil(target, settings.dragger);
-  
+
                 // Only use dragger if we're in a closed state
                 if( !dragParent &&
-                  (cache.translation !== settings.minPosition &&
-                    cache.translation !== settings.maxPosition
-                  )){
+                    (cache.translation !== settings.minPosition &&
+                        cache.translation !== settings.maxPosition
+                    )){
                   return;
                 }
               }
-  
+
               utils.dispatchEvent('start');
               settings.element.style[cache.vendor+'Transition'] = '';
               cache.isDragging = true;
@@ -382,21 +375,20 @@ const snapModule = {};
             },
             dragging: function(e) {
               if (cache.isDragging && settings.touchToDrag) {
-  
+
                 var thePageX = utils.page('X', e),
-                  thePageY = utils.page('Y', e),
-                  translated = cache.translation,
-                  absoluteTranslation = action.translate.get.matrix(4),
-                  whileDragX = thePageX - cache.startDragX,
-                  openingLeft = absoluteTranslation > 0,
-                  translateTo = whileDragX,
-                  diff;
-  
+                    thePageY = utils.page('Y', e),
+                    translated = cache.translation,
+                    absoluteTranslation = action.translate.get.matrix(4),
+                    whileDragX = thePageX - cache.startDragX,
+                    openingLeft = absoluteTranslation > 0,
+                    translateTo = whileDragX,
+                    diff;
+
                 // Shown no intent already
                 if((cache.intentChecked && !cache.hasIntent)){
                   return;
                 }
-  
                 if(settings.addBodyClasses){
                   if((absoluteTranslation)>0){
                     utils.klass.add(doc.body, 'snapjs-left');
@@ -406,11 +398,11 @@ const snapModule = {};
                     utils.klass.remove(doc.body, 'snapjs-left');
                   }
                 }
-  
+
                 if (cache.hasIntent === false || cache.hasIntent === null) {
                   var deg = utils.angleOfDrag(thePageX, thePageY),
-                    inRightRange = (deg >= 0 && deg <= settings.slideIntent) || (deg <= 360 && deg > (360 - settings.slideIntent)),
-                    inLeftRange = (deg >= 180 && deg <= (180 + settings.slideIntent)) || (deg <= 180 && deg >= (180 - settings.slideIntent));
+                      inRightRange = (deg >= 0 && deg <= settings.slideIntent) || (deg <= 360 && deg > (360 - settings.slideIntent)),
+                      inLeftRange = (deg >= 180 && deg <= (180 + settings.slideIntent)) || (deg <= 180 && deg >= (180 - settings.slideIntent));
                   if (!inLeftRange && !inRightRange) {
                     cache.hasIntent = false;
                   } else {
@@ -418,17 +410,17 @@ const snapModule = {};
                   }
                   cache.intentChecked = true;
                 }
-  
+
                 if (
-                  (settings.minDragDistance>=Math.abs(thePageX-cache.startDragX)) || // Has user met minimum drag distance?
-                  (cache.hasIntent === false)
+                    (settings.minDragDistance>=Math.abs(thePageX-cache.startDragX)) || // Has user met minimum drag distance?
+                    (cache.hasIntent === false)
                 ) {
                   return;
                 }
-  
+
                 utils.events.prevent(e);
                 utils.dispatchEvent('drag');
-  
+
                 cache.dragWatchers.current = thePageX;
                 // Determine which direction we are going
                 if (cache.dragWatchers.last > thePageX) {
@@ -490,7 +482,6 @@ const snapModule = {};
               if (cache.isDragging) {
                 utils.dispatchEvent('end');
                 var translated = action.translate.get.matrix(4);
-  
                 // Tap Close
                 if (cache.dragWatchers.current === 0 && translated !== 0 && settings.tapToClose) {
                   utils.dispatchEvent('close');
@@ -500,7 +491,6 @@ const snapModule = {};
                   cache.startDragX = 0;
                   return;
                 }
-  
                 // Revealing Left
                 if (cache.simpleStates.opening === 'left') {
                   // Halfway, Flicking, or Too Far Out
@@ -508,8 +498,8 @@ const snapModule = {};
                     if (cache.simpleStates.flick && cache.simpleStates.towards === 'left') { // Flicking Closed
                       action.translate.easeTo(0);
                     } else if (
-                      (cache.simpleStates.flick && cache.simpleStates.towards === 'right') || // Flicking Open OR
-                      (cache.simpleStates.halfway || cache.simpleStates.hyperExtending) // At least halfway open OR hyperextending
+                        (cache.simpleStates.flick && cache.simpleStates.towards === 'right') || // Flicking Open OR
+                        (cache.simpleStates.halfway || cache.simpleStates.hyperExtending) // At least halfway open OR hyperextending
                     ) {
                       action.translate.easeTo(settings.maxPosition); // Open Left
                     }
@@ -523,8 +513,8 @@ const snapModule = {};
                     if (cache.simpleStates.flick && cache.simpleStates.towards === 'right') { // Flicking Closed
                       action.translate.easeTo(0);
                     } else if (
-                      (cache.simpleStates.flick && cache.simpleStates.towards === 'left') || // Flicking Open OR
-                      (cache.simpleStates.halfway || cache.simpleStates.hyperExtending) // At least halfway open OR hyperextending
+                        (cache.simpleStates.flick && cache.simpleStates.towards === 'left') || // Flicking Open OR
+                        (cache.simpleStates.halfway || cache.simpleStates.hyperExtending) // At least halfway open OR hyperextending
                     ) {
                       action.translate.easeTo(settings.minPosition); // Open Right
                     }
@@ -545,111 +535,104 @@ const snapModule = {};
             action.drag.listen();
           }
         };
-      /*
-       * Public
-       */
-      this.open = function(side) {
-        utils.dispatchEvent('open');
-        utils.klass.remove(doc.body, 'snapjs-expand-left');
-        utils.klass.remove(doc.body, 'snapjs-expand-right');
-  
-        if (side === 'left') {
-          cache.simpleStates.opening = 'left';
-          cache.simpleStates.towards = 'right';
-          utils.klass.add(doc.body, 'snapjs-left');
-          utils.klass.remove(doc.body, 'snapjs-right');
-          action.translate.easeTo(settings.maxPosition);
-        } else if (side === 'right') {
-          cache.simpleStates.opening = 'right';
-          cache.simpleStates.towards = 'left';
-          utils.klass.remove(doc.body, 'snapjs-left');
-          utils.klass.add(doc.body, 'snapjs-right');
-          action.translate.easeTo(settings.minPosition);
-        } else if (side === 'bottom') {
-          cache.simpleStates.opening = 'bottom';
-          utils.klass.add(doc.body, 'snapjs-bottom');
-          action.translate.easeUp(true);
-        }
-      };
-      this.close = function() {
-        utils.dispatchEvent('close');
-        action.translate.easeTo(0);
-      };
-      this.closeBottom = function() {
-        utils.dispatchEvent('close');
-        action.translate.easeUp(false);
-  
-      };
-      this.expand = function(side){
-        var to = win.innerWidth || doc.documentElement.clientWidth;
-  
-        if(side==='left'){
-          utils.dispatchEvent('expandLeft');
-          utils.klass.add(doc.body, 'snapjs-expand-left');
-          utils.klass.remove(doc.body, 'snapjs-expand-right');
-        } else {
-          utils.dispatchEvent('expandRight');
-          utils.klass.add(doc.body, 'snapjs-expand-right');
-          utils.klass.remove(doc.body, 'snapjs-expand-left');
-          to *= -1;
-        }
-        action.translate.easeTo(to);
-      };
-  
-      this.on = function(evt, fn) {
-        eventList[evt] = fn;
-        return this;
-      };
-      this.off = function(evt) {
-        if (eventList[evt]) {
-          eventList[evt] = false;
-        }
-      };
-  
-      this.enable = function() {
-        utils.dispatchEvent('enable');
-        action.drag.listen();
-      };
-      this.disable = function() {
-        utils.dispatchEvent('disable');
-        action.drag.stopListening();
-      };
-  
-      this.settings = function(opts){
-        utils.deepExtend(settings, opts);
-      };
-  
-      this.state = function() {
-        // Now supports multiple panel and bottom open; jl 05/08/2019
-        var state,
-          fromLeft = action.translate.get.matrix(4);
-        if (fromLeft === settings.maxPosition) {
-          state = 'left';
-        } else if (fromLeft === settings.minPosition) {
-          state = 'right';
-        } else {
-          state = 'closed';
-        }
-        if (parseInt(settings.element.style.bottom)) {
-          state = state + " bottom";
-        }
-        return {
-          state: state,
-          info: cache.simpleStates
-        };
-      };
-      init(userOpts);
+    /*
+     * Public
+     */
+    this.open = function(side) {
+      utils.dispatchEvent('open');
+      utils.klass.remove(doc.body, 'snapjs-expand-left');
+      utils.klass.remove(doc.body, 'snapjs-expand-right');
+
+      if (side === 'left') {
+        cache.simpleStates.opening = 'left';
+        cache.simpleStates.towards = 'right';
+        utils.klass.add(doc.body, 'snapjs-left');
+        utils.klass.remove(doc.body, 'snapjs-right');
+        action.translate.easeTo(settings.maxPosition);
+      } else if (side === 'right') {
+        cache.simpleStates.opening = 'right';
+        cache.simpleStates.towards = 'left';
+        utils.klass.remove(doc.body, 'snapjs-left');
+        utils.klass.add(doc.body, 'snapjs-right');
+        action.translate.easeTo(settings.minPosition);
+      } else if (side === 'bottom') {
+        cache.simpleStates.opening = 'bottom';
+        utils.klass.add(doc.body, 'snapjs-bottom');
+        action.translate.easeUp(true);
+      }
     };
-    if ((typeof module !== 'undefined') && module.exports) {
-      module.exports = Snap;
-    }
-    if (typeof ender === 'undefined') {
-      this.Snap = Snap;
-    }
-    if ((typeof define === "function") && define.amd) {
-      define("snap", [], function() {
-        return Snap;
-      });
-    }
-  }).call(this || snapModule, window, document);
+    this.close = function() {
+      utils.dispatchEvent('close');
+      action.translate.easeTo(0);
+    };
+    this.closeBottom = function() {
+      utils.dispatchEvent('close');
+      action.translate.easeUp(false);
+
+    };
+    this.expand = function(side){
+      var to = win.innerWidth || doc.documentElement.clientWidth;
+
+      if(side==='left'){
+        utils.dispatchEvent('expandLeft');
+        utils.klass.add(doc.body, 'snapjs-expand-left');
+        utils.klass.remove(doc.body, 'snapjs-expand-right');
+      } else {
+        utils.dispatchEvent('expandRight');
+        utils.klass.add(doc.body, 'snapjs-expand-right');
+        utils.klass.remove(doc.body, 'snapjs-expand-left');
+        to *= -1;
+      }
+      action.translate.easeTo(to);
+    };
+
+    this.on = function(evt, fn) {
+      eventList[evt] = fn;
+      return this;
+    };
+    this.off = function(evt) {
+      if (eventList[evt]) {
+        eventList[evt] = false;
+      }
+    };
+
+    this.enable = function() {
+      utils.dispatchEvent('enable');
+      action.drag.listen();
+    };
+    this.disable = function() {
+      utils.dispatchEvent('disable');
+      action.drag.stopListening();
+    };
+
+    this.settings = function(opts){
+      utils.deepExtend(settings, opts);
+    };
+
+    this.state = function() {
+      // Now supports multiple panel and bottom open; jl 05/08/2019
+      var state,
+          fromLeft = action.translate.get.matrix(4);
+      if (fromLeft === settings.maxPosition) {
+        state = 'left';
+      } else if (fromLeft === settings.minPosition) {
+        state = 'right';
+      } else {
+        state = 'closed';
+      }
+      if (parseInt(settings.element.style.bottom)) {
+        state = state + " bottom";
+      }
+      return {
+        state: state,
+        info: cache.simpleStates
+      };
+    };
+    init(userOpts);
+  }
+
+}
+
+createSnap(window, document);
+
 export default snapModule.Snap;
