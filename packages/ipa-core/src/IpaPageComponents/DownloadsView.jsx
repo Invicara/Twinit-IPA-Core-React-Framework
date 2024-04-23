@@ -96,7 +96,6 @@ class DownloadsView extends React.Component {
                 {!this.state.isPageLoading && !!this.state.error && <div>{this.state.error}</div>}
                 {!this.state.isPageLoading && !this.state.error  ? <div style={{padding: '40px'}}>
                     <div style={{marginLeft: '20%', marginRight: '20%'}}>
-
                         {this.state.manifests.map((mani) => {
 
                             return  <div key={mani.system}>

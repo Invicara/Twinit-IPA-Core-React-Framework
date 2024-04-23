@@ -11,6 +11,7 @@ import {compose} from "redux";
 import {connect} from "react-redux";
 
 import './DashboardView.scss'
+import RemoteComponentWrapper from "../RemoteComponentWrapper";
 
 class DashboardView extends React.Component {
     constructor(props) {
@@ -111,6 +112,7 @@ class DashboardView extends React.Component {
     }
 
     getComponent = async (config) => {
+        console.log("getComponent config", config)
         let Component = null
         let componentInfo = null
         //Added logic to check if its a simple component or complex on the isString functions

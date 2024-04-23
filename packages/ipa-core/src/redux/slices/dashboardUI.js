@@ -10,6 +10,7 @@ import GenericIframe from "../../IpaControls/GenericIframe";
 import ScriptedAlertTable from '../../IpaControls/AlertTable/ScriptedAlertTable'
 import ScriptedDocumentTable from "../../IpaPageComponents/files/ScriptedDocumentTable";
 import StandaloneDocumentTable from "../../IpaPageComponents/files/StandaloneDocumentTable";
+import RemoteComponentWrapper from "../../IpaPageComponents/RemoteComponentWrapper";
 
 const DASHBOARD_COMPONENTS = {
   "ChartTestPage": ChartTestPage,
@@ -21,7 +22,8 @@ const DASHBOARD_COMPONENTS = {
   "Iframe": GenericIframe,
   "ScriptedAlertTable": ScriptedAlertTable,
   "ScriptedDocumentTable": ScriptedDocumentTable, 
-  "StandaloneDocumentTable": StandaloneDocumentTable
+  "StandaloneDocumentTable": StandaloneDocumentTable,
+  "RemoteComponent": RemoteComponentWrapper
 }
 
 let applicatonDashboardComponents = {}
