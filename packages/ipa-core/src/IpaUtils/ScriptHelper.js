@@ -2,7 +2,7 @@
 import { IafProj, IafSession} from "@dtplatform/platform-api";
 
 import * as PlatformApi from '@dtplatform/platform-api'
-import {IafScriptEngine} from '@invicara/iaf-script-engine';
+import {IafScriptEngine} from '@dtplatform/iaf-script-engine';
 import * as UiUtils from '@dtplatform/ui-utils'
 
 async function loadScript (query, ctx) {
@@ -230,16 +230,6 @@ function getFilterQuery (filters, filterOpts) {
   return sift.getFilterQuery(filters, filterOpts)
 }
 
-// Set up a sort of "global" expression exec context in the browser;  jl 08/04/2019
-let _expressionExecCtx
-function initExpressionExecCtx () {
-  _expressionExecCtx = expression.getExpressionExecCtx()
-}
-
-function releaseExpressionExecCtx () {
-  expression.releaseExpressionExecCtx(_expressionExecCtx)
-}
-
 function getScriptOperators () {
   return expression.getOperators()
 }
@@ -271,8 +261,6 @@ let ScriptHelper = {
   setScriptVar: setScriptVar,
   getFilterFunction: getFilterFunction,
   getFilterQuery: getFilterQuery,
-  initExpressionExecCtx: initExpressionExecCtx,
-  releaseExpressionExecCtx: releaseExpressionExecCtx,
   getScriptOperators: getScriptOperators,
   isProjectNextGenJs: isProjectNextGenJs
 }

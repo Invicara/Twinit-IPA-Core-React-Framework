@@ -1,7 +1,7 @@
 import React from "react";
 import { IafProj, IafSession, IafScripts, IafPassSvc } from "@dtplatform/platform-api";
 import * as PlatformApi from "@dtplatform/platform-api";
-import { IafScriptEngine } from "@invicara/iaf-script-engine";
+import { IafScriptEngine } from "@dtplatform/iaf-script-engine";
 import _ from "lodash";
 import GenericModal from "../IpaDialogs/GenericModal";
 import "../IpaDialogs/ProjectPickerModal.scss";

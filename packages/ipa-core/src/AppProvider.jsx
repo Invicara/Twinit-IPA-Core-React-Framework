@@ -4,7 +4,7 @@ import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
 import {IafSession, IafProj, IafDataSource} from '@dtplatform/platform-api';
-import {IafScriptEngine} from "@invicara/iaf-script-engine";
+import {IafScriptEngine} from "@dtplatform/iaf-script-engine";
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 
@@ -568,12 +568,9 @@ class AppProvider extends React.Component {
 
     //Clear all script state in cache and in script engine
     ScriptCache.clearCache();
-    if(!ScriptHelper.isProjectNextGenJs()) {
-      ScriptHelper.releaseExpressionExecCtx()
-      ScriptHelper.initExpressionExecCtx()
-    } else {
-      IafScriptEngine.clearVars()
-    }
+
+    IafScriptEngine.clearVars()
+  
     this.context.ifefShowModal(false);
 
     let selectedProj = IafProj.getCurrent();
