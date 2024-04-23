@@ -568,12 +568,9 @@ class AppProvider extends React.Component {
 
     //Clear all script state in cache and in script engine
     ScriptCache.clearCache();
-    if(!ScriptHelper.isProjectNextGenJs()) {
-      ScriptHelper.releaseExpressionExecCtx()
-      ScriptHelper.initExpressionExecCtx()
-    } else {
-      IafScriptEngine.clearVars()
-    }
+
+    IafScriptEngine.clearVars()
+  
     this.context.ifefShowModal(false);
 
     let selectedProj = IafProj.getCurrent();

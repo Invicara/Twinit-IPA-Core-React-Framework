@@ -230,16 +230,6 @@ function getFilterQuery (filters, filterOpts) {
   return sift.getFilterQuery(filters, filterOpts)
 }
 
-// Set up a sort of "global" expression exec context in the browser;  jl 08/04/2019
-let _expressionExecCtx
-function initExpressionExecCtx () {
-  _expressionExecCtx = expression.getExpressionExecCtx()
-}
-
-function releaseExpressionExecCtx () {
-  expression.releaseExpressionExecCtx(_expressionExecCtx)
-}
-
 function getScriptOperators () {
   return expression.getOperators()
 }
@@ -271,8 +261,6 @@ let ScriptHelper = {
   setScriptVar: setScriptVar,
   getFilterFunction: getFilterFunction,
   getFilterQuery: getFilterQuery,
-  initExpressionExecCtx: initExpressionExecCtx,
-  releaseExpressionExecCtx: releaseExpressionExecCtx,
   getScriptOperators: getScriptOperators,
   isProjectNextGenJs: isProjectNextGenJs
 }
