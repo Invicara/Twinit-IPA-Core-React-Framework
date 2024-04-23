@@ -2,7 +2,7 @@
 import { IafProj, IafSession} from "@dtplatform/platform-api";
 
 import * as PlatformApi from '@dtplatform/platform-api'
-import {IafScriptEngine} from '@invicara/iaf-script-engine';
+import {IafScriptEngine} from '@dtplatform/iaf-script-engine';
 import * as UiUtils from '@dtplatform/ui-utils'
 
 async function loadScript (query, ctx) {
