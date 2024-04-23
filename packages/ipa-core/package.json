@@ -66,6 +66,7 @@
     "react-select": "^3.0.8",
     "react-table": "^7.8.0",
     "react-transition-group": "^2.2.1",
+    "react-virtualized": "^9.22.5",
     "sass": "^1.53.0",
     "uid": "^2.0.0"
   },
