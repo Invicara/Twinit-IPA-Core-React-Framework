@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-core",
-  "version": "3.0.5",
+  "version": "3.0.8",
   "description": "DigitalTwin Factory frontend and scripting framework",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -64,6 +64,7 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-select": "^3.0.8",
+    "react-swipeable": "^7.0.1",
     "react-table": "^7.8.0",
     "react-transition-group": "^2.2.1",
     "react-virtualized": "^9.22.5",
