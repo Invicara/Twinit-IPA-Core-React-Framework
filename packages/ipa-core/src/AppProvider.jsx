@@ -4,7 +4,7 @@ import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
 import {IafSession, IafProj, IafDataSource} from '@dtplatform/platform-api';
-import {IafScriptEngine} from "@invicara/iaf-script-engine";
+import {IafScriptEngine} from "@dtplatform/iaf-script-engine";
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 
