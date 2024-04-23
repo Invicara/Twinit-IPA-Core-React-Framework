@@ -24,8 +24,5 @@
       "npx prettier --write",
       "npx eslint --fix"
     ]
-  },
-  "dependencies": {
-    "react-swipeable": "^7.0.1"
   }
 }
