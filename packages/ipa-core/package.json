@@ -18,6 +18,7 @@
     "/modules"
   ],
   "dependencies": {
+    "@dtplatform/iaf-script-engine": "~4.3.0",
     "@dtplatform/invicara-lib": "~4.3.0",
     "@dtplatform/platform-api": "~4.3.0",
     "@dtplatform/platform-ui-components": "~4.3.0",
