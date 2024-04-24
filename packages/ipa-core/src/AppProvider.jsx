@@ -201,7 +201,7 @@ class AppProvider extends React.Component {
     localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] = JSON.stringify(newSelecteds);
     this.setState({selectedItems: newSelecteds});
   }
-  getPageArray(){window.location.href.split('?')[0].split('/')}
+  getPageArray(){return window.location.href.split('?')[0].split('/')}
 
   getCurrentHandler() {
     let config = this.state.userConfig;
