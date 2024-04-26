@@ -1,6 +1,6 @@
 {
   "name": "@dtplatform/ipa-core",
-  "version": "2.2.111-react-17.0",
+  "version": "2.2.112-react-17.0",
   "description": "Invicara Platform application frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
