@@ -4,7 +4,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 
 export const InstallCodeBlock = (() => {
    const moduleMap = {
-        "TWINIT": "@invicara",
+        "TWINIT": "@dtplatform",
         "MIRRANA": "@mirrana",
    }
 

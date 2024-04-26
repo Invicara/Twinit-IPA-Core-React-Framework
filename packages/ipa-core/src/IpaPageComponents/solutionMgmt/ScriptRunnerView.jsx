@@ -29,7 +29,7 @@
 import React from "react";
 // import {ObjectInspector, chromeLight } from 'react-inspector';
 import Select from 'react-select';
-import {IafScripts} from '@invicara/platform-api'
+import {IafScripts} from '@dtplatform/platform-api'
 import _, { times } from 'lodash'
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';

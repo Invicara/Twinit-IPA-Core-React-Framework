@@ -1,10 +1,10 @@
 const esModules = [
-  '@invicara/platform-api',
+  '@dtplatform/platform-api',
   'lodash-es',
-  '@invicara/core-utils',
-  '@invicara/react-ifef',
-  '@invicara/expressions',
-  '@invicara/ui-utils'].join('|');
+  '@dtplatform/core-utils',
+  '@dtplatform/react-ifef',
+  '@dtplatform/expressions',
+  '@dtplatform/ui-utils'].join('|');
 
 const config = {
   verbose: true,

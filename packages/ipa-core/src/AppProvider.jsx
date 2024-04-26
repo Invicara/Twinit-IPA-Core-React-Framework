@@ -20,10 +20,10 @@ import * as PropTypes from 'prop-types';
 import {Route, Redirect} from 'react-router-dom';
 import _ from "lodash";
 
-import {IafSession, IafProj, IafDataSource} from '@invicara/platform-api';
-import {IafScriptEngine} from '@invicara/iaf-script-engine';
+import {IafSession, IafProj, IafDataSource} from '@dtplatform/platform-api';
+import {IafScriptEngine} from '@dtplatform/iaf-script-engine';
 console.log("IafScriptEngine", IafScriptEngine)
-import { expression } from '@invicara/expressions'
+// import { expression } from '@invicara/expressions'
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 
@@ -338,6 +338,8 @@ class AppProvider extends React.Component {
       const parsed = parseQuery(window.location.search);
       if (parsed.hasOwnProperty('inviteId')) {
         inviteId = parsed.inviteId;
+      } else if (parsed.hasOwnProperty('code')) {
+        await this.props.authService.initialize();
       }
     }
 
@@ -354,6 +356,11 @@ class AppProvider extends React.Component {
       }
     }
 
+    const authTokens = this.props.authService.getAuthTokens();
+    if (authTokens && Object.keys(authTokens).length > 0) {
+      sessionManage = { ...authTokens }
+    }
+
     // if we don't have a token yet and we have something in the session then
     // check that the token in the session is valid
     if (token === undefined && sessionManage && sessionManage !== undefined) {
@@ -365,6 +372,7 @@ class AppProvider extends React.Component {
           token = temp_token;
         }
       } catch(e) {
+        token = temp_token;
         console.log("Session token expired")
       }
 
@@ -386,19 +394,19 @@ class AppProvider extends React.Component {
         Each script plugin file must be located in ./app/ipaCore/scriptPlugins
       */
       let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
-      if (scriptPlugins) {
-        scriptPlugins.forEach((filename) => {
-          try {
-            let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
-            for (let fnName in funcs) {
-              addScriptFunction(funcs[fnName])
-            }
-          } catch(e) {
-            console.error(e)
-            console.error('Script plugin not able to be loaded: ' + filename)
-          }
-        })
-      }
+      // if (scriptPlugins) {
+      //   scriptPlugins.forEach((filename) => {
+      //     try {
+      //       let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
+      //       for (let fnName in funcs) {
+      //         addScriptFunction(funcs[fnName])
+      //       }
+      //     } catch(e) {
+      //       console.error(e)
+      //       console.error('Script plugin not able to be loaded: ' + filename)
+      //     }
+      //   })
+      // }
 
       /* load redux extended slices provided by the app */
 
@@ -597,12 +605,13 @@ class AppProvider extends React.Component {
 
     //Clear all script state in cache and in script engine
     ScriptCache.clearCache();
-    if(!ScriptHelper.isProjectNextGenJs()) {
-      ScriptHelper.releaseExpressionExecCtx()
-      ScriptHelper.initExpressionExecCtx()
-    } else {
-      IafScriptEngine.clearVars()
-    }
+    // if(!ScriptHelper.isProjectNextGenJs()) {
+    //   ScriptHelper.releaseExpressionExecCtx()
+    //   ScriptHelper.initExpressionExecCtx()
+    // } else {
+    //   IafScriptEngine.clearVars()
+    // }
+    IafScriptEngine.clearVars()
     this.context.ifefShowModal(false);
 
     let selectedProj = IafProj.getCurrent();
@@ -735,15 +744,15 @@ class AppProvider extends React.Component {
   }
 }
 
-export const addScriptFunction = (fn) => {
-  let fnName = "$" + fn.name
-  let fnWrapper = {}
-  fnWrapper[fnName] = {
-    operate: (a,b,c) => fn(expression.operate(a,b,c))
-  }
-  console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
-  expression.use(fnWrapper)
-}
+// export const addScriptFunction = (fn) => {
+//   let fnName = "$" + fn.name
+//   let fnWrapper = {}
+//   fnWrapper[fnName] = {
+//     operate: (a,b,c) => fn(expression.operate(a,b,c))
+//   }
+//   console.log(`Added Script Operator: ${fnName} => ${fn.name}`)
+//   expression.use(fnWrapper)
+// }
 
 async function calculateRoutes(config, ipaConfig) {
   const pList = [];

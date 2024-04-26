@@ -1,5 +1,5 @@
 
-import {IafFileSvc, IafFile, IafProj} from '@invicara/platform-api';
+import {IafFileSvc, IafFile, IafProj} from '@dtplatform/platform-api';
 import _ from 'lodash';
 
 var JSZip = require("jszip");
