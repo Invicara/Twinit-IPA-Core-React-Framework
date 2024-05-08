@@ -36,12 +36,12 @@ class EntityView extends React.Component {
 
     openDetail = entity => {
         this.setState({displayDetail: true})
-        this.props.entitiesSelected([entity]);
+        // this.props.entitiesSelected([entity]);
     }
 
     openSummary = () => {
         this.setState({displayDetail: false})
-        this.props.entitiesSelected([]);
+        // this.props.entitiesSelected([]);
     }
 
     onTreeSelect = (entities) => {
