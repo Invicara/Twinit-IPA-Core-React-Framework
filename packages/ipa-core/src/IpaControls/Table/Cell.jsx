@@ -39,8 +39,8 @@ export const getCellContent = (type, val) => {
         case "datetime":
             return <p className="cell__content cell__content--datetime">{parseDatetimeCell(val)}</p> 
         case "tags":
-            return <div className="cell__content cell__content--tags">{val.map(tag => {
-                return <span className="cell__content cell__content--tag">{tag}</span>
+            return <div className="cell__content cell__content--tags">{val.map((tag, idx) => {
+                return <span key={idx} className="cell__content cell__content--tag">{tag}</span>
             })}</div>
         default:
             return val
