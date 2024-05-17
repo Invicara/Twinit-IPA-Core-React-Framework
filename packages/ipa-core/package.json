@@ -1,6 +1,6 @@
 {
   "name": "@dtplatform/ipa-core",
-  "version": "2.2.113-react-17.0",
+  "version": "2.2.113-react-18.0",
   "description": "Invicara Platform application frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -18,8 +18,8 @@
     "/modules"
   ],
   "dependencies": {
-    "@dtplatform/iaf-script-engine": "~4.3.40",
     "@dtplatform/iaf-lib": "~4.3.8",
+    "@dtplatform/iaf-script-engine": "~4.3.40",
     "@dtplatform/platform-api": "~4.3.30",
     "@dtplatform/platform-ui-components": "~4.3.36",
     "@dtplatform/react-ifef": "~4.3.15",
