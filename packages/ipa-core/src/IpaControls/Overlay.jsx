@@ -26,7 +26,7 @@ export const Overlay = ({
         show && !durationElapsed && "shown",
       )}
     >
-      {<div>Hello there</div>}
+      {content || children}
     </div>
   );
 };
