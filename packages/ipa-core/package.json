@@ -18,7 +18,7 @@
     "/modules"
   ],
   "dependencies": {
-    "@dtplatform/iaf-lib": "~4.3.8",
+    "@dtplatform/iaf-lib": "~4.3.9",
     "@dtplatform/iaf-script-engine": "~4.3.40",
     "@dtplatform/platform-api": "~4.3.30",
     "@dtplatform/platform-ui-components": "~4.3.36",

@@ -6,7 +6,7 @@ import _ from "lodash";
 import GenericModal from "../IpaDialogs/GenericModal";
 import "../IpaDialogs/ProjectPickerModal.scss";
 import * as UiUtils from "@dtplatform/ui-utils";
-import { mobiscroll } from "@dtplatform/invicara-lib";
+import { mobiscroll } from "@dtplatform/iaf-lib";
 import { IafDataSource } from "@dtplatform/platform-api";
 
 export default class SetUpProject extends React.Component {
