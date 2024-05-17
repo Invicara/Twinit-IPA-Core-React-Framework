@@ -2,7 +2,6 @@ const esModules = [
   '@invicara/platform-api',
   'lodash-es',
   '@invicara/core-utils',
-  '@invicara/react-ifef',
   '@invicara/expressions',
   '@invicara/ui-utils'].join('|');
 

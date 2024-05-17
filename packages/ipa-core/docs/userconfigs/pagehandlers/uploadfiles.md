@@ -94,7 +94,7 @@ If provided, a script that seeds information about the files before they are sel
 
 If provided, this script will be run after the user has selected files from disk but before the file appears in the upload table. This script can be used to do things like look to see if the file has already been uploaded and pre-populate the file attributes on the file, parse the file name to extract attribute values to pre-populate file attributes, check file names against a list of expected file names, and even reject files from the upload.
 
-The script is passed an array of `<Files>` as `$files`. The script must return two lists of files: `accepted` and `rejected`.
+The script is passed an array of `<Files>` as `files`. The script must return two lists of files: `accepted` and `rejected`.
 
 Accepted files can have to follow information appended by the script:
 
@@ -130,13 +130,13 @@ Sample script result:
 
 If provided, this script allows you to modify the file’s name after the user has selected attributes in the upload table but before the file is uploaded.
 
-The script is handed the internal representation of the file in the upload table including the `fileAttributes` in `$file`. The script must return either a string or `null` value.
+The script is handed the internal representation of the file in the upload table including the `fileAttributes` in `input.file`. The script must return either a string or `null` value.
 
 #### `postProcessFiles`: (optional)
 
 If provided, this script lets you post-process the results of the upload. It can be used to do things, such as relating the uploaded files to other entities, such as assets.
 
-The script is handed the type of entities that the page may have received in `$entityType`, an array of the entities in `$entities`, and the newly created uploaded file items in `$fileItems`.
+The script is handed the type of entities that the page may have received in `input.entityType`, an array of the entities in `input.entities`, and the newly created uploaded file items in `input.fileItems`.
 
 The script does not return anything.
 
@@ -144,10 +144,10 @@ The script does not return anything.
 
 If provided, this script downloads an XLSX report of the uploaded files and their attributes if the user clicks the **Report** button. If the script is not provided the **Report** button will not appear for the user.
 
-The script receives an array of arrays in `$tableRows`, which represent the rows and cells for an XLSX export.
+The script receives an array of arrays in `input.tableRows`, which represent the rows and cells for an XLSX export.
 
 ### `uploadContainer`: (optional)
-If provided allows for files to be uplaoded into an alternate file container.
+If provided allows for files to be uploaded into an alternate file container.
 
 ```jsx
 uploadContainer: {
@@ -159,10 +159,5 @@ uploadContainer: {
 }
 ```
 
-#### `script`
-
-A script which returns the fiel container to which to upload files
-
-#### `containerDesc`
-
-A container description for the script to use to fetch the file container
+- `script`: A script which returns the file container to which to upload files
+- `containerDesc`: A container description for the script to use to fetch the file container.

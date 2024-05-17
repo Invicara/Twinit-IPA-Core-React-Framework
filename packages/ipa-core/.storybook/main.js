@@ -1,17 +1,14 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  "stories": [
-    "../src/**/*.stories.mdx",
-    "../src/**/*.stories.@(js|jsx|ts|tsx)"
-  ],
-  "addons": [
+  stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
+  addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-interactions"
+    "@storybook/addon-interactions",
   ],
-  "framework": "@storybook/react",
-  staticDirs: ['../src/stories/assets'],
+  framework: "@storybook/react",
+  staticDirs: ["../src/stories/assets"],
   webpackFinal: async (config, { configType }) => {
     // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
     // You can change the configuration based on that.
@@ -20,11 +17,14 @@ module.exports = {
     // Make whatever fine-grained changes you need
     config.module.rules.push({
       test: /\.scss$/,
-      use: ['style-loader', 'css-loader', 'sass-loader'],
-      include: path.resolve(__dirname, '../'),
+      use: ["style-loader", "css-loader", "sass-loader"],
+      include: path.resolve(__dirname, "../"),
     });
-
+    config.node = {
+      ...config.node,
+      fs: "empty",
+    };
     // Return the altered config
     return config;
   },
-}
+};

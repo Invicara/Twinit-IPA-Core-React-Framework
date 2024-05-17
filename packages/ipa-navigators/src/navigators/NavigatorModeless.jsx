@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import clsx from "clsx";
-import { IfefTouchPanel } from '@invicara/react-ifef';
-const { IfefDraggablePanel } = IfefTouchPanel;
+import { IfefDraggablePanel } from '../../../ipa-core/src/react-ifef/components/ifefTouchPanel';
 
 
 const NavigatorModeless = ({isFetching, isSelectingEntity = false, searchTab, treeComponent, detailComponent, onModelReset}) => {

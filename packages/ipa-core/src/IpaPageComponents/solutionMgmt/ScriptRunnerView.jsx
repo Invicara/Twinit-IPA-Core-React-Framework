@@ -1,5 +1,5 @@
 import React from "react";
-import {ObjectInspector, chromeLight } from 'react-inspector';
+// import {ObjectInspector, chromeLight } from 'react-inspector';
 import Select from 'react-select';
 import {IafScripts} from '@invicara/platform-api'
 import _ from 'lodash'
@@ -687,7 +687,7 @@ class ScriptRunnerView extends React.Component {
                       <div style={{fontSize: '18px', cursor: 'pointer', marginRight: '10px'}} onClick={() => this.clearVarValue(v)}><i title='Clear Value' className='fas fa-times-circle'></i></div>
                       <span style={{fontWeight: 'bold'}}>{v}</span>
                     </div>
-                    <ObjectInspector data={this.state.variables[v]} initialExpandedPaths={['root', 'root.*']} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/>
+                    {/* <ObjectInspector data={this.state.variables[v]} expandLevel={2} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/> */}
                   </div>
                 })}
               </div>
@@ -723,7 +723,7 @@ class ScriptRunnerView extends React.Component {
                 </div>
           </StackableDrawer>}
             <div style={{width: '100%'}}>
-            <div style={{padding: '40px'}} style={{marginTop: '20px'}}>
+            <div style={{padding: '40px', marginTop: '20px'}} >
               
                 <div style={{marginLeft: '15%', marginRight: '15%'}}>
 
@@ -825,7 +825,7 @@ class ScriptRunnerView extends React.Component {
                         </div>
 
                             {!res.collapsed && <div style={{marginTop: '10px', userSelect: 'text'}}>
-                                {res.disp && <ObjectInspector data={res.data} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/>}
+                                {/* {res.disp && <ObjectInspector data={res.data} theme={{...chromeLight, ...({ BASE_FONT_SIZE: '15px', TREENODE_FONT_SIZE: '15px'})}}/>} */}
                                 {!res.disp && <pre contentEditable="true" suppressContentEditableWarning={true}>{JSON.stringify(res.data, null, 3)}</pre>}
                             </div>}
 

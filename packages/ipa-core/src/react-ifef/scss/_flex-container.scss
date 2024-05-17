@@ -1,0 +1,16 @@
+.flex-container{
+  display: flex;
+  flex-direction: row;
+  height: calc(100% - 80px);
+  position: fixed;
+  width: 100%;
+  top: $bar-header-height;
+}
+
+.flex-content{
+  width: 100%;
+}
+
+.scroll-overflowY{
+  overflow-y: scroll;
+}

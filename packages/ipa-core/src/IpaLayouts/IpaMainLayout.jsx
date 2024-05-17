@@ -13,7 +13,7 @@ import {IafPlugins} from '@invicara/script-iaf';
 import store from "../redux/store";
 import {Provider} from "react-redux";
 import {enableMapSet} from "immer"
-import { IfefBody } from '@invicara/react-ifef';
+import IfefBody from '../react-ifef/components/ifefBody';
 import { getPlatform } from '../IpaUtils/helpers';
 import * as qs from 'querystring';
 
@@ -83,6 +83,8 @@ class IpaMainLayout extends React.Component {
             `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/authorize`,
           authType: endPointConfig.authType, // Tells about which authentication process/type we're using. It can be "implicit" or "pkce".
         });
+        this.authService.initialize();
+
     }
 
     render() {

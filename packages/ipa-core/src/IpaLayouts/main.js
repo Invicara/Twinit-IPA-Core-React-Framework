@@ -5,3 +5,4 @@ const IpaLayouts = {
 }
 
 export default IpaLayouts
+export {IpaMainLayout}

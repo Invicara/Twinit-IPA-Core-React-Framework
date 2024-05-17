@@ -1,29 +1,49 @@
-import React from 'react';
+import React from "react";
 import SimpleTable from "../../IpaControls/SimpleTable";
 
 export default {
-  title: 'Controls/SimpleTable',
+  title: "Controls/SimpleTable",
   component: SimpleTable,
   parameters: {
     // More on Story layout: https://storybook.js.org/docs/react/configure/story-layout
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
 };
 
 const Template = (args) => {
-  return <SimpleTable className="simple-property-grid simple-property-grid-header" {...args}/>;
+  return (
+    <SimpleTable
+      className="simple-property-grid simple-property-grid-header"
+      {...args}
+    />
+  );
 };
 
 export const WithColumnsAndObjects = Template.bind({});
+
 WithColumnsAndObjects.args = {
-  columns: [{
-    name: "Test 1",
-    accessor: "properties.BA Name"
-  }],
-  objects: [{
-    _id: "1",
-    properties: {
-      "BA Name" : "Hello"
-    }
-  }]
+  columns: [
+    {
+      name: "Test 1",
+      accessor: "properties.BA Name",
+    },
+    {
+      name: "Test 2",
+      accessor: "properties.BA Name",
+    },
+  ],
+  objects: [
+    {
+      _id: "1",
+      properties: {
+        "BA Name": "Hello",
+      },
+    },
+    {
+      _id: "2",
+      properties: {
+        "BA Name": "Test",
+      },
+    },
+  ],
 };

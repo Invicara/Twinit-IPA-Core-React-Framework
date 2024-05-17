@@ -4,7 +4,6 @@ import '../src/IpaIcons/icons.scss';
 //using bootstrap to include normalize css
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../src/stories/assets/icons.scss';
-import '@invicara/react-ifef/dist/styles/react-ifef-styles.css';
 import '../src/stories/assets/variables.scss';
 
 export const parameters = {

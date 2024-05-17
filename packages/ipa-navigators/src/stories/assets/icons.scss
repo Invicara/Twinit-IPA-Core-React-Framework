@@ -1,13 +1,13 @@
 /* BASE WHITE SVG's */
-$inv-icon-assets-url:        '/digitaltwin/icons/icon-assets.svg';
-$inv-icon-docs-url:          '/digitaltwin/icons/icon-docs.svg';
-$inv-icon-download-url:      '/digitaltwin/icons/icon-download.svg';
-$inv-icon-logout-url:        '/digitaltwin/icons/icon-logout.svg';
-$inv-icon-reports-url:       '/digitaltwin/icons/icon-reports.svg';
-$inv-icon-spaces-url:        '/digitaltwin/icons/icon-spaces.svg';
-$inv-icon-user-url:          '/digitaltwin/icons/icon-user.svg';
-$inv-icon-smartBuilding-url: '/digitaltwin/icons/icon-smartBuilding.svg';
-$inv-icon-nav-url:           '/digitaltwin/icons/icon-nav.svg';
+$inv-icon-assets-url:        '/icons/icon-assets.svg';
+$inv-icon-docs-url:          '/icons/icon-docs.svg';
+$inv-icon-download-url:      '/icons/icon-download.svg';
+$inv-icon-logout-url:        '/icons/icon-logout.svg';
+$inv-icon-reports-url:       '/icons/icon-reports.svg';
+$inv-icon-spaces-url:        '/icons/icon-spaces.svg';
+$inv-icon-user-url:          '/icons/icon-user.svg';
+$inv-icon-smartBuilding-url: '/icons/icon-smartBuilding.svg';
+$inv-icon-nav-url:           '/icons/icon-nav.svg';
 
 .inv-icon-assets   { background-image: url($inv-icon-assets-url); }
 .inv-icon-docs     { background-image: url($inv-icon-docs-url); }
@@ -60,12 +60,12 @@ $inv-icon-nav-url:           '/digitaltwin/icons/icon-nav.svg';
 /*
 Colored icons not through the mask
 */
-.inv-icon-assets.purple { background-image: url(/digitaltwin/icons/icon-assets-purple.svg); }
-.inv-icon-docs.purple { background-image: url(/digitaltwin/icons/icon-docs-purple.svg); }
-.inv-icon-download.purple { background-image: url(/digitaltwin/icons/icon-download-purple.svg); }
-.inv-icon-logout.purple { background-image: url(/digitaltwin/icons/icon-logout-purple.svg); }
-.inv-icon-reports.purple { background-image: url(/digitaltwin/icons/icon-reports-purple.svg); }
-.inv-icon-spaces.purple { background-image: url(/digitaltwin/icons/icon-spaces-purple.svg); }
-.inv-icon-user.purple { background-image: url(/digitaltwin/icons/icon-user-purple.svg); }
-.inv-icon-smartBuilding.purple { background-image: url(/digitaltwin/icons/icon-smartBuilding-purple.svg); }
-.inv-icon-nav.purple{ background-image: url(/digitaltwin/icons/icon-nav-purple.svg); }
+.inv-icon-assets.purple { background-image: url(/icons/icon-assets-purple.svg); }
+.inv-icon-docs.purple { background-image: url(/icons/icon-docs-purple.svg); }
+.inv-icon-download.purple { background-image: url(/icons/icon-download-purple.svg); }
+.inv-icon-logout.purple { background-image: url(/icons/icon-logout-purple.svg); }
+.inv-icon-reports.purple { background-image: url(/icons/icon-reports-purple.svg); }
+.inv-icon-spaces.purple { background-image: url(/icons/icon-spaces-purple.svg); }
+.inv-icon-user.purple { background-image: url(/icons/icon-user-purple.svg); }
+.inv-icon-smartBuilding.purple { background-image: url(/icons/icon-smartBuilding-purple.svg); }
+.inv-icon-nav.purple{ background-image: url(/icons/icon-nav-purple.svg); }

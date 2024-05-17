@@ -10,4 +10,10 @@ const IpaDialogs = {
     StackableDrawerContainer: StackableDrawerContainer
 }
 
-export default IpaDialogs
+export default IpaDialogs;
+export {
+    GenericModal,
+    StackableDrawer,
+    StackableContentDrawer,
+    StackableDrawerContainer
+}

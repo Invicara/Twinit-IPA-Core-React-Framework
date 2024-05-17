@@ -1,0 +1,227 @@
+/* -------------------------------------------------------------------------------------
+// Date        Author     Referene    Comments
+// 28-06-23    HSK        PLAT-2728   Coloring Mechanism - Derive from var(--app-accent-color)
+// -------------------------------------------------------------------------------------
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "faricy-new-web", sans-serif;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: #bfbfbf;
+}
+
+/* --- HEADER --- */
+
+header {
+    background-color: #333333;
+    color: white;
+    width: 100%;
+    height: $bar-header-height;
+    box-shadow: 0 10px 10px 0 #00000033;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    position: fixed;
+    top:0;
+}
+
+#logo {
+    width: 50%;
+}
+
+#logo img {
+    height: 25px;
+    padding-left: 25px;
+}
+
+#active-session {
+    width: 50%;
+}
+
+#active-session-text {
+    font-size: 20px;
+    font-weight: 500;
+    text-align: right;
+    padding-right: 25px;
+}
+
+#active-session-text button{
+    border-color: transparent;
+    background: none;
+    box-shadow: none;
+    color: #fff;
+}
+/* --- NAVIGATION --- */
+
+.menu-item {
+    position: absolute;
+    transition: all 0.5s;
+    opacity: 0;
+    transform: translateY(5px);
+    overflow: hidden;
+}
+
+nav {
+    background-color: #666666;
+    width: $left-panel-width;
+    height: calc(100% - 80px);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.5s;
+    box-shadow: 10px 0 10px 0 #00000033;
+    position: absolute;
+    z-index: $z-index-left-nav;
+}
+
+nav:hover {
+    width: 300px;
+}
+
+nav:hover .menu-item, nav:hover #version-number  {
+    transition: all 0.5s;
+    opacity: 1 !important;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+nav li {
+    padding: 25px 25px 25px 15px;
+}
+
+.main-nav {
+    width: 100%;
+    flex: 1 0 auto;
+}
+
+.main-nav li{
+    display: block;
+    border-left: 10px solid #00000000;
+    transition: all 0.5s;
+}
+
+.main-nav li:hover{
+    background-color: #999999;
+    transition: all 0.5s;
+}
+
+.main-nav:hover a {
+    color: white;
+    text-decoration: none;
+}
+
+.main-nav-active {
+    background-color: #bfbfbf;
+    border-left: 10px solid var(--app-accent-color) !important;
+}
+
+
+.main-nav-active a {
+    color: var(--app-accent-color) !important;
+}
+
+/*.main-nav-active:hover a {
+    color: white;
+}
+*/
+.user-nav {
+    background-color: #333333;
+    width: 100%;
+    flex: 0 1 auto;
+}
+
+.user-nav li {
+    display: block;
+    padding-left: 25px !important;
+    transition: all 0.5s;
+}
+
+.user-nav li:hover {
+    transition: all 0.5s;
+    background-color: #999999 !important;
+}
+
+.user-nav:hover a {
+    color: white;
+    text-decoration: none;
+}
+
+
+#version-number {
+    padding: 25px;
+    color: white;
+    font-size: 0.75em;
+    opacity: 1;
+    transition: all 0.5s;
+}
+
+#active-user {
+    font-size: 1em;
+}
+
+.button-3d-view {
+    background-color: var(--app-accent-color);
+    width: 75px;
+    height: 75px;
+    border-radius: 50px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 5px 5px 10px 0 #00000033;
+    transition: all 0.5s;
+}
+
+.button-3d-view:hover {
+    transform: scale(1.1);
+}
+
+.button-3d-view-text {
+    font-size: 1.5em;
+    font-weight: 900;
+    color: white;
+}
+
+ul {
+    list-style-type: none;
+}
+
+i {
+    padding-right: 10px;
+}
+
+.has-left-nav{
+    margin-left: $left-panel-width
+}
+
+.navExpanded {
+    width: 300px;
+}
+
+.navExpanded span.menu-item {
+    transition: all 0.5s;
+    opacity: 1;
+}
+
+.navCollapsed span.menu-item {
+    transition: all 0.5s;
+    opacity: 0 !important;
+}
+
+.navCollapsed {
+    width: $left-panel-width !important;
+}
