@@ -81,10 +81,10 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback){
       const overloadedPlatformApi = {...PlatformApi, IafScriptEngine}
       let libraries = { PlatformApi: overloadedPlatformApi, UiUtils, IafScriptEngine }
       console.log("ScriptHelper executeScript libraries", libraries);
+
       let result = loadedScripts[scriptName](operand, libraries, ctx, callback);
-      if (result && result instanceof Promise) {
-          result = await result;
-      }
+      result = Promise.resolve(result);
+      result = await result;
       console.log(scriptName+" loadedScript result:", result);
       return result
     }
