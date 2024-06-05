@@ -15,21 +15,36 @@
  * permission is obtained from Invicara Inc.
  */
 
-import React from 'react';
-import Button from '@material-ui/core/Button';
+import React from "react";
+import Button from "@mui/material/Button";
 
-import './GenericMatButton.scss'
+import "./GenericMatButton.scss";
 
 export default class GenericMatButton extends React.Component {
   render() {
-    
-    
     return (
-        <div className={`GenericMatButton ${this.props.className}`}>    
-          <Button variant="contained" size={this.props.size} style={{...this.props.styles}} onClick={this.props.onClick} disabled={this.props.disabled} className={this.props.customClasses}>
-              {this.props.children}
-          </Button>
-        </div>
-    )
+      <div className={`GenericMatButton ${this.props.className}`}>
+        <Button
+          variant="contained"
+          size={this.props.size}
+          style={{ ...this.props.styles }}
+          onClick={this.props.onClick}
+          disabled={this.props.disabled}
+          className={this.props.customClasses}
+          sx={{
+            "padding" : "6px 16px !important",
+            ...(!this.props.disabled && {
+              '&.MuiButton-contained': {
+                color: 'rgba(0, 0, 0, 0.87)',
+                boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)',
+                backgroundColor: '#e0e0e0',
+              },
+            }),
+          }}
+        >
+          {this.props.children}
+        </Button>
+      </div>
+    );
   }
 }

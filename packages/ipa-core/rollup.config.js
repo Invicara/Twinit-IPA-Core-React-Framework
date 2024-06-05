@@ -64,7 +64,7 @@ let pkg = JSON.parse(fs.readFileSync('./package.json')),
 /*
 const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
-    '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles', '@material-ui/icons',
+    '@mui/material', '@mui/icons-material', '@mui/lab', '@mui/styles', '@mui/icons-material',
     '@nivo/bar', '@nivo/pie', '@nivo/line',
     'file-saver', 'immer', 'interactjs', 'json-schema-faker', 'jszip',
     'mime-types', 'moment', 'prop-types', 'qs', 'object-assign',

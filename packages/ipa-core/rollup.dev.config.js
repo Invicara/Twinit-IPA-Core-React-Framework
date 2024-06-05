@@ -84,7 +84,7 @@ export default {
   external: [
     'lodash', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
-    '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles',
+    '@mui/material', '@mui/icons-material', '@mui/lab', '@mui/styles',
     '@nivo/bar', '@nivo/pie', '@nivo/line',
     'file-saver', 'immer', 'interactjs', 'json-schema-faker', 'jszip',
     'mime-types', 'moment', 'prop-types', 'qs', 'object-assign',

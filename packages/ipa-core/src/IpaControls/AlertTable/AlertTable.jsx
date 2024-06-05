@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Table from '../Table/Table'
 import BaseTextInput from "../BaseTextInput";
 import './AlertTable.scss'
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import {withGenericPageContext} from "../../IpaPageComponents/genericPageContext";
 
 const getHeaders = columns => {

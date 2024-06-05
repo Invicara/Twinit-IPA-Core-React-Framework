@@ -1,11 +1,15 @@
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import CheckIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import {withStyles} from "@material-ui/core";
+import Checkbox from '@mui/material/Checkbox';
+import { default as CheckIcon } from '@mui/material/SvgIcon';
+import {styled} from "@mui/system";
 import produce from "immer";
 import React, {useEffect, useState} from "react";
 import {usePrevious} from "../IpaUtils/usePrevious";
 import _ from "lodash";
-import {CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBoxRounded, CheckCircle as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from "@material-ui/icons";
+import CheckBox from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
+import IndeterminateCheckBoxRounded from '@mui/icons-material/IndeterminateCheckBoxRounded';
+import CheckedCircle from '@mui/icons-material/CheckCircle';
+import UncheckedCircle from '@mui/icons-material/RadioButtonUnchecked';
 
 const iconStyle = {fontSize: 18};
 
@@ -21,8 +25,7 @@ export const RoundCheckbox = ({...props}) => <Checkbox
     {...props}
 />;
 
-
-export const PinkCheckbox = withStyles({
+const StyledCheckBox = styled(Checkbox)(({ theme }) => ({
     root: {
         color: "#B8B8B8",
         '&$checked': {
@@ -33,41 +36,60 @@ export const PinkCheckbox = withStyles({
         color: 'var(--app-accent-color)'
     },
     checked: {},
-})((props) => <Checkbox
-    icon={<CheckBoxOutlineBlank/>}
-    indeterminateIcon={<IndeterminateCheckBoxRounded/>}
-    checkedIcon={<CheckBox/>}
-    
-    {...produce(props, props => {delete props.classes.icon})} />);
+  }));
 
-export const SquareInSquareCheckbox = withStyles({
-    icon: {
+  export const PinkCheckbox = (props) => (
+    <StyledCheckBox
+      icon={<CheckBoxOutlineBlank />}
+      indeterminateIcon={<IndeterminateCheckBoxRounded />}
+      checkedIcon={<CheckBox />}
+      {...props}
+    />
+  );
+  
 
+    const StyledSquareCheckBox = styled(Checkbox)(({ theme }) => ({
+      icon: {
         width: 18,
         height: 18,
         margin: 3,
-        border: '2px solid rgb(87,87,87)',
-        backgroundColor: '#f5f8fa',
-    },
-    checkedIcon: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        border: "2px solid rgb(87,87,87)",
+        backgroundColor: "#f5f8fa",
+      },
+      checkedIcon: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         width: 18,
         height: 18,
         margin: 3,
-        border: '2px solid var(--app-accent-color)',
-        backgroundColor: '#f5f8fa',
-    },
-    innerCheckedIcon: {
+        border: "2px solid var(--app-accent-color)",
+        backgroundColor: "#f5f8fa",
+      },
+      innerCheckedIcon: {
         width: 8,
         height: 8,
-        backgroundColor: 'var(--app-accent-color)',
-    }
-})((props) => <Checkbox
-    icon={<span className={props.classes.icon}/>}
-    checkedIcon={<span className={props.classes.checkedIcon}><div className={props.classes.innerCheckedIcon}/></span>}
-    {...produce(props, props => {delete props.classes.icon; delete props.classes.checkedIcon; delete props.classes.innerCheckedIcon})} />);
+        backgroundColor: "var(--app-accent-color)",
+      },
+    }));
+
+    export const SquareInSquareCheckbox = (props) => {
+      <StyledSquareCheckBox
+        icon={<span className={props.classes.icon} />}
+        checkedIcon={
+          <span className={props.classes.checkedIcon}>
+            <div className={props.classes.innerCheckedIcon} />
+          </span>
+        }
+        {...produce(props, (props) => {
+          delete props.classes.icon;
+          delete props.classes.checkedIcon;
+          delete props.classes.innerCheckedIcon;
+        })}
+      />;
+    };
+
+
 
 export const useChecked = (inputItems, checkCallback, allCheckCallback) => {
     const [items, setItems] = useState([]);

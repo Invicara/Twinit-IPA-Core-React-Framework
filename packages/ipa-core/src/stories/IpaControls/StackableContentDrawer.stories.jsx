@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import {StackableDrawer} from "../../IpaDialogs/StackableDrawer";
 import StackableDrawerContainer from "../../IpaDialogs/StackableDrawerContainer";
 import './StackableDrawer.stories.scss'
-import {Typography} from "@material-ui/core";
-import {Skeleton} from "@material-ui/lab";
+import {Typography} from "@mui/material";
+import { Skeleton } from '@mui/material';
 import {StackableContentDrawer} from "../../IpaDialogs/StackableContentDrawer";
 
 export default {
@@ -19,15 +19,14 @@ export default {
 const Template = (args) => {
   return <>
   <div>
-      <Skeleton variant="circle" width={40} height={40} animation={false} />
-      <Skeleton variant="rect" width={210} height={118} animation={false} />
+      <Skeleton variant="circular" width={40} height={40} animation={false} />
+      <Skeleton variant="rectangular" width={210} height={118} animation={false} />
       <Skeleton animation={false} />
   </div>
     {args.drawersLeft && args.drawersLeft.length>0 && generateDrawersInContainer(args,args.drawersLeft,"left", true)}
 
     {args.drawersRight && args.drawersRight.length>0 && generateDrawersInContainer(args,args.drawersRight,"right", true)}
-  </>
-  ;
+  </>;
 };
 
 export const Left = Template.bind({});

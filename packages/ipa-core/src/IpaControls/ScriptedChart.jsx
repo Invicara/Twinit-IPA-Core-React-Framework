@@ -51,7 +51,7 @@ const ScriptedChart = ({script, scriptArgs, chart, chartConfig, onClick, scripte
   useEffect(() => {
     const loadData = async () => {
       setChartData("fetching")
-      setChartData(scriptedData || await ScriptHelper.executeScript(script, scriptArgs))
+      setChartData(scriptedData || (await ScriptHelper.executeScript(script, scriptArgs)))
    }    
    loadData()
   }, [script, chart])

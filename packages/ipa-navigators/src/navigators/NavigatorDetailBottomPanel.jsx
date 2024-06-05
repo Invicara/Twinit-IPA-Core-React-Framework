@@ -19,7 +19,7 @@ import React, {useEffect, useState, useCallback, useMemo, useContext, useRef} fr
 import interact from "interactjs";
 import _ from 'lodash'
 import clsx from "clsx";
-import {Button, ButtonGroup, Tooltip} from "@material-ui/core";
+import {Button, ButtonGroup, Tooltip} from "@mui/material";
 import NavigatorSource from "./NavigatorSource";
 import EntityDetailBottomPanel from "./EntityDetailBottomPanel";
 import SystemDetailBottomPanel from "./SystemDetailBottomPanel";

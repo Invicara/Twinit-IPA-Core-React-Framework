@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 
 import _ from 'lodash'
 import clsx from 'clsx'
-import Switch from '@material-ui/core/Switch';
-import { withStyles } from "@material-ui/core";
+import Switch from '@mui/material/Switch';
+import {styled} from "@mui/system";
 import Select from 'react-select'
 
 import { IafItemSvc, IafPermission, IafFileSvc } from '@dtplatform/platform-api'
@@ -23,19 +23,24 @@ const itemClassPermObjMap = {
     Default: 'namedUserItems'
 }
 
-const AccentSwitch = withStyles({
+  const StyledAccentSwitch = styled(Switch)(({theme})=>({
     switchBase: {
-      color: 'var(--app-accent-color) !important',
-      "&$checked": {
-        color: 'var(--app-accent-color) !important'
+        color: 'var(--app-accent-color) !important',
+        "&$checked": {
+          color: 'var(--app-accent-color) !important'
+        },
+        "&$checked + $track": {
+          backgroundColor: 'var(--app-accent-color) !important'
+        }
       },
-      "&$checked + $track": {
-        backgroundColor: 'var(--app-accent-color) !important'
-      }
-    },
-    checked: {},
-    track: {}
-  })(Switch);
+      checked: {},
+      track: {}
+  }))
+
+
+  const AccentSwitch = (props) => (
+    <StyledAccentSwitch {...props}/>
+  )
 
 export const UserGroupPermissionTable = ({usergroup, allowManagePermissions, itemFetchScript}) => {
 

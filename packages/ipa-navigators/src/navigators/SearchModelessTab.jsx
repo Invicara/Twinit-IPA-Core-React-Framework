@@ -1,5 +1,5 @@
 import React, {useMemo,useCallback,useRef, useState} from "react";
-import {Button} from "@material-ui/core";
+import {Button} from "@mui/material";
 import {EnhancedFetchControl} from "@invicara/ipa-core/modules/IpaControls";
 import {propsEqual} from "@invicara/ipa-core/modules/IpaUtils";
 import _ from 'lodash'
