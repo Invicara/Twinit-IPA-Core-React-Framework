@@ -1,17 +1,9 @@
 import React, { useState } from "react";
-import Table from "../Table/Table";
+import Table from "../Table/Table.jsx";
+import { Tooltip } from "@material-ui/core";
+import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import BaseTextInput from "../BaseTextInput";
 import "./AlertTable.scss";
-import { Tooltip } from "@material-ui/core";
-import { withGenericPageContext } from "../../IpaPageComponents/genericPageContext";
-import ScriptHelper from "../../IpaUtils/ScriptHelper";
-
-const getHeaders = (columns) => {
-  let headers = columns.filter((c) => c.active === true).map((c) => c.name);
-  headers.push("");
-  headers.splice(1, 0, "");
-  return headers;
-};
 
 const URGENCY_CLASSNAMES = {
   High: "cell--urgency cell--urgency-high",
@@ -19,21 +11,26 @@ const URGENCY_CLASSNAMES = {
   Low: "cell--urgency cell--urgency-low",
 };
 
-const inactivateAlert = (alert, setAcknowledgedAlert, scriptName) => {
-  const result = alert;
-  result.properties.Acknowledged.val = true;
-  setAcknowledgedAlert(true);
-  return ScriptHelper.executeScript(scriptName, { data: result });
+export const getHeaders = (columns) => {
+  let headers = columns.filter((c) => c.active === true).map((c) => c.name);
+  headers.push("");
+  headers.splice(1, 0, "");
+  return headers;
 };
 
-const getRowFromAlert = (
-  alert,
-  activeColumns,
-  navigationConfig,
-  onNavigate,
-  setAcknowledgedAlert,
-  scriptName,
-) => {
+export const inactivateAlert = (alert, acknowledgedAlert, setAcknowledgedAlert, scriptName) => {
+  const alertCopy = alert;
+  alertCopy.properties.Acknowledged.val = true;
+  acknowledgAlert(alertCopy, acknowledgedAlert, setAcknowledgedAlert, scriptName)
+  return alertCopy
+};
+
+const acknowledgAlert = (alertCopy, acknowledgedAlert, setAcknowledgedAlert, scriptName) => {
+  setAcknowledgedAlert(!acknowledgedAlert);
+  return ScriptHelper.executeScript(scriptName, { data: alertCopy });
+}
+
+const getRowFromAlert = (alert, activeColumns, navigationConfig, onNavigate, acknowledgedAlert, setAcknowledgedAlert, scriptName) => {
   const row = activeColumns.map((c) => {
     let className = undefined;
     let property = _.get(alert, c.accessor);
@@ -64,7 +61,7 @@ const getRowFromAlert = (
         <button
           className="alert-table__row-action-button"
           onClick={() => {
-            inactivateAlert(alert, setAcknowledgedAlert, scriptName);
+            inactivateAlert(alert, acknowledgedAlert, setAcknowledgedAlert, scriptName);
           }}
         >
           <i className="fa fa-times" aria-hidden="true"></i>
@@ -81,9 +78,8 @@ const getRowFromAlert = (
       <Tooltip key="cell-tooltip" title="Navigate to Source" enterDelay={500}>
         <button
           className="alert-table__row-action-button"
+          data-testid="navigate-button"
           onClick={() => {
-            console.log("button onClick alert", alert);
-            console.log("button onClick navigationConfig", navigationConfig);
             if (alert.Source !== null) {
               const entityType = alert.Source.entityType;
               const selectedEntities = alert.Source.entities.map((e) => e._id);
@@ -111,35 +107,20 @@ const getRowFromAlert = (
   return row;
 };
 
-const getRowsFromAlerts = (
-  alerts,
-  columns,
-  navigationConfig,
-  onNavigate,
-  setAcknowledgedAlert,
-  scriptName,
-) => {
+export const getRowsFromAlerts = (alerts, columns, navigationConfig, onNavigate, acknowledgedAlert, setAcknowledgedAlert, scriptName) => {
   let activeColumns = columns.filter((c) => c.active === true);
 
-  let rows = alerts.map((a) =>
-    getRowFromAlert(
-      a,
-      activeColumns,
-      navigationConfig,
-      onNavigate,
-      setAcknowledgedAlert,
-      scriptName,
-    ),
-  );
+  let rows = alerts.map((a) => getRowFromAlert(a, activeColumns, navigationConfig, onNavigate, acknowledgedAlert, setAcknowledgedAlert, scriptName));
   return rows;
 };
 
-const AlertTable = (props) => {
-  const [filterInput, setFilterInput] = useState(null);
+export const AlertTable = ({title, alerts, columns, navigateTo, onNavigate, scriptName}) => {
+  const [filterInput, setFilterInput] = useState(undefined);
+  const [acknowledgedAlert, setAcknowledgedAlert] = useState(false)
 
   return (
     <div className="alert-table">
-      <h1 className="alert-table__title">{props.title}</h1>
+      <h1 className="alert-table__title">{title}</h1>
       <div className="alert-table__body">
         <div className="alert-table__filter">
           <label className="alert-table__filter-label">Filter By: </label>
@@ -161,14 +142,15 @@ const AlertTable = (props) => {
         </div>
         <Table
           className="alert-table__table"
-          headers={getHeaders(props.columns)}
+          headers={getHeaders(columns)}
           rows={getRowsFromAlerts(
-            props.alerts,
-            props.columns,
-            props.navigateTo,
-            props.onNavigate,
-            props.setAcknowledgedAlert,
-            props.scriptName,
+            alerts,
+            columns,
+            navigateTo,
+            onNavigate,
+            acknowledgedAlert,
+            setAcknowledgedAlert,
+            scriptName,
           )}
           options={{
             emptyMessage: "No data",
@@ -179,5 +161,3 @@ const AlertTable = (props) => {
     </div>
   );
 };
-
-export default withGenericPageContext(AlertTable);
