@@ -1,24 +1,26 @@
 import React, { useState } from 'react'
-import AlertTable from './AlertTable'
+import {AlertTable} from'./AlertTable.jsx'
+import {AlertTableTestProps} from './testData.js'
 
 export default function ScriptedAlertTable (props) {
-  const [acknowledgedAlert, setAcknowledgedAlert] = useState(false)
-
 
   return (
-    <AlertTable 
-			title={props.config.title} 
-			columns={props.config.columns} 
-      navigateTo={props.config.navigateTo}
-			alerts={props.data._list}
-      scriptName={props.config.scriptName}
-      setAcknowledgedAlert={setAcknowledgedAlert}
-		/>
-  )
+   <>
+        {props.data._list.length > 0 ? 
+            <AlertTable
+                title={AlertTableTestProps.title} 
+                columns={AlertTableTestProps.columns} 
+                navigateTo={AlertTableTestProps.navigateTo}
+                alerts={AlertTableTestProps.alerts}
+                scriptName={props.config.scriptName}
+            /> : null}
+   </>
+)
 }
 
 export const ScriptedAlertTableFactory = {
-  create: ({ config, data }) => {
-    return <ScriptedAlertTable {...config} data={data} />
+  create: ({ config, data, props }) => {
+    const newProps = {...config, ...props}
+    return <ScriptedAlertTable {...newProps} data={data}/>
   }
 }
