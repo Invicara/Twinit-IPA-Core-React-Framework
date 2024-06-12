@@ -285,7 +285,8 @@ export default class ProjectPickerModal extends React.Component {
         await this.loadProject(project);
 
         sessionStorage.setItem(PROJECT_ID_KEY, project._id)
-        appContextProps.actions.setSelectedItems({selectedProject: currProject, selectedUserGroupId: this.state.selectedUserGroupId});
+        const selectedUserGroupId = this.state.projectUserGroups?.length === 1 ? this.state.projectUserGroups[0]._id : this.state.selectedUserGroupId;
+        appContextProps.actions.setSelectedItems({ selectedProject: currProject, selectedUserGroupId });
         window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
 
         if (this.props.referenceAppConfig?.refApp) {
