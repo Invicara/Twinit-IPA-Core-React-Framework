@@ -79,7 +79,6 @@ const ScriptedChart = ({
   if (chartData != "fetching") {
     let ci = CHARTS[chart];
     let Chart = ci.component;
-    console.log(chartData);
     //the chart data script can return just data, or can return data and other chart settings
     //if other chart data is returned then we get the data from chartData.data
     //and we pass along everything but the data to the chart component as otherData
