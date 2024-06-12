@@ -93,6 +93,12 @@ export default class SetUpProject extends React.Component {
         _userType: "createCollections",
       },
       {
+        _name: "Create Other Collections",
+        _shortName: "createOtherCollections",
+        _description: "Create Other collections",
+        _userType: "createOtherCollections",
+      },
+      {
         _name: "Import File Attributes",
         _shortName: "fileAttributesImport",
         _description: "Import File Attributes",
@@ -103,6 +109,12 @@ export default class SetUpProject extends React.Component {
         _shortName: "apiConfigImport",
         _description: "Import Api Config File",
         _userType: "apiConfigImport",
+      },
+      {
+        _name: "Add Project DataSources",
+        _shortName: "addDataSources",
+        _description: "Add Project DataSources",
+        _userType: "addDataSources",
       },
     ];
 
@@ -130,8 +142,10 @@ export default class SetUpProject extends React.Component {
       "configUpload",
       "uploadBimpk",
       "createCollections",
+      "createOtherCollections",
       "fileAttributesImport",
       "apiConfigImport",
+      "addDataSources"
     ];
     for (let i = 0; i < scriptNames.length; i++) {
       const scriptName = scriptNames[i];
@@ -218,6 +232,15 @@ export default class SetUpProject extends React.Component {
             },
             {
               _sequenceno: 4,
+              _name: "Import Bimpk",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "iaf_import_model",
+                _scriptName: "importModel", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 5,
               _name: "Creating Collections:",
               _orchcomp: "default_script_target",
               _actualparams: {
@@ -226,7 +249,25 @@ export default class SetUpProject extends React.Component {
               },
             },
             {
-              _sequenceno: 5,
+              _sequenceno: 6,
+              _name: "Map revit Collection:",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "iaf_map_elms_type",
+                _scriptName: "mapRevitTypeCollection", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 7,
+              _name: "Create Other Collection:",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "createOtherCollections",
+                _scriptName: "createOtherCollections", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 8,
               _name: "Importing File Attributes:",
               _orchcomp: "default_script_target",
               _actualparams: {
@@ -235,7 +276,16 @@ export default class SetUpProject extends React.Component {
               },
             },
             {
-              _sequenceno: 6,
+              _sequenceno: 9,
+              _name: "Map revit Collection Again:",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "iaf_map_elms_type",
+                _scriptName: "mapRevitTypeCollection", // the named script to run in the file above
+              },
+            },
+            {
+              _sequenceno: 10,
               _name: "Importing OMAPI Configurations:",
               _orchcomp: "default_script_target",
               _actualparams: {
@@ -243,9 +293,18 @@ export default class SetUpProject extends React.Component {
                 _scriptName: "apiConfigImport", // the named script to run in the file above
               },
             },
+            {
+              _sequenceno: 11,
+              _name: "Add project dataSources:",
+              _orchcomp: "default_script_target",
+              _actualparams: {
+                userType: "addDataSources",
+                _scriptName: "addDataSources", // the named script to run in the file above
+              },
+            },
           ],
         },
-      });
+      },ctx);
       console.log(orchestratorConfig);
 
       //Fetch created orchestrator
