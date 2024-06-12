@@ -41,7 +41,7 @@ To add functionality to load an additional 25 nodes at each button click, see [L
 
 For the most basic setup of just the knowledge graph canvas, nest the following components as described below:
 
-```js
+```jsx
 <ConfigController graphConfig={graphConfig as any}>
   <Provider store={store}>
     <GraphBoundsController>
@@ -63,7 +63,7 @@ Create your own GraphContainer component to define the viewport for the knowledg
 
 The following example invokes the `width` and `height` values from `ConfigContext` as well as some style properties.
 
-```js
+```jsx
 function GraphContainer({ children }: { children: React.ReactNode }) {
   useConfigSync();
 
@@ -89,7 +89,7 @@ function GraphContainer({ children }: { children: React.ReactNode }) {
 
 You can then wrap the `Canvas` component with your `GraphContainer` component.
 
-```js
+```jsx
   <ConfigController graphConfig={graphConfig as any}>
     <Provider store={store}>
       <GraphBoundsController>
@@ -117,7 +117,7 @@ Maintains context of your config
 
 To add a menu for each node that the user can use to edit, delete, or hightlight the clicked node, or add a new node in relation to the current, use the NodeMenu component and wrap it with the `NodeMenuController` context component:
 
-```js
+```jsx
   <ConfigController graphConfig={graphConfig as any}>
     <Provider store={store}>
       {/* Controls the node menu */}
@@ -138,8 +138,7 @@ To add a menu for each node that the user can use to edit, delete, or hightlight
 
 To add a right-click menu for nodes, import and use the `RightMenuController` wrapper component:
 
-```js
-return (
+```jsx
   <ConfigController graphConfig={graphConfig as any}>
     <Provider store={store}>
       {/* Added RightMenuController wrapper */}
@@ -155,7 +154,6 @@ return (
       </RightMenuController>
     </Provider>
   </ConfigController>
-)
 ```
 
 ### LoadMoreDialogController
@@ -179,7 +177,7 @@ By default, 25 nodes load. To add functionality to load an additional 25 nodes a
 
 ### Example
 
-```js
+```jsx
 
 import React, { Dispatch, SetStateAction, memo, useContext } from "react";
 import { Provider } from "react-redux";
