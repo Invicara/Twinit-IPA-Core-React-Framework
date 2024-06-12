@@ -42,17 +42,15 @@ To add functionality to load an additional 25 nodes at each button click, see [L
 For the most basic setup of just the knowledge graph canvas, nest the following components as described below:
 
 ```js
-
-  <ConfigController graphConfig={graphConfig as any}>
-    <Provider store={store}>
-      <GraphBoundsController>
-        <GraphContainer>
-          <Canvas />
-        </GraphContainer>
-      </GraphBoundsController>
-    </Provider>
-  </ConfigController>
-
+<ConfigController graphConfig={graphConfig as any}>
+  <Provider store={store}>
+    <GraphBoundsController>
+      <GraphContainer>
+        <Canvas />
+      </GraphContainer>
+    </GraphBoundsController>
+  </Provider>
+</ConfigController>
 ```
 
 #### Canvas
@@ -66,7 +64,6 @@ Create your own GraphContainer component to define the viewport for the knowledg
 The following example invokes the `width` and `height` values from `ConfigContext` as well as some style properties.
 
 ```js
-
 function GraphContainer({ children }: { children: React.ReactNode }) {
   useConfigSync();
 
@@ -88,13 +85,11 @@ function GraphContainer({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
 ```
 
 You can then wrap the `Canvas` component with your `GraphContainer` component.
 
 ```js
-
   <ConfigController graphConfig={graphConfig as any}>
     <Provider store={store}>
       <GraphBoundsController>
@@ -104,7 +99,6 @@ You can then wrap the `Canvas` component with your `GraphContainer` component.
       </GraphBoundsController>
     </Provider>
   </ConfigController>
-
 ```
 
 #### GraphBoundsController
@@ -145,7 +139,7 @@ To add a menu for each node that the user can use to edit, delete, or hightlight
 To add a right-click menu for nodes, import and use the `RightMenuController` wrapper component:
 
 ```js
-
+return (
   <ConfigController graphConfig={graphConfig as any}>
     <Provider store={store}>
       {/* Added RightMenuController wrapper */}
@@ -161,15 +155,14 @@ To add a right-click menu for nodes, import and use the `RightMenuController` wr
       </RightMenuController>
     </Provider>
   </ConfigController>
-
+)
 ```
 
 ### LoadMoreDialogController
 
 By default, 25 nodes load. To add functionality to load an additional 25 nodes at each button click, use the `LoadMoreDialogController` wrapper.
 
-```js
-
+```jsx
   <ConfigController graphConfig={graphConfig as any}>
     <Provider store={store}>
       {/* Added controller */}
