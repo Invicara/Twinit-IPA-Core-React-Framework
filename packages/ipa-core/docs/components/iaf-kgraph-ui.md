@@ -42,7 +42,7 @@ To add functionality to load an additional 25 nodes at each button click, see [L
 For the most basic setup of just the knowledge graph canvas, nest the following components as described below:
 
 ```jsx
-<ConfigController graphConfig={graphConfig as any}>
+<ConfigController graphConfig={graphConfig}>
   <Provider store={store}>
     <GraphBoundsController>
       <GraphContainer>
@@ -67,7 +67,7 @@ The following example invokes the `width` and `height` values from `ConfigContex
 function GraphContainer({ children }: { children: React.ReactNode }) {
   useConfigSync();
 
-  const { config } = useContext(ConfigContext as any)! as any;
+  const { config } = useContext(ConfigContext)!;
 
   return (
     <div
@@ -90,7 +90,7 @@ function GraphContainer({ children }: { children: React.ReactNode }) {
 You can then wrap the `Canvas` component with your `GraphContainer` component.
 
 ```jsx
-  <ConfigController graphConfig={graphConfig as any}>
+  <ConfigController graphConfig={graphConfig}>
     <Provider store={store}>
       <GraphBoundsController>
         <GraphContainer>
@@ -118,7 +118,7 @@ Maintains context of your config
 To add a menu for each node that the user can use to edit, delete, or hightlight the clicked node, or add a new node in relation to the current, use the NodeMenu component and wrap it with the `NodeMenuController` context component:
 
 ```jsx
-  <ConfigController graphConfig={graphConfig as any}>
+  <ConfigController graphConfig={graphConfig}>
     <Provider store={store}>
       {/* Controls the node menu */}
       <NodeMenuController> 
@@ -139,7 +139,7 @@ To add a menu for each node that the user can use to edit, delete, or hightlight
 To add a right-click menu for nodes, import and use the `RightMenuController` wrapper component:
 
 ```jsx
-  <ConfigController graphConfig={graphConfig as any}>
+  <ConfigController graphConfig={graphConfig}>
     <Provider store={store}>
       {/* Added RightMenuController wrapper */}
       <RightMenuController>
@@ -161,7 +161,7 @@ To add a right-click menu for nodes, import and use the `RightMenuController` wr
 By default, 25 nodes load. To add functionality to load an additional 25 nodes at each button click, use the `LoadMoreDialogController` wrapper.
 
 ```jsx
-  <ConfigController graphConfig={graphConfig as any}>
+  <ConfigController graphConfig={graphConfig}>
     <Provider store={store}>
       {/* Added controller */}
       <LoadMoreDialogController>
@@ -200,7 +200,7 @@ import useConfigSync from "../_hooks_/useConfigSync";
 function GraphContainer({ children }: { children: React.ReactNode }) {
   useConfigSync();
 
-  const { config } = useContext(ConfigContext as any)! as any;
+  const { config } = useContext(ConfigContext)!;
 
   return (
     <div
@@ -219,12 +219,7 @@ function GraphContainer({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Graph(
-  graphConfig: Partial<any> & {
-    drawerProps?: any;
-    setDrawerProps: Dispatch<SetStateAction<any>>;
-  }
-) {
+function Graph(graphConfig) {
   const { openModal } = useModal();
 
   return (
@@ -236,7 +231,7 @@ function Graph(
       }}
     >   
       <div style={{ position: "relative" }}>
-        <ConfigController graphConfig={graphConfig as any}>
+        <ConfigController graphConfig={graphConfig}>
           <Provider store={store}>
             <LoadMoreDialogController>
               <RightMenuController>
@@ -274,7 +269,6 @@ In the parent component that imports and uses your knowledge graph component, wr
       <DataStateProvider>
         <ActiveGraphController>
           <Grid container spacing={1}>
-            <ItemTree title="Items" />
             <Grid item xs={6}>
               <KnowledgeGraph
                 explore={getConnection}
