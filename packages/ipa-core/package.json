@@ -23,6 +23,7 @@
     "@dtplatform/platform-api": "~4.3.0",
     "@dtplatform/platform-ui-components": "~4.3.0",
     "@dtplatform/ui-utils": "~4.3.0",
+    "@dtplatform/iaf-doc-viewer": "~4.3.0",
     "@invicara/script-data": "~4.2.0",
     "@invicara/script-iaf": "~4.2.0",
     "@invicara/script-ui": "~4.2.0",
