@@ -290,7 +290,9 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
       if (options != undefined) {
         if (options.newTab === true) {
-          window.open(`${endPointConfig.baseRoot}/#${newPath}`, '_blank')?.focus()
+
+          let newURL = `${endPointConfig.baseRoot}${endPointConfig.baseRoot.endsWith('/') ? "" : '/'}#${newPath}`
+          window.open(newURL, '_blank')?.focus()
         } else {
           history.push(newPath);
         }
