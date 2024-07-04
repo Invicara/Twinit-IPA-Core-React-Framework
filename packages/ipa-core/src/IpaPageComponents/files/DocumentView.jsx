@@ -1,6 +1,6 @@
 import React from "react";
 import _ from "lodash";
-// import IafDocViewer from '@invicara/iaf-doc-viewer';
+import IafDocViewer from '@invicara/iaf-doc-viewer';
 import "./DocumentView.scss";
 
 const DocumentView = (props) => {
@@ -18,9 +18,9 @@ const DocumentView = (props) => {
       </span>
     );
   } else if (!_.isEmpty(docIds)) {
-    // pageContent = <IafDocViewer
-    //     docIds={docIds}
-    // />
+    pageContent = <IafDocViewer
+        docIds={docIds}
+    />
   } else {
     pageContent = <span className="info-message">No data</span>;
   }
