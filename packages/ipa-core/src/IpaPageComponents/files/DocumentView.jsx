@@ -1,6 +1,6 @@
 import React from "react";
 import _ from "lodash";
-import IafDocViewer from '@invicara/iaf-doc-viewer';
+import IafDocViewer from '@dtplatform/iaf-doc-viewer';
 import "./DocumentView.scss";
 
 const DocumentView = (props) => {
