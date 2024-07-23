@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useCallback, useEffect, useRef} from "react";
 import _ from 'lodash'
 import clsx from "clsx";
 import {produce} from "immer";
@@ -12,12 +12,32 @@ import {curriedFlip} from "../IpaUtils/function";
 import './TreeControl.scss';
 import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 
+const TREE_NODE_HEIGHT = 30
+const MAX_HEIGHT_SCROLL = 50
+
 const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = defaultBranchRenderer, renderLeafNode = defaultLeafRenderer}) => {
 
     const reactVirtualizedCache = useRef(new CellMeasurerCache({
         fixedWidth: true,
         defaultHeight: 100
       }))
+
+    const listRef = useRef()
+
+    const refreshList = useCallback(_.debounce(() => {
+        listRef?.current?.recomputeRowHeights()
+        listRef?.current?.forceUpdateGrid()
+    }, 100), [listRef.current])
+
+    useEffect(() => {
+        const resize = () => {
+            refreshList()
+        }
+        window.addEventListener('resize', resize)
+        return () => {
+            window.removeEventListener('resize', resize)
+        };
+    }, []);
 
     const getNodeClasses = (node, baseClasses = '') => {
         return clsx(baseClasses,
@@ -27,9 +47,14 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         _.get(node,'hidden', false) && "hidden",
     )}
 
-    const expandBranch = (node) => onNodeIndexChange(produce(nodeIndex, nodeIndex => {
-        nodeIndex[node.id].expanded = !nodeIndex[node.id].expanded
-    }))
+    const expandBranch = async (node) => {
+        await onNodeIndexChange(produce(nodeIndex, nodeIndex => {
+            nodeIndex[node.id].expanded = !nodeIndex[node.id].expanded
+        }))
+
+        listRef?.current?.recomputeRowHeights()
+        listRef?.current?.forceUpdateGrid()
+    }
 
     const toggleNode = (property) =>  (node) => onNodeIndexChange(produce(nodeIndex, nodeIndex => {
         const wasOn = nodeIndex[node.id][property] === TreeNodeStatus.ON
@@ -37,19 +62,19 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         propagateNodeStatusUp(property)(nodeIndex, node.id);
     }))
 
-    const getNodeChildren = (node) => node.children.map(childId => nodeIndex[childId]);
+    const getNodeChildren = (node) => node?.children?.map(childId => nodeIndex[childId]);
 
     const getChildrenCount = (node) => _.values(nodeIndex).filter(n => n.isLeaf && n.parents.includes(node.id)).length
 
     const renderBranch = (node, virtualizedEvent) =>
         <li style={virtualizedEvent?.style || {}} className={getNodeClasses(node, 'branch')} onClick={withoutPropagation(() => toggleNode('selectedStatus')(node))} key={node.id}>
             <a>
-            <span>
-              <i className="fa fa-angle-down branch-expander" onClick={withoutPropagation(() => expandBranch(node))}/>
-                {renderBranchNode(node, getChildrenCount(node), curriedFlip(toggleNode)(node))}
-            </span>
+                <span>
+                <i className="fa fa-angle-down branch-expander" onClick={withoutPropagation(() => expandBranch(node))}/>
+                    {renderBranchNode(node, getChildrenCount(node), curriedFlip(toggleNode)(node))}
+                </span>
             </a>
-            <ul key={node.id + "_children"} style={{ height: getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 4}vh` : "50vh", width: "auto" }}>
+            <ul key={node.id + "_children"} style={{ height: getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 4}vh` : `${MAX_HEIGHT_SCROLL}vh`, width: "auto" }}>
                 <AutoSizer>
                     {({ width, height }) => (
                         <List
@@ -58,10 +83,11 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
                             rowHeight={reactVirtualizedCache.current.rowHeight}
                             deferredMeasurementCache={reactVirtualizedCache.current}
                             rowRenderer={(virtualizedEvent) => {
-                                const node = getNodeChildren(node)[virtualizedEvent.index]
+                                const children = getNodeChildren(node)
+                                const childNode = children[virtualizedEvent.index]
                                 return (
                                     <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                                        {renderNode(node, virtualizedEvent)}
+                                        {renderNode(childNode, virtualizedEvent)}
                                     </CellMeasurer>
                                 )
                             }}
@@ -69,7 +95,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
                         />
                     )}
                 </AutoSizer>
-                </ul>
+            </ul>
         </li>
 
     const renderLeaf = (node, virtualizedEvent) =>
@@ -86,13 +112,25 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
 
     return (
         <div className={"fancy-tree"}>
-            {!_.isEmpty(nodeIndex) ? <ul style={{ height: _.values(nodeIndex).filter(node => node.level === 0).length  < 10 ? `${_.values(nodeIndex).filter(node => node.level === 0).length * 4}vh` : "50vh", width: "auto" }}>
+            {!_.isEmpty(nodeIndex) ? <ul style={{ height: _.values(nodeIndex).filter(node => node.level === 0).length  < 10 ? `${_.values(nodeIndex).filter(node => node.level === 0).length * 4}vh` : `${MAX_HEIGHT_SCROLL}vh`, width: "auto" }}>
                 <AutoSizer>
                     {({ width, height }) => (
                         <List
+                            ref={listRef}
                             width={width}
                             height={height}
-                            rowHeight={reactVirtualizedCache.current.rowHeight}
+                            rowHeight={(index) => {
+                                let height = TREE_NODE_HEIGHT
+                                const node = _.values(nodeIndex)[index.index]
+                                if (node?.expanded && node?.children?.length) {
+                                    const vhInPixels = MAX_HEIGHT_SCROLL * window.innerHeight / 100
+                                    const heightWithScroll = TREE_NODE_HEIGHT + (vhInPixels)
+                                    const actualHeight = TREE_NODE_HEIGHT + (TREE_NODE_HEIGHT * node.children.length)
+                                    height = heightWithScroll < actualHeight ? heightWithScroll : actualHeight
+                                }
+                                
+                                return height
+                            }}
                             deferredMeasurementCache={reactVirtualizedCache.current}
                             rowRenderer={(virtualizedEvent) => {
                                 const node = _.values(nodeIndex).filter(node => node.level === 0)[virtualizedEvent.index]
