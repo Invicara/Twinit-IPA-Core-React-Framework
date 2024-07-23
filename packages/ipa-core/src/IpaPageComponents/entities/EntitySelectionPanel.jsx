@@ -84,6 +84,7 @@ class EntitySelectionPanel extends React.Component {
 
   componentDidMount() {
     this.loadGroups()
+    if(this.props.setFilteredBySearchEntities) this.props.setFilteredBySearchEntities(this.props.isolatedEntities)
   }
 
   componentWillUnmount() {
@@ -132,6 +133,7 @@ class EntitySelectionPanel extends React.Component {
               selection.push(this.props.entities.find(e => e._id == el.dataset.nodeId))
           })
       }
+      if(this.props.setFilteredBySearchEntities) this.props.setFilteredBySearchEntities(selection)
       this.onSelectEntities(selection)
   }
 
@@ -208,7 +210,7 @@ class EntitySelectionPanel extends React.Component {
           onSelectAll={this.onSelectAll}
           onSelectNone={this.onSelectIds}
           onSelectIds={this.onSelectIds}
-          selectedIds={this.getSelectedIds(this.props.selectedEntities)}
+          selectedIds={this.props.filteredBySearchEntityIds || this.getSelectedIds(this.props.selectedEntities)}
           allSelected={allSelected}
           treeSelectMode={this.props.treeSelectMode}
           tree={this.state.tree}/>
