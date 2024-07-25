@@ -277,7 +277,8 @@ export default class ProjectPickerModal extends React.Component {
   }
 
   submitProjSelection = async () => {
-    const {appContextProps, projects} = this.props;
+    const {appContextProps, projects, projectLoadHandlerCallback} = this.props;
+    projectLoadHandlerCallback && projectLoadHandlerCallback()
     for (const project of projects) {
       if (project._id === this.state.selectedProjectId) {
         await IafProj.switchProject(project._id);
