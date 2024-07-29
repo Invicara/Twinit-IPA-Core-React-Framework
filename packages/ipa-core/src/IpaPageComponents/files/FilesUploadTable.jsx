@@ -8,9 +8,9 @@ import {formatBytes} from "../../IpaUtils/bytesunit";
 const iconStyle = {fontSize: 18};
 const mainGreen = '#00A693';
 
-export const RoundFullCheckbox = ({...props}) => <Checkbox
+export const RoundFullCheckbox = ({completeColor, ...props}) => <Checkbox
     icon={<UncheckedCircle style={{...iconStyle, color: '#666666'}}/>}
-    checkedIcon={<CheckedCircle style={{...iconStyle, color: mainGreen}}/>}
+    checkedIcon={<CheckedCircle style={{...iconStyle, color: completeColor || mainGreen}}/>}
     {...props}
 />;
 
@@ -28,7 +28,7 @@ export const FileUploadTable = ({files:inputFiles, customColor}) => {
             <thead>
             <tr className="file-table-header">
                 <th>
-                    <RoundFullCheckbox disabled checked={inputFiles.every(isComplete)} />
+                    <RoundFullCheckbox disabled checked={inputFiles.every(isComplete)} completeColor={customColor?.complete}/>
                 </th>
                 <th>Name</th>
                 <th>File Type</th>
@@ -39,7 +39,7 @@ export const FileUploadTable = ({files:inputFiles, customColor}) => {
             <tbody>
             {inputFiles.map((file,i) => <tr key={i} className="file-table-body" style={isPending(file) ? {color: '#B2B2B2'} : {}}>
                 <td>
-                    <RoundFullCheckbox disabled checked={isComplete(file)} />
+                    <RoundFullCheckbox disabled checked={isComplete(file)} completeColor={customColor?.complete} />
                 </td>
                 <td>{file.name}</td>
                 <td>{getType(file)}</td>
