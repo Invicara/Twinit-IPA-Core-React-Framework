@@ -92,7 +92,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         },
         {
             name: 'Uploading',
-            component: <FileUploadTable files={files}/>,
+            component: <FileUploadTable files={files} customColor={config?.customColor}/>,
             buttons: WizardButtons({
                 primaryContent: files.every(isComplete) ?
                     <span className={'button-content'}>Next<i className="fas fa-angle-right"/></span> :

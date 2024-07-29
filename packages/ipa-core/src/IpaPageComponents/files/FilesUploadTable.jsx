@@ -14,7 +14,7 @@ export const RoundFullCheckbox = ({...props}) => <Checkbox
     {...props}
 />;
 
-export const FileUploadTable = ({files:inputFiles}) => {
+export const FileUploadTable = ({files:inputFiles, customColor}) => {
 
     const getType = file => {
         const extension = mime.extension(getBlob(file).type);
@@ -44,7 +44,7 @@ export const FileUploadTable = ({files:inputFiles}) => {
                 <td>{file.name}</td>
                 <td>{getType(file)}</td>
                 <td>{isInProgress(file) ?  `${formatBytes(file.bytesUploaded)} of ${formatBytes(getBlob(file).size)}` : formatBytes(getBlob(file).size)}</td>
-                <td style={isComplete(file) ? {color: mainGreen} : {}}>{file.status}</td>
+                <td style={isComplete(file) ? {color: customColor?.complete || mainGreen} : {}}>{file.status}</td>
             </tr>)}
             </tbody>
         </table>
