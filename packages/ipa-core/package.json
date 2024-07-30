@@ -18,7 +18,7 @@
     "/modules"
   ],
   "dependencies": {
-    "@dtplatform/iaf-doc-viewer": "~4.3.0",
+    "@dtplatform/iaf-doc-viewer": "4.3.38",
     "@dtplatform/iaf-script-engine": "~4.3.0",
     "@dtplatform/invicara-lib": "~4.3.0",
     "@dtplatform/platform-api": "~4.3.0",
