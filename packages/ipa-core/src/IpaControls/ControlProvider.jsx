@@ -62,7 +62,7 @@ const getTreeSelectQuery = (selector, filteringNodes) => {
                         ]
                     }) :
                     ({
-                        [`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeNameWithParent(node.name).childNodeInfo.displayName
+                        "$and": buildLeafQuery(selector, node)
                     })
                 )
         }
@@ -76,6 +76,22 @@ const getTreeSelectQuery = (selector, filteringNodes) => {
     let query = getQueryNodesFor(parsedNodesKeys);
 
     return isNotEmpty && query;
+}
+
+// We want to include both the parent branch and selected leaf as part of the query. Otherwise
+// risk of returning results where leaf nodes have the same name in multiple separate branches
+const buildLeafQuery = (selector, node) => {
+    let query = [{[`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeNameWithParent(node.name).childNodeInfo.displayName}]
+
+    const parentLevel = node.level - 1
+
+    if (node.parents?.length > 0 && selector.treeLevels[parentLevel]) {
+        node.parents.forEach((p) => {
+            query.push({[`properties.${selector.treeLevels[parentLevel].property}.val`]: parseNodeNameWithParent(p).childNodeInfo.displayName})
+        })
+    }
+
+    return query
 }
 
 //It makes sense that the responsibility of knowing how to build a query be *inside* each query control. Probably they
