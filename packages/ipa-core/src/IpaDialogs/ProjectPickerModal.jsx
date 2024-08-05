@@ -277,7 +277,7 @@ export default class ProjectPickerModal extends React.Component {
   }
 
   submitProjSelection = async () => {
-    const {appContextProps, projects} = this.props;
+    const {appContextProps, projects, projectLoadHandlerCallback} = this.props;
     for (const project of projects) {
       if (project._id === this.state.selectedProjectId) {
         await IafProj.switchProject(project._id);
@@ -286,6 +286,9 @@ export default class ProjectPickerModal extends React.Component {
 
         sessionStorage.setItem(PROJECT_ID_KEY, project._id)
         const selectedUserGroupId = this.state.projectUserGroups?.length === 1 ? this.state.projectUserGroups[0]._id : this.state.selectedUserGroupId;
+
+        projectLoadHandlerCallback && projectLoadHandlerCallback({ selectedProject: currProject, userGroup: this.state.projectUserGroups?.find((UG)=>UG._id === selectedUserGroupId) })
+
         appContextProps.actions.setSelectedItems({ selectedProject: currProject, selectedUserGroupId });
         window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
 

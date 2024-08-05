@@ -94,7 +94,7 @@ class IpaMainLayout extends React.Component {
                 <HashRouter>
                     <App history={history} location={location}>
                     <AuthProvider authService={this.authService}>
-                        <AppProvider location={location} history={history} ipaConfig={this.props.ipaConfig} onConfigLoad={this.props.onConfigLoad}> 
+                        <AppProvider location={location} history={history} ipaConfig={this.props.ipaConfig} onConfigLoad={this.props.onConfigLoad} onCancel={this.props.onCancel} projectLoadHandlerCallback={this.props.projectLoadHandlerCallback}> 
                             <AppContext.Consumer>
                                 {
                                     (contextProps) => {
