@@ -117,6 +117,7 @@ const withEntitySearch = WrappedComponent => {
                 queryParams.selectedEntities.forEach(id =>
                     selectedEntities.push(this.props.entities.find(e => e._id == id)))
                 if (selectedEntities.length > 0)
+                    this.props.setFilteredBySearchEntities(selectedEntities)
                     this.props.setSelectedEntities(selectedEntities)
                 this.props.setSelecting(false)
             }

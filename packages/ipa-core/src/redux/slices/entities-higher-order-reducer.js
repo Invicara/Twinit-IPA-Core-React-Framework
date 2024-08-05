@@ -19,7 +19,8 @@ let initialState = {//TODO if operations on these entities get too slow, use dir
     viewerSyncOn: false,
     allCurrent: [],
     selectedIds: [],
-    isolatedIds: []
+    isolatedIds: [],
+    filteredBySearchEntityIds: []
 };
 
 let currentFetchPromise = new Promise(res => res([]))
@@ -43,6 +44,9 @@ export const entitiesSliceFactory = (identifier = '') => {
             },
             setSelectedEntities: (state, {payload: entities}) => {
                 state.selectedIds = mapIds(entities)
+            },
+            setFilteredBySearchEntities: (state, {payload: entities}) => {
+                state.filteredBySearchEntityIds = mapIds(entities)
             },
             applyFiltering: (state, {payload: filters}) => {
                 state.appliedFilters = filters
@@ -96,7 +100,8 @@ export const entitiesSliceFactory = (identifier = '') => {
                 state.appliedFilters = {}
                 state.appliedGroups = []
                 state.selectedIds = [];
-                state.isolatedIds = []
+                state.isolatedIds = [],
+                state.filteredBySearchEntityIds = []
             },
             clearForNewEntityType: (state,{payload: type}) => {
                 state.allCurrent = [];
@@ -104,7 +109,8 @@ export const entitiesSliceFactory = (identifier = '') => {
                 state.appliedGroups = []
                 state.selectedIds = [];
                 state.isolatedIds = [];
-                state.currentEntityType = type
+                state.currentEntityType = type,
+                state.filteredBySearchEntityIds = []
             },
             loadSnapshot : (state,{payload: snapshot}) => {
                 state.allCurrent = snapshot.allCurrent;
@@ -116,6 +122,7 @@ export const entitiesSliceFactory = (identifier = '') => {
                 state.fetchingCurrent = snapshot.fetchingCurrent;
                 state.selectingEntities = snapshot.selectingEntities;
                 state.viewerSyncOn = snapshot.viewerSyncOn;//TODO: ?? this could be a global value?
+                state.filteredBySearchEntityIds = snapshot.filteredBySearchEntityIds
             }
         },
     });
@@ -128,7 +135,7 @@ export const entitiesSliceFactory = (identifier = '') => {
     const {
         setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setSelectedEntities, setCurrentEntityType, setSelecting,
         applyFiltering, resetFiltering, applyGrouping, resetGrouping, resetForFilteringAndGrouping,
-        addEntity, deleteEntity, updateEntity, clearEntities, loadSnapshot, clearForNewEntityType
+        addEntity, deleteEntity, updateEntity, clearEntities, loadSnapshot, clearForNewEntityType, setFilteredBySearchEntities
     } = actionCreators
 
     //Private selectors
@@ -139,6 +146,8 @@ export const entitiesSliceFactory = (identifier = '') => {
     const getIsolatedEntitiesIds = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.isolatedIds || [])
 
     const getSelectedEntitiesIds = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.selectedIds || [])
+
+    const getFilteredBySearchEntityIds = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.filteredBySearchEntityIds || [])
 
     const fromIDs = (entities, ids) => entities.filter(e => _.includes(ids, e._id))
 
@@ -167,7 +176,7 @@ export const entitiesSliceFactory = (identifier = '') => {
 
     const selectors = {
         getAllCurrentEntities, getAppliedFilters, getAppliedGroups, getFilteredEntities, getIsolatedEntities, getSelectedEntities,
-        getFetchingCurrent, isViewerSyncOn, isSelectingEntities, getCurrentEntityType, getSnapshot
+        getFetchingCurrent, isViewerSyncOn, isSelectingEntities, getCurrentEntityType, getSnapshot, getFilteredBySearchEntityIds
     }
 
     //Thunks
