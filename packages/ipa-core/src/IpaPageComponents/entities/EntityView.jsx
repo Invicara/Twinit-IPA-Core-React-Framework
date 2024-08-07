@@ -35,7 +35,8 @@ class EntityView extends React.Component {
     state = {displayDetail: false}
 
     openDetail = entity => {
-        this.setState({displayDetail: true})
+        this.setState({displayDetail: true, selectedEntity: entity})
+        this.props.setAvailableDataGroups(entity)
         // this.props.entitiesSelected([entity]);
     }
 
