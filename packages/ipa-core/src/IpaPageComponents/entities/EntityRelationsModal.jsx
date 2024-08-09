@@ -101,8 +101,8 @@ export default class EntityRelationsModal extends React.Component {
         />
         <hr/>
         <div className="relations">
-          {!this.state.currentRelatedEntities.length && <div>No data</div>}
-          {!!this.state.currentRelatedEntities.length && this.state.currentRelatedEntities.map(re => <div key={re._id} className="selected-relations-display-row">
+          {!this.state.currentRelatedEntities?.length && <div>No data</div>}
+          {!!this.state.currentRelatedEntities?.length && this.state.currentRelatedEntities?.map(re => <div key={re._id} className="selected-relations-display-row">
               <span className="remove-from-collection" onClick={() => this.removeRelation(re)}><i className="fas fa-times"></i></span>      
               <span className="selected-relations-name-combo">{re['Entity Name']}</span>
             </div>
