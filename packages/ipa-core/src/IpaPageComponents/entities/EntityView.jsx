@@ -32,10 +32,14 @@ const tableComponents = {
 
 class EntityView extends React.Component {
 
-    state = {displayDetail: false}
+    state = {
+        displayDetail: false,
+        selectedEntity: []
+    }
 
     openDetail = entity => {
-        this.setState({displayDetail: true})
+        this.setState({displayDetail: true, selectedEntity: entity})
+        this.props.setAvailableDataGroups(entity)
         // this.props.entitiesSelected([entity]);
     }
 
@@ -111,7 +115,7 @@ class EntityView extends React.Component {
                 pageContent = <EntityDetailPanel
                     context={this.context}
                     onSummary={this.openSummary}
-                    entity={this.props.selectedEntities[0]}
+                    entity={this.props.selectedEntities[0] || this.state.selectedEntity}
                     config={this.props.handler.config}
                     actions={actions}
                     availableDataGroups={this.props.availableDataGroups}
