@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import _ from 'lodash'
 import clsx from "clsx";
 import {produce} from "immer";
@@ -11,12 +11,16 @@ import {
 import {curriedFlip} from "../IpaUtils/function";
 import './TreeControl.scss';
 import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
+import { CircularProgress } from "@material-ui/core";
 
-const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = defaultBranchRenderer, renderLeafNode = defaultLeafRenderer}) => {
+const MAX_HEIGHT_SCROLL = 50
+
+const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = defaultBranchRenderer, renderLeafNode = defaultLeafRenderer, nodeHeight = 30}) => {
+    const [nodeLoading, setNodeLoading] = useState()
 
     const reactVirtualizedCache = useRef(new CellMeasurerCache({
         fixedWidth: true,
-        defaultHeight: 100
+        defaultHeight: nodeHeight
       }))
 
     const getNodeClasses = (node, baseClasses = '') => {
@@ -27,9 +31,16 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         _.get(node,'hidden', false) && "hidden",
     )}
 
-    const expandBranch = (node) => onNodeIndexChange(produce(nodeIndex, nodeIndex => {
-        nodeIndex[node.id].expanded = !nodeIndex[node.id].expanded
-    }))
+    const expandBranch = async (node) => {
+        setNodeLoading(node.id)
+        await onNodeIndexChange(produce(nodeIndex, nodeIndex => {
+            nodeIndex[node.id].expanded = !nodeIndex[node.id].expanded
+        }))
+
+        listRef?.current?.recomputeRowHeights()
+        listRef?.current?.forceUpdateGrid()
+        setNodeLoading(null)
+    }
 
     const toggleNode = (property) =>  (node) => onNodeIndexChange(produce(nodeIndex, nodeIndex => {
         const wasOn = nodeIndex[node.id][property] === TreeNodeStatus.ON
@@ -44,10 +55,16 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
     const renderBranch = (node, virtualizedEvent) =>
         <li style={virtualizedEvent?.style || {}} className={getNodeClasses(node, 'branch')} onClick={withoutPropagation(() => toggleNode('selectedStatus')(node))} key={node.id}>
             <a>
-            <span>
-              <i className="fa fa-angle-down branch-expander" onClick={withoutPropagation(() => expandBranch(node))}/>
-                {renderBranchNode(node, getChildrenCount(node), curriedFlip(toggleNode)(node))}
-            </span>
+                <span>
+                    {node.id == nodeLoading
+                        ? (
+                            <CircularProgress style={{width: 12, height: 12, marginRight: 8}} />
+                        ) : (
+                            <i className="fa fa-angle-down branch-expander" onClick={withoutPropagation(() => expandBranch(node))}/>
+                        )
+                    }
+                    {renderBranchNode(node, getChildrenCount(node), curriedFlip(toggleNode)(node))}
+                </span>
             </a>
             <ul key={node.id + "_children"} style={{ height: getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 4}vh` : "50vh", width: "auto" }}>
                 <AutoSizer>
@@ -84,6 +101,19 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         return node.isLeaf ? renderLeaf(node, virtualizedEvent) : renderBranch(node, virtualizedEvent)
     }
 
+    const calculateRowHeight = useCallback((index) => {
+        let height = nodeHeight
+        const node = _.values(nodeIndex)[index.index]
+        if (node?.expanded && node?.children?.length) {
+            const vhInPixels = MAX_HEIGHT_SCROLL * window.innerHeight / 100
+            const heightWithScroll = nodeHeight + (vhInPixels)
+            const actualHeight = nodeHeight + (nodeHeight * node.children.length)
+            height = heightWithScroll < actualHeight ? heightWithScroll : actualHeight
+        }
+        
+        return height
+    }, [nodeIndex])
+
     return (
         <div className={"fancy-tree"}>
             {!_.isEmpty(nodeIndex) ? <ul style={{ height: _.values(nodeIndex).filter(node => node.level === 0).length  < 10 ? `${_.values(nodeIndex).filter(node => node.level === 0).length * 4}vh` : "50vh", width: "auto" }}>
@@ -92,7 +122,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
                         <List
                             width={width}
                             height={height}
-                            rowHeight={reactVirtualizedCache.current.rowHeight}
+                            rowHeight={calculateRowHeight}
                             deferredMeasurementCache={reactVirtualizedCache.current}
                             rowRenderer={(virtualizedEvent) => {
                                 const node = _.values(nodeIndex).filter(node => node.level === 0)[virtualizedEvent.index]
