@@ -23,6 +23,23 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         defaultHeight: nodeHeight
       }))
 
+    const listRef = useRef()
+
+    const refreshList = useCallback(_.debounce(() => {
+        listRef?.current?.recomputeRowHeights()
+        listRef?.current?.forceUpdateGrid()
+    }, 100), [listRef.current])
+
+    useEffect(() => {
+        const resize = () => {
+            refreshList()
+        }
+        window.addEventListener('resize', resize)
+        return () => {
+            window.removeEventListener('resize', resize)
+        };
+    }, []);
+
     const getNodeClasses = (node, baseClasses = '') => {
         return clsx(baseClasses,
         _.get(node,'selectedStatus', TreeNodeStatus.OFF) === TreeNodeStatus.ON && "selected",
@@ -48,7 +65,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         propagateNodeStatusUp(property)(nodeIndex, node.id);
     }))
 
-    const getNodeChildren = (node) => node.children.map(childId => nodeIndex[childId]);
+    const getNodeChildren = (node) => node?.children?.map(childId => nodeIndex[childId]);
 
     const getChildrenCount = (node) => _.values(nodeIndex).filter(n => n.isLeaf && n.parents.includes(node.id)).length
 
@@ -66,7 +83,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
                     {renderBranchNode(node, getChildrenCount(node), curriedFlip(toggleNode)(node))}
                 </span>
             </a>
-            <ul key={node.id + "_children"} style={{ height: getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 4}vh` : "50vh", width: "auto" }}>
+            <ul key={node.id + "_children"} style={{ height: getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 4}vh` : `${MAX_HEIGHT_SCROLL}vh`, width: "auto" }}>
                 <AutoSizer>
                     {({ width, height }) => (
                         <List
@@ -75,10 +92,11 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
                             rowHeight={reactVirtualizedCache.current.rowHeight}
                             deferredMeasurementCache={reactVirtualizedCache.current}
                             rowRenderer={(virtualizedEvent) => {
-                                const node = getNodeChildren(node)[virtualizedEvent.index]
+                                const children = getNodeChildren(node)
+                                const childNode = children[virtualizedEvent.index]
                                 return (
                                     <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                                        {renderNode(node, virtualizedEvent)}
+                                        {renderNode(childNode, virtualizedEvent)}
                                     </CellMeasurer>
                                 )
                             }}
@@ -86,7 +104,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
                         />
                     )}
                 </AutoSizer>
-                </ul>
+            </ul>
         </li>
 
     const renderLeaf = (node, virtualizedEvent) =>
@@ -116,10 +134,11 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
 
     return (
         <div className={"fancy-tree"}>
-            {!_.isEmpty(nodeIndex) ? <ul style={{ height: _.values(nodeIndex).filter(node => node.level === 0).length  < 10 ? `${_.values(nodeIndex).filter(node => node.level === 0).length * 4}vh` : "50vh", width: "auto" }}>
+            {!_.isEmpty(nodeIndex) ? <ul style={{ height: _.values(nodeIndex).filter(node => node.level === 0).length  < 10 ? `${_.values(nodeIndex).filter(node => node.level === 0).length * 4}vh` : `${MAX_HEIGHT_SCROLL}vh`, width: "auto" }}>
                 <AutoSizer>
                     {({ width, height }) => (
                         <List
+                            ref={listRef}
                             width={width}
                             height={height}
                             rowHeight={calculateRowHeight}
