@@ -114,6 +114,19 @@ class Layout extends React.Component {
     )
     }
 
+    getComponent(name) {
+        let component
+        try {
+            component = require('../../../../../app/ipaCore/components/' + name + '.jsx').default;
+        } catch(e) {
+            console.error(e)
+            console.error("can't find page component: ", name)
+            component = null
+        }
+
+        return component
+    }
+
 
     render() {
         let contextProps = this.props.contextProps;
@@ -150,20 +163,28 @@ class Layout extends React.Component {
           showTitle = false
         }
 
+        let customSidebar
+        if (settings.sidebarComponent) {
+            customSidebar = { component: this.getComponent(settings.sidebarComponent) }
+        }
+
         return (
             <div className={cn} onMouseMove={this._mouseMove.bind(this)} onMouseUp={this._mouseUp.bind(this)}>
                 {showTitle && <TitleBar contextProps={this.props.contextProps} parent={this} ipaConfig={this.props.ipaConfig}/>}
                 <SidePanelContainer settings={sidePanelSettings} {...this.props}>                
                 <FlexContainer {...this.props} >
-                        { showSidebar &&
-                          <FlexLeftNavs customClasses={this.props.pageGroups.length > 0 ? "grouped-left-nav-bar" : ''}>
-                              <FlexLeftNav customClasses="main-nav">
-                                  <ul>
-                                      {items}
-                                  </ul>
-                              </FlexLeftNav>
-                          </FlexLeftNavs>
-                        }
+                        {customSidebar?.component ? (
+                            <customSidebar.component {...this.props.contextProps} />
+                        ): (
+                            showSidebar &&
+                              <FlexLeftNavs customClasses={this.props.pageGroups.length > 0 ? "grouped-left-nav-bar" : ''}>
+                                  <FlexLeftNav customClasses="main-nav">
+                                      <ul>
+                                          {items}
+                                      </ul>
+                                  </FlexLeftNav>
+                              </FlexLeftNavs>
+                        )}
                         <FlexContent {...this.props} location={this.context.location} customClasses="has-left-nav">
                             {this.props.children}
                                 <BottomPanel height={this.state.bottomPanelHeight} hideOnLoad={true}>
