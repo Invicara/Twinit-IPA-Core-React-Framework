@@ -48,6 +48,7 @@ class EntityView extends React.Component {
         if (this.state.displayDetail == true && entities.length > 1) {
             this.setState({displayDetail: false})
         }
+        this.props.setFilteredBySearchEntities(entities)
         this.props.entitiesSelected(entities)
     }
 
