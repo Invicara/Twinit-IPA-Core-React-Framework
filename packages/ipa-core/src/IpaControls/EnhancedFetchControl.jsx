@@ -55,6 +55,8 @@ class EnhancedFetchControl extends React.Component {
 
     //value is optional, it can be used to provide a value not yet available in the state.
     handleFetch = (selectorId, value, state) => {
+        // This will clear any entities that have been selected directly from the model
+        if(this.props.setViewerSelectedEntitiesBySearch) this.props.setViewerSelectedEntitiesBySearch([])
         //The disable props can prevent fetching. 
         // It is especially useful to prevent spontaneous fetching from TreeSearch after it reloads itself. 
         if(this.props.disable) return;
