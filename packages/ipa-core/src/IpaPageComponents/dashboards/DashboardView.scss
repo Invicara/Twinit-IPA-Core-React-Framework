@@ -29,6 +29,18 @@
   padding: 15px;
 }
 
+@media (max-width: 1480px) {
+  .dashboard {
+    padding: 20px;
+    height: auto !important;
+  }
+
+  .dashboard.db-grid {
+    grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)) !important;
+    grid-template-rows: repeat(auto-fit, minmax(255px, 1fr)) !important;
+  }
+}
+
 .dashboard-header {
   margin-top: 20px;
   display: flex;
