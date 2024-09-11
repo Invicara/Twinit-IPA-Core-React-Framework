@@ -15,6 +15,8 @@ let initialState = {//TODO if operations on these entities get too slow, use dir
     fetchingCurrent: 0,
     appliedFilters: {},
     appliedGroups: [],
+    appliedRelateFilters: {},
+    appliedRelateGroups: [],
     selectingEntities: false,
     viewerSyncOn: false,
     allCurrent: [],
@@ -63,6 +65,11 @@ export const entitiesSliceFactory = (identifier = '') => {
             resetForFilteringAndGrouping: (state, {payload: {groups, filters}}) => {
                 state.appliedFilters = filters ? filters : state.appliedFilters
                 state.appliedGroups = groups ? groups : state.appliedGroups
+                state.selectedIds = _.isEmpty(state.selectedIds) ? state.selectedIds : []
+            },
+            resetForRelatedFilteringAndGrouping: (state, {payload: {groups, filters}}) => {
+                state.appliedRelateFilters = filters ? filters : state.appliedFilters
+                state.appliedRelateGroups = groups ? groups : state.appliedGroups
                 state.selectedIds = _.isEmpty(state.selectedIds) ? state.selectedIds : []
             },
             setFetching: (state, {payload: fetching}) => {
@@ -134,7 +141,7 @@ export const entitiesSliceFactory = (identifier = '') => {
     //Action creators
     const {
         setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setSelectedEntities, setCurrentEntityType, setSelecting,
-        applyFiltering, resetFiltering, applyGrouping, resetGrouping, resetForFilteringAndGrouping,
+        applyFiltering, resetFiltering, applyGrouping, resetGrouping, resetForFilteringAndGrouping, resetForRelatedFilteringAndGrouping,
         addEntity, deleteEntity, updateEntity, clearEntities, loadSnapshot, clearForNewEntityType, setFilteredBySearchEntities
     } = actionCreators
 
@@ -158,6 +165,8 @@ export const entitiesSliceFactory = (identifier = '') => {
 
     const getAppliedGroups = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.appliedGroups)
 
+    const getAppliedRelatedGroups = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.appliedRelateGroups)
+
     const getFilteredEntities = createSelector([getAllCurrentEntities, getAppliedFilters], (currentEntities, appliedFilters) =>
         _.isEmpty(getAppliedFilters) ? currentEntities : getFilteredEntitiesBy(currentEntities, appliedFilters)
     )
@@ -176,7 +185,8 @@ export const entitiesSliceFactory = (identifier = '') => {
 
     const selectors = {
         getAllCurrentEntities, getAppliedFilters, getAppliedGroups, getFilteredEntities, getIsolatedEntities, getSelectedEntities,
-        getFetchingCurrent, isViewerSyncOn, isSelectingEntities, getCurrentEntityType, getSnapshot, getFilteredBySearchEntityIds
+        getFetchingCurrent, isViewerSyncOn, isSelectingEntities, getCurrentEntityType, getSnapshot, getFilteredBySearchEntityIds,
+        getAppliedRelatedGroups
     }
 
     //Thunks

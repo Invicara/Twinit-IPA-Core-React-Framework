@@ -24,6 +24,7 @@ import {
   searchEntities,
   setSelectedSearchedEntities
 } from '../../redux/slices/entities-pluggable-search'
+import { resetForRelatedFilteringAndGrouping, getAppliedRelatedGroups } from "../../redux/slices/entities";
 import { SummaryPanel } from './SummaryPanel'
 import { SearchPanel } from './SearchPanel'
 import { RelatePanel } from './RelatePanel'
@@ -55,7 +56,9 @@ const RawRelationsModal = ({
   applySearchFiltering,
   setSelectedSearchedEntities,
   recoverRelated,
-  destroyModal
+  destroyModal,
+  resetForRelatedFilteringAndGrouping,
+  groups
 }) => {
   const [selectedEntityType, setSelectedEntityType] = useState('')
   const { handleCheck, items: checkedEntities, resetChecked } = useChecked(
@@ -246,6 +249,8 @@ const RawRelationsModal = ({
                 relate={relate}
                 applySearchFiltering={applySearchFiltering}
                 setSelectedSearchedEntities={setSelectedSearchedEntities}
+                resetForRelatedFilteringAndGrouping={resetForRelatedFilteringAndGrouping}
+                groups={groups}
               />
             </div>
           </div>
@@ -276,7 +281,8 @@ const mapStateToProps = state => ({
   selectedEntities: getSelectedSearchedEntities(state),
   fetchingRelated: getFetchingRelatedEntities(state),
   entitiesChanged: getEntitiesChanged(state),
-  modal: state.modal
+  modal: state.modal,
+  groups: getAppliedRelatedGroups(state)
 })
 
 const mapDispatchToProps = {
@@ -289,7 +295,8 @@ const mapDispatchToProps = {
   applyRelationChanges,
   removeRelated,
   recoverRelated,
-  destroyModal: modal.actions.destroy
+  destroyModal: modal.actions.destroy,
+  resetForRelatedFilteringAndGrouping
 }
 
 export const RelationsModal = compose(
