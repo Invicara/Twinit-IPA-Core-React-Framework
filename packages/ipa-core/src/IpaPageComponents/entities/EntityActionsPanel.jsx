@@ -9,7 +9,7 @@ import './EntityActionsPanel.scss';
 import '../../IpaStyles/DbmTooltip.scss'
 import ActionButton from "../../IpaControls/ActionButton";
 
-const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer}) => {
+const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer, showModal}) => {
   let icons = []
 
   const reduxStore = useStore();
@@ -65,7 +65,8 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       newEntity = await runPreEntityActionScript({action, entity: newEntity, type})
       // the factory create method can use the app context to display the component
       // e.g. context.ifefShowModal(modal)
-      factory.create({action, entity: newEntity, type, context, reduxStore})
+      // Issue with context being set to null which meant context.ifefShowModal was undefined. Passing through showModal from AppProvider as an alternative. 
+      factory.create({action, entity: newEntity, type, context, reduxStore, showModal})
     } else {
       // if there's no component execute the action directly
       let newEntity = action.showOnTable && Array.isArray(entity) ? [...entity] : Object.assign({}, entity)
