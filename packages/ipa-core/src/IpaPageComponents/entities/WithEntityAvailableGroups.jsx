@@ -43,7 +43,7 @@ const withEntityAvailableGroups = WrappedComponent => {
         }
 
         selectedEntitiesEffect(){
-            if (this.props.selectedEntities) {
+            if (this.props.selectedEntities.length) {
                 this.setAvailableDataGroups(this.props.selectedEntities[0], false)
             }
         }
