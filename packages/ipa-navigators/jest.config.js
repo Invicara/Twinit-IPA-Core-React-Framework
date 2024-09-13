@@ -3,7 +3,7 @@ const esModules = [
   'lodash-es',
   '@invicara/core-utils',
   '@invicara/expressions',
-  '@invicara/ui-utils'].join('|');
+  '@dtplatform/ui-utils'].join('|');
 
 const config = {
   verbose: true,

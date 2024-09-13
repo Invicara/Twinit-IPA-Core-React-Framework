@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import {IafProj, IafUserGroup, IafSession, IafPassSvc} from '@invicara/platform-api';
+import {IafProj, IafUserGroup, IafSession, IafPassSvc} from '@dtplatform/platform-api';
 import _ from 'lodash';
 import GenericModal from "./GenericModal";
 import SimpleTable from "../IpaControls/SimpleTable"

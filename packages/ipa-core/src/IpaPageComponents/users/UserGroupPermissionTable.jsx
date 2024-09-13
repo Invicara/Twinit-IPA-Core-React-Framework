@@ -7,7 +7,7 @@ import Switch from '@material-ui/core/Switch';
 import { withStyles } from "@material-ui/core";
 import Select from 'react-select'
 
-import { IafItemSvc, IafPermission, IafFileSvc } from '@invicara/platform-api'
+import { IafItemSvc, IafPermission, IafFileSvc } from '@dtplatform/platform-api'
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 
 import { RoundCheckbox } from "../../IpaControls/Checkboxes";
