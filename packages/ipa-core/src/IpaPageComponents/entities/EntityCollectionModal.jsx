@@ -207,8 +207,8 @@ EntityCollectionModal.contextTypes = {
   export const EntityCollectionModalFactory = {
     create: ({type, action, entity, context, reduxStore, showModal}) => {
       let modal = <EntityCollectionModal action={action} entity={entity} type={type} />
-      if(context.ifefShowModal) {
-        context.ifefShowModal(modal);
+      if(context?.ifefShowModal) {
+        context?.ifefShowModal(modal);
       } else {
         showModal(modal)
       }
