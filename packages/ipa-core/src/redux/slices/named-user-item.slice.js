@@ -4,8 +4,8 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
-import {IafItemSvc, IafFileSvc} from "@invicara/platform-api";
-import {IafScriptEngine} from '@invicara/iaf-script-engine';
+import {IafItemSvc, IafFileSvc} from "@dtplatform/platform-api";
+import {IafScriptEngine} from '@dtplatform/iaf-script-engine';
 import ScriptHelper from '../../IpaUtils/ScriptHelper';
 import _ from 'lodash';
 

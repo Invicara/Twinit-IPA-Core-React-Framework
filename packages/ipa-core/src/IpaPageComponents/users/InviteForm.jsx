@@ -8,7 +8,7 @@ import SimpleTextThrobber from '../../IpaControls/SimpleTextThrobber'
 
 import './InviteForm.scss'
 import {selectStyles} from '../../IpaControls/private/selectStyles'
-import { IafUserGroup } from "@invicara/platform-api"
+import { IafUserGroup } from "@dtplatform/platform-api"
 
 const SimpleButton = ({children, disabled=false, onClick}) => {
   if (!disabled) return <div className='simple-button' onClick={onClick}>{children}</div>

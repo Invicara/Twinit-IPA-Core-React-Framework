@@ -1,10 +1,10 @@
-import { IafProj, IafSession } from '@invicara/platform-api'
+import { IafProj, IafSession } from '@dtplatform/platform-api'
 
 import { expression, sift } from '@invicara/expressions'
 
-import * as PlatformApi from '@invicara/platform-api'
-import { IafScriptEngine } from '@invicara/iaf-script-engine'
-import * as UiUtils from '@invicara/ui-utils'
+import * as PlatformApi from '@dtplatform/platform-api'
+import { IafScriptEngine } from '@dtplatform/iaf-script-engine'
+import * as UiUtils from '@dtplatform/ui-utils'
 
 async function loadScript (query, ctx) {
   console.log('ScriptHelper loadScript query', query)

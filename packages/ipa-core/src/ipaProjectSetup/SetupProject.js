@@ -1,13 +1,12 @@
 import React from "react";
-import { IafProj, IafSession, IafScripts, IafPassSvc } from "@invicara/platform-api";
-import * as PlatformApi from "@invicara/platform-api";
-import { IafScriptEngine } from "@invicara/iaf-script-engine";
+import { IafProj, IafSession, IafScripts, IafPassSvc, IafDataSource } from "@dtplatform/platform-api";
+import * as PlatformApi from "@dtplatform/platform-api";
+import { IafScriptEngine } from "@dtplatform/iaf-script-engine";
 import _ from "lodash";
 import GenericModal from "../IpaDialogs/GenericModal";
 import "../IpaDialogs/ProjectPickerModal.scss";
-import * as UiUtils from "@invicara/ui-utils";
-import { mobiscroll } from "@invicara/invicara-lib";
-import { IafDataSource } from "@invicara/platform-api";
+import * as UiUtils from "@dtplatform/ui-utils";
+import { mobiscroll } from "@dtplatform/invicara-lib";
 
 export default class SetUpProject extends React.Component {
   constructor(props) {

@@ -12,7 +12,7 @@ import AppProvider, {addScriptFunction} from "../AppProvider";
 
 import {MemoryRouter} from "react-router-dom";
 import {createMemoryHistory} from "history";
-import {IafProj, IafSession, IafFetch} from "@invicara/platform-api";
+import {IafProj, IafSession, IafFetch} from "@dtplatform/platform-api";
 import {createLegacyContextSupport} from "./util/legacyContext";
 import {addDashboardComponents} from "../redux/slices/dashboardUI";
 import {addEntityComponents} from "../redux/slices/entityUI";
