@@ -117,7 +117,7 @@ class Layout extends React.Component {
     getComponent(name) {
         let component
         try {
-            component = require('../../../../../app/ipaCore/components/' + name + '.jsx').default;
+            component = require('../../../../../app/ipaCore/' + name + '.jsx').default;
         } catch(e) {
             console.error(e)
             console.error("can't find page component: ", name)
