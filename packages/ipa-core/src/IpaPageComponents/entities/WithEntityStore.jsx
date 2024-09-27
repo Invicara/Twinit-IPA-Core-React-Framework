@@ -19,7 +19,8 @@ import {
     clearForNewEntityType,
     getSnapshot,
     loadSnapshot,
-    resetForFilteringAndGrouping, getAppliedGroups, applyGrouping
+    resetForFilteringAndGrouping, getAppliedGroups, applyGrouping,
+    setFilteredBySearchEntities
 } from "../../redux/slices/entities";
 import {connect} from "react-redux";
 import withEntityConfig from "./WithEntityConfig";
@@ -195,7 +196,8 @@ const withEntityStore = (WrappedComponent) => {
         fetchEntities,
         clearForNewEntityType,
         loadSnapshot,
-        resetForFilteringAndGrouping
+        resetForFilteringAndGrouping,
+        setFilteredBySearchEntities
     }
 
     return connect(mapStateToProps, mapDispatchToProps)(withEntityConfig(EntityStoreHOC))
