@@ -129,7 +129,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test": "jest",
-    "testa": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "testa": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "clear_jest": "jest --clearCache"
   },
   "babel": {
     "presets": [
