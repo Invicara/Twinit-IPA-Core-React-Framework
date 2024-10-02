@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { InviteForm } from "./InviteForm";
+import { InviteForm } from "../InviteForm";
 
 describe("InviteForm Component", () => {
   const mockOnInvitesSent = jest.fn();
