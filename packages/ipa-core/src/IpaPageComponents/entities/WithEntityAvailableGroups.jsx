@@ -22,12 +22,12 @@ const withEntityAvailableGroups = WrappedComponent => {
             this.setState({loadingAvailableDataGroups: false})
         }
 
-        setAvailableDataGroups = (entity, propertiesOnly) => {
+        setAvailableDataGroups = (entity, propertiesOnly, detailedEntity) => {
 
             //reset all available groups
             this.setState({availableDataGroups: _.cloneDeep(this.props.initialAvailableDataGroups), loadingAvailableDataGroups : true})
             if(entity) {
-                this.props.findAvailableDataGroups(entity, propertiesOnly, entity ? this.props.currentEntityType.singular : undefined, this.onDataGroupAvailable, this.onDataGroupsLoaded)
+                this.props.findAvailableDataGroups(detailedEntity ? detailedEntity : entity, propertiesOnly, entity ? this.props.currentEntityType.singular : undefined, this.onDataGroupAvailable, this.onDataGroupsLoaded)
             }
         };
 
@@ -37,14 +37,15 @@ const withEntityAvailableGroups = WrappedComponent => {
         }
 
         componentDidUpdate(prevProps, prevState, snapshot) {
-            if(prevProps.selectedEntities !== this.props.selectedEntities) {
+            //     Called inside Entity Handler/EntityDetailPanel                Called inside the Navigator/EntityDetailBottomPanelContent
+            if((prevProps.selectedEntities !== this.props.selectedEntities) || (prevProps.detailedEntity !== this.props.detailedEntity)) {
                 this.selectedEntitiesEffect()
             }
         }
 
         selectedEntitiesEffect(){
             if (this.props.selectedEntities.length) {
-                this.setAvailableDataGroups(this.props.selectedEntities[0], false)
+                this.setAvailableDataGroups(this.props.selectedEntities[0], false, this.props.detailedEntity)
             }
         }
 
