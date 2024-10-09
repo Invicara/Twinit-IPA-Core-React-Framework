@@ -2,6 +2,7 @@
 **/node_modules/
 **/dist/
 **/modules/
+**/.DS_Store/
 **/esm_modules/
 **/storybook-static/
 lerna-debug.log
