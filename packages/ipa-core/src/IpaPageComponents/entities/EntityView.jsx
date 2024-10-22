@@ -41,7 +41,7 @@ class EntityView extends React.Component {
 
     openSummary = () => {
         this.setState({displayDetail: false})
-        this.props.entitiesSelected([]);
+        // this.props.entitiesSelected([]);
     }
 
     onTreeSelect = (entities) => {
@@ -111,7 +111,7 @@ class EntityView extends React.Component {
                 pageContent = <EntityDetailPanel
                     context={this.context}
                     onSummary={this.openSummary}
-                    entity={this.props.selectedEntities[0]}
+                    entity={this.props.selectedEntities[0] || this.state.selectedEntity}
                     config={this.props.handler.config}
                     actions={actions}
                     availableDataGroups={this.props.availableDataGroups}
