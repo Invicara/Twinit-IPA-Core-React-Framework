@@ -123,18 +123,36 @@ class EntitySelectionPanel extends React.Component {
     this.props.onGroupOrFilterChange({groups})
   }
 
-  onSelectLeaves = (leaves) => {
+  onSelectLeaves = (leaves, BranchSelected) => {
       let selection = []
-      if (leaves.length==0 && this.props.treeSelectMode === TreeSelectMode.NONE_MEANS_ALL) {
-          selection = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props));
-      }
-      else {
+      let branchesSelection = []
+      let combinedArray
+      if(BranchSelected) {
+        branchesSelection.push(...BranchSelected)
+      } else if (leaves.length==0 && this.props.treeSelectMode === TreeSelectMode.NONE_MEANS_ALL) {
+        selection = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props));
+      } 
+      if(leaves) {
           leaves.forEach(el => {
               selection.push(this.props.entities.find(e => e._id == el.dataset.nodeId))
           })
       }
+      if(selection.length > 1 && branchesSelection.length > 1) {
+        // Combining selected leaves and branches
+        const combined = [...selection, ...branchesSelection];
+        // Removing any duplicate entities found in the selection and branchesSelection arrays
+        combinedArray = [...new Set(combined)];
+      }
+
       if(this.props.setFilteredBySearchEntities) this.props.setFilteredBySearchEntities(selection)
-      this.onSelectEntities(selection)
+      if(combinedArray?.length > 1) {
+        this.onSelectEntities(combinedArray)
+      } else if(branchesSelection.length > 1 ) {
+        this.onSelectEntities(branchesSelection)
+      } else {
+        this.onSelectEntities(selection)
+      }
+      
   }
 
   onSelectEntities = (entities) => {
