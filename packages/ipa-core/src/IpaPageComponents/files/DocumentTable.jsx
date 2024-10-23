@@ -121,7 +121,8 @@ const DocumentTable = props => {
   const isDisabled = (doc, action) => {
     if (doc.currentVersion.length > 0) {
       if (action.key === "VIEW") {
-        if (props.tableConfig.supportedTypes.includes(doc.documentData.name.split('.')[1])) {
+        let extension = doc.documentData.name.substring(doc.documentData.name.lastIndexOf('.') + 1);
+        if (props.tableConfig.supportedTypes.includes(extension.toLowerCase())) {
           return true
         }
         else {
