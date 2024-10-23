@@ -32,16 +32,20 @@ const tableComponents = {
 
 class EntityView extends React.Component {
 
-    state = {displayDetail: false}
+    state = {
+        displayDetail: false,
+        selectedEntity: []
+    }
 
     openDetail = entity => {
-        this.setState({displayDetail: true})
-        this.props.entitiesSelected([entity]);
+        this.setState({displayDetail: true, selectedEntity: entity})
+        this.props.setAvailableDataGroups(entity)
+        // this.props.entitiesSelected([entity]);
     }
 
     openSummary = () => {
         this.setState({displayDetail: false})
-        this.props.entitiesSelected([]);
+        // this.props.entitiesSelected([]);
     }
 
     onTreeSelect = (entities) => {
