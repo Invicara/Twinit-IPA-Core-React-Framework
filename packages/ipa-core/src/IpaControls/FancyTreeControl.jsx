@@ -94,7 +94,7 @@ const FancyTreeControl = ({
 
   const expandBranch = (e, nodeName, nodeValue) => {
     let el = e.target
-    e.target.offsetParent.lastChild.classList.toggle("expanded")
+
     e.stopPropagation()
     while (el.tagName != "LI")
       el = el.parentElement
@@ -123,28 +123,6 @@ const FancyTreeControl = ({
     });
   }
 
-  const gatherAllSelected = () => {
-    const elementsArray = Array.from(document.querySelectorAll('.branch.inner.selected'));
-    const selectedBranches = []
-    const selectedNodes = []
-    elementsArray.map((el) => {
-      selectedBranches.push(el.dataset.branchName)
-    })
-    selectedBranches.map((branch) => {
-      if(tree[branch]) {
-        // Level one branch selection
-        if (Array.isArray(tree[branch])){
-          selectedNodes.push(...tree[branch])
-        // Level two branch selection
-        } else if(typeof tree[branch] === 'object') {
-          const valueArray = Object.values(tree[branch]);
-          selectedNodes.push(...valueArray)
-        } 
-      }
-    })
-    return selectedNodes
-  }
-
   const selectNode = (e, nodeName, nodeValue) => {
     const treeDOM = treeDOMRef.current;
     let el = e.target;
@@ -170,55 +148,12 @@ const FancyTreeControl = ({
     establishTreeBranchClasses();
 
     if (onSelect) {
-      const selectedBranches = gatherAllSelected()
       const allSelected = treeDOM.querySelectorAll("li.leaf.selected");
 
-      if(selectedBranches.length > 1) {
-        return onSelect(allSelected, selectedBranches)
-      } else {
-        const allSelected = treeDOM.querySelectorAll("li.leaf.selected");
-        onSelect([...allSelected], nodeName, nodeValue, _.isArray(nodeValue), el.classList.contains("selected"));
-      }
+      onSelect([...allSelected], nodeName, nodeValue, _.isArray(nodeValue), el.classList.contains("selected"));
       dispatch({type: 'nodeSelected', previouslySelectedIds: previouslySelectedIds});
     }
   }
-
-  const importStyle = (nodeValue) => {
-  // Branch has less then 50 entities
-  const style = {
-    height: 'auto',
-    width: 'auto'
-  }
-
-  // Branch has more then 50 entities
-  const styleTwo = {
-    height: '0.5px',
-    width: 'auto',
-    visibility: 'hidden'
-  }
-
-  // If multiple 'Group By' attributes are selected
-  const styleThree = {
-  width: 'auto',
-  visibility: 'hidden'
-  }
-
-  // If multiple 'Group By' attributes are selected 
-  if (selectedGroups.length > 1) {
-    if(nodeValue.length > 50) {
-      return styleTwo 
-    } else {
-      return styleThree
-    }
-  // If one or no 'Group By' attributes are selected 
-  } else {
-    if (nodeValue?.length < 50) { 
-      return style
-    }else {
-      return styleTwo
-    }
-  }
-}
 
   const getNodes = (nodes, depth, virtualizedEvent) => {
     if (!nodes) return
@@ -253,50 +188,19 @@ const FancyTreeControl = ({
       children = []
       depth++
       Object.entries(nodes).forEach(([nodeName, nodeValue]) => {
-        let branchStyle = importStyle(nodeValue) 
         children.push(
-          <li style={virtualizedEvent?.style || {}} className={clsx(
-            'branch inner', selectedNodeNames.includes(nodeName) && "selected",
-            expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
+          <li className={clsx(
+              'branch',selectedNodeNames.includes(nodeName) && "selected",
+              expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
           )}
-            onClick={e => selectNode(e, nodeName, nodeValue)} key={nodeName} data-branch-name={nodeName} >
+              onClick={e => selectNode(e, nodeName, nodeValue)} key={nodeName} data-branch-name={nodeName} >
             <a>
               <span>
                 <i className="fa fa-angle-down branch-expander" onClick={e => expandBranch(e, nodeName, nodeValue)} />
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-
-            <ul className={"child-branch" } id="innerChildBranch" key={nodeName + "_children"} style={branchStyle } ref={(node) => {
-                // This is a way to add the !important tag to inline style in jsx
-                if(node && nodeValue.length < 50) {
-                node.style.setProperty("height", "auto", "important");
-                node.style.removeProperty('display')
-              } else if (node && nodeValue.length > 50){
-                node.style.setProperty("display", "block", "important");
-              }
-            }}>
-              {Array.isArray(nodeValue) && nodeValue?.length > 50 ?
-                <AutoSizer>
-                  {({ width, height }) => (
-                    <List
-                      width={width}
-                      height={height}
-                      rowHeight={reactVirtualizedCache.current.rowHeight}
-                      deferredMeasurementCache={reactVirtualizedCache.current}
-                      rowRenderer={(virtualizedEvent) => {
-                        return (
-                          <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                            {getNodes(nodeValue, depth, virtualizedEvent)}
-                          </CellMeasurer>
-                        )
-                      }}
-                      rowCount={nodeValue.length}
-                    />
-                  )}
-                </AutoSizer> : getNodes(nodeValue, 1)
-              }
-            </ul>
+            <ul key={nodeName+"_children"}>{getNodes(nodeValue, depth)}</ul>
           </li>)
       })
     }

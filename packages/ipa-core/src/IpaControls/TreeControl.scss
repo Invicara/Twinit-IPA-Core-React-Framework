@@ -70,16 +70,6 @@
     display: none;
   }
 
-  .child-branch.selected{
-    display: block !important;
-  }
-
-  .child-branch.expanded{
-    display: block !important;
-    visibility: visible !important;
-    height: 60vh !important;
-  }
-
   > ul,
   li.expanded > ul {
     display: block;
