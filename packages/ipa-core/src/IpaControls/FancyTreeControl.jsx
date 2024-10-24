@@ -153,7 +153,7 @@ const FancyTreeControl = ({
     }
   }
 
-  const getNodes = (nodes, depth, virtualizedEvent) => {
+  const getNodes = (nodes, depth) => {
     if (!nodes) return
     let children
     if (Array.isArray(nodes)) {
@@ -169,57 +169,24 @@ const FancyTreeControl = ({
             </a>
           </li>)
       })
-      if (virtualizedEvent) {
-        let n = nodes[virtualizedEvent?.index]
-        let cn = "leaf"
-        if ( selectedIds.includes(n._id) || selectedNodeNames.includes(n.name)) cn += " selected";
-        if (expandedNodeNames.includes(n.name)) cn += " expanded"
-        if (partialNodeNames.includes(n.name)) cn += " partial"
-        return <li style={virtualizedEvent?.style || {}} onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
-          <a>
-            <span>{renderLeafNode(n)}</span>
-          </a>
-        </li>
-      }
     }
     else {
       children = []
       depth++
       Object.entries(nodes).forEach(([nodeName, nodeValue]) => {
         children.push(
-          <li style={virtualizedEvent?.style || {}} className={clsx(
-            'branch', selectedNodeNames.includes(nodeName) && "selected",
-            expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
+          <li className={clsx(
+              'branch',selectedNodeNames.includes(nodeName) && "selected",
+              expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
           )}
-            onClick={e => selectNode(e, nodeName, nodeValue)} key={nodeName} data-branch-name={nodeName} >
+              onClick={e => selectNode(e, nodeName, nodeValue)} key={nodeName} data-branch-name={nodeName} >
             <a>
               <span>
                 <i className="fa fa-angle-down branch-expander" onClick={e => expandBranch(e, nodeName, nodeValue)} />
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-            <ul key={nodeName + "_children"} style={{ height: nodeValue?.length > 50 ? "60vh" : "auto", width: "auto" }}>
-              {Array.isArray(nodeValue) && nodeValue?.length > 50 ?
-                <AutoSizer>
-                  {({ width, height }) => (
-                    <List
-                      width={width}
-                      height={height}
-                      rowHeight={reactVirtualizedCache.current.rowHeight}
-                      deferredMeasurementCache={reactVirtualizedCache.current}
-                      rowRenderer={(virtualizedEvent) => {
-                        return (
-                          <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                            {getNodes(nodeValue, depth, virtualizedEvent)}
-                          </CellMeasurer>
-                        )
-                      }}
-                      rowCount={nodeValue.length}
-                    />
-                  )}
-                </AutoSizer> : getNodes(nodeValue, 1)
-              }
-            </ul>
+            <ul style={{ height: nodeValue.length > 50 ? "60vh" : "auto", overflow: nodeValue.length > 50 ? "auto": "none" }} key={nodeName+"_children"}>{getNodes(nodeValue, depth)}</ul>
           </li>)
       })
     }
