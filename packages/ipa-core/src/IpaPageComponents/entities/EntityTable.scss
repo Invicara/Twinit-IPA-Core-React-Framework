@@ -116,13 +116,37 @@ div.header-row {
   .ReactVirtualized__Grid.ReactVirtualized__List {
       overflow-x: visible !important;
       overflow-y: auto !important;
-      min-width: 800px !important;
   
       .ReactVirtualized__Grid__innerScrollContainer {
         overflow: visible !important;
         min-width: 800px !important;
       }
     }
+}
+
+.virtualized-table{
+  height: 70vh;
+  width: 100%;
+}
+
+.ReactVirtualized__Grid::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+  
+.ReactVirtualized__Grid::-webkit-scrollbar-track {
+    background: white;
+}
+
+  
+.ReactVirtualized__Grid::-webkit-scrollbar-thumb {
+background: #DCDCDC;
+        border-radius: 2rem;
+}
+
+  
+.ReactVirtualized__Grid::-webkit-scrollbar-thumb:hover {
+    background: #B8B8B8;
 }
 
 div.content-row {
