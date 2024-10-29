@@ -170,7 +170,6 @@ const createSnap = function(win, doc) {
           translate: {
             get: {
               matrix: function(index) {
-
                 if( !utils.canTransform() ){
                   return parseInt(settings.element.style.left, 10);
                 } else {
@@ -195,17 +194,14 @@ const createSnap = function(win, doc) {
               cache.translation = action.translate.get.matrix(4);
               cache.easing = false;
               clearInterval(cache.animatingInterval);
-
               if(cache.easingTo===0){
                 utils.klass.remove(doc.body, 'snapjs-right');
                 utils.klass.remove(doc.body, 'snapjs-left');
               }
-
               utils.dispatchEvent('animated');
               utils.events.removeEvent(settings.element, utils.transitionCallback(), action.translate.easeCallback);
             },
             easeTo: function(n) {
-
               if( !utils.canTransform() ){
                 cache.translation = n;
                 action.translate.x(n);
@@ -254,13 +250,11 @@ const createSnap = function(win, doc) {
                 settings.element.style.bottom = 0;
               }
             },
-
             adjustContentWidth: function (n) {
               if (!settings.adjustContentWidth) {
                 return;
               } else {
                 var el = settings.element, bottomEl = settings.bottomElement;
-
                 if (n === 0) {
                   el.style.width = win.innerWidth;  // assume content pane is full width!
                   el.style.left = 0;
@@ -268,7 +262,6 @@ const createSnap = function(win, doc) {
                     bottomEl.style.width = win.innerWidth;  // assume content pane is full width!
                     bottomEl.style.left = 0;
                   }
-
                 } else if (n > 0 && el.clientWidth > 680) {
                   el.style.left = 0;    // In case right panel was open
                   el.style.width = el.clientWidth - n;
@@ -300,12 +293,10 @@ const createSnap = function(win, doc) {
                   n=settings.minPosition;
                 }
               }
-
               n = parseInt(n, 10);
               if(isNaN(n)){
                 n = 0;
               }
-
               if( utils.canTransform() ){
                 var theTranslate = 'translate3d(' + n + 'px, 0,0)';
                 settings.element.style[cache.vendor+'Transform'] = theTranslate;
@@ -314,7 +305,6 @@ const createSnap = function(win, doc) {
                 }
               } else {
                 settings.element.style.width = (win.innerWidth || doc.documentElement.clientWidth)+'px';
-
                 settings.element.style.left = n+'px';
                 settings.element.style.right = '';
               }
@@ -399,7 +389,6 @@ const createSnap = function(win, doc) {
                 if((cache.intentChecked && !cache.hasIntent)){
                   return;
                 }
-
                 if(settings.addBodyClasses){
                   if((absoluteTranslation)>0){
                     utils.klass.add(doc.body, 'snapjs-left');
@@ -493,7 +482,6 @@ const createSnap = function(win, doc) {
               if (cache.isDragging) {
                 utils.dispatchEvent('end');
                 var translated = action.translate.get.matrix(4);
-
                 // Tap Close
                 if (cache.dragWatchers.current === 0 && translated !== 0 && settings.tapToClose) {
                   utils.dispatchEvent('close');
@@ -503,7 +491,6 @@ const createSnap = function(win, doc) {
                   cache.startDragX = 0;
                   return;
                 }
-
                 // Revealing Left
                 if (cache.simpleStates.opening === 'left') {
                   // Halfway, Flicking, or Too Far Out

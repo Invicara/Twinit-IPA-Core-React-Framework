@@ -2,7 +2,6 @@ const esModules = [
   '@dtplatform/platform-api',
   'lodash-es',
   '@invicara/core-utils',
-  '@invicara/expressions',
   '@dtplatform/ui-utils'].join('|');
 
 const config = {

@@ -16,7 +16,7 @@ export default {
   output: {
     file: 'dist/ipa-core.js',
     format: 'cjs',
-    name: 'IpaCore',
+    name: 'DTFFCore',
     sourcemap: false
   },
 
@@ -75,7 +75,7 @@ export default {
     'react-autosuggest', 'react-click-outside', 'react-css-modules',
     'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
     'react-inspector', 'react-select', 'react-table',
-    '@invicara/expressions', '@invicara/platform-api',
+    '@dtplatform/platform-api',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path'
   ]

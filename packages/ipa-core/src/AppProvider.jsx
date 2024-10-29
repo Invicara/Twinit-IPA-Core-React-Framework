@@ -5,7 +5,6 @@ import _ from "lodash";
 
 import {IafSession, IafProj, IafDataSource} from '@dtplatform/platform-api';
 import {IafScriptEngine} from "@dtplatform/iaf-script-engine";
-import { expression } from '@invicara/expressions';
 
 import EmptyConfig, {actualPage} from './emptyConfig';
 
@@ -124,7 +123,7 @@ class AppProvider extends React.Component {
   async userLogout() {
     try {
       await IafSession.logout();
-    } catch (e) {}
+    } catch (e) {console.error("An unexpected error happened while logging out.")}
 
     this.sisenseLogout()
 
@@ -202,7 +201,7 @@ class AppProvider extends React.Component {
     localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] = JSON.stringify(newSelecteds);
     this.setState({selectedItems: newSelecteds});
   }
-  getPageArray = () => window.location.href.split('?')[0].split('/');
+  getPageArray(){return window.location.href.split('?')[0].split('/')}
 
   getCurrentHandler() {
     let config = this.state.userConfig;
@@ -263,7 +262,7 @@ class AppProvider extends React.Component {
     }
     
     return handler;
-  };
+  }
 
   handlePageHandlerLoadError(error) {
     throw error;
@@ -313,7 +312,7 @@ class AppProvider extends React.Component {
 
     if (auth_token && Object.keys(auth_token).length !== 0) {
       sessionManage = auth_token;
-    };
+    }
 
     if (sessionManage && Object.keys(sessionManage).length === 0) {
       sessionManage = undefined;
@@ -328,9 +327,9 @@ class AppProvider extends React.Component {
     //check for invites. If so - redirect to signup
     if (window.location.search) {
       const parsed = parseQuery(window.location.search);
-      if (parsed.hasOwnProperty('inviteId')) {
+      if (Object.prototype.hasOwnProperty.call(parsed, 'inviteId')) {
         inviteId = parsed.inviteId;
-      } else if (parsed.hasOwnProperty('code')) {
+      } else if (Object.prototype.hasOwnProperty.call(parsed, 'code')) {
         await this.props.authService.initialize();
       }
     }
@@ -361,7 +360,7 @@ class AppProvider extends React.Component {
           token = temp_token;
         }
       } catch(e) {
-        console.log("Session token expired")
+        console.error("Session token expired")
       }
 
     }
@@ -373,28 +372,6 @@ class AppProvider extends React.Component {
     } else {
 
       if (this.props.ipaConfig) self.setSelectedItems({ipaConfig: this.props.ipaConfig})
-
-      /* load script plugins */
-
-      /*
-        We load all the exported functions from each file listed in ipaConfig.scriptPlugins.
-
-        Each script plugin file must be located in ./app/ipaCore/scriptPlugins
-      */
-      let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
-      if (scriptPlugins) {
-        scriptPlugins.forEach((filename) => {
-          try {
-            let funcs = require('../../../../app/ipaCore/scriptPlugins/' + filename)
-            for (let fnName in funcs) {
-              addScriptFunction(funcs[fnName])
-            }
-          } catch(e) {
-            console.error(e)
-            console.error('Script plugin not able to be loaded: ' + filename)
-          }
-        })
-      }
 
       /* load redux extended slices provided by the app */
 
@@ -509,17 +486,20 @@ class AppProvider extends React.Component {
                     testConfig={self.testConfig}
                     userLogout = {this.state.actions.userLogout}
                     onConfigLoad={callback}
-                    onCancel={() => self.context.ifefShowModal(false)}
+                    onCancel={() => {
+                      self.context.ifefShowModal(false);
+                      this.props.onCancel && this.props.onCancel()
+                    }}
+                    projectLoadHandlerCallback = {this.props.projectLoadHandlerCallback}
                     referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
-                      allowMultipleProjects={this.props.ipaConfig.referenceAppConfig.allowMultipleProjects}
-                      restartApp={this.state.actions.restartApp}
-                      projects={projects}
-                      onCancel={() => {
-                        this.setState((prev) => {
-                          return { ...prev, isshowProjectPickerModal: true };
-                        });
-                      }}
-                  />) }
+                        restartApp={this.state.actions.restartApp}
+                        projects={projects}
+                        onCancel={() => {
+                          this.setState((prev) => {
+                            return { ...prev, isshowProjectPickerModal: true };
+                          });
+                        }}
+                    />) }
                 />);
         } catch (error) {
           console.error(error);
@@ -531,7 +511,9 @@ class AppProvider extends React.Component {
         this.props.ipaConfig.css.forEach((styleSheet) => {
           try {
             let customCss = require('../../../../app/ipaCore/css/'+ styleSheet)
-          } catch(e) {}
+          } catch(e) {
+            console.error("Failed to load custom css styleSheet: ", styleSheet)
+          }
         })
       }
     }
@@ -590,12 +572,9 @@ class AppProvider extends React.Component {
 
     //Clear all script state in cache and in script engine
     ScriptCache.clearCache();
-    if(!ScriptHelper.isProjectNextGenJs()) {
-      ScriptHelper.releaseExpressionExecCtx()
-      ScriptHelper.initExpressionExecCtx()
-    } else {
-      IafScriptEngine.clearVars()
-    }
+
+    IafScriptEngine.clearVars()
+  
     this.context.ifefShowModal(false);
 
     let selectedProj = IafProj.getCurrent();
@@ -725,15 +704,6 @@ class AppProvider extends React.Component {
     const context = {...this.state};
     return <AppContext.Provider value={context}>{this.props.children}</AppContext.Provider>
   }
-}
-
-export const addScriptFunction = (fn) => {
-  let fnName = "$" + fn.name
-  let fnWrapper = {}
-  fnWrapper[fnName] = {
-    operate: (a,b,c) => fn(expression.operate(a,b,c))
-  }
-  expression.use(fnWrapper)
 }
 
 async function calculateRoutes(config, ipaConfig) {

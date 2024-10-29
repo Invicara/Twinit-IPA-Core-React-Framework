@@ -18,7 +18,7 @@ const DocumentView = (props) => {
       </span>
     );
   } else if (!_.isEmpty(docIds)) {
-     pageContent = <IafDocViewer
+    pageContent = <IafDocViewer
         docIds={docIds}
     />
   } else {

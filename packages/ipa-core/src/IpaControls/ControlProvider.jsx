@@ -84,7 +84,7 @@ const buildLeafQuery = (selector, node) => {
     let query = [{[`properties.${selector.treeLevels[node.level].property}.val`]: parseNodeNameWithParent(node.name).childNodeInfo.displayName}]
 
     const parentLevel = node.level - 1
-    
+
     if (node.parents?.length > 0 && selector.treeLevels[parentLevel]) {
         node.parents.forEach((p) => {
             query.push({[`properties.${selector.treeLevels[parentLevel].property}.val`]: parseNodeNameWithParent(p).childNodeInfo.displayName})

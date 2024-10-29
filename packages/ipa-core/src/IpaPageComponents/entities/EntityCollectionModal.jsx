@@ -203,13 +203,15 @@ EntityCollectionModal.contextTypes = {
   ifefModalOpen: PropTypes.bool
 };
 
-export const EntityCollectionModalFactory = {
-  create: ({type, action, entity, context, showModal}) => {
-    let modal = <EntityCollectionModal action={action} entity={entity} type={type} />
-    if(context?.ifefShowModal) {
-      context?.ifefShowModal(modal);
-    } else {
-      showModal(modal)
+
+  export const EntityCollectionModalFactory = {
+    create: ({type, action, entity, context, reduxStore, showModal}) => {
+      let modal = <EntityCollectionModal action={action} entity={entity} type={type} />
+      if(context?.ifefShowModal) {
+        context?.ifefShowModal(modal);
+      } else {
+        showModal(modal)
+      }
+      return modal
     }
-  }
 }

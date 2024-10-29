@@ -23,6 +23,7 @@ const withEntityAvailableGroups = WrappedComponent => {
         }
 
         setAvailableDataGroups = (entity, propertiesOnly, detailedEntity) => {
+
             //reset all available groups
             this.setState({availableDataGroups: _.cloneDeep(this.props.initialAvailableDataGroups), loadingAvailableDataGroups : true})
             if(entity) {

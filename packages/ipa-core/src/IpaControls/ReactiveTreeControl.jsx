@@ -128,7 +128,7 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
             const actualHeight = nodeHeight + (nodeHeight * node.children.length)
             height = heightWithScroll < actualHeight ? heightWithScroll : actualHeight
         }
-        
+
         return height
     }, [nodeIndex])
 

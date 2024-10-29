@@ -8,7 +8,7 @@ import {addUser} from "../redux/slices/user";
 import store, {addReducerSlice} from '../redux/store'
 
 import {AppContext} from "../appContext";
-import AppProvider, {addScriptFunction} from "../AppProvider";
+import AppProvider from "../AppProvider";
 
 import {MemoryRouter} from "react-router-dom";
 import {createMemoryHistory} from "history";
@@ -32,7 +32,7 @@ class MockAppProvider extends AppProvider {
     console.log('MockAppProvider state', this.state);
   }
 
-  getPageArray = () => {
+  getPageArray() {
     console.log("GET PAGE ARRAY");
     let currentPath = "/";
     if(this.props.history.entries.length) {
@@ -103,27 +103,6 @@ class MockAppProvider extends AppProvider {
     }
 
 
-    /* load script plugins */
-
-    /*
-      We load all the exported functions from each file listed in ipaConfig.scriptPlugins.
-
-      Each script plugin file must be located in ./app/ipaCore/scriptPlugins
-    */
-    let scriptPlugins = this.props?.ipaConfig?.scriptPlugins
-    if (scriptPlugins) {
-      scriptPlugins.forEach((filename) => {
-        try {
-          let funcs = require('../../../../../app/ipaCore/scriptPlugins/' + filename)
-          for (let fnName in funcs) {
-            addScriptFunction(funcs[fnName])
-          }
-        } catch(e) {
-          console.error(e)
-          console.error('Script plugin not able to be loaded: ' + filename)
-        }
-      })
-    }
 
     /* load redux extended slices provided by the app */
 
@@ -220,7 +199,9 @@ class MockAppProvider extends AppProvider {
         this.props.ipaConfig.css.forEach((styleSheet) => {
           try {
             let customCss = require('../../../../../app/ipaCore/css/'+ styleSheet)
-          } catch(e) {}
+          } catch(e) {
+            console.error('Failed to load custom css stylesheet: ', styleSheet)
+          }
         })
       }
 

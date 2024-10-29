@@ -1,6 +1,6 @@
 {
   "packages": [
-    "packages/ipa-core"
+    "packages/*"
   ],
   "version": "independent",
   "command": {

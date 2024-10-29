@@ -87,7 +87,6 @@ const redux = {
         applyGrouping,
         resetFiltering,
         setSelecting,
-        setSelecting,
         setFilteredBySearchEntities
     },
     EntitiesPluggableSearch: {

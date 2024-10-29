@@ -10,10 +10,10 @@ export default function Table ({rows, className, headers, options}) {
       <tbody>
         {headers && (
           <tr>
-            {headers?.map(header => {
+            {headers?.map((header, idx) => {
               return (
-                <th key={header}>
-                  <Cell type='text' val={header} />
+                <th key={idx}>
+                  <Cell type='text' val={header} key={idx}/>
                 </th>
               )
             })}
@@ -25,7 +25,7 @@ export default function Table ({rows, className, headers, options}) {
             <tr key={idx}> 
               {row.map((cell, idx) => (
                 <td key={idx}>
-                  <Cell type={cell.type} val={cell.val} className={cell.className} />
+                  <Cell type={cell.type} val={cell.val} className={cell.className} key={idx}/>
                 </td>
               ))}
             </tr>

@@ -73,7 +73,7 @@ const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react-autosuggest', 'react-click-outside', 'react-css-modules',
     'react-date-picker', 'react-datetime-picker', 'react-dropzone', 'react-is',
     'react-inspector', 'react-select','react-select/creatable', 'react-table',
-    '@invicara/expressions', '@invicara/platform-api',
+    '@dtplatform/platform-api',
     '@invicara/script-data', '@invicara/script-iaf', '@invicara/script-ui',
     'app-root-path', 'json5',
 
