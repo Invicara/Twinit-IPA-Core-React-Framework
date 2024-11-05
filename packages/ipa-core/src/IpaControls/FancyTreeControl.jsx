@@ -94,6 +94,7 @@ const FancyTreeControl = ({
 
   const expandBranch = (e, nodeName, nodeValue) => {
     let el = e.target
+
     e.stopPropagation()
     while (el.tagName != "LI")
       el = el.parentElement
@@ -148,6 +149,7 @@ const FancyTreeControl = ({
 
     if (onSelect) {
       const allSelected = treeDOM.querySelectorAll("li.leaf.selected");
+
       onSelect([...allSelected], nodeName, nodeValue, _.isArray(nodeValue), el.classList.contains("selected"));
       dispatch({type: 'nodeSelected', previouslySelectedIds: previouslySelectedIds});
     }
@@ -187,39 +189,18 @@ const FancyTreeControl = ({
       depth++
       Object.entries(nodes).forEach(([nodeName, nodeValue]) => {
         children.push(
-          <li style={virtualizedEvent?.style || {}} className={clsx(
-            'branch', selectedNodeNames.includes(nodeName) && "selected",
-            expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
+          <li className={clsx(
+              'branch',selectedNodeNames.includes(nodeName) && "selected",
+              expandedNodeNames.includes(nodeName) && "expanded", partialNodeNames.includes(nodeName) && "partial"
           )}
-            onClick={e => selectNode(e, nodeName, nodeValue)} key={nodeName} data-branch-name={nodeName} >
+              onClick={e => selectNode(e, nodeName, nodeValue)} key={nodeName} data-branch-name={nodeName} >
             <a>
               <span>
                 <i className="fa fa-angle-down branch-expander" onClick={e => expandBranch(e, nodeName, nodeValue)} />
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-            <ul key={nodeName + "_children"} style={{ height: nodeValue?.length > 50 ? "60vh" : "auto", width: "auto" }}>
-              {Array.isArray(nodeValue) && nodeValue?.length > 50 ?
-                <AutoSizer>
-                  {({ width, height }) => (
-                    <List
-                      width={width}
-                      height={height}
-                      rowHeight={reactVirtualizedCache.current.rowHeight}
-                      deferredMeasurementCache={reactVirtualizedCache.current}
-                      rowRenderer={(virtualizedEvent) => {
-                        return (
-                          <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                            {getNodes(nodeValue, depth, virtualizedEvent)}
-                          </CellMeasurer>
-                        )
-                      }}
-                      rowCount={nodeValue.length}
-                    />
-                  )}
-                </AutoSizer> : getNodes(nodeValue, 1)
-              }
-            </ul>
+            <ul key={nodeName+"_children"}>{getNodes(nodeValue, depth)}</ul>
           </li>)
       })
     }

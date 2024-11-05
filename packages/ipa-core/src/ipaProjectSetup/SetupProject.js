@@ -1,5 +1,5 @@
 import React from "react";
-import { IafProj, IafSession, IafScripts, IafPassSvc } from "@dtplatform/platform-api";
+import { IafProj, IafSession, IafScripts, IafPassSvc, IafDataSource } from "@dtplatform/platform-api";
 import * as PlatformApi from "@dtplatform/platform-api";
 import { IafScriptEngine } from "@dtplatform/iaf-script-engine";
 import _ from "lodash";
@@ -7,7 +7,6 @@ import GenericModal from "../IpaDialogs/GenericModal";
 import "../IpaDialogs/ProjectPickerModal.scss";
 import * as UiUtils from "@dtplatform/ui-utils";
 import { mobiscroll } from "@dtplatform/invicara-lib";
-import { IafDataSource } from "@dtplatform/platform-api";
 
 export default class SetUpProject extends React.Component {
   constructor(props) {

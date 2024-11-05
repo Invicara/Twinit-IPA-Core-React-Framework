@@ -115,7 +115,7 @@ class EntityView extends React.Component {
                 pageContent = <EntityDetailPanel
                     context={this.context}
                     onSummary={this.openSummary}
-                    entity={this.props.selectedEntities[0] || this.state.selectedEntity}
+                    entity={this.state.selectedEntity || this.props.selectedEntities[0]}
                     config={this.props.handler.config}
                     actions={actions}
                     availableDataGroups={this.props.availableDataGroups}

@@ -13,6 +13,13 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "main": "modules/index.js",
+  "module": "esm_modules/index.js",
+  "exports": {
+    "./*.scss": "./*.scss",
+    "./*.svg": "./*.svg",
+    "./*.js": "./*.js",
+    "./*": "./*/index.js"
+  },
   "files": [
     "/dist",
     "/modules"
