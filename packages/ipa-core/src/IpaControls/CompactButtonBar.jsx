@@ -26,7 +26,7 @@ const CompactButtonBar = (props) => {
             (props?.dashboard?.props?.selectedItems?.ipaConfig
               ?.referenceAppConfig?.refApp
               ? "/reference/"
-              : "/") + a.icon
+              : "/digitaltwin/") + a.icon
           }
         />
       </div>

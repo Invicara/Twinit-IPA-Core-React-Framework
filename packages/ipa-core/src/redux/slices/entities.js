@@ -10,9 +10,9 @@ export const getAppliedFilters = selectors.getAppliedFilters
 
 export const getAppliedGroups = selectors.getAppliedGroups
 
-export const getAppliedRelatedGroups = selectors.getAppliedRelatedGroups
-
 export const getFilteredEntities = selectors.getFilteredEntities
+
+export const getAppliedRelatedGroups = selectors.getAppliedRelatedGroups
 
 export const getIsolatedEntities = selectors.getIsolatedEntities
 

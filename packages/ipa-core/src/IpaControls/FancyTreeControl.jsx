@@ -94,6 +94,7 @@ const FancyTreeControl = ({
 
   const expandBranch = (e, nodeName, nodeValue) => {
     let el = e.target
+
     e.stopPropagation()
     while (el.tagName != "LI")
       el = el.parentElement
@@ -148,6 +149,7 @@ const FancyTreeControl = ({
 
     if (onSelect) {
       const allSelected = treeDOM.querySelectorAll("li.leaf.selected");
+
       onSelect([...allSelected], nodeName, nodeValue, _.isArray(nodeValue), el.classList.contains("selected"));
       dispatch({type: 'nodeSelected', previouslySelectedIds: previouslySelectedIds});
     }

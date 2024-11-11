@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-core",
-  "version": "3.0.32",
+  "version": "3.0.34",
   "description": "DigitalTwin Factory frontend and scripting framework",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -13,6 +13,13 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "main": "modules/index.js",
+  "module": "esm_modules/index.js",
+  "exports": {
+    "./*.scss": "./*.scss",
+    "./*.svg": "./*.svg",
+    "./*.js": "./*.js",
+    "./*": "./*/index.js"
+  },
   "files": [
     "/dist",
     "/modules"

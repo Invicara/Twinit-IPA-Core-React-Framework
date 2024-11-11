@@ -129,7 +129,7 @@ export const entitiesSliceFactory = (identifier = '') => {
                 state.fetchingCurrent = snapshot.fetchingCurrent;
                 state.selectingEntities = snapshot.selectingEntities;
                 state.viewerSyncOn = snapshot.viewerSyncOn;//TODO: ?? this could be a global value?
-                state.filteredBySearchEntityIds = snapshot.filteredBySearchEntityIds
+                state.filteredBySearchEntityIds = snapshot.filteredBySearchEntityIds;
             }
         },
     });

@@ -124,15 +124,14 @@ class EntitySelectionPanel extends React.Component {
   }
 
   onSelectLeaves = (leaves) => {
-      let selection = []
-      if (leaves.length==0 && this.props.treeSelectMode === TreeSelectMode.NONE_MEANS_ALL) {
-          selection = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props));
-      }
-      else {
-          leaves.forEach(el => {
-              selection.push(this.props.entities.find(e => e._id == el.dataset.nodeId))
-          })
-      }
+    let selection = []
+    if (leaves.length==0 && this.props.treeSelectMode === TreeSelectMode.NONE_MEANS_ALL) {
+      selection = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props));
+    } else {
+      leaves.forEach(el => {
+          selection.push(this.props.entities.find(e => e._id == el.dataset.nodeId))
+      })
+    }
       if(this.props.setFilteredBySearchEntities) this.props.setFilteredBySearchEntities(selection)
       this.onSelectEntities(selection)
   }

@@ -119,6 +119,24 @@ $bar-height: 60px;
     position: relative;
     flex-grow: 1;
 
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+      
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+      
+    &::-webkit-scrollbar-thumb {
+    background: #DCDCDC;
+            border-radius: 2rem;
+    }
+      
+    &::-webkit-scrollbar-thumb:hover {
+        background: #B8B8B8;
+    }
+
     .enhanced-fetch-control {
 
       position: absolute;
@@ -180,6 +198,24 @@ $bar-height: 60px;
     overflow: auto;
     height: calc(100% - #{$panel-title-height});
     padding: 20px 20px 45px 20px;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+      
+    &::-webkit-scrollbar-track {
+        background: white;
+    }
+      
+    &::-webkit-scrollbar-thumb {
+    background: #DCDCDC;
+            border-radius: 2rem;
+    }
+      
+    &::-webkit-scrollbar-thumb:hover {
+        background: #B8B8B8;
+    }
   }
 
   .add-button-container{
