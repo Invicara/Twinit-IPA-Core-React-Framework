@@ -3,6 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import {getPlatformPath} from '../IpaPaths'
+import IfefLoading from "../react-ifef/components/ifefLoading";
 
 class DownloadsView extends React.Component {
     constructor(props) {
@@ -153,7 +154,7 @@ class DownloadsView extends React.Component {
                         })}
                     </div>
 
-                </div> : null}
+                </div> : <IfefLoading show={this.state.isPageLoading}/>}
                 </div>)
     }
 }

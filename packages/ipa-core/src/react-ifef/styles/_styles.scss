@@ -27,9 +27,11 @@
     opacity: 1;
 }
 
-// fix to align spinner in loading element
-.inloader.spinner svg {
-    margin-bottom: -4px;
+.inloader.spinner {
+    padding-right: 0px;
+    svg {
+        margin-bottom: -4px;
+    }
 }
 
 // Hack to use ReactCSSTransitionGroup for loading
