@@ -20,7 +20,7 @@ class DownloadsView extends React.Component {
 
     async _loadAsyncData() {
         
-        fetch(getPlatformPath('DOWNLOADS')).then(async (resp) => {
+        await fetch(getPlatformPath('DOWNLOADS')).then(async (resp) => {
           let downs = await resp.json();
 
           let manifests = [];
