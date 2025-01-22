@@ -108,9 +108,9 @@ class DownloadsView extends React.Component {
 
                                                 return <div key={ver.manifest} style={{verticalAlign: 'center'}}>
                                                     <h4 style={{display: 'inline', marginRight: '20px'}}>{ver.details.resources.en.name}</h4>
-                                                    <i title='Info' style={{cursor: 'pointer', fontSize: '24px', display: 'inline', color: '#387ef5', marginRight: '20px'}} className='ion-ios-information-outline' onClick={(e) => this.toggleDetails(mani, ver)}></i>
+                                                    <i title='Info' style={{cursor: 'pointer', fontSize: '24px', display: 'inline', color: '#008973', marginRight: '20px'}} className='ion-ios-information-outline' onClick={(e) => this.toggleDetails(mani, ver)}></i>
                                                     <a href={getPlatformPath('PLUGIN_BASE', ver.details.filename)}>
-                                                        <i title='Download' style={{cursor: 'pointer', fontSize: '24px', display: 'inline', color: '#387ef5'}} className='icon ion-ios-cloud-download'></i>
+                                                        <i title='Download' style={{cursor: 'pointer', fontSize: '24px', display: 'inline', color: '#008973'}} className='icon ion-ios-cloud-download'></i>
                                                     </a>
                                                     {ver.showDetails && <div style={{marginLeft: '20px', marginTop: '10px'}}>
                                                             <table >
