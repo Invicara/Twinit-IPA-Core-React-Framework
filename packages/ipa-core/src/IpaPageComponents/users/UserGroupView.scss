@@ -77,19 +77,23 @@
 
     .invite-info {
         margin-left: 50px;
+        color: #5D5D5D;
+
+        .info-span {
+            color: #1D1D1D;
+        }
     }
 
     .card-actions {
         align-self: center;
-        color: #D32F2F;
+        color: #999999;
 
         i {
             cursor: pointer;
         }
-    }
 
-    .card-actions:hover {
-        color: #DC5959;
+        .fa-trash { color: #D32F2F; }
+        .fa-trash:hover { color: #DC5959; }
     }
 
     .card-row2 {

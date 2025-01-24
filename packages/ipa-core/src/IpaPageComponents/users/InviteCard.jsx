@@ -67,8 +67,8 @@ export const InviteCard  = ({invite, isCurrentUser=false, existingUser=false, sh
                 <div className='user-email'>{invite._email}</div>
               </div>
               <div className='invite-info'>
-                <div className={clsx('invite-expires', expired && 'expired')}><span className='bold'>Expires:</span> {expiresDate}</div>
-                <div className='invite-usergroup'><span className='bold'>UserGroup:</span> {invite._usergroup._name}</div>
+                <div className={clsx('invite-expires', expired && 'expired')}><span className='bold info-span'>Expires:</span> {expiresDate}</div>
+                <div className='invite-usergroup'><span className='bold info-span'>UserGroup:</span> {invite._usergroup._name}</div>
               </div>
               {showActions && !isDoingAction && <div className='card-actions'>
                 {isCurrentUser && !expired && <i className='fas fa-check' onClick={() => confirmAction('ACCEPT')}></i>}
