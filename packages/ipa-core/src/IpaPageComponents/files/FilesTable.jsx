@@ -1,5 +1,5 @@
 import {RoundCheckbox, TickCheckbox, useChecked} from "../../IpaControls/Checkboxes";
-import React from "react";
+import React, {useEffect} from "react";
 import {Star} from "./misc";
 import {comesFromComplexSelect, isReadyFor} from "../../redux/slices/files";
 import _ from 'lodash'
@@ -7,18 +7,28 @@ import _ from 'lodash'
 export const getValue = value =>
     (comesFromComplexSelect(value) ? _.values(value).map(([actualValue]) => actualValue).filter(v => !!v).join(' - ') : value) || '-';
 
-export const FileTable = ({files:inputFiles, columns, onFileChange, readonly}) => {
+export const FileTable = ({files:inputFiles, columns, onFileChange, readonly, setIsLoading, LinkedSelectValues}) => {
     const {allChecked, handleCheck, handleAllCheck, items: files} = useChecked(inputFiles, file => file.name);
-   
+
     const isReady = isReadyFor(columns);
 
-    const getControl = (col, file) => 
+    const getControl = (col, file, LinkedSelectValues) => 
          col.control ? col.control(
-             file.fileAttributes[col.name],
-             (value) => onFileChange(file.checked ? [...files.filter(f => f.checked), file] : [file], col.name, value), file
+             file.fileAttributes[col.name], // value
+             (value) => onFileChange(file.checked ? [...files.filter(f => f.checked), file] : [file], col.name, value), LinkedSelectValues
          ) : 'loading...';
 
-    return <div className="file-table-container">
+    useEffect(async () => {
+        // Checking for when the final file is rendered to the screen in order to remove the loading bar
+        let finalRenderedFile
+        const lastFileName = files[files.length - 1]?.name
+        if(lastFileName) finalRenderedFile = await window.getByText(lastFileName).innerText
+        if(!_.isUndefined(finalRenderedFile) && finalRenderedFile === lastFileName) {
+            setIsLoading(false)
+        }   
+    }, [files])
+
+    return <div className="file-table-container">        
         <table className="file-table">
             <thead>
             <tr className="file-table-header">
@@ -43,7 +53,7 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly}) =
                     <TickCheckbox checked={isReady(file)} onChange={() => {}}/>
                 </td>
                 <td>{file.version}</td>
-                {columns.map(col =><td key={col.name}>{readonly ? getValue(file.fileAttributes[col.name]) : getControl(col, file)}</td>)}
+                {columns.map(col =><td key={col.name}>{readonly ? getValue(file.fileAttributes[col.name]) : getControl(col, file, LinkedSelectValues)}</td>)}
                 </tr>)}
             </tbody>
         </table>
