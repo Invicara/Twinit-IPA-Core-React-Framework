@@ -100,7 +100,7 @@ const ScriptedChart = ({
         {...chartConfig}
       />
     );
-    //extensions = getChartExtensions(chartConfig, data)
+    extensions = getChartExtensions(chartConfig, data)
   }
 
   return (
