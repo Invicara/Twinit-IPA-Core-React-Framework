@@ -12,10 +12,19 @@ const fallbackControlBuilder = async column => {
 }
 
 const controlBuilders = {
-    '<<CREATABLE_SCRIPTED_SELECTS>>':  column => {
+    '<<CREATABLE_SCRIPTED_SELECTS>>': async column => {
+        let selectValues
+        const values = _.values(await ScriptHelper.executeScript(column.script))
+        if(values) {
+            selectValues = _.mapValues(values, (options) =>
+                options?.sort((a, b) => a.localeCompare(b)),
+            )
+        } else {
+            selectValues = {}
+        }
         if(!column.script) throw new Error(`Error in file column config for ${column.name}: <<CREATABLE_SCRIPTED_SELECTS>> require a script to populate select options`)
         return function(value, onChange, entity){//If this needs to be turned into an arrow function, be careful with the `this` reference
-            return <CreatableScriptedSelects currentValue={value} onChange={onChange} noFetch compact horizontal isClearable={false}
+            return <CreatableScriptedSelects currentValue={value} selectValues={selectValues} onChange={onChange} noFetch compact horizontal isClearable={false}
                                              selectOverrideStyles={fileSelectStyles} filterInfo={entity} script={this.script}/>
         }
     },
@@ -36,9 +45,9 @@ const buildConfig = displayNames  => produce(async column => {
     if(typeof column.query === 'object'){
         const Control = ControlProvider.getControlComponent(column.query);
         validateMulti(column.query)
-        column.control = function (value, onChange) {//If this needs to be turned into an arrow function, be careful with the `this` reference
-            return <Control currentValue={value} onChange={onChange} noFetch selects={this.query.selects}
-                            compact horizontal isClearable={false} selectOverrideStyles={fileSelectStyles}/>
+        column.control = function (value, onChange, LinkedSelectValues) { //If this needs to be turned into an arrow function, be careful with the `this` reference 
+                return <Control currentValue={value} onChange={onChange} noFetch selects={this.query.selects}
+                        compact horizontal isClearable={false} selectOverrideStyles={fileSelectStyles} LinkedSelectValues={LinkedSelectValues}/>
         }
     } else if(typeof column.query === 'string'){
         column.control = await (controlBuilders[column.query] || fallbackControlBuilder)(column)

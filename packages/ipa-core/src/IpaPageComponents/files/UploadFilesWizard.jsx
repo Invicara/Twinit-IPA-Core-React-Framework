@@ -20,12 +20,14 @@ import _ from 'lodash'
 
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import './UploadFilesWizard.scss'
+import {fetchLinkedSelectValues} from './LinkedSelectValues'
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
                                addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles, removeAllFiles}) => {
 
     const [selectedStep, setSelectedStep] = useState(1);
     const [uploadContainer, setUploadContainer] = useState(selectedItems.selectedProject.rootContainer)
+    const [isloading, setIsLoading] = useState(false)
 
     useEffect(() => {
 
@@ -45,6 +47,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     }, [queryParams])
 
     const addFiles = newFiles => {
+        setIsLoading(true)
         setSelectedStep(2)
         removeAllFiles()
         const fileRes = fileChecker(files, [...newFiles])
@@ -96,12 +99,23 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         }
       }
 
+    const [LinkedSelectValues, setLinkedSelectValues] = useState()
+
+    useEffect(() => {
+        config.columns.map(async(col) => {
+            if(col.name.includes('dtCategory')) {
+                let valueRes = await fetchLinkedSelectValues(handleFileChange)
+                setLinkedSelectValues(valueRes)
+            }
+        })
+    },[])
+
     const steps = [
         {name: 'Add Files', component: config.scripts.seedAttributes ? <SeedAttributes onClick={seedAttributes} /> : <div/>},
         {
             name: 'Enter Required Data',
             component: columnConfig ?
-                <FileTable columns={columnConfig} files={files} onFileChange={handleFileChange}/> : 'Loading...',
+                <FileTable columns={columnConfig} files={files} onFileChange={handleFileChange} setIsLoading={setIsLoading} LinkedSelectValues={LinkedSelectValues}/> : 'Loading...',
             buttons: WizardButtons({
                 primaryContent: <span className={'button-content'}><i className="fas fa-upload"/>Upload</span>,
                 secondaryContent: 'Cancel',
@@ -142,6 +156,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
                                    uploadIconName={config?.uploadIconName}
                                    removeRejectedFiles={removeRejectedFiles}
                                    hideDefaultError={config.hideDefaultRejectedError}
+                                   isloading={isloading}
     />
 }
 

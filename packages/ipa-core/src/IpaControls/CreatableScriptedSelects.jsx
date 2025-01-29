@@ -23,42 +23,34 @@ export const CreatableScriptedSelects = ({
   isClearable = true,
   reloadTrigger,
   isTest = false,
+  selectValues
 }) => {
-  const [selects, setSelects] = useState({});
-  const [test, setTest] = useState(isTest);
+
   const { current: debouncedScriptExecutor } = useRef(
     _.debounce(ScriptCache.runScript, 1000, { leading: true, trailing: true }),
   );
   const prevFilterInfo = usePrevious(filterInfo);
 
   const value = currentValue || {};
+  const [selects, setSelects] = useState(selectValues);
 
   const fetchOptions = async (filterInfo) => {
-    if (!isTest) {
-      const selectOptions = filterInfo
-        ? await debouncedScriptExecutor(script, { filterInfo: filterInfo })
-        : await ScriptCache.runScript(script);
-      setSelects(
-        _.mapValues(selectOptions, (options) =>
-          options?.sort((a, b) => a.localeCompare(b)),
-        ),
-      );
-      loadPlainInitialValueWithScriptedSelectFormat(
-        onChange,
-        value,
-        selectOptions,
-      );
+    // If component is called from the FileTable, use the selectValue provided from configReader.jsx.
+    if (selectValues) {
+      const resKeys = Object.keys(selectValues)
+      if(resKeys.length >= 1) {
+        loadPlainInitialValueWithScriptedSelectFormat(onChange, value, selectValues);
+      } 
     } else {
-      const testOptions = {
-        select1: ["value 1"],
-        select2: ["value 2"],
-      };
-      setSelects(testOptions);
-      loadPlainInitialValueWithScriptedSelectFormat(
-        onChange,
-        value,
-        testOptions,
-      );
+      const selectOptions = filterInfo
+      ? await debouncedScriptExecutor(script, { filterInfo: filterInfo })
+      : await ScriptCache.runScript(script);
+    setSelects(
+      _.mapValues(selectOptions, (options) =>
+        options?.sort((a, b) => a.localeCompare(b)),
+      ),
+    );
+    loadPlainInitialValueWithScriptedSelectFormat(onChange, value, selectOptions);
     }
   };
 
