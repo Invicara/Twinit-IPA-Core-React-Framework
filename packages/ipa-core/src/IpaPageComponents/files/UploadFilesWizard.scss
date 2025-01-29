@@ -37,6 +37,13 @@ $black: black;
     }
   }
 
+  .table-loading-bar {
+    position: sticky;
+    top: 0px;
+    height: 10px;
+    z-index: 1;
+  }
+
   .wizard-panel {
     box-shadow: 0px 10px 20px #0000001A;
     background: #ffffff;
