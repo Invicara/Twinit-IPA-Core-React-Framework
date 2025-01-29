@@ -203,6 +203,13 @@ export const entitiesSliceFactory = (identifier = '') => {
             if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, (e) => (e?.modelData?.id || e?._id))) {
                 dispatch(setEntities({entities: filteredToSelect, shouldIsolate: false}))
             }
+            // If the selected entity has no DT properties associated with it
+            if(filteredToSelect.length < 1) {
+                const resObj = { 
+                    noEntityFound: 'No Digital Twin entity associated with the selected object'
+                }
+                return resObj
+            }
             dispatch(setSelectedEntities(filteredToSelect))
             dispatch(setSelecting(false))
         } catch (e) {
