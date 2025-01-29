@@ -35,6 +35,11 @@ export default class TitleBar extends React.Component {
             }
         }
 
+        // If user is undefined (i.e. token has expired), we run restartApp() to generate token and to set user object
+        if(!this.props.contextProps.user) {
+            this.props.contextProps.actions.restartApp()
+        }
+
         return (
             <>
                 {customHeader?.component ? (
@@ -57,7 +62,7 @@ export default class TitleBar extends React.Component {
                                     <div className={'session-options'}>         
                                         <LinkedIcon customClass={'session-item'} clickHandler={switchProj} icon={'icofont-refresh icofont-2x'} linkText={'Switch Project'}/>
                                         <LinkedIcon customClass={'session-item'} clickHandler={this.props.parent.props.userLogout} iconClasses={'ipa-icon-svg'} iconImg={IconLogout} linkText={'Logout'}/>
-                                        <LinkedIcon customClass={'session-item'} clickHandler={goToUserAccount} iconClasses={'ipa-icon-svg'} iconImg={IconUser} linkText={this.props.contextProps.user._firstname + " " + this.props.contextProps.user._lastname}/>
+                                        <LinkedIcon customClass={'session-item'} clickHandler={goToUserAccount} iconClasses={'ipa-icon-svg'} iconImg={IconUser} linkText={this.props.contextProps?.user?._firstname + " " + this.props.contextProps?.user?._lastname}/>
 
                                         <div className={'session-item'}>{version?.version}</div>
                                     </div>

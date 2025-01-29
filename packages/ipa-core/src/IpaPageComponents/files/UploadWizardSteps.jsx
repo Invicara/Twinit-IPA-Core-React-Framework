@@ -6,8 +6,9 @@ import {WizardTimeline} from "./WizardTimeline";
 import {ChooseFiles} from "./ChooseFiles";
 import {PanelToggle} from "./misc";
 import _ from 'lodash'
+import { LinearProgress, makeStyles } from "@material-ui/core";
 
-export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName, hideDefaultError = false, removeRejectedFiles}) => {
+export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName, hideDefaultError = false, removeRejectedFiles, isloading}) => {
     const [panelOpen, setPanelOpen] = useState(selectedStep === 1)
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -41,7 +42,31 @@ export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUplo
 
     const Buttons = steps[selectedStep - 1].buttons;
 
+    const useStyles = makeStyles(theme => ({
+        root: {
+            flexGrow: 1
+        },
+        colorPrimary: {
+            background: '#C71784'
+        },
+        barColorPrimary: {
+            background: 'white'
+        },
+        customTabRoot: {
+            color: ' #3E3E3E',
+            "& .Mui-selected": {
+                color: "#C71784",
+                },
+        },
+        customTabIndicator: {
+            backgroundColor: "#C71784"
+        }
+    }));
+    
+    const classes = useStyles();
+
     return <div className="upload-files-wizard-root with-buttons">
+        {isloading? <LinearProgress classes={{ colorPrimary: classes.colorPrimary, barColorPrimary: classes.barColorPrimary }} className={'table-loading-bar'}/> : null}
         <div className={clsx('wizard-panel', panelOpen && 'wizard-panel-expanded')}>
             <WizardTimeline steps={steps.map(({name}) => name)}
                             selectedStep={selectedStep}/>

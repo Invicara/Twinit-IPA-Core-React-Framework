@@ -9,7 +9,7 @@ import {
     setRejectedFiles,
     isComplete, isReadyFor,
     loadAssociatedEntities, updateMultipleFileAttribute,
-    uploadFiles
+    uploadFiles, removeAllFiles
 } from "../../redux/slices/files";
 import {UploadFilesWizardSteps} from "./UploadWizardSteps";
 import {SeedAttributes} from "./SeedAttributes";
@@ -20,12 +20,14 @@ import _ from 'lodash'
 
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import './UploadFilesWizard.scss'
+import {fetchLinkedSelectValues} from './LinkedSelectValues'
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
-                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles}) => {
+                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles, removeAllFiles}) => {
 
     const [selectedStep, setSelectedStep] = useState(1);
     const [uploadContainer, setUploadContainer] = useState(selectedItems.selectedProject.rootContainer)
+    const [isloading, setIsLoading] = useState(false)
 
     useEffect(() => {
 
@@ -45,8 +47,11 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     }, [queryParams])
 
     const addFiles = newFiles => {
+        setIsLoading(true)
         setSelectedStep(2)
-        addFilesToUpload([...newFiles], uploadContainer, config.scripts.preprocessFiles)
+        removeAllFiles()
+        const fileRes = fileChecker(files, [...newFiles])
+        addFilesToUpload([...fileRes], uploadContainer, config.scripts.preprocessFiles)
     }
 
     const cancel = () => {
@@ -76,12 +81,41 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         return ScriptHelper.executeScript(config.scripts.seedAttributes)
     }
 
+    function fileChecker(files, newFiles) {
+        if(files.length >= 1) {
+            const combinedArray = [...files, ...newFiles];
+            const seen = new Set();
+            const filteredFiles = combinedArray.filter(file => {
+              // Check if the file name is already in the Set
+              if (seen.has(file.name)) {
+                return false; // File is a duplicate, filter it out
+              }
+              seen.add(file.name);
+              return true; // Keep the file
+            });
+            return filteredFiles;
+        } else {
+            return newFiles
+        }
+      }
+
+    const [LinkedSelectValues, setLinkedSelectValues] = useState()
+
+    useEffect(() => {
+        config.columns.map(async(col) => {
+            if(col.name.includes('dtCategory')) {
+                let valueRes = await fetchLinkedSelectValues(handleFileChange)
+                setLinkedSelectValues(valueRes)
+            }
+        })
+    },[])
+
     const steps = [
         {name: 'Add Files', component: config.scripts.seedAttributes ? <SeedAttributes onClick={seedAttributes} /> : <div/>},
         {
             name: 'Enter Required Data',
             component: columnConfig ?
-                <FileTable columns={columnConfig} files={files} onFileChange={handleFileChange}/> : 'Loading...',
+                <FileTable columns={columnConfig} files={files} onFileChange={handleFileChange} setIsLoading={setIsLoading} LinkedSelectValues={LinkedSelectValues}/> : 'Loading...',
             buttons: WizardButtons({
                 primaryContent: <span className={'button-content'}><i className="fas fa-upload"/>Upload</span>,
                 secondaryContent: 'Cancel',
@@ -122,6 +156,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
                                    uploadIconName={config?.uploadIconName}
                                    removeRejectedFiles={removeRejectedFiles}
                                    hideDefaultError={config.hideDefaultRejectedError}
+                                   isloading={isloading}
     />
 }
 
@@ -133,7 +168,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, fetchColumnConfig, setRejectedFiles
+    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, fetchColumnConfig, setRejectedFiles, removeAllFiles
 }
 
 export default compose(
