@@ -9,7 +9,7 @@ import {
     setRejectedFiles,
     isComplete, isReadyFor,
     loadAssociatedEntities, updateMultipleFileAttribute,
-    uploadFiles
+    uploadFiles, removeAllFiles
 } from "../../redux/slices/files";
 import {UploadFilesWizardSteps} from "./UploadWizardSteps";
 import {SeedAttributes} from "./SeedAttributes";
@@ -23,7 +23,7 @@ import './UploadFilesWizard.scss'
 import {fetchLinkedSelectValues} from './LinkedSelectValues'
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
-                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles}) => {
+                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles, removeAllFiles}) => {
 
     const [selectedStep, setSelectedStep] = useState(1);
     const [uploadContainer, setUploadContainer] = useState(selectedItems.selectedProject.rootContainer)
@@ -49,7 +49,9 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     const addFiles = newFiles => {
         setIsLoading(true)
         setSelectedStep(2)
-        addFilesToUpload([...newFiles], uploadContainer, config.scripts.preprocessFiles)
+        removeAllFiles()
+        const fileRes = fileChecker(files, [...newFiles])
+        addFilesToUpload([...fileRes], uploadContainer, config.scripts.preprocessFiles)
     }
 
     const cancel = () => {
@@ -78,6 +80,24 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     const seedAttributes = async () => {
         return ScriptHelper.executeScript(config.scripts.seedAttributes)
     }
+
+    function fileChecker(files, newFiles) {
+        if(files.length >= 1) {
+            const combinedArray = [...files, ...newFiles];
+            const seen = new Set();
+            const filteredFiles = combinedArray.filter(file => {
+              // Check if the file name is already in the Set
+              if (seen.has(file.name)) {
+                return false; // File is a duplicate, filter it out
+              }
+              seen.add(file.name);
+              return true; // Keep the file
+            });
+            return filteredFiles;
+        } else {
+            return newFiles
+        }
+      }
 
     const [LinkedSelectValues, setLinkedSelectValues] = useState()
 
@@ -148,7 +168,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, fetchColumnConfig, setRejectedFiles
+    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, fetchColumnConfig, setRejectedFiles, removeAllFiles
 }
 
 export default compose(
