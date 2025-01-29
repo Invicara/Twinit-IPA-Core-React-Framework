@@ -155,7 +155,7 @@ const FancyTreeControl = ({
     }
   }
 
-  const getNodes = (nodes, depth, virtualizedEvent) => {
+  const getNodes = (nodes, depth) => {
     if (!nodes) return
     let children
     if (Array.isArray(nodes)) {
@@ -171,18 +171,6 @@ const FancyTreeControl = ({
             </a>
           </li>)
       })
-      if (virtualizedEvent) {
-        let n = nodes[virtualizedEvent?.index]
-        let cn = "leaf"
-        if ( selectedIds.includes(n._id) || selectedNodeNames.includes(n.name)) cn += " selected";
-        if (expandedNodeNames.includes(n.name)) cn += " expanded"
-        if (partialNodeNames.includes(n.name)) cn += " partial"
-        return <li style={virtualizedEvent?.style || {}} onClick={e => selectNode(e, n.name, n)} key={n._id || n.name} data-node-id={n._id} className={cn}>
-          <a>
-            <span>{renderLeafNode(n)}</span>
-          </a>
-        </li>
-      }
     }
     else {
       children = []
@@ -200,7 +188,7 @@ const FancyTreeControl = ({
                 {renderBranchNode ? renderBranchNode(nodeName, nodeValue) : nodeName}
               </span>
             </a>
-            <ul key={nodeName+"_children"}>{getNodes(nodeValue, depth)}</ul>
+            <ul style={{ height: nodeValue.length > 50 ? "60vh" : "auto", overflow: nodeValue.length > 50 ? "auto": "none" }} key={nodeName+"_children"}>{getNodes(nodeValue, depth)}</ul>
           </li>)
       })
     }
