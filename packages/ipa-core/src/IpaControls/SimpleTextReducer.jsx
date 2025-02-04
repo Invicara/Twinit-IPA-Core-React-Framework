@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 
 const SimpleTextReducer = ({ text, limit }) => {
   let newText;

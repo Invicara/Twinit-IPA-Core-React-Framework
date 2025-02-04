@@ -6,7 +6,7 @@ import { PopoverMenuView } from "../IpaLayouts/PopoverMenuView";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import produce from "immer";
 import { connect } from "react-redux";
-import { Box, Container, Toolbar } from '@material-ui/core';
+import { Box, Container, Toolbar } from '@mui/material';
 
 import './GenericPage.scss'
 import GenericMatButton from "../IpaControls/GenericMatButton";

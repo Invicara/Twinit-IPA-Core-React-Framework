@@ -162,7 +162,7 @@ export default class SetUpProject extends React.Component {
     console.log("called"); // console to know function is called
     e.preventDefault();
     //check multiple projects are allowed, if not delete previous project
-    !this.props.allowMultipleProjects && await this.deletePreviousProject();
+    !this.props.allowMultipleProjects && (await this.deletePreviousProject());
     this.setState({ click: true, open: false });
     let project = await IafProj.createProject(this.state.project); //Create Project
     this.setState({ createdProject: project });

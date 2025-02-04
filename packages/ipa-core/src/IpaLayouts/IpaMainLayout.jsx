@@ -19,7 +19,8 @@ import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
 import {IafAuth} from '@dtplatform/platform-ui-components';
-import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
+import StylesProvider from '@mui/styles/StylesProvider';
+import createGenerateClassName from '@mui/styles/createGenerateClassName';
 
 const {AuthProvider, AuthService} = IafAuth;
 

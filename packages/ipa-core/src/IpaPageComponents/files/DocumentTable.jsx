@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { PinkCheckbox } from "../../IpaControls/Checkboxes";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 import './DocumentTable.scss'
 import _ from 'lodash'
 import * as modal from '../../redux/slices/modal'
