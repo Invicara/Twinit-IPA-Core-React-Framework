@@ -6,10 +6,6 @@ import {CSSTransition, TransitionGroup} from 'react-transition-group';
 import AppProvider from "../AppProvider";
 import {AppContext} from "../appContext";
 
-import {LocalFilePlugins} from '@invicara/script-ui';
-import {DataPlugins} from '@invicara/script-data';
-import {IafPlugins} from '@invicara/script-iaf';
-
 import store from "../redux/store";
 import {Provider} from "react-redux";
 import {enableMapSet} from "immer"
@@ -17,7 +13,6 @@ import IfefBody from '../react-ifef/components/ifefBody';
 import { getPlatform } from '../IpaUtils/helpers';
 import * as qs from 'querystring';
 
-import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
 
 import '../IpaStyles/theme.scss'
@@ -68,9 +63,9 @@ class App extends React.Component {
 class IpaMainLayout extends React.Component {
     constructor(props) {
         super(props);
-        IafPlugins.BAM_Script.initBAMScriptPlugins();
-        LocalFilePlugins.initScriptPlugins();
-        DataPlugins.initScriptPlugins();
+        // IafPlugins.BAM_Script.initBAMScriptPlugins();
+        // LocalFilePlugins.initScriptPlugins();
+        // DataPlugins.initScriptPlugins();
         this.authService = new AuthService({        //Added authService for rotated refresh token
           clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,
           location: window.location,
