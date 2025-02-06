@@ -13,6 +13,7 @@ import GenericMatButton from "../IpaControls/GenericMatButton";
 
 import { GenericPageContext } from "./genericPageContext";
 import { compose } from "@reduxjs/toolkit";
+import { BodyContext } from '../react-ifef/components/bodyProvider';
 
 const URL_LENGTH_WARNING = 80000
 
@@ -36,6 +37,8 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       this.onLoadComplete = this.onLoadComplete.bind(this);
       this.onNavigated = this.onNavigated.bind(this);
     }
+
+    static contextType = BodyContext;
 
     async componentDidMount() {
 
@@ -451,15 +454,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
   };
 
-  GenericPage.contextTypes = {
-    ifefPlatform: PropTypes.object,
-    ifefSnapper: PropTypes.object,
-    ifefNavDirection: PropTypes.string,
-    ifefShowPopover: PropTypes.func,
-    ifefUpdatePopover: PropTypes.func,
-    ifefUpdatePopup: PropTypes.func,
-    ifefShowModal: PropTypes.func
-  };
 
   const mapStateToProps = state => ({
     //please connect here only high level generic slices

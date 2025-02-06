@@ -2,10 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import {CSSTransition} from 'react-transition-group';
+import { BodyContext } from './bodyProvider';
 
 class IfefModalContainer extends React.Component {
   // this component need to be attached to the DOM before the Modal enters
   // otherwise the transitions won't work
+
+  static contextType = BodyContext;
 
   render() {
     let classes = classnames('asf-modal-container', this.props.animation,this.context.ifefModalOpen?'modal-opened':'' );
@@ -36,17 +39,14 @@ IfefModalContainer.defaultProps = {
 };
 
 
-IfefModalContainer.contextTypes = {
-  ifefModal: PropTypes.oneOfType([PropTypes.object,PropTypes.bool]),
-  ifefModalOpen: PropTypes.bool
-}
-
 class IfefModal extends React.Component {
   constructor(props, context) {
     super(props, context);
 
     this.backdropClicked = this.backdropClicked.bind(this);
   }
+
+  static contextType = BodyContext;
 
   backdropClicked(e) {
       let targetClassName = e.target.className;
@@ -151,11 +151,6 @@ IfefModal.defaultProps = {
   padding: true,
 };
 
-IfefModal.contextTypes = {
-  ifefShowModal: PropTypes.func,
-  ifefKeyboardHeight: PropTypes.number,
-  ifefPlatform: PropTypes.object
-};
 
 export default IfefModal;
 export { IfefModalContainer };
