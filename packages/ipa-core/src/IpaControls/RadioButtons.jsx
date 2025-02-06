@@ -4,7 +4,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-import withStyles from '@mui/styles/withStyles';
+import {withStyles} from '@mui/styles';
 import "./RadioButtons.scss";
 
 const RadioButtons = ({ options, value, onChange, labelPlacement = "end" }) => {

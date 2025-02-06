@@ -6,7 +6,8 @@ import {WizardTimeline} from "./WizardTimeline";
 import {ChooseFiles} from "./ChooseFiles";
 import {PanelToggle} from "./misc";
 import _ from 'lodash'
-import { LinearProgress, makeStyles } from "@mui/material";
+import { LinearProgress } from "@mui/material";
+import {makeStyles} from "@mui/styles"
 
 export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName, hideDefaultError = false, removeRejectedFiles, isloading}) => {
     const [panelOpen, setPanelOpen] = useState(selectedStep === 1)

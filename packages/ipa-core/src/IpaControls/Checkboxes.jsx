@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Checkbox from "@mui/material/Checkbox/Checkbox";
 import CheckIcon from "@mui/material/SvgIcon/SvgIcon";
-import { withStyles } from "@mui/material";
+import { withStyles } from "@mui/styles";
 import produce from "immer";
 import _ from "lodash";
 import {
