@@ -55,7 +55,7 @@ export const TextSearch = ({
   );
 };
 
-TextSearch.PropTypes = {
+TextSearch.propTypes = {
   currentValue: PropTypes.string,
   onChange: PropTypes.func,
   touched: PropTypes.bool,

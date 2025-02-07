@@ -54,7 +54,7 @@ class IfefActionSheet extends React.Component {
     if (!this.state.isUp && prevState.isUp) {
       var self = this;
       var handler =  function() {
-        self.context.ifefUpdateActionSheet({});
+        self.props.context.ifefUpdateActionSheet({});
         wrapper.removeEventListener(transitionend, handler);
         if (typeof self.state.callback === 'function') {
           self.state.callback();
@@ -138,8 +138,5 @@ class IfefActionSheet extends React.Component {
   }
 }
 
-IfefActionSheet.contextTypes = {
-  ifefUpdateActionSheet: PropTypes.func
-};
 
 export default IfefActionSheet;

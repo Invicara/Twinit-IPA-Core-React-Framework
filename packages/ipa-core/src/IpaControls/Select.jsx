@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import './Select.scss'
 import ControlLabel from './ControlLabel';
-import {any, array, bool, func, object, shape, string} from 'prop-types'
+import {any, array, bool, func, object, shape, string, oneOfType} from 'prop-types'
 
 
 const Select = props => {
@@ -71,7 +71,10 @@ Select.propTypes = {
   value: any,
   onChange: func,
   options: array,
-  closeMenuOnSelect: func,
+  closeMenuOnSelect: oneOfType([
+    func,
+    bool
+  ]),
   isClearable: bool,
   placeholder: string,
   label: string,

@@ -6,7 +6,6 @@ import _ from "lodash";
 import GenericModal from "../IpaDialogs/GenericModal";
 import "../IpaDialogs/ProjectPickerModal.scss";
 import * as UiUtils from "@dtplatform/ui-utils";
-import { mobiscroll } from "@dtplatform/invicara-lib";
 
 export default class SetUpProject extends React.Component {
   constructor(props) {
@@ -163,7 +162,7 @@ export default class SetUpProject extends React.Component {
     console.log("called"); // console to know function is called
     e.preventDefault();
     //check multiple projects are allowed, if not delete previous project
-    !this.props.allowMultipleProjects && await this.deletePreviousProject();
+    !this.props.allowMultipleProjects && (await this.deletePreviousProject());
     this.setState({ click: true, open: false });
     let project = await IafProj.createProject(this.state.project); //Create Project
     this.setState({ createdProject: project });
@@ -354,7 +353,7 @@ export default class SetUpProject extends React.Component {
                 <form style={{ width: "100%" }} onSubmit={!this.props.allowMultipleProjects? this.handleClickOpen : this.handleProjectSetUp}>
                   <div style={{ margin: "9px 0" }}>
                     <label>Name</label>
-                    <mobiscroll.Input
+                    <input
                       style={{ width: "100%" }}
                       id="_name"
                       type="text"
@@ -363,12 +362,12 @@ export default class SetUpProject extends React.Component {
                       required={true}
                       value={this.state.project._name}
                       onChange={this.handleInputChange}
-                    ></mobiscroll.Input>
+                    ></input>
                   </div>
                   <div style={{ margin: "9px 0" }}>
                     <label>Short Name</label>
 
-                    <mobiscroll.Input
+                    <input
                       style={{ width: "100%" }}
                       id="_shortName"
                       type="text"
@@ -377,12 +376,12 @@ export default class SetUpProject extends React.Component {
                       required={true}
                       value={this.state.project._shortName}
                       onChange={this.handleInputChange}
-                    ></mobiscroll.Input>
+                    ></input>
                   </div>
                   <div style={{ margin: "9px 0" }}>
                     <label>Description</label>
 
-                    <mobiscroll.Input
+                    <input
                       style={{ width: "100%" }}
                       id="_description"
                       type="text"
@@ -391,7 +390,7 @@ export default class SetUpProject extends React.Component {
                       required={true}
                       value={this.state.project._description}
                       onChange={this.handleInputChange}
-                    ></mobiscroll.Input>
+                    ></input>
                   </div>
                   <div
                     style={{

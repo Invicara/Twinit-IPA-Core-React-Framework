@@ -6,10 +6,6 @@ import {CSSTransition, TransitionGroup} from 'react-transition-group';
 import AppProvider from "../AppProvider";
 import {AppContext} from "../appContext";
 
-import {LocalFilePlugins} from '@invicara/script-ui';
-import {DataPlugins} from '@invicara/script-data';
-import {IafPlugins} from '@invicara/script-iaf';
-
 import store from "../redux/store";
 import {Provider} from "react-redux";
 import {enableMapSet} from "immer"
@@ -17,14 +13,16 @@ import IfefBody from '../react-ifef/components/ifefBody';
 import { getPlatform } from '../IpaUtils/helpers';
 import * as qs from 'querystring';
 
-import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
 
 import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
 import {IafAuth} from '@dtplatform/platform-ui-components';
-import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
+import StylesProvider from '@mui/styles/StylesProvider';
+import createGenerateClassName from '@mui/styles/createGenerateClassName';
+
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const {AuthProvider, AuthService} = IafAuth;
 
@@ -57,10 +55,23 @@ class App extends React.Component {
   render() {
     var platform = getPlatform(this.state.platformOverride);
 
+    const theme = createTheme({
+      palette: {
+        buttonDefault: {
+          main: '#E0E0E0'
+        },
+        tabDefault: {
+          main: '#000000DE'
+        },
+      },
+    });
+
     return (
-      <IfefBody platform={platform} history={this.props.history} location={this.props.location}>
-        {this.props.children}
-      </IfefBody>
+      <ThemeProvider theme={theme}> 
+        <IfefBody platform={platform} history={this.props.history} location={this.props.location}>
+          {this.props.children}
+        </IfefBody>
+      </ThemeProvider> 
     );
   }
 }
@@ -68,9 +79,9 @@ class App extends React.Component {
 class IpaMainLayout extends React.Component {
     constructor(props) {
         super(props);
-        IafPlugins.BAM_Script.initBAMScriptPlugins();
-        LocalFilePlugins.initScriptPlugins();
-        DataPlugins.initScriptPlugins();
+        // IafPlugins.BAM_Script.initBAMScriptPlugins();
+        // LocalFilePlugins.initScriptPlugins();
+        // DataPlugins.initScriptPlugins();
         this.authService = new AuthService({        //Added authService for rotated refresh token
           clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,
           location: window.location,

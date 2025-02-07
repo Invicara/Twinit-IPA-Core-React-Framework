@@ -1,13 +1,14 @@
 import * as PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
+import { BodyContext } from '../react-ifef/components/bodyProvider';
 
 
 class HeaderBar extends React.Component {
   constructor(props) {
     super(props);
   }
-
+  static contextType = BodyContext;
 
   componentDidMount() {
     this.context.ifefUpdateHasX && this.context.ifefUpdateHasX('ifefHasHeader', true);
@@ -35,9 +36,5 @@ HeaderBar.defaultProps = {
   customClasses: ''
 };
 
-HeaderBar.contextTypes = {
-  ifefUpdateHasX: PropTypes.func,
-  ifefPlatform: PropTypes.object
-};
 
 export default HeaderBar;

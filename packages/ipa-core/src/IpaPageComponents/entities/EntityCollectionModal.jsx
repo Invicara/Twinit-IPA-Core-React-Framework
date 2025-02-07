@@ -10,7 +10,7 @@ import GenericModal from '../../IpaDialogs/GenericModal'
 
 import '../../lib/mobiscroll.scss'
 import './EntityCollectionModal.scss'
-
+import { BodyContext } from '../../react-ifef/components/bodyProvider';
 
 
 export default class EntityCollectionModal extends React.Component {
@@ -28,6 +28,8 @@ export default class EntityCollectionModal extends React.Component {
             reloadTrigger: true
           }
     }
+
+    static contextType = BodyContext;
 
     async componentDidMount() {
       
@@ -191,18 +193,6 @@ export default class EntityCollectionModal extends React.Component {
               modalBody={modalBody} />
     }
 }
-
-EntityCollectionModal.contextTypes = {
-  ifefPlatform: PropTypes.object,
-  ifefSnapper: PropTypes.object,
-  ifefNavDirection: PropTypes.string,
-  ifefShowPopover: PropTypes.func,
-  ifefUpdatePopover: PropTypes.func,
-  ifefUpdatePopup: PropTypes.func,
-  ifefShowModal: PropTypes.func,
-  ifefModalOpen: PropTypes.bool
-};
-
 
   export const EntityCollectionModalFactory = {
     create: ({type, action, entity, context, reduxStore, showModal}) => {

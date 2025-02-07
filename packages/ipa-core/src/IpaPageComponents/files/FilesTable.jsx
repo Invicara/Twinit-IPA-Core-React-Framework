@@ -18,15 +18,17 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly, se
              (value) => onFileChange(file.checked ? [...files.filter(f => f.checked), file] : [file], col.name, value), LinkedSelectValues
          ) : 'loading...';
 
-    useEffect(async () => {
-        // Checking for when the final file is rendered to the screen in order to remove the loading bar
-        let finalRenderedFile
-        const lastFileName = files[files.length - 1]?.name
-        if(lastFileName) finalRenderedFile = await window.getByText(lastFileName).innerText
-        if(!_.isUndefined(finalRenderedFile) && finalRenderedFile === lastFileName) {
-            setIsLoading(false)
-        }   
-    }, [files])
+    useEffect(() => {
+        async function fetchData() {
+            let finalRenderedFile
+            const lastFileName = files[files.length - 1]?.name
+            if(lastFileName) finalRenderedFile = await window.getByText(lastFileName).innerText
+            if(!_.isUndefined(finalRenderedFile) && finalRenderedFile === lastFileName) {
+                setIsLoading(false)
+            } 
+        }
+        fetchData();
+      }, [files]);
 
     return <div className="file-table-container">        
         <table className="file-table">

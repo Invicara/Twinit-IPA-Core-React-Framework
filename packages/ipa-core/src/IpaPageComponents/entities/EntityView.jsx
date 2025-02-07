@@ -23,7 +23,7 @@ import {getFilteredEntitiesBy} from "../../IpaUtils/entities";
 import './EntityView.scss'
 import {EntityTableContainer} from "./EntityTableContainer";
 import withEntityAvailableGroups from "./WithEntityAvailableGroups";
-
+import { BodyContext } from "../../react-ifef/components/bodyProvider";
 
 const tableComponents = {
     'EntityListView': EntityListView,
@@ -36,6 +36,8 @@ class EntityView extends React.Component {
         displayDetail: false,
         selectedEntity: []
     }
+
+     static contextType = BodyContext;
 
     openDetail = entity => {
         this.setState({displayDetail: true, selectedEntity: entity})
@@ -190,16 +192,6 @@ class EntityView extends React.Component {
     }
 }
 
-EntityView.contextTypes = {
-    actions: PropTypes.object,
-    ifefPlatform: PropTypes.object,
-    ifefSnapper: PropTypes.object,
-    ifefNavDirection: PropTypes.string,
-    ifefShowPopover: PropTypes.func,
-    ifefUpdatePopover: PropTypes.func,
-    ifefUpdatePopup: PropTypes.func,
-    ifefShowModal: PropTypes.func
-};
 
 
 const mapStateToProps = state => ({

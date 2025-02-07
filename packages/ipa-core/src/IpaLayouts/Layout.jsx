@@ -18,9 +18,10 @@ import './Layout-MainNav.scss'
 import './Layout.scss'
 import clsx from "clsx";
 import { connect } from 'react-redux';
+import { AppContext } from '../appContext';
 
 class Layout extends React.Component {
-
+  static contextType = AppContext;
     constructor(props) {
         super(props);
         this.state = {
@@ -54,7 +55,7 @@ class Layout extends React.Component {
         this.setState({bottomPanelHeight: this.props.contextProps.defaultBottomPanelHeight})
     }
 
-    _getIcon = (icon, customClass) => {
+    _getIcon(icon, customClass) {
         let iconClass = icon;
         iconClass += icon.startsWith('icofont') ? ' icofont-2x' : ''
         iconClass += customClass ? ' ' + customClass : '';
@@ -203,13 +204,6 @@ class Layout extends React.Component {
         );
     }
 }
-
-Layout.contextTypes = {
-    ifefSnapper: PropTypes.object,
-    ifefPlatform: PropTypes.object,
-    location: PropTypes.object,
-    appContext: PropTypes.object
-};
 
 const mapStateToProps = state => ({modal: state.modal})
 

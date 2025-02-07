@@ -46,7 +46,7 @@ class IfefPopover extends React.Component {
     }
     
     if (!this.state.isUp && prevState.isUp) {
-      this.context.ifefShowPopover(false, null);
+      this.props.context.ifefShowPopover(false, null);
     }
   
     if (!_.isEmpty(this.props.ifefPopover) && this.props.ifefPopoverElem &&
@@ -135,9 +135,6 @@ IfefPopover.propTypes = {
 IfefPopover.defaultProps = {
 };
 
-IfefPopover.contextTypes = {
-  ifefShowPopover: PropTypes.func
-};
 
 
 class IfefPopoverButton extends React.Component {
@@ -148,7 +145,7 @@ class IfefPopoverButton extends React.Component {
   }
   
   handleClick(e) {
-    this.context.ifefShowPopover(true, e.target)
+    this.props.context.ifefShowPopover(true, e.target)
   }
   
   render() {
@@ -158,9 +155,6 @@ class IfefPopoverButton extends React.Component {
   }
 }
 
-IfefPopoverButton.contextTypes = {
-  ifefShowPopover: PropTypes.func
-};
 
 export default IfefPopover;
 export { IfefPopoverButton };
