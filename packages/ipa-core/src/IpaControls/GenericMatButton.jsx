@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 
 import "./GenericMatButton.scss";
 
@@ -9,6 +9,7 @@ export default class GenericMatButton extends React.Component {
     return (
       <div className={`GenericMatButton ${this.props.className}`}>
         <Button
+          color="buttonDefault"
           variant="contained"
           size={this.props.size}
           style={{ ...this.props.styles }}
@@ -29,6 +30,9 @@ GenericMatButton.propTypes = {
   styles: PropTypes.object,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
-  customClasses: PropTypes.object,
+  customClasses: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.string
+    ]),
   children: PropTypes.string,
 };

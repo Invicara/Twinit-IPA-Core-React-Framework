@@ -16,6 +16,9 @@ FetchButton.propTypes = {
   styles: PropTypes.object,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
-  customClasses: PropTypes.object,
+  customClasses: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool
+  ]),
   children: PropTypes.string,
 };

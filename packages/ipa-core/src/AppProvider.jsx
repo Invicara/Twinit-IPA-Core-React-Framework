@@ -28,8 +28,9 @@ import InternalPages from './IpaPageComponents/InternalPages'
 import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
 import {AppContext, withAppContext} from "./appContext";
 import withAuthHoc from './withAuthHoc';
-
+import { BodyContext } from './react-ifef/components/bodyProvider';
 class AppProvider extends React.Component {
+  static contextType = BodyContext;
   constructor(props) {
     super(props);
 
@@ -898,10 +899,5 @@ async function calculateRoutes(config, ipaConfig) {
 
   return {pageList: pList, pageRoutes: pRoutes, pageGroups: pGroups};
 }
-
-AppProvider.contextTypes = {
-  ifefSnapper: PropTypes.object,
-  ifefShowModal: PropTypes.func
-};
 
 export default withAuthHoc(AppProvider);

@@ -29,16 +29,17 @@ const getPlugins = () => [
             require("@babel/plugin-proposal-object-rest-spread"),
             require("fast-async"),
             ["@babel/plugin-proposal-class-properties", {"loose": true}],
+            ["@babel/plugin-transform-private-methods", { "loose": true }],
+            ["@babel/plugin-transform-private-property-in-object", { "loose": true }],
             //make sure we do not pull the whole material ui
             //https://github.com/avocadowastaken/babel-plugin-direct-import
             [
                 "babel-plugin-direct-import",
                 {
                     "modules": [
-                        "@material-ui/lab",
-                        "@material-ui/core",
-                        "@material-ui/icons",
-                        "@material-ui/system"
+                        "@mui/material",
+                        "@mui/icons-material",
+                        "@mui/styles"
                     ]
                 }
             ]
@@ -65,7 +66,7 @@ let pkg = JSON.parse(fs.readFileSync('./package.json')),
 /*
 const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
-    '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles', '@material-ui/icons',
+    '@mui/material', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles', '@material-ui/icons',
     '@nivo/bar', '@nivo/pie', '@nivo/line',
     'file-saver', 'immer', 'interactjs', 'json-schema-faker', 'jszip',
     'mime-types', 'moment', 'prop-types', 'qs', 'object-assign',

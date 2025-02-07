@@ -25,7 +25,7 @@ export const useEntityData = (collapsable, collapsed, entity, config, getData, d
   const handleSetData = (values) => setData((prevValue) => ({
     ...prevValue,
     [key]: {
-      ...prevValue?.[key] && prevValue[key],
+      ...(prevValue?.[key] && prevValue[key]),
       ...values
     }
   }))

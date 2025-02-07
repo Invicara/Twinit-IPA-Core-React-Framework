@@ -598,7 +598,7 @@ class ScriptRunnerView extends React.Component {
         }
 
         resolve(completion)
-      })
+      });
     }
 
     handleOpSearchTerm(e) {

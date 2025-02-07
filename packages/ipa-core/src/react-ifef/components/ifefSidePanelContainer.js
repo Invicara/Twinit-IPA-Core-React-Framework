@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 import Snap from '../helpers/snap';
+import { BodyContext } from './bodyProvider';
 
 class IfefSidePanelContainer extends React.Component {
 
@@ -12,6 +13,8 @@ class IfefSidePanelContainer extends React.Component {
       elementBottomDimension: _.get(props, 'settings.elementBottomDimension')
     }
   }
+
+  static contextType = BodyContext;
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let nextElementBottomDimension = _.get(nextProps, 'settings.elementBottomDimension');
@@ -74,11 +77,6 @@ class IfefSidePanelContainer extends React.Component {
     );
   }
 }
-
-IfefSidePanelContainer.contextTypes = {
-  ifefSnapper: PropTypes.object,
-  ifefSetSnapper: PropTypes.func
-};
 
 IfefSidePanelContainer.propTypes = {
   settings: PropTypes.object,

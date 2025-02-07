@@ -11,7 +11,7 @@ import {
 import {curriedFlip} from "../IpaUtils/function";
 import './TreeControl.scss';
 import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@mui/material";
 
 const MAX_HEIGHT_SCROLL = 50
 

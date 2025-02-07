@@ -16,7 +16,7 @@ import {
   TableRow,
   Toolbar,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import useSortEntities, { usePaginateEntities } from "./sortEntities";
 import { EntityTableHead } from "./EntityTableHead";
 import PropTypes from "prop-types";

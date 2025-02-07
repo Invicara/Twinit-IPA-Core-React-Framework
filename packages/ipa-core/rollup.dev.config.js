@@ -39,7 +39,9 @@ export default {
       plugins: [
         require("@babel/plugin-proposal-object-rest-spread"),
         require("fast-async"),
-        ["@babel/plugin-proposal-class-properties", { "loose": true }]
+        ["@babel/plugin-proposal-class-properties", { "loose": true }],
+        ["@babel/plugin-transform-private-methods", { "loose": true }],
+        ["@babel/plugin-transform-private-property-in-object", { "loose": true }],
       ]
     }),
     commonjs(),
@@ -67,7 +69,7 @@ export default {
   external: [
     'lodash', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
-    '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles',
+    '@mui/material', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles',
     '@nivo/bar', '@nivo/pie', '@nivo/line',
     'file-saver', 'immer', 'interactjs', 'json-schema-faker', 'jszip',
     'mime-types', 'moment', 'prop-types', 'qs', 'object-assign',
