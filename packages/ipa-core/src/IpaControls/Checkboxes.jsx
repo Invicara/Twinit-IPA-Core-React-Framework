@@ -10,7 +10,7 @@ import {
   IndeterminateCheckBoxRounded,
   CheckCircle as CheckedCircle,
   RadioButtonUnchecked as UncheckedCircle,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 const iconStyle = { fontSize: 18 };
 
