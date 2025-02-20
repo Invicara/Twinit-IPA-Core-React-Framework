@@ -214,7 +214,11 @@ const FancyTreeControl = ({
                 rowRenderer={(virtualizedEvent) => {
                   return (
                     <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                      {getNodes(tree, 1, virtualizedEvent)}
+                        {({registerChild}) => (
+                          <div ref={registerChild}>
+                            {getNodes(tree, 1)}
+                          </div>
+                        )}
                     </CellMeasurer>
                   )
                 }}
