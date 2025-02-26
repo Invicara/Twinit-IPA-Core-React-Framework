@@ -82,20 +82,31 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     }
 
     function fileChecker(files, newFiles) {
+        // This will remove any duplicate files if they are uploaded at once
+        const seenFileNames = new Set();
+        const newFilesArr = newFiles.filter(file => {
+            if (seenFileNames.has(file.name)) {
+                return false;
+            } else {
+                seenFileNames.add(file.name);
+                return true;
+            }
+        });
+
+        // This is to check if the same file is already in the File Table
         if(files.length >= 1) {
-            const combinedArray = [...files, ...newFiles];
+            const combinedArray = [...files, ...newFilesArr];
             const seen = new Set();
             const filteredFiles = combinedArray.filter(file => {
-              // Check if the file name is already in the Set
               if (seen.has(file.name)) {
-                return false; // File is a duplicate, filter it out
+                return false;
               }
               seen.add(file.name);
-              return true; // Keep the file
+              return true;
             });
             return filteredFiles;
         } else {
-            return newFiles
+            return newFilesArr
         }
       }
 
