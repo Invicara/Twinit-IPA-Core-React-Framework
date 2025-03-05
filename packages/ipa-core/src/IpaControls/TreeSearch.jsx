@@ -7,7 +7,8 @@ import ReactiveTreeControl from "./ReactiveTreeControl";
 import './TreeSearch.scss';
 
 const treeControlLeafNodeRenderer = (group) => {
-    return <div>{parseNodeNameWithParent(group.name).childNodeInfo.displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
+    const displayNameRes = parseNodeNameWithParent(group.name)
+    return <div >{displayNameRes.secondChildNodeInfo ? displayNameRes.secondChildNodeInfo.displayName : displayNameRes.childNodeInfo.displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
 }
 
 const treeControlBranchNodeRenderer = (group) => {
@@ -26,7 +27,7 @@ const treeSearchReducer = (state, action) => {
             return {...state, reloading: true};
         case 'reloaded':
             return {...state, reloading: false, nodeIndex: action.nodeIndex};
-        case 'update_node':
+        case 'update_node': {
             let nodeToUpdate = state.nodeIndex.find(action.id)
             if (nodeToUpdate === undefined) return state;
             return {
@@ -36,6 +37,7 @@ const treeSearchReducer = (state, action) => {
                     [action.id]: {...nodeToUpdate, ...action.node}
                 }
             }
+        }
         default:
             return {...state, reloading: false, nodeIndex: action.nodeIndex ? action.nodeIndex : state.nodeIndex};
     }
@@ -97,7 +99,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
             newNodeIndex = await loadChildrenDeep(nodeKey, newNodeIndex, currentValue);
         }
         return newNodeIndex;
-    };
+    }
 
     async function refreshTree() {
         let newNodeIndex = await getTree();
