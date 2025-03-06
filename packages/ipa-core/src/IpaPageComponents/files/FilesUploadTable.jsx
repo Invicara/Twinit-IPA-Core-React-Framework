@@ -1,6 +1,6 @@
 import React from "react";
 import Checkbox from "@mui/material/Checkbox/Checkbox";
-import {RadioButtonChecked as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from '@material-ui/icons';
+import {RadioButtonChecked as CheckedCircle, RadioButtonUnchecked as UncheckedCircle} from '@mui/icons-material';
 import mime from "mime-types";
 import {getBlob, isComplete, isInProgress, isPending} from "../../redux/slices/files";
 import {formatBytes} from "../../IpaUtils/bytesunit";
