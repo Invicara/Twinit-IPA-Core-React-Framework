@@ -1,4 +1,7 @@
   .fancy-tree {
+    height: 50vh;
+    overflow: scroll;
+
   --invisible-ink: rgba(0, 0, 0, 0);
 
   --line-height: 2em;
@@ -109,9 +112,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    &:hover {
-      white-space: normal;
-    }
   }
 
   /* Channel */

@@ -103,7 +103,7 @@ export const parseNodeName = name => {
  * @throws {InvalidNodeName} if the strings contain more than one NODE_SEPERATOR, it means the display name from one of the nodes contained an NODE_SPERATOR, which is a reserved character.
  */
 export const parseNodeNameWithParent = name => {
-    let arr = name.split(NODE_SEPARATOR);
+    let arr = name?.split(NODE_SEPARATOR);
     if(arr.length === 1) {
         return {
             childNodeInfo: parseNodeName(arr[0])
@@ -112,10 +112,15 @@ export const parseNodeNameWithParent = name => {
         return {
             parentNodeInfo: parseNodeName(arr[0]),
             childNodeInfo: parseNodeName(arr[1])
+        }
+    } else if(arr.length === 3) {
+        return {
+            parentNodeInfo: parseNodeName(arr[0]),
+            childNodeInfo: parseNodeName(arr[1]),
+            secondChildNodeInfo: parseNodeName(arr[2])
         };
-    } else {
-        throw new InvalidNodeName(name)
     }
+    throw new InvalidNodeName(name)
 }
 
 
