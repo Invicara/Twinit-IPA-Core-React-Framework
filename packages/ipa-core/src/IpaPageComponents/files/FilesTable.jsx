@@ -1,5 +1,5 @@
 import {RoundCheckbox, TickCheckbox, useChecked} from "../../IpaControls/Checkboxes";
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import {Star} from "./misc";
 import {comesFromComplexSelect, isReadyFor} from "../../redux/slices/files";
 import _ from 'lodash'
@@ -18,11 +18,14 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly, se
              (value) => onFileChange(file.checked ? [...files.filter(f => f.checked), file] : [file], col.name, value), LinkedSelectValues
          ) : 'loading...';
 
+    const tableRef = useRef();
+
     useEffect(() => {
         async function fetchData() {
             let finalRenderedFile
             const lastFileName = files[files.length - 1]?.name
-            if(lastFileName) finalRenderedFile = await window.getByText(lastFileName).innerText
+            if(lastFileName) finalRenderedFile = tableRef.current?.innerText
+
             if(!_.isUndefined(finalRenderedFile) && finalRenderedFile === lastFileName) {
                 setIsLoading(false)
             } 
@@ -30,7 +33,7 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly, se
         fetchData();
       }, [files]);
 
-    return <div className="file-table-container">        
+    return <div className="file-table-container" >        
         <table className="file-table">
             <thead>
             <tr className="file-table-header">
@@ -50,7 +53,7 @@ export const FileTable = ({files:inputFiles, columns, onFileChange, readonly, se
                 <td>
                     <RoundCheckbox checked={_.get(files[i],'checked', false)} onChange={() => handleCheck(files[i])}/>
                 </td>
-                <td>{file.name}</td>
+                <td ref={tableRef}>{file.name}</td>
                 <td>
                     <TickCheckbox checked={isReady(file)} onChange={() => {}}/>
                 </td>
