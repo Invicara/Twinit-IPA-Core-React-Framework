@@ -2,14 +2,13 @@ import React, {useEffect, useReducer, useRef} from "react";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import _ from "lodash";
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
-import {parseNodeNameWithParent, stringifyNodeWithParent} from "./private/tree";
+import {parseNodeNameWithParent, parseNodeNameWithParents, stringifyNodeWithParent} from "./private/tree";
 import ReactiveTreeControl from "./ReactiveTreeControl";
 import './TreeSearch.scss';
 
 const treeControlLeafNodeRenderer = (group) => {
-    const displayNameRes = parseNodeNameWithParent(group.name)
-    return <div >{displayNameRes.secondChildNodeInfo ? displayNameRes.secondChildNodeInfo.displayName : displayNameRes.childNodeInfo.displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
-}
+    return <div>{parseNodeNameWithParents(group.name).childNodeInfo.displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
+  }
 
 const treeControlBranchNodeRenderer = (group) => {
     const childCount = group.count;
