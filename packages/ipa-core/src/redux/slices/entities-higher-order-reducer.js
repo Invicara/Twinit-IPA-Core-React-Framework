@@ -228,7 +228,7 @@ export const entitiesSliceFactory = (identifier = '') => {
         (entityChanges[changeType] || defaultChangeHandler)(entity)
     }
 
-    const fetchEntities = (script, selector, value, runScriptOptions) => async (dispatch, getState) => {
+    const fetchEntities = (script, selector, value, runScriptOptions, initialPageLoad) => async (dispatch, getState) => {
         const query = ControlProvider.getQuery(value, selector);
         dispatch(setFetching(true));
 
@@ -248,7 +248,9 @@ export const entitiesSliceFactory = (identifier = '') => {
         let entities = await currentFetchPromise;
         const sorted = _.sortBy(entities, a => a["Entity Name"]);
         dispatch(setEntities({entities: sorted}));
-        dispatch(setSelectedEntities([]));
+        if(!initialPageLoad) {
+            dispatch(setSelectedEntities([]));
+        }
         // We do this to wait for the next tick thus allowing react to render the loading page-in between.
         // Otherwise when retrieving cached data it might happen so quickly that the loading page does not render and
         // the user has a few milliseconds while the page with updated data renders to execute a navigate action with stale data.
