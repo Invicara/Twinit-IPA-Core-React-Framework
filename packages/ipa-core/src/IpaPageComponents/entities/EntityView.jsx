@@ -136,7 +136,8 @@ class EntityView extends React.Component {
                     context={this.context}
                     entityPlural={this.props.entityPlural}
                     entitySingular={this.props.entitySingular}
-
+                    setSelectedEntities={this.props.setSelectedEntities}
+                    setIsolatedEntities={this.props.setIsolatedEntities}
                 />
             }
         } else {
