@@ -129,7 +129,7 @@ class EntitySelectionPanel extends React.Component {
       selection = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props));
     } else {
       leaves.forEach(el => {
-          selection.push(this.props.entities.find(e => e._id == el.dataset.nodeId))
+          selection.push(this.props.entities.find(e => e._id == el))
       })
     }
       if(this.props.setFilteredBySearchEntities) this.props.setFilteredBySearchEntities(selection)
@@ -149,7 +149,11 @@ class EntitySelectionPanel extends React.Component {
   }
 
   onSelectAll = () => {
-      this.onSelectEntities(getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props)));
+      const entities = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props))
+      if(this.props.setFilteredBySearchEntities) {
+        this.props.setFilteredBySearchEntities(entities)
+      }
+     this.onSelectEntities(entities);
   }
   
   getAvailableGroupValues = () => {
