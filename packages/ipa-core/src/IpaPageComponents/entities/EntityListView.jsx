@@ -9,7 +9,7 @@ import {isValidUrl} from '../../IpaUtils/helpers'
 import useSortEntities from "./sortEntities";
 import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 
-export const EntityListView = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity', showModal, setSelectedEntities}) => {
+export const EntityListView = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity', showModal}) => {
     const reactVirtualizedCache = useRef(new CellMeasurerCache({
         fixedWidth: true,
         defaultHeight: 100
@@ -90,7 +90,6 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
                 type={entityType}
                 context={context}
                 showModal={showModal}
-                setSelectedEntities={setSelectedEntities}
             />
         </div>}
         <div className='entity-list-view-count'>

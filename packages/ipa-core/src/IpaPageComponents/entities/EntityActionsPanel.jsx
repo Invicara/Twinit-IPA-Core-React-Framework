@@ -9,7 +9,7 @@ import './EntityActionsPanel.scss';
 import '../../IpaStyles/DbmTooltip.scss'
 import ActionButton from "../../IpaControls/ActionButton";
 
-const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer, showModal, setSelectedEntities}) => {
+const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer, showModal}) => {
   let icons = []
 
   const reduxStore = useStore();
@@ -77,9 +77,6 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
       let result = await action.doEntityAction(action.name, {new: newEntity, original: origEntity}, type);
       if (result?.success) {
-        if(actions[actionName].navigateTo === 'navigator') {
-          setSelectedEntities(newEntity)
-        }
         if (action.onSuccess) {
           action.onSuccess(action.type, newEntity, result)
         }
