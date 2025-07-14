@@ -237,26 +237,43 @@ export const entitiesSliceFactory = (identifier = '') => {
         }
 
         const getNextFetchPromise = () =>
-            query ?
-                ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query}, runScriptOptions)
-                : new Promise(res => res([]));
+            query
+                ? ScriptCache.runScript(
+                    selector.altScript ? selector.altScript : script,
+                    { entityInfo: selector.altScript ? value : query },
+                    runScriptOptions
+                )
+                : Promise.resolve([]);
+
         currentFetchPromise = currentFetchPromise.then(
             () => getNextFetchPromise(),
             //ABOVE might return rejected promise, and chaining another .then is not possible without error handler resetting the promise status
-            (errorResult) => { interceptFetchError(errorResult); return getNextFetchPromise();}
+            errorResult => {
+                interceptFetchError(errorResult)
+                return getNextFetchPromise();
+            }
         )
-        let entities = await currentFetchPromise;
-        const sorted = _.sortBy(entities, a => a["Entity Name"]);
-        dispatch(setEntities({entities: sorted}));
-        if(!initialPageLoad) {
-            dispatch(setSelectedEntities([]));
-        }
+
+        try {
+            const entities = await currentFetchPromise;
+            const sorted = _.sortBy(entities, a => a["Entity Name"]);
+
+            dispatch(setEntities({ entities: sorted }));
+            if (!initialPageLoad) {
+                dispatch(setSelectedEntities([]));
+            }
         // We do this to wait for the next tick thus allowing react to render the loading page-in between.
         // Otherwise when retrieving cached data it might happen so quickly that the loading page does not render and
         // the user has a few milliseconds while the page with updated data renders to execute a navigate action with stale data.
         // The real fix for this would be addressing the slow-render of the page, not a priority now.
-        setTimeout( () => dispatch(setFetching(false)), 0)
-    }
+            setTimeout(() => dispatch(setFetching(false)), 0);
+            return sorted;
+        } catch (err) {
+            interceptFetchError(err);
+            dispatch(setFetching(false));
+            throw err;
+        }
+    };
 
     const thunks = {
         selectEntitiesFromModels, changeEntity, fetchEntities
