@@ -83,7 +83,7 @@ class EntitySelectionPanel extends React.Component {
   }
 
   componentDidMount() {
-    this.loadGroups()
+    // this.loadGroups()
     if(this.props.setFilteredBySearchEntities) this.props.setFilteredBySearchEntities(this.props.isolatedEntities)
   }
 
@@ -129,7 +129,7 @@ class EntitySelectionPanel extends React.Component {
       selection = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props));
     } else {
       leaves.forEach(el => {
-          selection.push(this.props.entities.find(e => e._id == el.dataset.nodeId))
+          selection.push(this.props.entities.find(e => e._id == el))
       })
     }
       if(this.props.setFilteredBySearchEntities) this.props.setFilteredBySearchEntities(selection)
@@ -149,15 +149,17 @@ class EntitySelectionPanel extends React.Component {
   }
 
   onSelectAll = () => {
-      this.onSelectEntities(getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props)));
+      const entities = getFilteredEntitiesBy(this.props.entities, getSelectedFilters(this.props))
+      if(this.props.setFilteredBySearchEntities) {
+        this.props.setFilteredBySearchEntities(entities)
+      }
+     this.onSelectEntities(entities);
   }
   
   getAvailableGroupValues = () => {
     const nonGroupableProperties = this.props.nonGroupableProperties || [];
     return this.state.uniquePropNames.filter(p => !nonGroupableProperties.includes(p));
   }
-
-  getSelectedIds = _.memoize((_selectedEntities)=>_.map(_selectedEntities, e => e._id));
 
   render() {
 
@@ -179,6 +181,16 @@ class EntitySelectionPanel extends React.Component {
     const allSelected = this.state.numFilteredEntities === this.props.selectedEntities.length
 
     const selectedFilters = getSelectedFilters(this.props)
+
+    const getSelectedIds = (selectedEntities, filteredBySearchEntityIds) => {
+      const selecedIds = _.memoize((_selectedEntities)=>_.map(_selectedEntities, e => e._id));
+
+      if (!_.isEmpty(selectedEntities)) {
+        return selecedIds(selectedEntities)
+      } else if(!_.isEmpty(filteredBySearchEntityIds)) {
+        return filteredBySearchEntityIds
+      } else return []  
+    }
 
     return (
       <div className="entity-tree-panel">
@@ -209,7 +221,7 @@ class EntitySelectionPanel extends React.Component {
           onSelectAll={this.onSelectAll}
           onSelectNone={this.onSelectIds}
           onSelectIds={this.onSelectIds}
-          selectedIds={this.props.filteredBySearchEntityIds || this.getSelectedIds(this.props.selectedEntities)}
+          selectedIds={getSelectedIds(this.props.selectedEntities,this.props.filteredBySearchEntityIds)}
           allSelected={allSelected}
           treeSelectMode={this.props.treeSelectMode}
           tree={this.state.tree}/>
