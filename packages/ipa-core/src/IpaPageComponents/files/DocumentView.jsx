@@ -6,7 +6,12 @@ import "./DocumentView.scss";
 const DocumentView = (props) => {
   if (props.isPageLoading) return null;
 
-  const docIds = props.docIds || props.queryParams.docIds || [];
+  let docIds = props.docIds || props.queryParams.docIds || [];
+
+  // If more then 100 files are selected, docIds will be an object of objects. Need to convert it to an array.
+  if(!Array.isArray(docIds)) {
+    docIds = Object.values(docIds)
+  }
 
   let pageContent;
   if (props.fetching) {

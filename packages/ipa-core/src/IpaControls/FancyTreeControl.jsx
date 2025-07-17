@@ -124,35 +124,39 @@ const FancyTreeControl = ({
   }
 
   const selectNode = (e, nodeName, nodeValue) => {
-    const treeDOM = treeDOMRef.current;
-    let el = e.target;
-    if (el.classList.contains("branch-expander")) {
-      return;
-    }
-    while (el.tagName != "LI") {
-      el = el.parentElement;
-    }
-    e.stopPropagation();
+    e.stopPropagation()
 
-    //before toggle, gather previously selected
-    const previouslySelectedIds = [...treeDOM.querySelectorAll("li.leaf.selected")].map(li=>li.dataset.nodeId);
+    let el = e.target
+    if (el.classList.contains("branch-expander")) return
+    while (el.tagName !== "LI") el = el.parentElement
 
-    el.classList.toggle("selected");
+    const nodeId = el.dataset.nodeId
+    const isSelected = el.classList.contains("selected")
 
-    if (el.classList.contains("branch")) {
-      let branchLeaves = Array.from(el.querySelectorAll("li"))
-      if (el.classList.contains("selected")) branchLeaves.forEach(ell => ell.classList.add("selected"))
-      else branchLeaves.forEach(ell => ell.classList.remove("selected"))
-    }
+    let updatedSelectedIds = [...selectedIds]
 
-    establishTreeBranchClasses();
+    if (nodeId) {
+      // leaf node
+      if (isSelected) {
+        updatedSelectedIds = updatedSelectedIds.filter(id => id !== nodeId)
+      } else {
+        updatedSelectedIds.push(nodeId)
+      }
+    } else if (el.classList.contains("branch")) {
+      // branch node
+      const leafNodes = Array.from(el.querySelectorAll("li.leaf"))
+      const leafNodeIds = leafNodes.map(li => li.dataset.nodeId)
+      const adding = !isSelected
 
-    if (onSelect) {
-      const allSelected = treeDOM.querySelectorAll("li.leaf.selected");
+      updatedSelectedIds = adding
+        ? _.uniq([...updatedSelectedIds, ...leafNodeIds])
+        : updatedSelectedIds.filter(id => !leafNodeIds.includes(id))
+    } 
 
-      onSelect([...allSelected], nodeName, nodeValue, _.isArray(nodeValue), el.classList.contains("selected"));
-      dispatch({type: 'nodeSelected', previouslySelectedIds: previouslySelectedIds});
-    }
+    establishTreeBranchClasses()
+    onSelect?.(updatedSelectedIds, nodeName, nodeValue, _.isArray(nodeValue), !isSelected)
+
+    dispatch({ type: 'nodeSelected', previouslySelectedIds: selectedIds })
   }
 
   const getNodes = (nodes, depth) => {
@@ -195,6 +199,24 @@ const FancyTreeControl = ({
     return children
   }
 
+  const flattenTree = (nodes, expandedNodeNames, depth = 0, result = []) => {
+    if (Array.isArray(nodes)) {
+      nodes.forEach(n => {
+        result.push({ node: n, type: 'leaf', depth })
+      })
+    } else {
+      Object.entries(nodes).forEach(([name, children]) => {
+        result.push({ node: { name, children }, type: 'branch', depth })
+        if (expandedNodeNames.includes(name)) {
+          flattenTree(children, expandedNodeNames, depth + 1, result)
+        }
+      })
+    }
+    return result
+  }
+
+const flatTree = flattenTree(tree, expandedNodeNames);
+
   return (
     <div className={"fancy-tree"} ref={treeDOMRef}>
       {onSelectAll ? <div className="fancy-tree__count">
@@ -211,18 +233,54 @@ const FancyTreeControl = ({
                 height={height}
                 rowHeight={reactVirtualizedCache.current.rowHeight}
                 deferredMeasurementCache={reactVirtualizedCache.current}
-                rowRenderer={(virtualizedEvent) => {
+                rowRenderer={({ index, key, style, parent }) => {
+                  const { node, type, depth } = flatTree[index]
+
                   return (
-                    <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                        {({registerChild}) => (
-                          <div ref={registerChild}>
-                            {getNodes(tree, 1)}
-                          </div>
-                        )}
+                    <CellMeasurer
+                      key={key}
+                      cache={reactVirtualizedCache.current}
+                      parent={parent}
+                      columnIndex={0}
+                      rowIndex={index}
+                    >
+                      {({ registerChild }) => (
+                        <div ref={registerChild} style={style}>
+                          {type === 'leaf' ? (
+                            <li
+                              onClick={e => selectNode(e, node.name, node)}
+                              key={node._id || node.name}
+                              data-node-id={node._id}
+                              className={`leaf ${selectedIds.includes(node._id) ? "selected" : ""}`}
+                              style={{ paddingLeft: depth * 20 }}
+                            >
+                              <a><span>{renderLeafNode(node)}</span></a>
+                            </li>
+                          ) : (
+                            <li
+                              onClick={e => selectNode(e, node.name, node.children)}
+                              key={node.name}
+                              data-branch-name={node.name}
+                              className={`branch ${expandedNodeNames.includes(node.name) ? "expanded" : ""}`}
+                              style={{ paddingLeft: depth * 20 }}
+                            >
+                              <a>
+                                <span>
+                                  <i
+                                    className="fa fa-angle-down branch-expander"
+                                    onClick={e => expandBranch(e, node.name, node.children)}
+                                  />
+                                  {renderBranchNode(node.name, node.children)}
+                                </span>
+                              </a>
+                            </li>
+                          )}
+                        </div>
+                      )}
                     </CellMeasurer>
                   )
                 }}
-                rowCount={tree.length}
+                rowCount={flatTree.length}
               />
             )}
           </AutoSizer> : getNodes(tree, 1)

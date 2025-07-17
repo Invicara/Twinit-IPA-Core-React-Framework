@@ -72,13 +72,17 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
                         </span>
                     </a>
                     {isLeaf? 
-                         <ul key={node.id + "_children"} style={{ height: getNodeChildren(node)?.length  < 10 ? `${getNodeChildren(node)?.length * 2.5}vh` : `${MAX_HEIGHT_SCROLL}vh`, width: "auto" }}>
-                         <AutoSizer>
-                             {({ width, height }) => (
+                        <ul key={node.id + "_children"} style={{ maxHeight: `${MAX_HEIGHT_SCROLL}vh`, overflowY: "auto" }} >
+                         <AutoSizer disableHeight>
+                             {({ width }) => (
                                  <List
                                      ref={listRef}
                                      width={width}
-                                     height={height}
+                                     height={Math.min(
+                                        reactVirtualizedCache.current.rowHeight({ index: 0 }) *
+                                            getNodeChildren(node).length,
+                                        MAX_HEIGHT_SCROLL * window.innerHeight / 100 
+                                     )}
                                      rowHeight={reactVirtualizedCache.current.rowHeight}
                                      deferredMeasurementCache={reactVirtualizedCache.current}
                                      rowRenderer={(virtualizedEvent) => {
