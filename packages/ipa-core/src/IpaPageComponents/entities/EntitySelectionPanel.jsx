@@ -83,7 +83,7 @@ class EntitySelectionPanel extends React.Component {
   }
 
   componentDidMount() {
-    // this.loadGroups()
+    this.loadGroups()
     if(this.props.setFilteredBySearchEntities) this.props.setFilteredBySearchEntities(this.props.isolatedEntities)
   }
 
