@@ -72,7 +72,7 @@ class EntityView extends React.Component {
             return a._id === newEntity._id ? newEntity : a;
         });
         const filteredEntities = getFilteredEntitiesBy(updatedEntities, this.props.appliedFilters)
-        if(!_.isEmpty(filteredEntities) && _.isEmpty(filteredEntities.find(e => e._id === newEntity._id))) this.openSummary()
+        if(!_.isEmpty(filteredEntities) && !_.isEmpty(filteredEntities.find(e => e._id === newEntity._id))) this.openSummary()
       }
       this.props.onEntityChange(actionType, newEntity, result);
       

@@ -292,6 +292,10 @@ export default class ProjectPickerModal extends React.Component {
         appContextProps.actions.setSelectedItems({ selectedProject: currProject, selectedUserGroupId });
         window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
 
+        // After a user accepts an invite, we make sure to remove the 'inviteId' from the URL
+        if(window.location.href.includes('inviteId')) {
+          window.location.href = `${window.location.origin}/`
+        }
         if (this.props.referenceAppConfig?.refApp) {
           window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
         }
