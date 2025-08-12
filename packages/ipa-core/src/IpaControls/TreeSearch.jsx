@@ -105,6 +105,10 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
         return newNodeIndex;
     }
 
+    useEffect(() => {
+        refreshTree()
+    },[reloadToken])
+
     async function fetchTree() {
         reloadTokenLatest.current = reloadToken;
         treeLevelsLatest.current = treeLevels;
