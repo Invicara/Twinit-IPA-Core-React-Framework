@@ -34,10 +34,17 @@ class EntityView extends React.Component {
 
     state = {
         displayDetail: false,
-        selectedEntity: []
+        selectedEntity: [],
+        reloadToken: false
     }
 
      static contextType = BodyContext;
+
+     toggleReloadToken = () => {
+        this.setState(prevState => ({
+            reloadToken: !prevState.reloadToken
+        }));
+    };
 
     openDetail = entity => {
         this.setState({displayDetail: true, selectedEntity: entity})
@@ -47,6 +54,7 @@ class EntityView extends React.Component {
 
     openSummary = () => {
         this.setState({displayDetail: false})
+        this.toggleReloadToken()
         // this.props.entitiesSelected([]);
     }
 
@@ -66,7 +74,12 @@ class EntityView extends React.Component {
     }
     
     actionSuccess = (actionType, newEntity, result) => {
-    if (actionType === 'delete') this.openSummary();
+    if (actionType === 'create') {
+        this.toggleReloadToken()
+    }
+    if (actionType === 'delete') {
+        this.openSummary()
+    };
     if (actionType === 'edit') {  
         var updatedEntities = this.props.allEntities.map(a => {
             return a._id === newEntity._id ? newEntity : a;
@@ -161,6 +174,7 @@ class EntityView extends React.Component {
                             initialValue={query}
                             selectors={handler.config.selectBy}
                             doFetch={this._doFetch}
+                            reloadToken={this.state.reloadToken}
                         />
                     </div>
                 </StackableDrawer>
