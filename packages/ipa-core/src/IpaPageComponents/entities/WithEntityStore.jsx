@@ -121,6 +121,12 @@ const withEntityStore = (WrappedComponent) => {
             if(this.props.currentEntityType && _.includes(this.props.allowedEntityTypes, this.props.currentEntityType?.singular) ){
                 return this.props.currentEntityType;
             }
+            // This will ensure the correct Entity Config is passed through when a user selects an Asset -> selects a related Space -> and views that space in the Navigator
+             if(queryParams.entityType !== queryParams.senderEntityType) {
+                const entityOptions = _.values(this.props.perEntityConfig)
+                const selectedEntityOption = entityOptions.filter((entityConfig) => entityConfig.singular === queryParams.entityType)
+                return selectedEntityOption[0]
+            }
             // else we assume we are going to use first entity from the handler config
             return _.values(this.props.perEntityConfig)[0];
         }
