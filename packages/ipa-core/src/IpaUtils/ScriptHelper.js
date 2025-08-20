@@ -1,14 +1,14 @@
-import { IafProj, IafSession } from "@dtplatform/platform-api";
+import { IafProj, IafSession } from '@dtplatform/platform-api';
 
-import * as PlatformApi from "@dtplatform/platform-api";
-import { IafScriptEngine } from "@dtplatform/iaf-script-engine";
-import * as UiUtils from "@dtplatform/ui-utils";
-import { exportWorkbook } from "./helpers";
+import * as PlatformApi from '@dtplatform/platform-api';
+import { IafScriptEngine } from '@dtplatform/iaf-script-engine';
+import * as UiUtils from '@dtplatform/ui-utils';
+import { exportWorkbook } from './helpers';
 
 async function loadScript(query, ctx) {
-  console.log("ScriptHelper loadScript query", query);
+  console.log('ScriptHelper loadScript query', query);
   if (!query) {
-    console.warn("ScriptHelper loadScript: No script query in loadScript");
+    console.warn('ScriptHelper loadScript: No script query in loadScript');
     return;
   }
   if (isProjectNextGenJs()) {
@@ -17,21 +17,21 @@ async function loadScript(query, ctx) {
       authToken: IafSession.getAuthToken(),
     };
     let criteria = { query: { _userType: query._userType } };
-    console.log("ScriptHelper loadScript criteria", criteria);
+    console.log('ScriptHelper loadScript criteria', criteria);
 
     let scriptModule = await IafScriptEngine.dynamicImport(criteria, ctx);
 
     if (scriptModule) {
-      console.log("ScriptHelper loadScript scriptModule", scriptModule);
+      console.log('ScriptHelper loadScript scriptModule', scriptModule);
 
-      let loadedScripts = await IafScriptEngine.getVar("loadedScripts");
-      console.log("ScriptHelper loadScript loadedScripts", loadedScripts);
+      let loadedScripts = await IafScriptEngine.getVar('loadedScripts');
+      console.log('ScriptHelper loadScript loadedScripts', loadedScripts);
 
       let loadedScriptsByUserTypes = await IafScriptEngine.getVar(
-        "loadedScriptsByUserTypes",
+        'loadedScriptsByUserTypes',
       );
       console.log(
-        "ScriptHelper loadScript loadedScriptsByUserTypes",
+        'ScriptHelper loadScript loadedScriptsByUserTypes',
         loadedScriptsByUserTypes,
       );
 
@@ -46,15 +46,15 @@ async function loadScript(query, ctx) {
       }
       loadedScriptsByUserTypes[query._userType] = scriptModule.default;
 
-      console.log("ScriptHelper loadScript loadedScripts2", loadedScripts);
-      await IafScriptEngine.setVar("loadedScripts", loadedScripts);
+      console.log('ScriptHelper loadScript loadedScripts2', loadedScripts);
+      await IafScriptEngine.setVar('loadedScripts', loadedScripts);
 
       console.log(
-        "ScriptHelper loadScriptByUserTypes loadedScripts2",
+        'ScriptHelper loadScriptByUserTypes loadedScripts2',
         loadedScriptsByUserTypes,
       );
       await IafScriptEngine.setVar(
-        "loadedScriptsByUserTypes",
+        'loadedScriptsByUserTypes',
         loadedScriptsByUserTypes,
       );
     } else {
@@ -109,24 +109,24 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback) {
   if (isProjectNextGenJs()) {
     //execute js script
 
-    let loadedScripts = IafScriptEngine.getVar("loadedScripts");
-    console.log("ScriptHelper executeScript loadedScripts", loadedScripts);
+    let loadedScripts = IafScriptEngine.getVar('loadedScripts');
+    console.log('ScriptHelper executeScript loadedScripts', loadedScripts);
 
     let loadedScriptsByUserTypes = IafScriptEngine.getVar(
-      "loadedScriptsByUserTypes",
+      'loadedScriptsByUserTypes',
     );
     console.log(
-      "ScriptHelper executeScript loadedScriptsByUserTypes",
+      'ScriptHelper executeScript loadedScriptsByUserTypes',
       loadedScriptsByUserTypes,
     );
 
     if (!scriptName) {
-      console.error("Script information is required!");
-      return "Script information is required!";
+      console.error('Script information is required!');
+      return 'Script information is required!';
     }
 
     let scriptToExecute;
-    if (typeof scriptName === "string") {
+    if (typeof scriptName === 'string') {
       if (!loadedScripts || !loadedScripts[scriptName]) {
         console.error(
           `executeScript "${scriptName}" not found on loadedScripts!`,
@@ -137,8 +137,8 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback) {
       }
     } else {
       if (!scriptName.userType || !scriptName.script) {
-        console.error("Script Info missing userType and/or script!");
-        return "Script Info missing userType and/or script!";
+        console.error('Script Info missing userType and/or script!');
+        return 'Script Info missing userType and/or script!';
       }
 
       if (
@@ -146,8 +146,8 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback) {
         !loadedScriptsByUserTypes[scriptName.userType] ||
         !loadedScriptsByUserTypes[scriptName.userType][scriptName.script]
       ) {
-        console.error("Script Info missing userType and/or script!");
-        return "Script Info missing userType and/or script!";
+        console.error('Script Info missing userType and/or script!');
+        return 'Script Info missing userType and/or script!';
       }
 
       scriptToExecute =
@@ -162,22 +162,22 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback) {
         UiUtils,
         IafScriptEngine,
       };
-      console.log("ScriptHelper executeScript libraries", libraries);
+      console.log('ScriptHelper executeScript libraries', libraries);
       let result = scriptToExecute(operand, libraries, ctx, callback);
       if (result && result instanceof Promise) {
         result = await result;
       }
 
-      if (scriptName === "exportAssets") {
+      if (scriptName === 'exportAssets') {
         if (result) {
-          let name = "Exported_Assets.xlsx";
+          let name = 'Exported_Assets.xlsx';
           exportWorkbook(result, name);
         } else {
-          console.warn("No workbook returned from exportAssets");
+          console.warn('No workbook returned from exportAssets');
         }
       }
 
-      console.log(scriptName + " loadedScript result:", result);
+      console.log(scriptName + ' loadedScript result:', result);
       return result;
     }
   } // else { // COMMENTING OUT WITH INTENT TO REMOVE IN THE FUTURE NOW THAT WE DON'T SUPPORT OLD EXPRESSIONS SCRIPTS
@@ -246,17 +246,17 @@ function getScriptOperators() {
 }
 
 function isProjectNextGenJs() {
-  const sessionProject = JSON.parse(sessionStorage.getItem("project"));
-  console.log("sessionProject", sessionProject);
-  if (sessionProject?._userAttributes?.hasOwnProperty("nextScriptEngine")) {
+  const sessionProject = JSON.parse(sessionStorage.getItem('project'));
+  console.log('sessionProject', sessionProject);
+  if (sessionProject?._userAttributes?.hasOwnProperty('nextScriptEngine')) {
     console.log(
-      "sessionProject._userAttributes.nextScriptEngine",
+      'sessionProject._userAttributes.nextScriptEngine',
       sessionProject?._userAttributes?.nextScriptEngine,
     );
     return sessionProject?._userAttributes?.nextScriptEngine;
   } else {
     const currentProject = IafProj.getCurrent();
-    console.log("currentProject", currentProject);
+    console.log('currentProject', currentProject);
     return currentProject?._userAttributes?.nextScriptEngine
       ? currentProject._userAttributes.nextScriptEngine
       : false;

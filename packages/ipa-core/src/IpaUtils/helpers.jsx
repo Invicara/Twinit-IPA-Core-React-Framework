@@ -1,21 +1,21 @@
-import _ from "lodash";
-import * as XLSX from "xlsx";
+import _ from 'lodash';
+import * as XLSX from 'xlsx';
 
 var getPlatform = function (platformOverride) {
-  var isCordova = typeof Meteor !== "undefined" && Meteor.isCordova;
+  var isCordova = typeof Meteor !== 'undefined' && Meteor.isCordova;
   var iOS = {
     isIOS: true,
     isAndroid: false,
     isCordova: isCordova,
     transitionTimeOut: 450,
-    name: "iOS",
+    name: 'iOS',
   };
   var android = {
     isIOS: false,
     isAndroid: true,
     isCordova: isCordova,
     transitionTimeOut: 320,
-    name: "Android",
+    name: 'Android',
   };
 
   // jl override to test various iOS components
@@ -24,7 +24,7 @@ var getPlatform = function (platformOverride) {
     return iOS;
   }
 
-  if (typeof cordova !== "undefined" && cordova.platformId === "ios") {
+  if (typeof cordova !== 'undefined' && cordova.platformId === 'ios') {
     return iOS;
   }
 
@@ -36,15 +36,15 @@ var getPlatform = function (platformOverride) {
     return iOS;
   }
 
-  if (platformOverride === "Android") {
+  if (platformOverride === 'Android') {
     return android;
   }
 
-  if (typeof cordova !== "undefined" && cordova.platformId === "android") {
+  if (typeof cordova !== 'undefined' && cordova.platformId === 'android') {
     return android;
   }
 
-  if (navigator.userAgent.indexOf("Android") > 0) {
+  if (navigator.userAgent.indexOf('Android') > 0) {
     return android;
   }
 
@@ -53,18 +53,18 @@ var getPlatform = function (platformOverride) {
     isAndroid: false,
     isCordova: isCordova,
     transitionTimeOut: 450,
-    name: "Web",
+    name: 'Web',
   };
 };
 
 function parseQuery(queryString) {
   const query = {};
   const pairs = (
-    queryString[0] === "?" ? queryString.substr(1) : queryString
-  ).split("&");
+    queryString[0] === '?' ? queryString.substr(1) : queryString
+  ).split('&');
   for (let i = 0; i < pairs.length; i++) {
-    const pair = pairs[i].split("=");
-    query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || "");
+    const pair = pairs[i].split('=');
+    query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
   }
   return query;
 }
@@ -72,17 +72,17 @@ function parseQuery(queryString) {
 function getTitleBarInfoFromProps(pageName, props) {
   return {
     pageName,
-    projectName: _.get(props, "selectedItems.selectedProject._name", ""),
+    projectName: _.get(props, 'selectedItems.selectedProject._name', ''),
     switchProject: props.actions ? props.actions.reloadConfig : null,
     userName: props.user
-      ? props.user._firstname + " " + props.user._lastname
-      : "",
+      ? props.user._firstname + ' ' + props.user._lastname
+      : '',
     logout: props.actions ? props.actions.userLogout : null,
   };
 }
 
 const getRandomString = (prefix) =>
-  (prefix || "") + Math.random().toString(36).substring(2, 15);
+  (prefix || '') + Math.random().toString(36).substring(2, 15);
 
 const group = (assets, groupProperty, getPropertyValue) => {
   return assets.reduce((result, a) => {
@@ -120,7 +120,7 @@ const isValidUrl = (testString) => {
     return false;
   }
 
-  return url.protocol === "http:" || url.protocol === "https:";
+  return url.protocol === 'http:' || url.protocol === 'https:';
 };
 
 const makePromiseIgnorable = (promise) => {
@@ -144,15 +144,15 @@ const makePromiseIgnorable = (promise) => {
 
 const exportWorkbook = (result, name) => {
   // Convert workbook into binary (ArrayBuffer)
-  const wbout = XLSX.write(result, { bookType: "xlsx", type: "array" });
+  const wbout = XLSX.write(result, { bookType: 'xlsx', type: 'array' });
 
   // Create blob for download
   const blob = new Blob([wbout], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   });
 
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
   a.download = name;
   document.body.appendChild(a);
