@@ -120,9 +120,12 @@ export const InviteForm  = ({appName, appUrl, currentUser, users, userGroups, pr
     setSendingInvites(true)
     setInviteErrorMode(false)
 
+    let newAppUrl = appUrl
+    if(appUrl === '/digitaltwin') newAppUrl = '/'
+
     let params = {
       base_url: endPointConfig.baseRoot,
-      invite_link: appUrl+(appUrl.endsWith('/')?'':'/'),
+      invite_link: newAppUrl+(newAppUrl.endsWith('/')?'':'/'),
       type: 'Project',
       name: project._name,
       inviter_name: currentUser._firstname + " " + currentUser._lastname,
