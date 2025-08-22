@@ -102,54 +102,24 @@ export const parseNodeName = name => {
  * @returns {{parentNodeInfo: NodeInfo, childNodeInfo: NodeInfo}} All the information contained in the base name of the parent node and all the information contained in the base name of the child node. If the string input does not contain a _, we assume the string is the child node's base name and parse it accordingly, parentNodeIfno will then be undefined.
  * @throws {InvalidNodeName} if the strings contain more than one NODE_SEPERATOR, it means the display name from one of the nodes contained an NODE_SPERATOR, which is a reserved character.
  */
-export const parseNodeNameWithParent = name => {
-    let arr = name?.split(NODE_SEPARATOR);
-    if(arr.length === 1) {
+
+export const parseNodeNameWithParent = (name) => {
+    if (!name) throw new InvalidNodeName(name)
+
+    const arr = name.split(NODE_SEPARATOR);
+
+    if (arr.length === 0) throw new InvalidNodeName(name);
+
+    if (arr.length === 1) {
         return {
             childNodeInfo: parseNodeName(arr[0])
-        }
-    } else if(arr.length === 2) {
-        return {
-            parentNodeInfo: parseNodeName(arr[0]),
-            childNodeInfo: parseNodeName(arr[1])
-        }
-    } else if(arr.length === 3) {
-        return {
-            parentNodeInfo: parseNodeName(arr[0]),
-            childNodeInfo: parseNodeName(arr[1]),
-            secondChildNodeInfo: parseNodeName(arr[2])
         };
     }
-    throw new InvalidNodeName(name)
-}
 
- /**
- * 
- * @param {string} name The complete name of the node you want to parse following this format : parentNodeBaseName_nodeBaseName
- * @returns {{parentNodeInfo: NodeInfo, childNodeInfo: NodeInfo}} All the information contained in the base name of the parent node and all the information contained in the base name of the child node. If the string input does not contain a _, we assume the string is the child node's base name and parse it accordingly, parentNodeIfno will then be undefined.
- * @throws {InvalidNodeName} if the strings contain more than one NODE_SEPERATOR, it means the display name from one of the nodes contained an NODE_SPERATOR, which is a reserved character.
- */
+    let mulitLevels = {
+        parentNodeInfo: arr.slice(0, -1).map(segment => parseNodeName(segment)),
+        childNodeInfo: parseNodeName(arr[arr.length - 1])
+    };
 
- // Handling nodes that contain more then two levels
- export const parseNodeNameWithParents = name => {
-
-    let arr = name?.split(NODE_SEPARATOR);
-    let parentNodeName = arr[arr.length - 2]
-    let childNodeName = arr[arr.length - 1]
-
-    if(arr.length === 1) {
-        return {
-            childNodeInfo: parseNodeName(arr[0])
-        }
-    } else if(arr.length === 2) {
-        return {
-            parentNodeInfo: parseNodeName(arr[0]),
-            childNodeInfo: parseNodeName(arr[1])
-        }
-    } 
-
-    return  {
-        parentNodeInfo: parseNodeName(parentNodeName),
-        childNodeInfo: parseNodeName(childNodeName)
-    }
+    return mulitLevels
 }
