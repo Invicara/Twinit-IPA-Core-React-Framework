@@ -846,12 +846,12 @@ class EntityModal extends React.Component {
 
     selectKeys.forEach(propertyKey => {
       const property = this.state.newEntity.properties[propertyKey]
-      const value = property.hasMultipleValues ? undefined : [property.val]
-      placeholders[propertyKey] = property.hasMultipleValues && (
+      const value = property?.hasMultipleValues ? undefined : [property?.val]
+      placeholders[propertyKey] = property?.hasMultipleValues && (
         <ControlTextOverlay text='Multiple values' />
       )
-      highlightedOptions[propertyKey] = property.hasMultipleValues
-        ? property.val
+      highlightedOptions[propertyKey] = property?.hasMultipleValues
+        ? property?.val
         : undefined
       currentValue[propertyKey] = value
     })

@@ -106,18 +106,25 @@ class EntityView extends React.Component {
 
         let actions = {}
         let tableActions = {}
+        let newActions = {}
+
         if (this.props.handler.config.actions) {
             actions = Object.assign({}, this.props.handler.config.actions)
             actions.onSuccess = this.actionSuccess
             actions.doEntityAction = this.props.doEntityAction
+
+            newActions.onSuccess = this.actionSuccess
+            newActions.doEntityAction = this.props.doEntityAction
 
             tableActions.onSuccess = this.actionSuccess
             tableActions.doEntityAction = this.props.doEntityAction
 
             let actionNames = Object.keys(actions);
             actionNames.forEach((action) => {
-                if (actions[action].showOnTable)
+                if (actions[action].showOnTable) {
                     tableActions[action] = actions[action];
+                    newActions[action] = actions[action];
+                }
             });
 
         }
@@ -132,7 +139,7 @@ class EntityView extends React.Component {
                     onSummary={this.openSummary}
                     entity={this.state.selectedEntity || this.props.selectedEntities[0]}
                     config={this.props.handler.config}
-                    actions={actions}
+                    actions={newActions}
                     availableDataGroups={this.props.availableDataGroups}
                     entityType={this.props.entitySingular}
                     loadingDataGroups={this.props.loadingAvailableDataGroups}
