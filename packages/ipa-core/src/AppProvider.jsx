@@ -764,7 +764,9 @@ async function calculateRoutes(config, ipaConfig) {
       title: handler.title || 'no title',
       icon: (handler.icon || ''),
       name: handlerName,
-      exact: true
+      exact: true,
+      newTab: handler?.config?.openNewTab || null,
+      newTabUrl: handler?.config?.url || null,
     };
 
     let detailItem = undefined;

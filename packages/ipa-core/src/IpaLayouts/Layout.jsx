@@ -79,7 +79,7 @@ class Layout extends React.Component {
         let pageRegex = new RegExp(page.path + '(?:/|$)');
         return (
             <li className={clsx('nav-li', pageRegex.test(loc) ? activeClass : '')} key={page.path ? page.path : page.key}>
-                <Item link={page.path} key={page.path ? page.path : page.key}
+                <Item page={page} link={page.path} key={page.path ? page.path : page.key}
                           customClasses={page.customClasses} onClick={page.onClick} item={false}>
                     {this._getIcon(page.icon, iconClass)}
                     <span className="menu-item"> {page.title}</span>

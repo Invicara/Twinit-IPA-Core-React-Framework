@@ -28,7 +28,13 @@ class Item extends React.Component {
     );
     var item;
     //TODO: replace by a more declarative option
-    if (this.props.link) {
+    if(this.props?.page?.newTab) {
+      item = (
+        <div style={{cursor: 'pointer'}} onClick={()=> window.open(this.props?.page?.newTabUrl)}>
+          {this.props.children}
+        </div>
+      )
+    } else if (this.props.link) {
       item = (
          <Link className={classes} to={this.props.link} onClick={this.props.onClick}>
            {this.props.children}
