@@ -52,10 +52,6 @@ export const ScriptedLinkedSelects = ({
   };
 
   const updateFetchOptions = async () => {
-    // If called from File Table, using the LinkedSelectValues provided to avoid repeated script calls.
-    if(LinkedSelectValues) {
-      setSelects(LinkedSelectValues)
-    } else {
       let newSelects = await fetchOptions(selects);
       if (currentValue) {
         let selectKeys = Object.keys(selects);
@@ -72,7 +68,6 @@ export const ScriptedLinkedSelects = ({
           } else break;
         }
       }
-    }
   };
 
   const fetchOptions = async (
@@ -80,8 +75,7 @@ export const ScriptedLinkedSelects = ({
     currentSelect,
     previousSelectsValues,
   ) => {
-    const nextSelect =
-      _.values(selects)[currentSelect ? currentSelect.index + 1 : 0];
+    const nextSelect = _.values(selects)[currentSelect ? currentSelect.index + 1 : 0];
     let newSelects;
 
     if (nextSelect) {
