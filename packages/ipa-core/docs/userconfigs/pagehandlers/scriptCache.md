@@ -22,5 +22,7 @@ Please find a list of all the functions provided by the `ScriptCache` below
 
 
 ### `clearCache`
-
 `ScriptCache.clearCache()` allows a user to clear the Cache.
+
+### `processCache`
+`ScriptCache.processCache(function)` allows a user to process the Cache using a function argument. The passed in function has access to cachedPromises.
