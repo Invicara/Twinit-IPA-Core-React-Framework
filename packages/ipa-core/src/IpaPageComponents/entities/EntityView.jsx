@@ -182,6 +182,7 @@ class EntityView extends React.Component {
                             selectors={handler.config.selectBy}
                             doFetch={this._doFetch}
                             reloadToken={this.state.reloadToken}
+                            handler={this.props.handler}
                         />
                     </div>
                 </StackableDrawer>
