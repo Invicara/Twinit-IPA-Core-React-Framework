@@ -97,6 +97,7 @@ class EnhancedFetchControl extends React.Component {
                     currentState={selector.currentState}
                     disable={this.props.disable} //Its not useful yet but might be for some Controls in the future.
                     reloadToken={this.props.reloadToken}
+                    handler={this.props.handler}
                 />
             </div>
 
