@@ -128,8 +128,9 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
         treeLevelsLatest.current = treeLevels;
         try {
             refreshTree().then((nodeIndex) => {
+                console.log('Adam TreeSearch handler', handler)
                 // This will auto select all entities on the page render.
-                if(handler.config.selectAllOnRender) {
+                if(handler?.config?.selectAllOnRender) {
                     const newNodeIndex = toggleSelectedStatus(nodeIndex)
                     handleNodeIndexChange(newNodeIndex)
                 }
