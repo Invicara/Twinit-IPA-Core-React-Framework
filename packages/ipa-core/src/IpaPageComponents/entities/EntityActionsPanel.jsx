@@ -73,8 +73,11 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
 
       newEntity = await runPreEntityActionScript({action, entity: newEntity, type});
 
-      let origEntity = action.showOnTable && !Array.isArray(entity) ? [{...entity}] : entity;
+      let origEntity
+      origEntity = action.showOnTable && !Array.isArray(entity) ? [{...entity}] : entity;
 
+      if(action.name === 'View' && !action.showOnTable) origEntity = [{...entity}]
+      
       let result = await action.doEntityAction(action.name, {new: newEntity, original: origEntity}, type);
       if (result?.success) {
         if (action.onSuccess) {
