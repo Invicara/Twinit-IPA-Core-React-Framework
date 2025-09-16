@@ -141,15 +141,15 @@ export const updateMultipleFileAttribute = (fileUpdates) => async (dispatch) => 
     fileUpdates.forEach(fu => dispatch(updateFileAttribute(fu)))
 }
 
-export const uploadFiles = (container, processUploadScript, postProcessScript, batchSize = 5) => async (dispatch, getState) => {
+export const uploadFiles = (container, processUploadScript, postProcessScript, batchSize = 5, getFileContainerScript) => async (dispatch, getState) => {
     const batches = _.chunk(getFilesMetadata(getState()), batchSize);
     for(let batch of batches){
-        await dispatch(uploadFileBatch(container, batch, processUploadScript))
+        await dispatch(uploadFileBatch(container, batch, processUploadScript, getFileContainerScript))
     }
     if(postProcessScript) dispatch(postProcessFiles(postProcessScript))
 }
 
-export const uploadFileBatch = (container, batch, processUploadScript) => async dispatch => {
+export const uploadFileBatch = (container, batch, processUploadScript, getFileContainerScript) => async dispatch => {
     const refreshBytes = file => bytes => dispatch(updateFile({name: file.name, bytesUploaded: bytes}))
 
     return Promise.all(batch.map(async file => {
@@ -166,10 +166,19 @@ export const uploadFileBatch = (container, batch, processUploadScript) => async 
         }
       }
 
+      let fileContainer = container;
+      // get the file container for the file if provided
+      if(getFileContainerScript){
+        fileContainer = (await ScriptHelper.executeScript(getFileContainerScript, {file})) || container;
+        // Recompute version based on resolved container just before upload
+        const { version } = await withVersion(fileContainer)(file);
+        dispatch(updateFile({name: file.name, version}))
+      }
+
       dispatch(updateFile({name: file.name, status: FileStatus.PROGRESS}))
 
       try{
-          const uploaded = await uploadFile(container, file,refreshBytes(file), processUploadScript);
+          const uploaded = await uploadFile(fileContainer, file, refreshBytes(file), processUploadScript);
           dispatch(updateFile({name: file.name, status: FileStatus.COMPLETE, uploadResult: uploaded}))
       } catch {
           dispatch(updateFile({name: file.name, status: FileStatus.ERROR}))
