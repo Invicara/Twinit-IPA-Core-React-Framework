@@ -114,7 +114,7 @@ export default class ProjectPickerModal extends React.Component {
       for (let i = 0; i < projects.length; i++) {
 
         let userGroups = await IafProj.getUserGroupsForCurrentUser(projects[i])
-        
+        // console.log('ProjectPickerModal loadModal userGroups', userGroups)
         //filter out groups with no configs
         if (userGroups)
           userGroups = userGroups.filter(ug => !!ug._userAttributes.userConfigs)
@@ -167,7 +167,9 @@ export default class ProjectPickerModal extends React.Component {
             usergroupid = myUserGroups[myProjects[0]._id][0]._id
       }
 
-      const selectUserGroupOptions = this.getUserGroupOptions(projectid)
+      const selectUserGroupOptions = myUserGroups[projectid]
+        ? myUserGroups[projectid].map((ug) => ({ value: ug._id, label: ug._name }))
+        : []
 
       this.setState({selectedProjectId: projectid, showLoadButton: true,
         projectUserGroups: myUserGroups[projectid],
@@ -409,7 +411,8 @@ export default class ProjectPickerModal extends React.Component {
                 </div>
           return [<span>&bull;</span>,inv._params.name, inv._usergroup._name, statusOrButtons]})}
         />
-
+console.log('ProjectPickerModal this.state.userGroupOptions', this.state.userGroupOptions)
+console.log('ProjectPickerModal this.state.userGroupValue', this.state.userGroupValue)
     let title = <span>Project Selection</span>
     return (
       <GenericModal
