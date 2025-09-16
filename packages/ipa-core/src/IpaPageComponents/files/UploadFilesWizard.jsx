@@ -62,7 +62,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
 
     const startUpload = () => {
         setSelectedStep(3);
-        uploadFiles(uploadContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles)
+        uploadFiles(uploadContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles, 5, config.scripts.getFileContainer)
     }
 
     const handleFileChange = config.readonly ? _.noop : (files, field, newValue) => updateMultipleFileAttribute(
