@@ -254,15 +254,15 @@ export const postProcessFiles = (postProcessScript) => async (dispatch, getState
 const withVersion = container => async file => {
     try {
         const existingCheck = await IafFile.getFileItems(container, {name: file.name}, null, null, null);
-        const version = !!existingCheck && existingCheck._list.length > 0 ?
-            existingCheck._list[0].tipVersionNumber : 1;
+        const hasExisting = !!existingCheck && existingCheck._list.length > 0;
+        const tip = hasExisting ? existingCheck._list[0].tipVersionNumber : 0;
+        const version = (tip || 0) + 1; // show next version to be created
         return {name: file.name, version}
     } catch (error) {
         console.error('[withVersion] Error checking existing files:', error);
         return {name: file.name, version: 1}
     }
 }
-
 const uploadFile = (container, file, refreshBytes) => new Promise((resolve, reject) => {
     const newFile = new File([getBlob(file)], file.name, {type:getBlob(file).type})
     newFile.fileItem = {
