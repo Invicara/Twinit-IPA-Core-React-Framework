@@ -141,6 +141,51 @@ export const updateMultipleFileAttribute = (fileUpdates) => async (dispatch) => 
     fileUpdates.forEach(fu => dispatch(updateFileAttribute(fu)))
 }
 
+export const updateMultipleFileAttributeAndVersion = (fileUpdates, defaultContainer, getFileContainerScript) => async (dispatch, getState) => {
+    // Update attributes first
+    fileUpdates.forEach(fu => {
+        dispatch(updateFileAttribute(fu));
+    });
+    
+    // Recompute version for each updated file based on new attributes
+    const versionUpdates = await Promise.allSettled(
+        fileUpdates.map(async (fileUpdate) => {
+            const file = getState().files.toUpload.find(f => f.name === fileUpdate.name);
+            if (!file) {
+                return null;
+            }
+            
+            let fileContainer = defaultContainer;
+            
+            // Resolve container based on updated attributes
+            if (getFileContainerScript) {
+                try {
+                    fileContainer = (await ScriptHelper.executeScript(getFileContainerScript, { file })) || defaultContainer;
+                } catch (error) {
+                    console.warn(`Failed to resolve container for file ${file.name}:`, error);
+                    // Continue with default container
+                }
+            }
+            
+            // Compute version for resolved container
+            try {
+                const { version } = await withVersion(fileContainer)(file);
+                return { name: file.name, version };
+            } catch (error) {
+                console.warn(`Failed to compute version for file ${file.name}:`, error);
+                return null; // Keep existing version
+            }
+        })
+    );
+    
+    // Update versions for successful computations
+    versionUpdates.forEach((result, index) => {
+        if (result.status === 'fulfilled' && result.value) {
+            dispatch(updateFile(result.value));
+        }
+    });
+}
+
 export const uploadFiles = (container, processUploadScript, postProcessScript, batchSize = 5, getFileContainerScript) => async (dispatch, getState) => {
     const batches = _.chunk(getFilesMetadata(getState()), batchSize);
     for(let batch of batches){
@@ -207,10 +252,15 @@ export const postProcessFiles = (postProcessScript) => async (dispatch, getState
 
 //Other
 const withVersion = container => async file => {
-    const existingCheck = await IafFile.getFileItems(container, {name: file.name}, null, null, null);
-    const version = !!existingCheck && existingCheck._list.length > 0 ?
-        existingCheck._list[0].tipVersionNumber : 1;
-    return {name: file.name, version}
+    try {
+        const existingCheck = await IafFile.getFileItems(container, {name: file.name}, null, null, null);
+        const version = !!existingCheck && existingCheck._list.length > 0 ?
+            existingCheck._list[0].tipVersionNumber : 1;
+        return {name: file.name, version}
+    } catch (error) {
+        console.error('[withVersion] Error checking existing files:', error);
+        return {name: file.name, version: 1}
+    }
 }
 
 const uploadFile = (container, file, refreshBytes) => new Promise((resolve, reject) => {
