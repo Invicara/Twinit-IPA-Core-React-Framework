@@ -8,7 +8,7 @@ import {
     getFilesToUpload, getRejectedFiles,
     setRejectedFiles,
     isComplete, isReadyFor,
-    loadAssociatedEntities, updateMultipleFileAttribute,
+    loadAssociatedEntities, updateMultipleFileAttribute, updateMultipleFileAttributeAndVersion,
     uploadFiles, removeAllFiles
 } from "../../redux/slices/files";
 import {UploadFilesWizardSteps} from "./UploadWizardSteps";
@@ -23,7 +23,7 @@ import './UploadFilesWizard.scss'
 import {fetchLinkedSelectValues} from './LinkedSelectValues'
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
-                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles, removeAllFiles}) => {
+                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, updateMultipleFileAttributeAndVersion, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles, removeAllFiles}) => {
 
     const [selectedStep, setSelectedStep] = useState(1);
     const [uploadContainer, setUploadContainer] = useState(selectedItems.selectedProject.rootContainer)
@@ -65,9 +65,34 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         uploadFiles(uploadContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles, 5, config.scripts.getFileContainer)
     }
 
-    const handleFileChange = config.readonly ? _.noop : (files, field, newValue) => updateMultipleFileAttribute(
-        files.map(file =>({name: file.name, [field]: newValue}))
-    );
+    const handleFileChange = config.readonly ? _.noop : (files, field, newValue) => {
+        const normalizedField = Array.isArray(field) ? field.join(',') : field;
+        const fieldCandidates = Array.isArray(field) ? [normalizedField, ...field] : [normalizedField];
+        
+        // Check if this attribute affects container resolution
+        const containerAffectingAttributes = config.containerAffectingAttributes || [];
+        
+        const affectsContainer = containerAffectingAttributes && containerAffectingAttributes.length > 0 &&
+                                 containerAffectingAttributes.some(attr => fieldCandidates.includes(attr));
+                                 
+        const shouldRecomputeVersion = !!config.enableDynamicVersioning &&
+                                       !!config.scripts?.getFileContainer &&
+                                       affectsContainer;
+        
+        if (shouldRecomputeVersion) {
+            // Only recompute version for attributes that affect container resolution
+            updateMultipleFileAttributeAndVersion(
+                files.map(file =>({name: file.name, [normalizedField]: newValue})),
+                uploadContainer,
+                config.scripts.getFileContainer
+            );
+        } else {
+            // Use existing behavior for attributes that don't affect container
+            updateMultipleFileAttribute(
+                files.map(file =>({name: file.name, [normalizedField]: newValue}))
+            );
+        }
+    };
 
     const buildReport = () => {
         const headers = ['Name', ...columnConfig.map(col => `${col.displayAs}${col.required ? '*' : ''}`)];
@@ -179,7 +204,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, fetchColumnConfig, setRejectedFiles, removeAllFiles
+    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, updateMultipleFileAttributeAndVersion, fetchColumnConfig, setRejectedFiles, removeAllFiles
 }
 
 export default compose(
