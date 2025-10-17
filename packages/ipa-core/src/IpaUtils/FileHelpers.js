@@ -7,65 +7,55 @@ var JSZip = require("jszip");
 var FileSaver = require('file-saver');
 
 export async function downloadDocuments(fileItems) {
-  let fileUrls = [];
-  let urlPromises = [];
+  if (!fileItems?.length) return
 
-  for (let i = 0; i < fileItems.length; i++) {
+  const fileUrls = await Promise.all(
+    fileItems.map(async (fileItem) => {
+      const urlObj = await IafFileSvc.getFileUrl(fileItem._fileId)
+      const fileItemName = fileItem["Entity Name"]
 
-    urlPromises.push(IafFileSvc.getFileUrl(fileItems[i]._fileId).then((urlObj) => {
-      fileUrls.push(urlObj);
-    }));
+      // --- Fix extension case mismatch ---
+      if (fileItemName && urlObj._name) {
+        const fileItemExt = fileItemName.match(/\.[^/.]+$/)?.[0]
+        const urlObjExt = urlObj._name.match(/\.[^/.]+$/)?.[0]
 
-  }
-
-  Promise.all(urlPromises).then(async () => {
-
-    if (fileUrls.length === 1)
-      window.location.href = fileUrls[0]._url;
-    else if (fileUrls.length > 1) {
-
-      let urlFetchPromises = [];
-      let allFileBuffs = {};
-      for (let i = 0; i < fileUrls.length; i++) {
-
-        urlFetchPromises.push(fetch(fileUrls[i]._url).then((resp) => {
-
-          return new Promise((resolve, reject) => {
-            resp.arrayBuffer().then((buff) => {
-              resolve({ buff, resp });
-            });
-          })
-
-        }).then(((bufferInfo) => {
-          return new Promise((resolve, reject) => {
-
-            let fileUrlObj = _.find(fileUrls, { _url: bufferInfo.resp.url })
-            allFileBuffs[fileUrlObj._name] = bufferInfo.buff;;
-            resolve(bufferInfo.buff)
-          });
-
-        })));
+        if (fileItemExt && urlObjExt && fileItemExt.toLowerCase() === urlObjExt.toLowerCase() && fileItemExt !== urlObjExt) {
+          urlObj._name = urlObj._name.replace(urlObjExt, fileItemExt)
+        }
       }
 
-      Promise.all(urlFetchPromises).then(() => {
+      return urlObj
+    })
+  );
 
-        let buffs = Object.keys(allFileBuffs);
-        let zip = new JSZip();
+  if (fileUrls.length === 1) {
+    const file = fileUrls[0]
+    const blob = await (await fetch(file._url)).blob()
 
-        buffs.forEach((filebuff) => {
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(blob)
+    link.download = file._name
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(link.href)
+    return
+  }
 
-          let fileToZip = new File([allFileBuffs[filebuff]], filebuff);
-          zip.file(filebuff, fileToZip, { binary: true });
+  const fileBuffers = await Promise.all(
+    fileUrls.map(async (f) => {
+      const buff = await (await fetch(f._url)).arrayBuffer()
+      return { name: f._name, buff }
+    })
+  )
 
-        });
+  const zip = new JSZip()
+  fileBuffers.forEach(({ name, buff }) => {
+    zip.file(name, buff, { binary: true })
+  })
 
-        zip.generateAsync({ type: 'blob' }).then((zippedContent) => {
-          FileSaver.saveAs(zippedContent, 'DownloadedFiles.zip');
-        });
-      });
-    }
-  });
-
+  const zippedBlob = await zip.generateAsync({ type: "blob" })
+  FileSaver.saveAs(zippedBlob, "DownloadedFiles.zip")
 }
 export async function downloadDocumentsVersions(fileItems) {
   let fileUrls = [];
