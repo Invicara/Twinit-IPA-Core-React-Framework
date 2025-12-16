@@ -15,6 +15,10 @@
   "main": "modules/index.js",
   "module": "esm_modules/index.js",
   "exports": {
+    ".": {
+      "import": "./esm_modules/index.js",
+      "require": "./modules/index.js"
+    },
     "./*.scss": "./*.scss",
     "./*.svg": "./*.svg",
     "./*.js": "./*.js",
@@ -22,7 +26,8 @@
   },
   "files": [
     "/dist",
-    "/modules"
+    "/modules",
+    "/esm_modules"
   ],
   "dependencies": {
     "@dtplatform/iaf-doc-viewer": "~4.4.0",
