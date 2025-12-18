@@ -41,6 +41,7 @@ module.exports = {
         config.resolve.alias = {
             ...(config.resolve.alias || {}),
             fonts: path.resolve(__dirname, "../src/IpaFonts"),
+            "@storybook/client-api": require.resolve("@storybook/preview-api"),
         };
 
         config.module.rules.push({
@@ -72,6 +73,7 @@ module.exports = {
             crypto: false,
             util: false,
             canvas: false,
+            zlib: false,
             http: require.resolve("stream-http"),
             https: require.resolve("https-browserify"),
             stream: require.resolve("stream-browserify"),
