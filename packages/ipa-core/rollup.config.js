@@ -134,6 +134,7 @@ const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
 
 export default {
     input: {
+        'index': 'src/main.js',
         'IpaControls':'src/IpaControls/main.js',
         'IpaUtils':'src/IpaUtils/main.js',
         'IpaDialogs':'src/IpaDialogs/main.js',
@@ -148,13 +149,21 @@ export default {
         format: 'cjs',
         name: 'IpaControls',
         sourcemap: false,
-        entryFileNames: '[name]/index.js',
+        entryFileNames: (chunkInfo) => {
+            // Output index.js at root, others in subdirectories
+            return chunkInfo.name === 'index' ? 'index.js' : '[name]/index.js';
+        },
+        chunkFileNames: '[name]-[hash].js',
     },{
         dir: 'esm_modules',
         format: 'esm',
         name: 'IpaControls',
         sourcemap: false,
-        entryFileNames: '[name]/index.js',
+        entryFileNames: (chunkInfo) => {
+            // Output index.js at root, others in subdirectories
+            return chunkInfo.name === 'index' ? 'index.js' : '[name]/index.js';
+        },
+        chunkFileNames: '[name]-[hash].js',
     }],
     plugins: [
         cleaner({targets: ['./modules']}),

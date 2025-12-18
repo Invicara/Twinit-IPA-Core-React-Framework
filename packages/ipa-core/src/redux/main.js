@@ -52,14 +52,14 @@ import {
     fetchAllNamedUserItems, fetchNamedUserItemItems,
     namedUserItemActions, selectNamedUserItemById,
     selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus,
-    fetchNamedUserTotalAmountOfItems, importDataValidation, 
+    fetchNamedUserTotalAmountOfItems, importDataValidation,
     SelectNamedUserItemsErrorStatus, fileImport, SelectNamedUserItemsImportStatus
 } from "./slices/named-user-item.slice";
 import { addEntityComponents, getEntityDataComponent } from "./slices/entityUI"
-import store  from '../redux/store'
+import store, {frameworkReducers}  from '../redux/store'
 
 const redux = {
-    Entities: { 
+    Entities: {
         getFilteredEntities,
         getAppliedGroups,
         getAppliedRelatedGroups,
@@ -123,12 +123,13 @@ const redux = {
         fetchNamedUserTotalAmountOfItems,
         importDataValidation,
         fileImport
-    }, 
+    },
     EntityUi: {
         addEntityComponents,
         getEntityDataComponent
     },
-    store: store
+    store: store,
+    frameworkReducers
 }
 
 export default redux
