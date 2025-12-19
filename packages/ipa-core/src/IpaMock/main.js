@@ -1,7 +1,7 @@
 import MockAppProvider, {decorateWithMockAppProvider} from "./MockAppProvider";
 import {createLegacyContextSupport} from './util/legacyContext'
-import {AppProvider} from "./AppProvider";
-import withAuthHoc from "./withAuthHoc";
+import {AppProvider} from "../AppProvider";
+import withAuthHoc from "../AppProvider";
 
 const mocks = {
     MockAppProvider,
