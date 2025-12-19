@@ -12,7 +12,9 @@ module.exports = {
     ],
     framework: {
         name: "@storybook/react-webpack5",
-        options: {},
+        options: {
+            strictMode: false // this will enable Legacy Context
+        },
     },
     staticDirs: [
         "../src/stories/assets",
