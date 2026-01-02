@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback, useRef} from "react";
+import React, {useMemo, useCallback, useRef, useEffect} from "react";
 import clsx from "clsx";
 import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
@@ -50,6 +50,20 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         handleAllCheck = checkedObject.handleAllCheck;
         entityInstances = checkedObject.items;
     }
+    // Auto-select when there's only one entity, deselect all when more than one
+    useEffect(() => {
+        if (entities.length === 1 && entityInstances.length === 1 && !entityInstances[0].checked) {
+            handleCheck(entityInstances[0]);
+        } else if (entities.length > 1) {
+            // Deselect any checked entities
+            entityInstances.forEach(entity => {
+                if (entity.checked) {
+                    handleCheck(entity);
+                }
+            });
+        }
+    }, [entities.length, entityInstances]);
+
     const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
 
     const handleColumnClick = useCallback((col) => () => sortEntitiesBy(col.accessor),[sortEntitiesBy]);
