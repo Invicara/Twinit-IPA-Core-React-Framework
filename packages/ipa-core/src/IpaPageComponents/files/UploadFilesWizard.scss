@@ -366,3 +366,10 @@ ul li.file-asset::before {
     border-bottom: 1px solid $base-text-color;
   }
 }
+
+.toast-container {
+  position: fixed;
+  width: 100%;
+  right: 0;
+  z-index: 1;
+}
