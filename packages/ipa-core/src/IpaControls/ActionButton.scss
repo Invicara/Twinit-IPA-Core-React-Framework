@@ -44,4 +44,10 @@
       color: var(--app-accent-color);
     }
 
+    &--disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: auto;
+    }
+
 }

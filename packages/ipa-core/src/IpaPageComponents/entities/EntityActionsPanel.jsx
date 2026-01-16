@@ -90,9 +90,19 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
     }
   }
 
+  const isEntityEmpty = () => {
+    if (Array.isArray(entity)) {
+      return entity.length === 0;
+    }
+    return !entity || Object.keys(entity).length === 0;
+  };
+
   if (actions) {
     Object.keys(actions).forEach(actionName => {
       let action = actions[actionName];
+
+      // Disable Export button if no entities are selected
+      const shouldDisable = actionName === 'Export' && isEntityEmpty();
 
       if (action?.allow)
         icons.push(
@@ -101,6 +111,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
             icon={action.icon} 
             title={action.title || actionName} 
             onClick={e=>doAction(actionName)}
+            disabled={shouldDisable}
           />
         )
     })
