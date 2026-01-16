@@ -7,7 +7,7 @@ import {
     cleanFiles, fetchColumnConfig, getAssociatedEntities, getColumnConfig,
     getFilesToUpload, getRejectedFiles,
     setRejectedFiles,
-    isComplete, isReadyFor,
+    isComplete, isError, isFinished, isReadyFor,
     loadAssociatedEntities, updateMultipleFileAttribute, updateMultipleFileAttributeAndVersion,
     uploadFiles, removeAllFiles
 } from "../../redux/slices/files";
@@ -21,6 +21,8 @@ import _ from 'lodash'
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import './UploadFilesWizard.scss'
 import {fetchLinkedSelectValues} from './LinkedSelectValues'
+import ToastContainer, {useToast} from "../../IpaControls/ToastContainer";
+import {ErrorToast} from "../../IpaControls/ToastNotifications";
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
                                addFilesToUpload, selectedItems, updateMultipleFileAttribute, updateMultipleFileAttributeAndVersion, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles, removeAllFiles}) => {
@@ -28,6 +30,7 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     const [selectedStep, setSelectedStep] = useState(1);
     const [uploadContainer, setUploadContainer] = useState(selectedItems.selectedProject.rootContainer)
     const [isloading, setIsLoading] = useState(false)
+    const [toasts, addToast] = useToast();
 
     useEffect(() => {
 
@@ -60,9 +63,17 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     };
     const removeRejectedFiles = () => setRejectedFiles([])
 
-    const startUpload = () => {
+    const startUpload = async () => {
         setSelectedStep(3);
-        uploadFiles(uploadContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles, 5, config.scripts.getFileContainer)
+        const errors = await uploadFiles(uploadContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles, 5, config.scripts.getFileContainer)
+        if (errors && errors.length > 0) {
+            errors.forEach(({fileName, error}) => {
+                addToast({
+                    toast: <ErrorToast message={`${fileName}: ${error}`} />,
+                    delay: 7000
+                });
+            });
+        }
     }
 
     const handleFileChange = config.readonly ? _.noop : (files, field, newValue) => {
@@ -163,14 +174,22 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         {
             name: 'Uploading',
             component: <FileUploadTable files={files}/>,
-            buttons: WizardButtons({
-                primaryContent: files.every(isComplete) ?
-                    <span className={'button-content'}>Next<i className="fas fa-angle-right"/></span> :
-                    <span className={'button-content'}><i className="fas fa-sync"/>Uploading</span>,
-                primaryDisabled: !files.every(isComplete),
-                onPrimaryClick: () => setSelectedStep(4),
-                hideSecondary: true
-            })
+            buttons: (() => {
+                const allFinished = files.every(isFinished);
+                const hasSuccesses = files.some(isComplete);
+                const allErrors = allFinished && !hasSuccesses;
+                
+                return WizardButtons({
+                    primaryContent: allFinished && hasSuccesses ?
+                        <span className={'button-content'}>Next<i className="fas fa-angle-right"/></span> :
+                        allErrors ?
+                            <span className={'button-content'}>Cancel</span> :
+                            <span className={'button-content'}><i className="fas fa-sync"/>Uploading</span>,
+                    primaryDisabled: !allFinished,
+                    onPrimaryClick: allErrors ? cancel : () => setSelectedStep(4),
+                    hideSecondary: true
+                });
+            })()
         },
         {
             name: 'Review',
@@ -187,13 +206,18 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         },
     ]
 
-    return <UploadFilesWizardSteps steps={steps} selectedStep={selectedStep} associatedEntities={associatedEntities}
+    return <>
+        <div className="toast-container">
+            <ToastContainer toasts={toasts} />
+        </div>
+        <UploadFilesWizardSteps steps={steps} selectedStep={selectedStep} associatedEntities={associatedEntities}
                                    addFiles={addFiles} cancel={cancel} startUpload={startUpload} rejectedFiles={rejectedFiles}
                                    uploadIconName={config?.uploadIconName}
                                    removeRejectedFiles={removeRejectedFiles}
                                    hideDefaultError={config.hideDefaultRejectedError}
                                    isloading={isloading}
-    />
+        />
+    </>
 }
 
 const mapStateToProps = state => ({
