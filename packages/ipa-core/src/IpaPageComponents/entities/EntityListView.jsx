@@ -50,19 +50,38 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         handleAllCheck = checkedObject.handleAllCheck;
         entityInstances = checkedObject.items;
     }
-    // Auto-select when there's only one entity, deselect all when more than one
+
+    const autoSelectedRef = useRef(false);
+
     useEffect(() => {
-        if (entities.length === 1 && entityInstances.length === 1 && !entityInstances[0].checked) {
+    // Auto-select if only one Entity has been passsed through
+    if (entities.length === 1 && entityInstances.length === 1) {
+        if (!entityInstances[0].checked && !autoSelectedRef.current) {
+            autoSelectedRef.current = true;
             handleCheck(entityInstances[0]);
-        } else if (entities.length > 1) {
-            // Deselect any checked entities
+        }
+        return;
+    }
+
+    // If multiple Entities have been passed, remove auto-selection
+    if (entities.length > 1 && autoSelectedRef.current) {
+        autoSelectedRef.current = false;
+
+        // For controlled mode, call onChange directly with all unchecked
+        if (onChange) {
+            const uncheckedEntities = entityInstances.map(e => ({...e, checked: false}));
+            onChange(uncheckedEntities);
+        } else {
+            // For uncontrolled mode, call handleCheck for each checked entity
             entityInstances.forEach(entity => {
                 if (entity.checked) {
                     handleCheck(entity);
                 }
             });
         }
-    }, [entities.length, entityInstances]);
+    }
+}, [entities.length, entityInstances, onChange, handleCheck]);
+
 
     const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
 

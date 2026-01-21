@@ -122,9 +122,11 @@ export const useChecked = (inputItems, checkCallback, allCheckCallback) => {
     checkCallback?.(checkedInstance, !checkedInstance.checked);
     setItems((instances) =>
       instances.map((instance) =>
-        instance === checkedInstance
+        // Use ID comparison instead of reference equality to support batched updates
+        (instance._id && instance._id === checkedInstance._id) ||
+        (instance.name && instance.name === checkedInstance.name)
           ? {
-              ...checkedInstance,
+              ...instance,
               checked: !checkedInstance.checked,
             }
           : instance,
