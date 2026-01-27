@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 /**
  * Legacy context support thanks to:
@@ -17,6 +18,10 @@ export const createLegacyContextSupport = (contextTypes) => {
     }
   }
 
+  LegacyContextSupport.propTypes = {
+        context: PropTypes.object.isRequired,
+        children: PropTypes.node,
+  };
   LegacyContextSupport.contextTypes = contextTypes;
   LegacyContextSupport.childContextTypes = contextTypes;
   return LegacyContextSupport;

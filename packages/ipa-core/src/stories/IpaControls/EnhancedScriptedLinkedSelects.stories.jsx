@@ -1,47 +1,53 @@
 import React, { useState } from "react";
-import { storiesOf } from "@storybook/react";
+import { useArgs } from "@storybook/preview-api";
 import { action } from "@storybook/addon-actions";
 import { ScriptedLinkedSelects } from "../../IpaControls/EnhancedScriptedLinkedSelects";
-import { useArgs } from "@storybook/client-api";
 
 // Mock selects configuration
 const mockSelects = [
-  {
-    display: "Item",
-    script: "getCollectionTypesFlat",
-  },
-  {
-    display: "Color",
-    multi: false,
-    script: "getCollectionNames",
-    required: false,
-  },
+    {
+        display: "Item",
+        script: "getCollectionTypesFlat",
+    },
+    {
+        display: "Color",
+        multi: false,
+        script: "getCollectionNames",
+        required: false,
+    },
 ];
 
-// Define the Storybook story for the ScriptedLinkedSelects component
-storiesOf("Controls/ScriptedLinkedSelects", module).add("Default", () => {
-  const [_, updateArgs] = useArgs();
-  const [currentValue, setCurrentValue] = useState();
-  const handleChange = (e) => {
-    setCurrentValue(e);
-  };
+export default {
+    title: "Controls/ScriptedLinkedSelects",
+    component: ScriptedLinkedSelects,
+};
 
-  return (
-    <ScriptedLinkedSelects
-      currentValue={currentValue}
-      onChange={handleChange}
-      touched={false}
-      noFetch={false}
-      onFetch={action("onFetch")}
-      selects={mockSelects}
-      compact={false}
-      horizontal={false}
-      selectOverrideStyles={null}
-      highlightedOptions={{ "Select 1": ["option 1"] }} // Mock highlighted options for Select 1
-      placeholders={{ "Select 1": "Select an option..." }} // Mock placeholders for Select 1
-      isClearable={true}
-      disabled={false}
-      isTest={true}
-    />
-  );
-});
+export const Default = () => {
+    const [, updateArgs] = useArgs(); // keep if you plan to sync args later
+    const [currentValue, setCurrentValue] = useState();
+
+    const handleChange = (e) => {
+        setCurrentValue(e);
+        // Optional: sync to Storybook controls
+        // updateArgs({ currentValue: e });
+    };
+
+    return (
+        <ScriptedLinkedSelects
+            currentValue={currentValue}
+            onChange={handleChange}
+            touched={false}
+            noFetch={false}
+            onFetch={action("onFetch")}
+            selects={mockSelects}
+            compact={false}
+            horizontal={false}
+            selectOverrideStyles={null}
+            highlightedOptions={{ "Select 1": ["option 1"] }}
+            placeholders={{ "Select 1": "Select an option..." }}
+            isClearable={true}
+            disabled={false}
+            isTest={true}
+        />
+    );
+};
