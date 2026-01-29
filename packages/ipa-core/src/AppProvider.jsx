@@ -29,7 +29,7 @@ import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBo
 import {AppContext, withAppContext} from "./appContext";
 import withAuthHoc from './withAuthHoc';
 import { BodyContext } from './react-ifef/components/bodyProvider';
-class AppProvider extends React.Component {
+export class AppProvider extends React.Component {
   static contextType = BodyContext;
   constructor(props) {
     super(props);
@@ -261,7 +261,7 @@ class AppProvider extends React.Component {
       const allHandlers = Object.values(config.handlers);
       handler = allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
     }
-    
+
     return handler;
   }
 
@@ -289,7 +289,7 @@ class AppProvider extends React.Component {
             let updatedToken = await this.props.authService.fetchToken(refreshToken, true);   //Fetch new token using refresh token
             if (updatedToken) {
               let user = await IafSession.setAuthToken(updatedToken.access_token,undefined);    //Updated token in session storage
-              this.setState({token: updatedToken.access_token})         //Set updated token 
+              this.setState({token: updatedToken.access_token})         //Set updated token
             }
           }
         }
@@ -575,7 +575,7 @@ class AppProvider extends React.Component {
     ScriptCache.clearCache();
 
     IafScriptEngine.clearVars()
-  
+
     this.context.ifefShowModal(false);
 
     let selectedProj = IafProj.getCurrent();
