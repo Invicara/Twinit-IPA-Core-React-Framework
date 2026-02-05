@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import {IafProj, IafUserGroup, IafSession, IafPassSvc} from '@dtplatform/platform-api';
 import _ from 'lodash';
@@ -11,47 +11,43 @@ import '../IpaControls/SpinningLoadingIcon.scss'
 
 const PROJECT_ID_KEY = "ipaSelectedProjectId"
 
-export default class ProjectPickerModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loadingModal: true,
-      projects: [],
-      appUserGroups: [],
-      selectedProjectId: null,
-      userGroupOptions: [],
-      selectedUserGroupId: null,
-      remember: true,
-      projectUserGroups: [],
-      showLoadButton: false,
-      inviteStatus: {}
-    };
+const ProjectPickerModal = (props) => {
+  const {
+    projects,
+    configUserType,
+    appContextProps,
+    projectLoadHandlerCallback,
+    testConfig,
+    onConfigLoad,
+    defaultConfig,
+    referenceAppConfig,
+    onCancel,
+    userLogout,
+    referenceAppCreateProject,
+    onAcceptInvite
+  } = props;
 
-    this.getUserGroupOptions = this.getUserGroupOptions.bind(this)
-  }
+  const [loadingModal, setLoadingModal] = useState(true);
+  const [projectsState, setProjectsState] = useState([]);
+  const [appUserGroups, setAppUserGroups] = useState({});
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [userGroupOptions, setUserGroupOptions] = useState([]);
+  const [selectedUserGroupId, setSelectedUserGroupId] = useState(null);
+  const [remember, setRemember] = useState(true);
+  const [projectUserGroups, setProjectUserGroups] = useState([]);
+  const [showLoadButton, setShowLoadButton] = useState(false);
+  const [inviteStatus, setInviteStatus] = useState({});
+  const [invites, setInvites] = useState(null);
+  const [user, setUser] = useState(null);
+  const [userGroupValue, setUserGroupValue] = useState(null);
 
-  componentDidMount = async () => {
-    this.checkUserAccess();
-    this.loadModal();
-    this.setCssVariables();
-
-  }
-
-  componentDidUpdate = async (prevProps, prevState) => {
-
-    if (this.props.projects !== prevProps.projects)
-      this.loadModal();
-
-  }
-  checkUserAccess = async () => {
-    if (this.props.referenceAppConfig?.refApp) {
+  const checkUserAccess = async () => {
+    if (referenceAppConfig?.refApp) {
       try {
         let createTestProject = await IafPassSvc.createWorkspaces([]);
         if (createTestProject && createTestProject?._total == 0) {
-          this.setState({
-            user: {
+          setUser({
               has_access: true,
-            },
           });
         }
       } catch (err) {
@@ -59,9 +55,8 @@ export default class ProjectPickerModal extends React.Component {
       }
     }
   };
-  setCssVariables = async() => {
-    const { referenceAppConfig } = this.props;
 
+  const setCssVariables = async () => {
     // Check if referenceAppConfig is defined and refApp is true
     if (referenceAppConfig?.refApp) {
       const result = await IafPassSvc.getConfigs();
@@ -83,12 +78,186 @@ export default class ProjectPickerModal extends React.Component {
     }
   };
 
-  getUserGroupOptions = (projectid) => {
-    return this.state.appUserGroups[projectid] ? this.state.appUserGroups[projectid].map((ug) => {return {'value': ug._id, 'label': ug._name}}) : [];
-  }
+  const getUserGroupOptions = (projectid) => {
+    return appUserGroups[projectid]
+      ? appUserGroups[projectid].map((ug) => {return {'value': ug._id, 'label': ug._name}})
+      : [];
+  };
 
-  loadModal = async () => {
+  const saveChoice = (configData) => {
+    sessionStorage.ipadt_configData = JSON.stringify(configData);
+  };
 
+  const clearSavedChoice = () => {
+    delete sessionStorage.ipadt_configData;
+  };
+
+  const loadConfig = async (userConfig) => {
+    try {
+      if(userConfig) {
+
+        let latestUserConfigVersion = _.find(userConfig._versions, {_version: userConfig._tipVersion})
+        let _userData = JSON.parse(latestUserConfigVersion._userData)
+
+        _userData._id = userConfig._id;
+
+        const routes = await testConfig(_userData);
+
+        if (remember) {
+          saveChoice(_userData)
+        } else {
+          clearSavedChoice();
+        }
+
+        onConfigLoad(_userData, routes);
+      }else{
+        onConfigLoad(defaultConfig, testConfig(defaultConfig));
+      }
+    } catch (e) {
+      console.log(e);
+      onConfigLoad(defaultConfig, testConfig(defaultConfig));
+    }
+  };
+
+  const loadProject = async (project) => {
+    let userConfigs = [];
+
+    let selectedUserGroup = _.filter(projectUserGroups, u => u._id === selectedUserGroupId)[0];
+    if(!selectedUserGroup && projectUserGroups) {
+      selectedUserGroup = projectUserGroups[0];
+    }
+    if(!selectedUserGroup) {
+      userConfigs = await IafProj.getUserConfigs(project, {_userType: configUserType});
+    }else {
+      userConfigs.push(selectedUserGroup.userConfig);
+    }
+
+    if (userConfigs) {
+      if (userConfigs.length > 1) {
+        console.warn('There are ' + userConfigs.length + ' user configs found');
+      }
+      return loadConfig(userConfigs[0]);
+    } else {
+      return loadConfig();
+    }
+  };
+
+  const onRememberChange = (event) => {
+    setRemember(event.target.checked);
+  };
+
+  const onProjectPicked = (selectedOption) => {
+    const projectId = selectedOption.value;
+    setShowLoadButton(false);
+    setProjectUserGroups([]);
+    setUserGroupOptions([]);
+
+    let projectUserGroupsForProject = appUserGroups[projectId]
+    let selectedUserGroupIdForProject = appUserGroups[projectId][0]._id
+
+    const selectUserGroupOptions = getUserGroupOptions(projectId)
+
+    setSelectedProjectId(projectId);
+    setShowLoadButton(true);
+    setProjectUserGroups(projectUserGroupsForProject);
+    setUserGroupOptions(selectUserGroupOptions);
+    setUserGroupValue(selectUserGroupOptions[0]);
+    setSelectedUserGroupId(selectedUserGroupIdForProject);
+  };
+
+  const onUserGroupPicked = (selectedOption) => {
+    const selectedUserGroupIdLocal = selectedOption.value;
+    setSelectedUserGroupId(selectedUserGroupIdLocal);
+    setUserGroupValue(selectedOption);
+    console.log("selectedOption", selectedOption)
+    console.log("selectedUserGroupId",selectedUserGroupIdLocal)
+    window.localStorage.setItem("selectedUserGroup", selectedOption.label);
+    window.localStorage.setItem("selectedUserGroupId",selectedUserGroupIdLocal)
+  };
+
+  const submitProjSelection = async () => {
+    for (const project of projects) {
+      if (project._id === selectedProjectId) {
+        await IafProj.switchProject(project._id);
+        let currProject = await IafProj.getCurrent();
+        await loadProject(project);
+
+        sessionStorage.setItem(PROJECT_ID_KEY, project._id)
+        const selectedUserGroupIdLocal =
+          projectUserGroups?.length === 1
+            ? projectUserGroups[0]._id
+            : selectedUserGroupId;
+
+        projectLoadHandlerCallback && projectLoadHandlerCallback({
+          selectedProject: currProject,
+          userGroup: projectUserGroups?.find((UG)=>UG._id === selectedUserGroupIdLocal)
+        });
+
+        appContextProps.actions.setSelectedItems({ selectedProject: currProject, selectedUserGroupId: selectedUserGroupIdLocal });
+        window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
+
+        // After a user accepts an invite, we make sure to remove the 'inviteId' from the URL
+        if(window.location.href.includes('inviteId')) {
+          window.location.href = `${window.location.origin}/`
+        }
+        if (referenceAppConfig?.refApp) {
+          window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+        }
+        return;
+      }
+    }
+  };
+
+  const updateInviteStatus = (invite, status) => {
+    setInvites((currentInvites) =>
+      currentInvites ? currentInvites.filter(inv => inv._id != invite._id) : currentInvites
+    );
+    setInviteStatus((currentStatus) => ({
+      ...currentStatus,
+      [invite._id]: status
+    }));
+  };
+
+  const inviteFailed = (invite, e) => {
+    console.error(e);
+    setInviteStatus((currentStatus) => ({
+      ...currentStatus,
+      [invite._id]: "Failed: " + e.message
+    }));
+  };
+
+  const acceptInvite = (invite) => {
+    setInviteStatus((currentStatus) => ({
+      ...currentStatus,
+      [invite._id]: "Accepting..."
+    }));
+    IafUserGroup.addUserToGroupByInvite(invite._usergroup, invite)
+      .then(() => {
+        updateInviteStatus(invite, "Accepted");
+        onAcceptInvite && onAcceptInvite();
+      })
+      .catch(e => inviteFailed(invite, e));
+  };
+
+  const rejectInvite = (invite) => {
+    setInviteStatus((currentStatus) => ({
+      ...currentStatus,
+      [invite._id]: "Rejecting..."
+    }));
+
+    IafUserGroup.rejectInvite(invite._usergroup, invite._id)
+      .then(() => updateInviteStatus(invite, "Rejected"))
+      .catch(e => inviteFailed(invite, e));
+  };
+
+  useEffect(() => {
+    checkUserAccess();
+    setCssVariables();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const loadModal = async () => {
     function getFirstMatchingConfig(group, configs) {
 
       let match = null
@@ -103,8 +272,9 @@ export default class ProjectPickerModal extends React.Component {
       return match
     }
 
-    const {projects} = this.props;
-    this.getInvites()
+      IafPassSvc.getUserInvites().then((invitesResult) => {
+        setInvites(invitesResult);
+      });
     if(projects && projects.length > 0) {
 
       let myProjects = []
@@ -124,8 +294,8 @@ export default class ProjectPickerModal extends React.Component {
           continue
         }
 
-        //get all userConfigs in the project
-        let userConfigs = await IafProj.getUserConfigs(projects[i], {_userType: this.props.configUserType})
+        //get all userConfigs in the project that match the app's usertype.
+          let userConfigs = await IafProj.getUserConfigs(projects[i], {_userType: configUserType})
         
         //get userConfig for each remaining userGroup
         userGroups.forEach((ug) => [
@@ -146,23 +316,23 @@ export default class ProjectPickerModal extends React.Component {
       console.log(myProjects, myUserGroups)
       
       //serve projects and usergroups from state
-      this.setState({projects: myProjects, appUserGroups: myUserGroups})
+        setProjectsState(myProjects);
+        setAppUserGroups(myUserGroups);
 
       //check selectedItems and see if project and usergroup apply and if so set them to current
       let projectid, usergroupid;
-      if (!this.props.appContextProps.selectedItems.selectedProject || !myUserGroups[this.props.appContextProps.selectedItems.selectedProject._id]){
+        if (!appContextProps.selectedItems.selectedProject || !myUserGroups[appContextProps.selectedItems.selectedProject._id]){
           IafSession.setSessionStorage('project', {_namespaces: _.get(projects, '0._namespaces')});
           projectid = myProjects[0] ? myProjects[0]._id : null;
           usergroupid = projectid ? myUserGroups[myProjects[0]._id][0]._id : null
-      }
-      else {
+      } else {
 
-          projectid = this.props.appContextProps.selectedItems.selectedProject._id;
+          projectid = appContextProps.selectedItems.selectedProject._id;
 
-          if(this.state.selectedUserGroupId && projectid == this.state.selectedProjectId){
-            usergroupid = this.state.selectedUserGroupId;
-          }else if (this.props.appContextProps.selectedItems.selectedUserGroupId)
-            usergroupid = this.props.appContextProps.selectedItems.selectedUserGroupId;
+          if(selectedUserGroupId && projectid == selectedProjectId){
+            usergroupid = selectedUserGroupId;
+          }else if (appContextProps.selectedItems.selectedUserGroupId)
+            usergroupid = appContextProps.selectedItems.selectedUserGroupId;
           else
             usergroupid = myUserGroups[myProjects[0]._id][0]._id
       }
@@ -171,243 +341,92 @@ export default class ProjectPickerModal extends React.Component {
         ? myUserGroups[projectid].map((ug) => ({ value: ug._id, label: ug._name }))
         : []
 
-      this.setState({selectedProjectId: projectid, showLoadButton: true,
-        projectUserGroups: myUserGroups[projectid],
-        userGroupOptions: selectUserGroupOptions,
-        userGroupValue: _.find(selectUserGroupOptions, {value: usergroupid}),
-        selectedUserGroupId: usergroupid,
-        loadingModal: false});
-    }
-    else {
-      this.setState({loadingModal: false})
-    }
-  }
-
-  saveChoice = (configData) => {
-    sessionStorage.ipadt_configData = JSON.stringify(configData);
-  }
-
-  clearSavedChoice = () => {
-    delete sessionStorage.ipadt_configData;
-  }
-
-  getInvites = () => {
-      IafPassSvc.getUserInvites().then((invites) => {
-        this.setState({invites});
-    });
-  }
-
-  loadConfig = async (userConfig) => {
-    const {testConfig, onConfigLoad, defaultConfig} = this.props;
-    try {
-      if(userConfig) {
-
-        let latestUserConfigVersion = _.find(userConfig._versions, {_version: userConfig._tipVersion})
-        let _userData = JSON.parse(latestUserConfigVersion._userData)
-
-        _userData._id = userConfig._id;
-
-        const routes = await testConfig(_userData);
-
-        if (this.state.remember) {
-          this.saveChoice(_userData)
-        } else {
-          this.clearSavedChoice();
-        }
-
-        onConfigLoad(_userData, routes);
-      }else{
-        onConfigLoad(defaultConfig, testConfig(defaultConfig));
+        setSelectedProjectId(projectid);
+        setShowLoadButton(true);
+        setProjectUserGroups(myUserGroups[projectid]);
+        setUserGroupOptions(selectUserGroupOptions);
+        setUserGroupValue(_.find(selectUserGroupOptions, {value: usergroupid}));
+        setSelectedUserGroupId(usergroupid);
+        setLoadingModal(false);
       }
-    } catch (e) {
-      console.log(e);
-      onConfigLoad(defaultConfig, testConfig(defaultConfig));
-    }
-  }
-
-  loadProject = async (project) => {
-    let userConfigs = [];
-
-    let { projectUserGroups, selectedUserGroupId } = this.state;
-    let selectedUserGroup = _.filter(projectUserGroups, u => u._id === selectedUserGroupId)[0];
-    if(!selectedUserGroup && projectUserGroups) {
-        selectedUserGroup = projectUserGroups[0];
-    }
-    if(!selectedUserGroup) {
-      userConfigs = await IafProj.getUserConfigs(project, {_userType: this.props.configUserType});
-    }else {
-      userConfigs.push(selectedUserGroup.userConfig);
-    }
-
-    if (userConfigs) {
-      if (userConfigs.length > 1) {
-        console.warn('There are ' + userConfigs.length + ' user configs found');
+      else {
+        setLoadingModal(false);
       }
-      return this.loadConfig(userConfigs[0]);
-    } else {
-        return this.loadConfig();
-    }
-  }
+    };
 
-  onRememberChange = (event) => {
-    this.setState({remember: event.target.checked})
-  }
+    loadModal();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projects]);
 
-  onProjectPicked = async (selectedOption) => {
-    const projectId = selectedOption.value;
-    this.setState({showLoadButton: false, projectUserGroups:[], userGroupOptions: []});
-
-    let projectUserGroups = this.state.appUserGroups[projectId]
-    let selectedUserGroupId = this.state.appUserGroups[projectId][0]._id
-
-    const selectUserGroupOptions = this.getUserGroupOptions(projectId)
-
-    this.setState({selectedProjectId: projectId, showLoadButton: true,
-      projectUserGroups: projectUserGroups,
-      userGroupOptions: selectUserGroupOptions,
-      userGroupValue: selectUserGroupOptions[0],
-      selectedUserGroupId: selectedUserGroupId});
-  }
-
-  onUserGroupPicked = (selectedOption) => {
-    const selectedUserGroupId = selectedOption.value;
-    this.setState({selectedUserGroupId: selectedUserGroupId, userGroupValue: selectedOption});
-    console.log("selectedOption", selectedOption)
-    console.log("selectedUserGroupId",selectedUserGroupId)
-    window.localStorage.setItem("selectedUserGroup", selectedOption.label);
-    window.localStorage.setItem("selectedUserGroupId",selectedUserGroupId)
-  }
-
-  submitProjSelection = async () => {
-    const {appContextProps, projects, projectLoadHandlerCallback} = this.props;
-    for (const project of projects) {
-      if (project._id === this.state.selectedProjectId) {
-        await IafProj.switchProject(project._id);
-        let currProject = await IafProj.getCurrent();
-        await this.loadProject(project);
-
-        sessionStorage.setItem(PROJECT_ID_KEY, project._id)
-        const selectedUserGroupId = this.state.projectUserGroups?.length === 1 ? this.state.projectUserGroups[0]._id : this.state.selectedUserGroupId;
-
-        projectLoadHandlerCallback && projectLoadHandlerCallback({ selectedProject: currProject, userGroup: this.state.projectUserGroups?.find((UG)=>UG._id === selectedUserGroupId) })
-
-        appContextProps.actions.setSelectedItems({ selectedProject: currProject, selectedUserGroupId });
-        window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
-
-        // After a user accepts an invite, we make sure to remove the 'inviteId' from the URL
-        if(window.location.href.includes('inviteId')) {
-          window.location.href = `${window.location.origin}/`
-        }
-        if (this.props.referenceAppConfig?.refApp) {
-          window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
-        }
-        return;
-      }
-    }
-  }
-
-  acceptInvite = (invite) => {
-    let inviteStatus = {...this.state.inviteStatus}
-    inviteStatus[invite._id] = "Accepting..."
-    this.setState({inviteStatus})
-    IafUserGroup.addUserToGroupByInvite(invite._usergroup, invite)
-      .then((r) => {
-        this.updateInviteStatus(invite, "Accepted");
-        this.props.onAcceptInvite();
-      })
-      .catch(e => this.inviteFailed(invite, e))
-  }
-
-  rejectInvite = (invite) => {
-    let inviteStatus = {...this.state.inviteStatus}
-    inviteStatus[invite._id] = "Rejecting..."
-    this.setState({inviteStatus})
-
-    IafUserGroup.rejectInvite(invite._usergroup, invite._id)
-      .then(r => this.updateInviteStatus(invite, "Rejected"))
-      .catch(e => this.inviteFailed(e))
-  }
-
-  updateInviteStatus = (invite, status) => {
-    let invites = this.state.invites.filter(inv => inv._id != invite._id)
-    let inviteStatus = {...this.state.inviteStatus}
-    inviteStatus[invite._id] = status
-    this.setState({invites, inviteStatus})
-  }
-
-  inviteFailed = (invite, e) => {
-    console.error(e)
-    let inviteStatus = {...this.state.inviteStatus}
-    inviteStatus[invite._id] = "Failed: " + e.message
-    this.setState({invites, inviteStatus})
-  }
-
-  render() {
-    const {onCancel} = this.props;
-    const {projects, remember, projectUserGroups, showLoadButton, invites} = this.state;
     const loadBtn = showLoadButton ? (<div>
           <div className='custom-control custom-switch' style={{marginTop: '15px', zIndex: '0'}}>
-                <input type="checkbox" className="custom-control-input" id="remswitch" value={remember} checked={remember} onChange={this.onRememberChange.bind(this)}/>
+              <input
+                type="checkbox"
+                className="custom-control-input"
+                id="remswitch"
+                value={remember}
+                checked={remember}
+                onChange={onRememberChange}
+              />
                 <label className="custom-control-label" htmlFor="remswitch">Remember my choice</label>
           </div>
           <div className='button-container'>
-          {this.props.referenceAppConfig?.refApp &&
-          <button 
-            onClick={()=>this.props.userLogout()} 
-            className={this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"}
-          >
-            Logout
-          </button>
-          }
+            <button 
+            onClick={userLogout} 
+            className={referenceAppConfig?.refApp ? "cancel" : "default-cancel"}
+            >
+              Logout
+            </button>
           <button
             onClick={onCancel}
             className={
-              this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"
+            referenceAppConfig?.refApp ? "cancel" : "default-cancel"
             }
           >
             Cancel
           </button>
           <button
-            onClick={this.submitProjSelection}
+          onClick={submitProjSelection}
             className={
-              this.props.referenceAppConfig?.refApp ? "load" : "default-load"
+            referenceAppConfig?.refApp ? "load" : "default-load"
             }
           >
             Load Project
           </button>
-          {this.props.referenceAppConfig?.refApp && (
-            <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
+        {referenceAppConfig?.refApp && (
+          <button onClick={referenceAppCreateProject} className="setup">
               Create Project
             </button>
           )}
           </div>
         </div>
       ) : <div className="spinningLoadingIcon projectLoadingIcon"></div>;
+
     //TODO handle user modal manual close -> load default config
-    const selectProjectOptions = (!projects || projects.length == 0) ? [{value: 'none', label: ''}] :
-        projects.map((project) => {return {'value': project._id, 'label': project._name}});
+  const selectProjectOptions = (!projectsState || projectsState.length == 0) ? [{value: 'none', label: ''}] :
+      projectsState.map((project) => {return {'value': project._id, 'label': project._name}});
 
     //We don't want to always set the selects to the first option.
     //We want to be able to display the last choices the user made in the dialog.
     //So we default to the first option, but if we find selectedItems in the appContext we use them
     //to open the dialog with settings they last chose
     let defaultProjectOption = selectProjectOptions[0];
-    if (this.state.selectedProjectId) defaultProjectOption = _.find(selectProjectOptions, {value: this.state.selectedProjectId})
+  if (selectedProjectId) defaultProjectOption = _.find(selectProjectOptions, {value: selectedProjectId})
 
     let currentInvites = invites && invites.filter(inv => inv._status == "PENDING")
     let expiredInvites = invites && invites.filter(inv => inv._status == "EXPIRED")
 
-    const buildInviteTable = (invites, expired) => <SimpleTable
+  const buildInviteTable = (invitesForTable, expired) => <SimpleTable
         className="invite-table"
         header = { expired ? ["", "Expired Invites", "Role", ""] : ["", "Project", "Role", ""]}
-        rows={invites.map(inv => {
-          let status = this.state.inviteStatus[inv._id]
+      rows={invitesForTable.map(inv => {
+        let status = inviteStatus[inv._id]
           let statusOrButtons =
             status
               ? <span className={"invite-state-"+status.toLowerCase()}>{status}</span>
               : <div>
-                  { expired  ? "" : <span className='invite-action' onClick={e=>this.acceptInvite(inv)}><i className="fa fa-check"></i> Accept Invite</span> }
-                  <span className='invite-action' onClick={e=>this.rejectInvite(inv)}><i className="fa fa-times"></i> {expired ? "Remove" : "Reject"} Invite</span>
+                { expired  ? "" : <span className='invite-action' onClick={e=>acceptInvite(inv)}><i className="fa fa-check"></i> Accept Invite</span> }
+                <span className='invite-action' onClick={e=>rejectInvite(inv)}><i className="fa fa-times"></i> {expired ? "Remove" : "Reject"} Invite</span>
                 </div>
           return [<span>&bull;</span>,inv._params.name, inv._usergroup._name, statusOrButtons]})}
         />
@@ -419,17 +438,17 @@ export default class ProjectPickerModal extends React.Component {
         modalBody={
           <div className="project-picker-modal">
             {
-              (!this.state.loadingModal && (!projects || projects.length === 0)) &&
+            (!loadingModal && (!projectsState || projectsState.length === 0)) &&
               <div>
                 You are not yet a member of any projects, please
                 {(!currentInvites || currentInvites.length === 0) && <span> contact your project admin for an invite</span>}
 
-                {this.props.referenceAppConfig?.refApp && this.state.user?.has_access && (
+              {referenceAppConfig?.refApp && user?.has_access && (
                   <div>
-            <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
+                  <button onClick={referenceAppCreateProject} className="setup">
               Create Project
             </button>
-            <button onClick={()=>this.props.userLogout()}>
+                  <button onClick={userLogout}>
             Logout
           </button>
           </div>
@@ -438,11 +457,11 @@ export default class ProjectPickerModal extends React.Component {
               </div>
             }
 
-            {this.state.loadingModal && <SimpleTextThrobber throbberText="Loading your project information" />}
-            {this.props.referenceAppConfig?.refApp &&
+          {loadingModal && <SimpleTextThrobber throbberText="Loading your project information" />}
+          {referenceAppConfig?.refApp &&
             !showLoadButton &&
-            !this.state.loadingModal &&
-            !this.state.user?.has_access ? (
+          !loadingModal &&
+          !user?.has_access ? (
               <>
                 <br />
                 <div>
@@ -451,7 +470,7 @@ export default class ProjectPickerModal extends React.Component {
                     Please contact the Admin.
                   </span>
                 </div>
-                <button onClick={()=>this.props.userLogout()}>
+              <button onClick={userLogout}>
                   Logout
                 </button>
               </>
@@ -473,17 +492,17 @@ export default class ProjectPickerModal extends React.Component {
             </div>
 
             {
-              !this.state.loadingModal && projects && projects.length > 0 &&
+            !loadingModal && projectsState && projectsState.length > 0 &&
               <div>
                 <h4>Project</h4>
                 <Select
                     name="projectSelect"
                     options={selectProjectOptions}
                     defaultValue={defaultProjectOption}
-                    className={this.props.referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
+                    className={referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
                     classNamePrefix="select"
                     placeholder={'Select Project...'}
-                    onChange={this.onProjectPicked.bind(this)}
+                    onChange={onProjectPicked}
                     isDisabled={!showLoadButton}
                     isSearchable={false}
                     menuPosition='fixed'
@@ -495,12 +514,12 @@ export default class ProjectPickerModal extends React.Component {
                     <h4>User Group</h4>
                     <Select
                         name="userGroupSelect"
-                        options={this.state.userGroupOptions}
-                        value={this.state.userGroupValue}
-                        className={this.props.referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
+                      options={userGroupOptions}
+                      value={userGroupValue}
+                      className={referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
                         classNamePrefix="select"
                         placeholder={'Select User Group...'}
-                        onChange={this.onUserGroupPicked.bind(this)}
+                      onChange={onUserGroupPicked}
                         isSearchable={false}
                         menuPosition='fixed'
                     />
@@ -516,4 +535,5 @@ export default class ProjectPickerModal extends React.Component {
       />
     );
   }
-}
+
+export default ProjectPickerModal;
