@@ -15,7 +15,8 @@ import './ProjectPickerModal.scss'
 import '../IpaControls/SpinningLoadingIcon.scss'
 
 const PROJECT_ID_KEY = 'ipaSelectedProjectId'
-
+const USER_GROUP_ID_KEY = 'ipaSelectedUserGroupId'
+const CONFIG_DATA_KEY = 'ipadt_configData'
 const InviteTable = ({
   invites,
   expired,
@@ -211,37 +212,52 @@ const ProjectPickerModal = props => {
   }
 
   const saveChoice = configData => {
-    sessionStorage.ipadt_configData = JSON.stringify(configData)
+    sessionStorage.setItem(CONFIG_DATA_KEY, JSON.stringify(configData))
+    
+    if(selectedProjectId) { 
+      sessionStorage.setItem(PROJECT_ID_KEY, selectedProjectId)
+    }
+    if(selectedUserGroupId) {
+      sessionStorage.setItem(USER_GROUP_ID_KEY, selectedUserGroupId)
+    }
   }
 
   const clearSavedChoice = () => {
-    delete sessionStorage.ipadt_configData
+    sessionStorage.removeItem(CONFIG_DATA_KEY)
+    sessionStorage.removeItem(PROJECT_ID_KEY)
+    sessionStorage.removeItem(USER_GROUP_ID_KEY)
   }
 
   const loadConfig = async userConfig => {
+    console.log('ProjectPickerModal loadConfig userConfig', userConfig)
     try {
       if (userConfig) {
+        console.log('ProjectPickerModal loadConfig userConfig 1', userConfig)
         let latestUserConfigVersion = _.find(userConfig._versions, {
           _version: userConfig._tipVersion
         })
+        console.log('ProjectPickerModal loadConfig latestUserConfigVersion', latestUserConfigVersion)
         let _userData = JSON.parse(latestUserConfigVersion._userData)
-
+        console.log('ProjectPickerModal loadConfig _userData', _userData)
         _userData._id = userConfig._id
 
         const routes = await testConfig(_userData)
-
+        console.log('ProjectPickerModal loadConfig routes', routes)
         if (remember) {
+          console.log('ProjectPickerModal loadConfig remember', remember)
           saveChoice(_userData)
         } else {
+          console.log('ProjectPickerModal loadConfig clearSavedChoice')
           clearSavedChoice()
         }
 
         onConfigLoad(_userData, routes)
       } else {
+        console.log('ProjectPickerModal loadConfig defaultConfig', defaultConfig)
         onConfigLoad(defaultConfig, testConfig(defaultConfig))
       }
     } catch (e) {
-      console.log(e)
+      console.log('ProjectPickerModal loadConfig error', e)
       onConfigLoad(defaultConfig, testConfig(defaultConfig))
     }
   }
@@ -249,25 +265,44 @@ const ProjectPickerModal = props => {
   const loadProject = async project => {
     let userConfigs = []
 
+    console.log('ProjectPickerModal loadProject userGroups 1', userGroups)
+    console.log('ProjectPickerModal loadProject selectedUserGroupId', selectedUserGroupId)
     let selectedUserGroup = _.filter(
       userGroups,
       u => u._id === selectedUserGroupId
     )[0]
+    console.log('ProjectPickerModal loadProject selectedUserGroup 1', selectedUserGroup)
+    //If usergroups are loaded but the selected user group is not found in it, we recover by using the first usergroup
     if (!selectedUserGroup && userGroups) {
       selectedUserGroup = userGroups[0]
+      console.log('ProjectPickerModal loadProject selectedUserGroup 2', selectedUserGroup)
     }
     if (!selectedUserGroup) {
+      //There is not selectedUserGroup because userGroups were not loaded, se we fetch user configs from the project
       userConfigs = await IafProj.getUserConfigs(project, {
         _userType: configUserType
       })
+      console.log('ProjectPickerModal loadProject userConfigs 2', userConfigs)
     } else {
-      userConfigs.push(selectedUserGroup.userConfig)
+      //now we know we have a usergroup, so we add the user config from the usergroup to the empty user configs array
+      userConfigs.push(selectedUserGroup._userAttributes.userConfigs[0])
+      console.log('ProjectPickerModal loadProject selectedUserGroup._userAttributes.userConfigs[0]', selectedUserGroup._userAttributes.userConfigs[0])
     }
 
+    console.log('ProjectPickerModal loadProject userConfigs 3', userConfigs)
+    //If we have user configs by now, we load the config, if not loadConfig should manage with a default config.
     if (userConfigs) {
       if (userConfigs.length > 1) {
         console.warn('There are ' + userConfigs.length + ' user configs found')
       }
+
+      //We fetch the full user config from the project, not just the user config from the usergroup
+      userConfigs = await IafProj.getUserConfigs(project, {
+        _userType: configUserType,
+        _id: userConfigs[0]._id
+      })
+      console.log('ProjectPickerModal loadProject userConfigs 4', userConfigs)
+      //TODO: Fix load Project when triggered from loaded project.
       return loadConfig(userConfigs[0])
     } else {
       return loadConfig()
@@ -279,20 +314,17 @@ const ProjectPickerModal = props => {
   }
 
   const onProjectPicked = selectedOption => {
-    const selectedProjectId = selectedOption.value
-    setSelectedProjectId(selectedProjectId)
-    window.localStorage.setItem('selectedProjectId', selectedProjectId)
+    const selectedProjectIdLocal = selectedOption.value
+    setSelectedProjectId(selectedProjectIdLocal)
 
     //Clear the selected user group when a project is picked
     setSelectedUserGroupId(undefined)
-    window.localStorage.setItem('selectedUserGroupId', undefined)
 
-    fetchUserGroups(projects, selectedProjectId)
+    fetchUserGroups(projects, selectedProjectIdLocal)
   }
   const onUserGroupPicked = selectedOption => {
     const selectedUserGroupIdLocal = selectedOption.value
     setSelectedUserGroupId(selectedUserGroupIdLocal)
-    window.localStorage.setItem('selectedUserGroupId', selectedUserGroupIdLocal)
   }
 
   const submitProjSelection = async () => {
@@ -302,10 +334,8 @@ const ProjectPickerModal = props => {
         let currProject = await IafProj.getCurrent()
         await loadProject(project)
 
-        sessionStorage.setItem(PROJECT_ID_KEY, project._id)
-        const selectedUserGroupIdLocal =
-          userGroups?.length === 1 ? userGroups[0]._id : selectedUserGroupId
-
+        //Let the AppProvider know what project is selected
+        const selectedUserGroupIdLocal = selectedUserGroupId
         projectLoadHandlerCallback &&
           projectLoadHandlerCallback({
             selectedProject: currProject,
@@ -313,11 +343,11 @@ const ProjectPickerModal = props => {
               UG => UG._id === selectedUserGroupIdLocal
             )
           })
-
         appContextProps.actions.setSelectedItems({
           selectedProject: currProject,
           selectedUserGroupId: selectedUserGroupIdLocal
         })
+
         window.location.hash = '/' //Since we're outside the react router scope, we need to deal with the location object directly
 
         // After a user accepts an invite, we make sure to remove the 'inviteId' from the URL
@@ -347,62 +377,52 @@ const ProjectPickerModal = props => {
     if(!projects || projects.length === 0) {
       return
     }
-    //If no project is saved in localStorage, set the first project as a default`
-    let selectedProjectId = window.localStorage.getItem('selectedProjectId')
-    if(selectedProjectId === 'undefined') {
-      selectedProjectId = undefined
-    }
-
-    if(!selectedProjectId) {
-      selectedProjectId = projects?.[0]?._id
+    //Find the project in session or set the first project as the selected project by default
+    let sessionSelectedProjectId = sessionStorage.getItem(PROJECT_ID_KEY)
+    let selectedProjectIdLocal;
+    console.log('ProjectPickerModal fetchProjects sessionSelectedProjectId', sessionSelectedProjectId)
+    if(sessionSelectedProjectId && projects.find(project => project._id === sessionSelectedProjectId)) {
+      //could not find the project in the session, so we set the first project as the selected project by default
+      selectedProjectIdLocal = sessionSelectedProjectId;
+      setSelectedProjectId(sessionSelectedProjectId)
+    } else {
+      //We could not find the project in the session, so we set the first project as the selected project by default
+      selectedProjectIdLocal = projects?.[0]?._id;
       setSelectedProjectId(projects?.[0]?._id)
-      window.localStorage.setItem('selectedProjectId', projects?.[0]?._id)
     }
-
-    if(projects.find(project => project._id === selectedProjectId)) {
-      setSelectedProjectId(selectedProjectId)
-      window.localStorage.setItem('selectedProjectId', selectedProjectId)
-      fetchUserGroups(projects, selectedProjectId)
-    }
+    fetchUserGroups(projects, selectedProjectIdLocal)
   }
 
-  const fetchUserGroups = async (projects, selectedProjectId) => {
-    console.log('ProjectPickerModal fetchUserGroups projects, selectedProjectId', projects, selectedProjectId)
-
-    if(!projects || projects.length === 0 || !selectedProjectId) {
+  const fetchUserGroups = async (projects, selectedProjectIdLocal) => {
+    console.log('ProjectPickerModal fetchUserGroups projects', projects)
+    if(!projects || projects.length === 0) {
+      //Usergroups cannot be loaded
       return  
     }
-
     setLoadingUserGroups(true)
+
     const selectedProject = projects.find(
-      project => project._id === selectedProjectId
+      project => project._id === selectedProjectIdLocal
     )
     console.log('ProjectPickerModal fetchUserGroups selectedProject', selectedProject)
 
     const userGroups = await IafProj.getUserGroups(selectedProject)
     console.log('ProjectPickerModal fetchUserGroups userGroups', userGroups)
     setUserGroups(userGroups)
-    
-    //If no user group is saved in localStorage, set the first user group as a default
-    let selectedUserGroupId = window.localStorage.getItem('selectedUserGroupId')
-    if(selectedUserGroupId === 'undefined') {
-      selectedUserGroupId = undefined
-    }
 
-    console.log('ProjectPickerModal fetchUserGroups selectedUserGroupId 1', selectedUserGroupId)
-
-    if(!selectedUserGroupId) {
-      selectedUserGroupId = userGroups?.[0]?._id
+    //Find the usergroup in session or set the first user group of the project as the selected user group by default
+    let sessionSelectedUserGroupId = sessionStorage.getItem(USER_GROUP_ID_KEY)
+    console.log('ProjectPickerModal fetchUserGroups sessionSelectedUserGroupId', sessionSelectedUserGroupId)
+    if(sessionSelectedUserGroupId && userGroups.find(userGroup => userGroup._id === sessionSelectedUserGroupId)) {
+      //We found the usergroup in the session and it exists in the project
+      console.log('ProjectPickerModal fetchUserGroups 2')
+      setSelectedUserGroupId(sessionSelectedUserGroupId)
+    } else {
+      //We could not find the usergroup in the session or it does not exist in the project, so we set the first user group of the project as the selected user group by default
       setSelectedUserGroupId(userGroups?.[0]?._id)
-      window.localStorage.setItem('selectedUserGroupId', userGroups?.[0]?._id)
-      console.log('ProjectPickerModal fetchUserGroups selectedUserGroupId 2', selectedUserGroupId)
+      console.log('ProjectPickerModal fetchUserGroups 3')
     }
-    console.log('ProjectPickerModal fetchUserGroups selectedUserGroupId 3', selectedUserGroupId)
-
-    if(userGroups.find(userGroup => userGroup._id === selectedUserGroupId)) {
-      setSelectedUserGroupId(selectedUserGroupId)
-      window.localStorage.setItem('selectedUserGroupId', selectedUserGroupId)
-    }
+    
     setLoadingUserGroups(false)
   }
 
@@ -414,10 +434,6 @@ const ProjectPickerModal = props => {
     fetchProjects()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  //load usergroups when the project is selected
-  useEffect(() => {
-  }, [projects, selectedProjectId])
 
   //TODO handle user modal manual close -> load default config
   const projectOptions =
@@ -457,6 +473,8 @@ const ProjectPickerModal = props => {
   //A global loading state that describes if either the projects from the props are still loading
   // or if the modal is still loading something (usergroups or userconfigs)
   const loading = loadingUserGroups || loadingProjects
+
+  console.log('ProjectPickerModal render sessionStorage', sessionStorage)
 
   return (
     <GenericModal
