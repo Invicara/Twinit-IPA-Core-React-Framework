@@ -87,6 +87,10 @@ $light-grey: #6d6e70;
     z-index: unset;
   }
 
+  .spinningLoadingIcon.userGroupLoadingIcon {
+    position: relative;
+  }
+
   .custom-control-input:checked~.custom-control-label::before {
     color: #fff;
     border-color: var(--app-accent-color);

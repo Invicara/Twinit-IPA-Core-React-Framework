@@ -474,7 +474,6 @@ export class AppProvider extends React.Component {
       } else {
         const callback = (config, routes) => this.onConfigLoad(config, routes, token, user);
         try {
-          let projects = await IafProj.getProjects({_pageSize: 1000});
           if (showProjectPicker)
             self.context.ifefShowModal(
                 <ProjectPickerModal
@@ -483,7 +482,6 @@ export class AppProvider extends React.Component {
                     appContextProps={this.state}
                     defaultConfig={EmptyConfig}
                     onAcceptInvite={this.state.actions.restartApp}
-                    projects={projects}
                     testConfig={self.testConfig}
                     userLogout = {this.state.actions.userLogout}
                     onConfigLoad={callback}
@@ -492,7 +490,7 @@ export class AppProvider extends React.Component {
                       this.props.onCancel && this.props.onCancel()
                     }}
                     projectLoadHandlerCallback = {this.props.projectLoadHandlerCallback}
-                    referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
+                    referenceAppCreateProject={(projects) => self.context.ifefShowModal(<SetUpProject
                         restartApp={this.state.actions.restartApp}
                         projects={projects}
                         onCancel={() => {
