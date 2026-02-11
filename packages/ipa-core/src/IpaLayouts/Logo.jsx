@@ -15,12 +15,12 @@ const Logo = ({appName, children, homepage, contextProps}) => {
       if (contextProps.selectedItems.ipaConfig.referenceAppConfig?.refApp) {
         const result = await IafPassSvc.getConfigs();
         if (result.themes.login === 'default') {
-          setImgSrc(require('../img/invicara-logo_white.svg'));
+          setImgSrc(require('./img/invicara-logo_white.svg'));
       } else if (result.themes.login === 'mirrana') {
-          setImgSrc(require('../img/mirranaLogo.svg'));
+          setImgSrc(require('./img/mirranaLogo.svg'));
       }
       } else {
-        setImgSrc(require('../img/invicara-logo_white.svg'))
+        setImgSrc(require('./img/invicara-logo_white.svg'))
       }
       else if (imgSettings && imgSettings.url)
         setImgSrc(imgSettings.url)

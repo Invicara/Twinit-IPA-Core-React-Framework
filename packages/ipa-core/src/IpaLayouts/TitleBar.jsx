@@ -29,7 +29,7 @@ export default class TitleBar extends React.Component {
         const userConfigSettings = this.props.contextProps?.userConfig?.settings
         if (userConfigSettings.headerComponent) {
             try {
-                customHeader = { component: require('../../../../../app/ipaCore/' + userConfigSettings.headerComponent + '.jsx').default }
+                customHeader = { component: require('../../../../app/ipaCore/' + userConfigSettings.headerComponent + '.jsx').default }
             } catch(error) {
                 console.error(`Header component not found at path ${userConfigSettings.headerComponent}. Using default header.`)
             }
