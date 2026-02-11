@@ -6,6 +6,7 @@ import {
   IafPassSvc,
 } from '@dtplatform/platform-api'
 import _ from 'lodash'
+import { Dialog } from '@invicara/ipa-ui';
 import GenericModal from './GenericModal'
 import SimpleTable from '../IpaControls/SimpleTable'
 import SimpleTextThrobber from '../IpaControls/SimpleTextThrobber'
@@ -442,9 +443,10 @@ const ProjectPickerModal = props => {
   const loading = loadingUserGroups || loadingProjects
 
   return (
-    <GenericModal
+    <Dialog
       title={<span>Project Selection</span>}
-      modalBody={
+      open={true}
+      children={
         <div className='project-picker-modal'>
           {!loading && (!projects || projects.length === 0) && (
             <div>
@@ -536,60 +538,62 @@ const ProjectPickerModal = props => {
                 </div>
               )}
         
-                <div>
-                  <div
-                    className='custom-control custom-switch'
-                    style={{ marginTop: '15px', zIndex: '0' }}
-                  >
-                    <input
-                      type='checkbox'
-                      className='custom-control-input'
-                      id='remswitch'
-                      value={remember}
-                      checked={remember}
-                      onChange={onRememberChange}
-                    />
-                    <label className='custom-control-label' htmlFor='remswitch'>
-                      Remember my choices
-                    </label>
-                  </div>
-                  <div className='button-container'>
-                    <button
-                      onClick={userLogout}
-                      className={
-                        referenceAppConfig?.refApp ? 'cancel' : 'default-cancel'
-                      }
-                    >
-                      Logout
-                    </button>
-                    <button
-                      onClick={onCancel}
-                      className={
-                        referenceAppConfig?.refApp ? 'cancel' : 'default-cancel'
-                      }
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={submitProjSelection}
-                      className={
-                        referenceAppConfig?.refApp ? 'load' : 'default-load'
-                      }
-                      disabled={!selectedProjectId || !selectedUserGroupId}
-                    >
-                      Load Project
-                    </button>
-                    {referenceAppConfig?.refApp && (
-                      <button
-                        onClick={() => referenceAppCreateProject(projects)}
-                        className='setup'
-                      >
-                        Create Project
-                      </button>
-                    )}
-                  </div>
+              <div>
+                <div
+                  className='custom-control custom-switch'
+                  style={{ marginTop: '15px', zIndex: '0' }}
+                >
+                  <input
+                    type='checkbox'
+                    className='custom-control-input'
+                    id='remswitch'
+                    value={remember}
+                    checked={remember}
+                    onChange={onRememberChange}
+                  />
+                  <label className='custom-control-label' htmlFor='remswitch'>
+                    Remember my choices
+                  </label>
                 </div>
+              </div>
             </div>
+          )}
+        </div>
+      }
+      footer={
+        <div className='button-container'>
+          <button
+            onClick={userLogout}
+            className={
+              referenceAppConfig?.refApp ? 'cancel' : 'default-cancel'
+            }
+          >
+            Logout
+          </button>
+          <button
+            onClick={onCancel}
+            className={
+              referenceAppConfig?.refApp ? 'cancel' : 'default-cancel'
+            }
+          >
+            Cancel
+          </button>
+          <button
+            onClick={submitProjSelection}
+            className={
+              referenceAppConfig?.refApp ? 'load' : 'default-load'
+            }
+            disabled={!selectedProjectId || !selectedUserGroupId}
+          >
+            Load Project
+          </button>
+          {referenceAppConfig?.refApp && (
+            <button
+              onClick={() => referenceAppCreateProject(projects)}
+              className='setup'
+            >
+              Create Project
+            </button>
           )}
         </div>
       }

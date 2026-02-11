@@ -35,6 +35,7 @@
     "@dtplatform/platform-api": "~4.4.0",
     "@dtplatform/platform-ui-components": "~4.4.0",
     "@dtplatform/ui-utils": "~4.4.0",
+    "@invicara/ipa-ui": "^1.0.1",
     "@mui/icons-material": "^5.16.14",
     "@mui/material": "^5.16.14",
     "@mui/styles": "^5.16.14",
