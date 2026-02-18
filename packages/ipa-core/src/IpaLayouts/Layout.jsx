@@ -195,20 +195,9 @@ class Layout extends React.Component {
                         </FlexContent>
                     </FlexContainer>
                 </SidePanelContainer>
-                {   
-                    this.props.modal?.open && 
-                    this.props.modal?.component && 
-                    <this.props.modal.component {...this.props.modal.props}/>
-                }
             </div>
         );
     }
 }
 
-const mapStateToProps = state => ({modal: state.modal})
-
-const mapDispatchToProps = {
-}
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(Layout)
+export default connect()(Layout)

@@ -6,7 +6,7 @@ import {
   IafPassSvc,
 } from '@dtplatform/platform-api'
 import _ from 'lodash'
-import { Dialog } from '@invicara/ipa-ui';
+import { Dialog, Button, SingleSelect } from '@invicara/ipa-ui';
 import GenericModal from './GenericModal'
 import SimpleTable from '../IpaControls/SimpleTable'
 import SimpleTextThrobber from '../IpaControls/SimpleTextThrobber'
@@ -295,7 +295,8 @@ const ProjectPickerModal = props => {
   }
 
   const onProjectPicked = selectedOption => {
-    const selectedProjectIdLocal = selectedOption.value
+    console.log('onProjectPicked selectedOption', selectedOption)
+    const selectedProjectIdLocal = selectedOption
     setSelectedProjectId(selectedProjectIdLocal)
 
     //Clear the selected user group when a project is picked
@@ -304,7 +305,7 @@ const ProjectPickerModal = props => {
     fetchUserGroups(projects, selectedProjectIdLocal)
   }
   const onUserGroupPicked = selectedOption => {
-    const selectedUserGroupIdLocal = selectedOption.value
+    const selectedUserGroupIdLocal = selectedOption
     setSelectedUserGroupId(selectedUserGroupIdLocal)
   }
 
@@ -444,8 +445,11 @@ const ProjectPickerModal = props => {
 
   return (
     <Dialog
-      title={<span>Project Selection</span>}
+      title="Project Selection"
       open={true}
+      onOpenChange={(open) => {
+        if (!open) onCancel?.();
+      }}
       children={
         <div className='project-picker-modal'>
           {!loading && (!projects || projects.length === 0) && (
@@ -495,42 +499,37 @@ const ProjectPickerModal = props => {
           {!loadingProjects && projects && projects.length > 0 && (
             <div>
               <h4>Project</h4>
-              <Select
+              <SingleSelect
                 name='projectSelect'
                 options={projectOptions}
-                defaultValue={defaultProjectOption}
+                value={selectedProjectId}
                 className={
                   referenceAppConfig?.refApp
-                    ? 'custom-single-class'
-                    : 'basic-single'
+                    ? 'select custom-single-class'
+                    : 'select basic-single'
                 }
-                classNamePrefix='select'
                 placeholder={'Select Project...'}
                 onChange={onProjectPicked}
-                isDisabled={projects.length < 2}
-                isSearchable={false}
-                menuPosition='fixed'
+                disabled={projects.length < 2}
+                filter={false}
               />
 
               {userGroups && userGroups.length > 0 && (
                 <div>
                   <h4>User Group</h4>
                   {(!loadingUserGroups ? (
-                    <Select
+                    <SingleSelect
                       name='userGroupSelect'
                       options={userGroupOptions}
-                      defaultValue={defaultUserGroupOption}
+                      value={selectedUserGroupId }
                       className={
                         referenceAppConfig?.refApp
-                          ? 'custom-single-class'
-                          : 'basic-single'
-                      }
-                      classNamePrefix='select'
-                      placeholder={'Select User Group...'}
+                          ? 'select custom-single-class'
+                          : 'select basic-single'
+                      }                      placeholder={'Select User Group...'}
                       onChange={onUserGroupPicked}
-                      isDisabled={userGroups.length < 2}
-                      isSearchable={false}
-                      menuPosition='fixed'
+                      disabled={userGroups.length < 2}
+                      filter={false}
                     />
                   ) : (
                     <div className='spinningLoadingIcon userGroupLoadingIcon'></div>
@@ -562,23 +561,23 @@ const ProjectPickerModal = props => {
       }
       footer={
         <div className='button-container'>
-          <button
+          <Button
             onClick={userLogout}
             className={
               referenceAppConfig?.refApp ? 'cancel' : 'default-cancel'
             }
           >
             Logout
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={onCancel}
             className={
               referenceAppConfig?.refApp ? 'cancel' : 'default-cancel'
             }
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={submitProjSelection}
             className={
               referenceAppConfig?.refApp ? 'load' : 'default-load'
@@ -586,14 +585,14 @@ const ProjectPickerModal = props => {
             disabled={!selectedProjectId || !selectedUserGroupId}
           >
             Load Project
-          </button>
-          {referenceAppConfig?.refApp && (
-            <button
+          </Button>
+            {referenceAppConfig?.refApp && (
+            <Button
               onClick={() => referenceAppCreateProject(projects)}
               className='setup'
             >
               Create Project
-            </button>
+            </Button>
           )}
         </div>
       }

@@ -105,7 +105,15 @@ class IpaMainLayout extends React.Component {
                 <HashRouter>
                     <App history={history} location={location}>
                     <AuthProvider authService={this.authService}>
-                        <AppProvider location={location} history={history} ipaConfig={this.props.ipaConfig} onConfigLoad={this.props.onConfigLoad} onCancel={this.props.onCancel} projectLoadHandlerCallback={this.props.projectLoadHandlerCallback}> 
+                        <AppProvider 
+                          location={location} 
+                          history={history} 
+                          ipaConfig={this.props.ipaConfig} 
+                          onConfigLoad={this.props.onConfigLoad} 
+                          onCancel={this.props.onCancel} //I don't think this is used by any app yet we should think about removing it
+                          projectLoadHandlerCallback={this.props.projectLoadHandlerCallback}
+                          onProjectPickerCancel={this.props.onProjectPickerCancel}
+                        > 
                             <AppContext.Consumer>
                                 {
                                     (contextProps) => {

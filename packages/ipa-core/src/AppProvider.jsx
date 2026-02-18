@@ -22,6 +22,8 @@ import ScriptCache from './IpaUtils/script-cache'
 import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
+import { actions as Modals } from './redux/slices/modal'
+import ModalHost from './ModalHost'
 import SetUpProject from "./ipaProjectSetup/SetupProject";
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
@@ -197,8 +199,7 @@ export class AppProvider extends React.Component {
 
   setSelectedItems(newItems) {
     const {selectedItems} = this.state;
-    //save items to session
-    let newSelecteds = Object.assign(selectedItems, newItems);
+    const newSelecteds = { ...selectedItems, ...newItems };
     localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] = JSON.stringify(newSelecteds);
     this.setState({selectedItems: newSelecteds});
   }
@@ -474,32 +475,45 @@ export class AppProvider extends React.Component {
       } else {
         const callback = (config, routes) => this.onConfigLoad(config, routes, token, user);
         try {
-          if (showProjectPicker)
-            self.context.ifefShowModal(
-                <ProjectPickerModal
-                    configUserType={this.props.ipaConfig.configUserType}
-                    referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
-                    appContextProps={this.state}
-                    defaultConfig={EmptyConfig}
-                    onAcceptInvite={this.state.actions.restartApp}
-                    testConfig={self.testConfig}
-                    userLogout = {this.state.actions.userLogout}
-                    onConfigLoad={callback}
-                    onCancel={() => {
-                      self.context.ifefShowModal(false);
-                      this.props.onCancel && this.props.onCancel()
-                    }}
-                    projectLoadHandlerCallback = {this.props.projectLoadHandlerCallback}
-                    referenceAppCreateProject={(projects) => self.context.ifefShowModal(<SetUpProject
-                        restartApp={this.state.actions.restartApp}
-                        projects={projects}
-                        onCancel={() => {
-                          this.setState((prev) => {
-                            return { ...prev, isshowProjectPickerModal: true };
-                          });
-                        }}
-                    />) }
-                />);
+          if (showProjectPicker) {
+            const projectPickerProps = {
+              configUserType: this.props.ipaConfig.configUserType,
+              referenceAppConfig: this.props.ipaConfig.referenceAppConfig,
+              appContextProps: this.state,
+              defaultConfig: EmptyConfig,
+              onAcceptInvite: this.state.actions.restartApp,
+              testConfig: self.testConfig.bind(self),
+              userLogout: this.state.actions.userLogout,
+              onConfigLoad: callback,
+              onCancel: () => {
+                store.dispatch(Modals.destroy());
+                this.props.onCancel && this.props.onCancel();
+              },
+              projectLoadHandlerCallback: this.props.projectLoadHandlerCallback,
+              referenceAppCreateProject: (projects) => {
+                store.dispatch(Modals.setModal({
+                  component: SetUpProject,
+                  props: {
+                    restartApp: this.state.actions.restartApp,
+                    projects,
+                    onCancel: () => {
+                      store.dispatch(Modals.setModal({
+                        component: ProjectPickerModal,
+                        props: { ...projectPickerProps, appContextProps: this.state },
+                        open: true,
+                      }));
+                    },
+                  },
+                  open: true,
+                }));
+              },
+            };
+            store.dispatch(Modals.setModal({
+              component: ProjectPickerModal,
+              props: projectPickerProps,
+              open: true,
+            }));
+          }
         } catch (error) {
           console.error(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
@@ -574,7 +588,7 @@ export class AppProvider extends React.Component {
 
     IafScriptEngine.clearVars()
 
-    this.context.ifefShowModal(false);
+    store.dispatch(Modals.destroy());
 
     let selectedProj = IafProj.getCurrent();
     if (selectedProj) {
@@ -701,7 +715,12 @@ export class AppProvider extends React.Component {
 
   render() {
     const context = {...this.state};
-    return <AppContext.Provider value={context}>{this.props.children}</AppContext.Provider>
+    return (
+      <AppContext.Provider value={context}>
+        {this.props.children}
+        <ModalHost />
+      </AppContext.Provider>
+    );
   }
 }
 

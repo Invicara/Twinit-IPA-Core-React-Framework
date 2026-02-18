@@ -40,9 +40,17 @@ const rootReducer = (state, action) => {
   return combinedReducers(state, action)
 }
 
+// Configure default middleware to ignore known non-serializable modal.component
+const middleware = getDefaultMiddleware({
+  serializableCheck: {
+    ignoredPaths: ['modal.component'],
+    ignoredActions: ['modal/setModal'],
+  },
+})
+
 export default configureStore({
     reducer: rootReducer,
-    middleware: [...getDefaultMiddleware()],
+    middleware,
     devTools: process.env.NODE_ENV !== 'production',
 })
 
