@@ -100,7 +100,8 @@ class IpaMainLayout extends React.Component {
     render() {
 
         return (
-            <div>
+            <div data-theme="invicara">
+              <div id="ipa-ui-modal-root" />
               <Provider store={store}>
                 <HashRouter>
                     <App history={history} location={location}>
@@ -150,7 +151,7 @@ class IpaMainLayout extends React.Component {
                 </HashRouter>
             </Provider>
           </div>
-        )
+        );
     }
 }
 

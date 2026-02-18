@@ -1,53 +1,15 @@
 $light-grey: #6d6e70;
 
+.dialog-title {
+  margin-bottom: 0px;
+}
+
 .project-picker-modal {
-
-  button.default-load {
-    color: white;
-    background-color: var(--app-accent-color);
-    border-color: var(--app-accent-color);
-  }
-
-  button.default-cancel {
-    color: $light-grey;
-    background-color: white;
-    border-color: $light-grey;
-  }
-
-  button.setup {
-    color: white;
-    width: 23% !important;
-    background-color: var(--app-accent-color);
-    border-color: var(--app-accent-color);
-  }
-
-  button.cancel {
-    width: 23% !important;
-    color: $light-grey;
-    background-color: white;
-    border-color: $light-grey;
-  }
-
-  button.load {
-    color: white;
-    width: 23% !important;
-    background-color: var(--app-accent-color);
-    border-color: var(--app-accent-color);
-  }
-
-  button.done {
-    color: white;
-    width: 23% !important;
-    background-color: var(--app-accent-color);
-    border-color: var(--app-accent-color);
-  }
-
   h4 {
     font-size: 14px;
   }
 
   .invite-table {
-
     td,
     th {
       padding: 5px;
@@ -71,49 +33,61 @@ $light-grey: #6d6e70;
     }
   }
 
-  .custom-control.custom-switch {
-    z-index: unset;
-  }
-
   .spinningLoadingIcon.userGroupLoadingIcon {
     position: relative;
   }
 
-  .custom-control-input:checked~.custom-control-label::before {
-    color: #fff;
+  .custom-single-class .select__control:hover {
     border-color: var(--app-accent-color);
-    background-color: var(--app-accent-color);
+    box-shadow: 0 0 0 0px var(--app-accent-color);
   }
 
-.custom-single-class .select__control:hover {
-  border-color: var(--app-accent-color);
-  box-shadow: 0 0 0 0px var(--app-accent-color); 
-}
+  .custom-single-class .select__option {
+    color: black;
+    background-color: white;
+  }
 
-.custom-single-class .select__option {
-  color: black;
-  background-color: white;
-}
+  .custom-single-class .select__option--is-focused {
+    background-color: var(--app-accent-color) !important;
+    color: white;
+  }
 
-.custom-single-class .select__option--is-focused {
-  background-color: var(--app-accent-color) !important;
-  color: white;
-}
+  .custom-single-class .select__control {
+    border-color: #b0b0b0;
+    box-shadow: 0 0 0 0px #b0b0b0;
+  }
 
-.custom-single-class .select__control {
-  border-color: #b0b0b0;
-  box-shadow: 0 0 0 0px #b0b0b0;
-}
+  .custom-single-class .select__indicator-separator {
+    display: none; /* Hide the separator between the indicator and the input */
+  }
 
-.custom-single-class .select__indicator-separator {
-  display: none; /* Hide the separator between the indicator and the input */
-}
+  .select-container {
+    width: 100%;
+    margin-bottom: 24px;
+  }
 
+  .select-input-container {
+    width: 100%;
+  }
+
+  .select-popup {
+    width: 100%;
+  }
+
+  .select-trigger {
+    width: 100%;
+  }
 }
 
 .button-container {
   display: flex;
   justify-content: space-between;
+  width: 100%;
+
+  .dialog-footer-button {
+    flex-grow: 1;
+    margin: 0px 8px;
+  }
 }
 
 @media screen and (max-width: 768px) {

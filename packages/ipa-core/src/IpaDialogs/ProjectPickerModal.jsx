@@ -1,12 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Select from 'react-select'
-import {
-  IafProj,
-  IafUserGroup,
-  IafPassSvc,
-} from '@dtplatform/platform-api'
+import { IafProj, IafUserGroup, IafPassSvc } from '@dtplatform/platform-api'
 import _ from 'lodash'
-import { Dialog, Button, SingleSelect } from '@invicara/ipa-ui';
+import { Dialog, Button, SingleSelect, Checkbox } from '@invicara/ipa-ui'
 import GenericModal from './GenericModal'
 import SimpleTable from '../IpaControls/SimpleTable'
 import SimpleTextThrobber from '../IpaControls/SimpleTextThrobber'
@@ -212,11 +208,11 @@ const ProjectPickerModal = props => {
 
   const saveChoice = configData => {
     sessionStorage.setItem(CONFIG_DATA_KEY, JSON.stringify(configData))
-    
-    if(selectedProjectId) { 
+
+    if (selectedProjectId) {
       sessionStorage.setItem(PROJECT_ID_KEY, selectedProjectId)
     }
-    if(selectedUserGroupId) {
+    if (selectedUserGroupId) {
       sessionStorage.setItem(USER_GROUP_ID_KEY, selectedUserGroupId)
     }
   }
@@ -280,18 +276,14 @@ const ProjectPickerModal = props => {
       const fullUserConfigs = await IafProj.getUserConfigs(project, {
         _id: userConfigs[0]._id
       })
-      if(fullUserConfigs && fullUserConfigs.length > 0) {
+      if (fullUserConfigs && fullUserConfigs.length > 0) {
         return loadConfig(fullUserConfigs[0])
       } else {
-        console.error('Full user could not be fetched', userConfigs[0]);
+        console.error('Full user could not be fetched', userConfigs[0])
       }
     } else {
       return loadConfig()
     }
-  }
-
-  const onRememberChange = event => {
-    setRemember(event.target.checked)
   }
 
   const onProjectPicked = selectedOption => {
@@ -355,28 +347,31 @@ const ProjectPickerModal = props => {
     setProjects(projects)
     setLoadingProjects(false)
 
-    if(!projects || projects.length === 0) {
+    if (!projects || projects.length === 0) {
       return
     }
     //Find the project in session or set the first project as the selected project by default
     let sessionSelectedProjectId = sessionStorage.getItem(PROJECT_ID_KEY)
-    let selectedProjectIdLocal;
-    if(sessionSelectedProjectId && projects.find(project => project._id === sessionSelectedProjectId)) {
+    let selectedProjectIdLocal
+    if (
+      sessionSelectedProjectId &&
+      projects.find(project => project._id === sessionSelectedProjectId)
+    ) {
       //could not find the project in the session, so we set the first project as the selected project by default
-      selectedProjectIdLocal = sessionSelectedProjectId;
+      selectedProjectIdLocal = sessionSelectedProjectId
       setSelectedProjectId(sessionSelectedProjectId)
     } else {
       //We could not find the project in the session, so we set the first project as the selected project by default
-      selectedProjectIdLocal = projects?.[0]?._id;
+      selectedProjectIdLocal = projects?.[0]?._id
       setSelectedProjectId(projects?.[0]?._id)
     }
     fetchUserGroups(projects, selectedProjectIdLocal)
   }
 
   const fetchUserGroups = async (projects, selectedProjectIdLocal) => {
-    if(!projects || projects.length === 0) {
+    if (!projects || projects.length === 0) {
       //Usergroups cannot be loaded
-      return  
+      return
     }
     setLoadingUserGroups(true)
 
@@ -387,20 +382,30 @@ const ProjectPickerModal = props => {
     let userGroups = await IafProj.getUserGroups(selectedProject)
     setUserGroups(userGroups)
     //We fetch the selected project user configs with a userType matching the client's userType.
-    let userConfigs = await IafProj.getUserConfigs(selectedProject, {_userType: configUserType});
+    let userConfigs = await IafProj.getUserConfigs(selectedProject, {
+      _userType: configUserType
+    })
     //Now we can remove all userGroups that don't have a user config with the same userType.
-    userGroups = userGroups.filter(userGroup =>   userConfigs.find(userConfig => userConfig._id === userGroup._userAttributes.userConfigs[0]._id))
+    userGroups = userGroups.filter(userGroup =>
+      userConfigs.find(
+        userConfig =>
+          userConfig._id === userGroup._userAttributes.userConfigs[0]._id
+      )
+    )
 
     //Find the usergroup in session or set the first user group of the project as the selected user group by default
     let sessionSelectedUserGroupId = sessionStorage.getItem(USER_GROUP_ID_KEY)
-    if(sessionSelectedUserGroupId && userGroups.find(userGroup => userGroup._id === sessionSelectedUserGroupId)) {
+    if (
+      sessionSelectedUserGroupId &&
+      userGroups.find(userGroup => userGroup._id === sessionSelectedUserGroupId)
+    ) {
       //We found the usergroup in the session and it exists in the project
       setSelectedUserGroupId(sessionSelectedUserGroupId)
     } else {
       //We could not find the usergroup in the session or it does not exist in the project, so we set the first user group of the project as the selected user group by default
       setSelectedUserGroupId(userGroups?.[0]?._id)
     }
-    
+
     setLoadingUserGroups(false)
   }
 
@@ -415,7 +420,7 @@ const ProjectPickerModal = props => {
 
   //TODO handle user modal manual close -> load default config
   const projectOptions =
-    (!projects || projects.length == 0)
+    !projects || projects.length == 0
       ? [{ value: 'none', label: '' }]
       : projects.map(project => {
           return { value: project._id, label: project._name }
@@ -443,12 +448,17 @@ const ProjectPickerModal = props => {
   }
   const loading = loadingUserGroups || loadingProjects
 
+  const hasExistingProject = !!sessionStorage.getItem(CONFIG_DATA_KEY)
+
   return (
     <Dialog
-      title="Project Selection"
+      title='Project Selection'
       open={true}
-      onOpenChange={(open) => {
-        if (!open) onCancel?.();
+      onOpenChange={open => {
+        if (!open) onCancel?.()
+      }}
+      classNames={{
+        title: 'dialog-title'
       }}
       children={
         <div className='project-picker-modal'>
@@ -460,13 +470,17 @@ const ProjectPickerModal = props => {
               )}
               {referenceAppConfig?.refApp && user?.has_access && (
                 <div>
-                  <button
+                  <Button
                     onClick={() => referenceAppCreateProject(projects)}
-                    className='setup'
                   >
                     Create Project
-                  </button>
-                  <button onClick={userLogout}>Logout</button>
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={userLogout}
+                  >
+                    Logout
+                  </Button>
                 </div>
               )}
               {currentInvites && currentInvites.length > 0 && (
@@ -489,7 +503,12 @@ const ProjectPickerModal = props => {
                   App. Please contact the Admin.
                 </span>
               </div>
-              <button onClick={userLogout}>Logout</button>
+              <Button
+                variant="secondary"
+                onClick={userLogout}
+              >
+                Logout
+              </Button>
             </>
           ) : (
             <></>
@@ -508,6 +527,12 @@ const ProjectPickerModal = props => {
                     ? 'select custom-single-class'
                     : 'select basic-single'
                 }
+                classNames={{
+                  container: 'select-container',
+                  inputContainer: 'select-input-container',
+                  trigger: 'select-trigger',
+                  popup: 'select-popup'
+                }}
                 placeholder={'Select Project...'}
                 onChange={onProjectPicked}
                 disabled={projects.length < 2}
@@ -517,43 +542,42 @@ const ProjectPickerModal = props => {
               {userGroups && userGroups.length > 0 && (
                 <div>
                   <h4>User Group</h4>
-                  {(!loadingUserGroups ? (
+                  {!loadingUserGroups ? (
                     <SingleSelect
                       name='userGroupSelect'
                       options={userGroupOptions}
-                      value={selectedUserGroupId }
+                      value={selectedUserGroupId}
                       className={
                         referenceAppConfig?.refApp
                           ? 'select custom-single-class'
                           : 'select basic-single'
-                      }                      placeholder={'Select User Group...'}
+                      }
+                      classNames={{
+                        container: 'select-container',
+                        inputContainer: 'select-input-container',
+                        trigger: 'select-trigger',
+                        popup: 'select-popup'
+                      }}
+                      placeholder={'Select User Group...'}
                       onChange={onUserGroupPicked}
                       disabled={userGroups.length < 2}
                       filter={false}
                     />
                   ) : (
                     <div className='spinningLoadingIcon userGroupLoadingIcon'></div>
-                  ))}
+                  )}
                 </div>
               )}
-        
-              <div>
-                <div
-                  className='custom-control custom-switch'
-                  style={{ marginTop: '15px', zIndex: '0' }}
-                >
-                  <input
-                    type='checkbox'
-                    className='custom-control-input'
-                    id='remswitch'
-                    value={remember}
-                    checked={remember}
-                    onChange={onRememberChange}
-                  />
-                  <label className='custom-control-label' htmlFor='remswitch'>
-                    Remember my choices
-                  </label>
-                </div>
+
+              <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Checkbox
+                  id='remswitch'
+                  checked={remember}
+                  onCheckedChange={(checked) => setRemember(checked === true)}
+                />
+                <label htmlFor='remswitch' style={{ cursor: 'pointer', userSelect: 'none' }}>
+                  Remember my choice
+                </label>
               </div>
             </div>
           )}
@@ -561,35 +585,35 @@ const ProjectPickerModal = props => {
       }
       footer={
         <div className='button-container'>
-          <Button
-            onClick={userLogout}
-            className={
-              referenceAppConfig?.refApp ? 'cancel' : 'default-cancel'
-            }
-          >
-            Logout
-          </Button>
-          <Button
-            onClick={onCancel}
-            className={
-              referenceAppConfig?.refApp ? 'cancel' : 'default-cancel'
-            }
-          >
-            Cancel
-          </Button>
+          {!hasExistingProject && (
+            <Button
+              variant="secondary"
+              onClick={userLogout}
+              className={'dialog-footer-button'}
+            >
+              Logout
+            </Button>
+          )}
+          {hasExistingProject && (
+            <Button
+              variant="secondary"
+              onClick={onCancel}
+              className={'dialog-footer-button'}
+            >
+              Cancel
+            </Button>
+          )}
           <Button
             onClick={submitProjSelection}
-            className={
-              referenceAppConfig?.refApp ? 'load' : 'default-load'
-            }
             disabled={!selectedProjectId || !selectedUserGroupId}
+            className={'dialog-footer-button'}
           >
             Load Project
           </Button>
-            {referenceAppConfig?.refApp && (
+          {referenceAppConfig?.refApp && (
             <Button
               onClick={() => referenceAppCreateProject(projects)}
-              className='setup'
+              className={'dialog-footer-button'}
             >
               Create Project
             </Button>
