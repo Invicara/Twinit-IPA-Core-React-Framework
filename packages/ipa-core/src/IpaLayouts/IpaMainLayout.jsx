@@ -119,9 +119,14 @@ class IpaMainLayout extends React.Component {
                                 {
                                     (contextProps) => {
                                       console.log("AppContext contextProps", contextProps)
-                                      return contextProps.isLoading ?
-                                        <div>{contextProps.loadingText}</div>
-                                        :
+                                      return contextProps.isLoading ? (
+                                        <div className="ipa-loading-screen">
+                                          <header className="ipa-loading-screen__header">
+                                            <img src="/fonts/twinit.svg" alt="" className="ipa-loading-screen__logo" />
+                                          </header>
+                                          <div className="ipa-loading-screen__body" />
+                                        </div>
+                                      ) : (
                                        <StylesProvider generateClassName={generateClassName}> 
                                           <Layout pageList={contextProps.router.pageList}
                                                   pageGroups={contextProps.router.pageGroups}
@@ -142,6 +147,7 @@ class IpaMainLayout extends React.Component {
 
                                           </Layout>
                                        </StylesProvider>
+                                      );
                                     }
                               }
                             </AppContext.Consumer>

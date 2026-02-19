@@ -1,10 +1,43 @@
 $light-grey: #6d6e70;
 
-.dialog-title {
-  margin-bottom: 0px;
+
+.project-picker-modal-dialog-content {
+  padding: 36px 44px;
+  width: 552px;
+
+  .dialog-header {
+    background-color: var(--neutral-0);
+    padding-bottom: 8px;
+  }
+  
+  .dialog-title {
+    margin-top: 32px;
+    margin-bottom: 0px;
+  }
+
+  .dialog-title__no-close-button {
+    margin-top: 0px;
+  }
+  
+  .dialog-close-button {
+    align-self: flex-start;
+    svg {
+      color: var(--neutral-5);
+    }
+  }
+
+  .dialog-body {
+    padding-bottom: 12px;
+  }
 }
 
+
+
 .project-picker-modal {
+  .hidden {
+    visibility: hidden;
+  }
+
   h4 {
     font-size: 14px;
   }
@@ -33,9 +66,25 @@ $light-grey: #6d6e70;
     }
   }
 
+  .usergroup-loader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--app-accent-color);
+  }
+
   .spinningLoadingIcon.userGroupLoadingIcon {
     position: relative;
+    top: initial;
+    left: intial;
+    border-color: var(--app-accent-color);
+    border-top-color: var(--neutral-1);
+    height: 20px;
+    width: 20px;
   }
+
+
 
   .custom-single-class .select__control:hover {
     border-color: var(--app-accent-color);
@@ -63,7 +112,7 @@ $light-grey: #6d6e70;
 
   .select-container {
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 
   .select-input-container {
@@ -81,12 +130,17 @@ $light-grey: #6d6e70;
 
 .button-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   width: 100%;
 
   .dialog-footer-button {
     flex-grow: 1;
-    margin: 0px 8px;
+  }
+
+  .logout-button {
+    color: var(--destructive);
+    margin-top: 16px;
   }
 }
 

@@ -452,13 +452,21 @@ const ProjectPickerModal = props => {
 
   return (
     <Dialog
-      title='Project Selection'
+      title={!hasExistingProject ? "Project access" : "Switch project"}
       open={true}
+      disableCloseButton={!hasExistingProject}
+      disableClickOutside={!hasExistingProject}
+      hideOverlay={!hasExistingProject}
+      disableEscapeKey={!hasExistingProject}
       onOpenChange={open => {
         if (!open) onCancel?.()
       }}
       classNames={{
-        title: 'dialog-title'
+        content: 'project-picker-modal-dialog-content',
+        header: 'dialog-header',
+        title: `dialog-title ${!hasExistingProject ? 'dialog-title__no-close-button' : ''}`,
+        closeButton: 'dialog-close-button',
+        body: 'dialog-body',
       }}
       children={
         <div className='project-picker-modal'>
@@ -541,32 +549,33 @@ const ProjectPickerModal = props => {
 
               {userGroups && userGroups.length > 0 && (
                 <div>
-                  <h4>User Group</h4>
-                  {!loadingUserGroups ? (
-                    <SingleSelect
-                      name='userGroupSelect'
-                      options={userGroupOptions}
-                      value={selectedUserGroupId}
-                      className={
-                        referenceAppConfig?.refApp
-                          ? 'select custom-single-class'
-                          : 'select basic-single'
-                      }
-                      classNames={{
-                        container: 'select-container',
-                        inputContainer: 'select-input-container',
-                        trigger: 'select-trigger',
-                        popup: 'select-popup'
-                      }}
-                      placeholder={'Select User Group...'}
-                      onChange={onUserGroupPicked}
-                      disabled={userGroups.length < 2}
-                      filter={false}
-                    />
-                  ) : (
-                    <div className='spinningLoadingIcon userGroupLoadingIcon'></div>
-                  )}
-                </div>
+                    <div className={`usergroup-select-container ${loadingUserGroups ? 'hidden' : ''}`}>
+                      <h4>User Group</h4>
+                      <SingleSelect
+                        name='userGroupSelect'
+                        options={userGroupOptions}
+                        value={selectedUserGroupId}
+                        className={
+                          referenceAppConfig?.refApp
+                            ? 'select custom-single-class'
+                            : 'select basic-single'
+                        }
+                        classNames={{
+                          container: `select-container`,
+                          inputContainer: 'select-input-container',
+                          trigger: 'select-trigger',
+                          popup: 'select-popup'
+                        }}
+                        placeholder={'Select User Group...'}
+                        onChange={onUserGroupPicked}
+                        disabled={userGroups.length < 2}
+                        filter={false}
+                      />
+                    </div>
+                    {loadingUserGroups && (
+                      <SimpleTextThrobber throbberText='Loading user groups' />
+                    )}
+                  </div>
               )}
 
               <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -585,30 +594,12 @@ const ProjectPickerModal = props => {
       }
       footer={
         <div className='button-container'>
-          {!hasExistingProject && (
-            <Button
-              variant="secondary"
-              onClick={userLogout}
-              className={'dialog-footer-button'}
-            >
-              Logout
-            </Button>
-          )}
-          {hasExistingProject && (
-            <Button
-              variant="secondary"
-              onClick={onCancel}
-              className={'dialog-footer-button'}
-            >
-              Cancel
-            </Button>
-          )}
           <Button
             onClick={submitProjSelection}
-            disabled={!selectedProjectId || !selectedUserGroupId}
+            disabled={!selectedProjectId || !selectedUserGroupId || loadingUserGroups || loadingProjects}
             className={'dialog-footer-button'}
           >
-            Load Project
+            {hasExistingProject ? 'Switch Project' : 'Load Project'}
           </Button>
           {referenceAppConfig?.refApp && (
             <Button
@@ -618,6 +609,13 @@ const ProjectPickerModal = props => {
               Create Project
             </Button>
           )}
+          <Button
+            variant="tertiary"
+            onClick={userLogout}
+            className={'dialog-footer-button logout-button'}
+          >
+            Sign out
+          </Button>
         </div>
       }
     />

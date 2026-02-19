@@ -99,6 +99,7 @@ const getPlugins = () => [
     copy({
         targets: [
             {src: 'src/img/**/*', dest: 'modules/img'},
+            {src: 'src/img/twinit.svg', dest: 'modules/IpaIcons'},
             {src: 'src/**/*.scss', dest: 'modules/styles'},
             {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'},
             {src: 'src/IpaFonts/**/*', dest: 'modules/IpaFonts'},
