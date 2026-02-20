@@ -152,6 +152,7 @@ const ProjectPickerModal = props => {
     projectLoadHandlerCallback,
     testConfig,
     onConfigLoad,
+    onProjectLoadStart,
     defaultConfig,
     referenceAppConfig,
     onCancel,
@@ -302,6 +303,8 @@ const ProjectPickerModal = props => {
   }
 
   const submitProjSelection = async () => {
+    const hasExistingProject = !!sessionStorage.getItem(CONFIG_DATA_KEY)
+    onProjectLoadStart && onProjectLoadStart(hasExistingProject)
     for (const project of projects) {
       if (project._id === selectedProjectId) {
         await IafProj.switchProject(project._id)

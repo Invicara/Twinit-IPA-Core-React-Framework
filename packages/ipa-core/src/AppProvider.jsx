@@ -11,6 +11,7 @@ import EmptyConfig, {actualPage} from './emptyConfig';
 import DefaultStyleVars from "./IpaStyles/styleVars.json";
 
 import ProjectPickerModal from "./IpaDialogs/ProjectPickerModal";
+import LoadingModal from "./IpaDialogs/LoadingModal";
 import ScriptHelper from './IpaUtils/ScriptHelper'
 
 import {parseQuery} from "./IpaUtils/helpers";
@@ -485,6 +486,18 @@ export class AppProvider extends React.Component {
               testConfig: self.testConfig.bind(self),
               userLogout: this.state.actions.userLogout,
               onConfigLoad: callback,
+              onProjectLoadStart: (hasExistingProject) => {
+                store.dispatch(Modals.destroy());
+                store.dispatch(Modals.setModal({
+                  component: LoadingModal,
+                  props: {
+                    title: 'Loading project',
+                    description: "We're loading the data. This will only take a moment...",
+                    hideOverlay: !hasExistingProject,
+                  },
+                  open: true,
+                }));
+              },
               onCancel: () => {
                 store.dispatch(Modals.destroy());
                 this.props.onCancel && this.props.onCancel();
@@ -542,7 +555,7 @@ export class AppProvider extends React.Component {
   }
 
   async onConfigLoad(config, routes, token, user) {
-
+    try {
     function hasSisenseConnectors(config) {
       if (config.connectors) {
 
@@ -587,8 +600,6 @@ export class AppProvider extends React.Component {
     ScriptCache.clearCache();
 
     IafScriptEngine.clearVars()
-
-    store.dispatch(Modals.destroy());
 
     let selectedProj = IafProj.getCurrent();
     if (selectedProj) {
@@ -667,7 +678,7 @@ export class AppProvider extends React.Component {
           router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
         });
 
-      this.setState({isLoading: false});
+      this.setState({ isLoading: false });
 
       // Eval the "autoeval" script for any bootstrap setup of app.
       if (config.scripts && config.scripts.autoeval) {
@@ -700,6 +711,9 @@ export class AppProvider extends React.Component {
 
     if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
+    } finally {
+      store.dispatch(Modals.destroy());
+    }
   }
 
   setUserConfig(config) {

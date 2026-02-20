@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {HashRouter, Switch} from 'react-router-dom';
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
 
@@ -14,6 +15,7 @@ import { getPlatform } from '../IpaUtils/helpers';
 import * as qs from 'querystring';
 
 import Layout from './Layout';
+import LoadingModal from '../IpaDialogs/LoadingModal';
 
 import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
@@ -31,6 +33,28 @@ const generateClassName = createGenerateClassName({
 });
 
 enableMapSet()
+
+function LoadingScreenWithModal({ modal }) {
+  const showLoadingModal = !modal?.open || !modal?.component;
+  return (
+    <div className="ipa-loading-screen">
+      <header className="ipa-loading-screen__header">
+        <img src="/fonts/twinit.svg" alt="" className="ipa-loading-screen__logo" />
+      </header>
+      <div className="ipa-loading-screen__body">
+        {showLoadingModal && (
+          <LoadingModal
+            title="Signing you in"
+            description="We’re checking your details. This will only take a moment..."
+            hideOverlay={true}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+const LoadingScreenWithModalConnected = connect(state => ({ modal: state.modal }))(LoadingScreenWithModal);
 
 class App extends React.Component {
   constructor(props) {
@@ -120,12 +144,7 @@ class IpaMainLayout extends React.Component {
                                     (contextProps) => {
                                       console.log("AppContext contextProps", contextProps)
                                       return contextProps.isLoading ? (
-                                        <div className="ipa-loading-screen">
-                                          <header className="ipa-loading-screen__header">
-                                            <img src="/fonts/twinit.svg" alt="" className="ipa-loading-screen__logo" />
-                                          </header>
-                                          <div className="ipa-loading-screen__body" />
-                                        </div>
+                                        <LoadingScreenWithModalConnected />
                                       ) : (
                                        <StylesProvider generateClassName={generateClassName}> 
                                           <Layout pageList={contextProps.router.pageList}
