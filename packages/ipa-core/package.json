@@ -1,6 +1,6 @@
 {
   "name": "@invicara/ipa-core",
-  "version": "3.0.66-1",
+  "version": "3.0.66-2",
   "description": "DigitalTwin Factory frontend and scripting framework.",
   "author": "Scott Mollon <scott.mollon@invicara.com>",
   "repository": {
@@ -32,10 +32,10 @@
   "dependencies": {
     "@dtplatform/iaf-doc-viewer": "~4.4.0",
     "@dtplatform/iaf-script-engine": "~4.4.0",
+    "@dtplatform/ipa-ui": "^1.1.0",
     "@dtplatform/platform-api": "~4.4.0",
     "@dtplatform/platform-ui-components": "~4.4.0",
     "@dtplatform/ui-utils": "~4.4.0",
-    "@dtplatform/ipa-ui": "^1.1.0",
     "@mui/icons-material": "^5.16.14",
     "@mui/material": "^5.16.14",
     "@mui/styles": "^5.16.14",
