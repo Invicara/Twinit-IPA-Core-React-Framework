@@ -1,6 +1,6 @@
 import React from 'react'
 import { LinearProgress } from '@mui/material'
-import { Dialog } from '@invicara/ipa-ui'
+import { Dialog } from '@dtplatform/ipa-ui'
 
 import './LoadingModal.scss'
 
