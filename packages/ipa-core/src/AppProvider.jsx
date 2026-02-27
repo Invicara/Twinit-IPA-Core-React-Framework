@@ -521,7 +521,7 @@ export class AppProvider extends React.Component {
   }
 
   async testConfig(config) {
-    return await calculateRoutes(config, this.props.ipaConfig);
+    return await calculateRoutes(config, this.props.ipaConfig, this.props.pageComponentLoader);
   }
 
   showIpaModal(modalContent) {
@@ -707,7 +707,7 @@ export class AppProvider extends React.Component {
   }
 }
 
-async function calculateRoutes(config, ipaConfig) {
+async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
   const pList = [];
   const pRoutes = [];
   const pGroups = [];
@@ -729,25 +729,31 @@ async function calculateRoutes(config, ipaConfig) {
 
   function getPageComponent(pageComponent, pageComponentProps) {
 
-    let component
-    try {
-      component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
-      component = asIpaPage(component, pageComponentProps)
-    } catch(e) {
-
-      component = InternalPages[pageComponent] || null
-
-      if (component) {
-        component = asIpaPage(component, pageComponentProps)
-      }
-      else {
-        console.error(e)
-        console.error("can't find page component: ", pageComponent)
-        component = null
-      }
+    if (pageComponentLoader) {
+      // Opt-in lazy loading: the consuming app supplies the import() so webpack
+      // can analyze it in app code (no IIFE transform, full recursive context).
+      const LazyComponent = React.lazy(() =>
+        pageComponentLoader(pageComponent).catch(() => {
+          const internalComponent = InternalPages[pageComponent]
+          if (internalComponent) return { default: internalComponent }
+          console.error("can't find page component: ", pageComponent)
+          return { default: () => null }
+        })
+      )
+      return asIpaPage(LazyComponent, pageComponentProps)
     }
 
-    return component
+    // Legacy fallback: synchronous require (original behavior, zero breaking changes
+    // for consumers that do not pass pageComponentLoader).
+    try {
+      const component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default
+      if (component) return asIpaPage(component, pageComponentProps)
+    } catch (e) {
+      const internalComponent = InternalPages[pageComponent]
+      if (internalComponent) return asIpaPage(internalComponent, pageComponentProps)
+    }
+    console.error("can't find page component: ", pageComponent)
+    return asIpaPage(() => null, pageComponentProps)
 
   }
 

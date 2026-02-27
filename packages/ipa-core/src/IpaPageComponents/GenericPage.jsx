@@ -420,13 +420,19 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       </div>
     ) : (<React.Fragment>
       {this.toolbar()}
-      <PageComponent {...optionalProps} {...this.props}
-        onLoadComplete={this.onLoadComplete}
-        handler={this.state.handler}
-        onNavigate={genericPageContext.onNavigate}
-        setQueryParams={this.setQueryParams}
-        queryParams={this.state.queryParams}
-      />
+      <React.Suspense fallback={
+        <div style={{ padding: '40px' }}>
+          <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
+        </div>
+      }>
+        <PageComponent {...optionalProps} {...this.props}
+          onLoadComplete={this.onLoadComplete}
+          handler={this.state.handler}
+          onNavigate={genericPageContext.onNavigate}
+          setQueryParams={this.setQueryParams}
+          queryParams={this.state.queryParams}
+        />
+      </React.Suspense>
     </React.Fragment>)
 
     isNestedDetailPage = () => (optionalProps && optionalProps.detailPage && optionalProps.detailPage.nested);
