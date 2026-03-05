@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "overrides": {
     "lerna": { "minimatch": "3.1.4" },
     "@lerna/create": { "minimatch": "3.1.4" },
@@ -10,13 +13,13 @@
     "js-yaml": "4.1.1"
   },
   "scripts": {
-    "bootstrap": "lerna bootstrap --no-ci",
+    "bootstrap": "npm install",
     "build": "lerna run build",
     "build-dev": "lerna run build-dev",
     "release": "npm run build && lerna version --exact",
     "quickrelease": "lerna version --exact",
     "changed": "lerna changed",
-    "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes",
+    "publish": "lerna run build && lerna publish from-package --yes",
     "prepare": "husky install"
   },
   "devDependencies": {
