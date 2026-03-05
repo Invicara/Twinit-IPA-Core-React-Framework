@@ -15,6 +15,7 @@ import { getPlatform } from '../IpaUtils/helpers';
 import * as qs from 'querystring';
 
 import Layout from './Layout';
+import Logo from './Logo';
 import LoadingModal from '../IpaDialogs/LoadingModal';
 
 import '../IpaStyles/theme.scss'
@@ -34,13 +35,15 @@ const generateClassName = createGenerateClassName({
 
 enableMapSet()
 
-function LoadingScreenWithModal({ modal }) {
+function LoadingScreenWithModal({ modal, ipaConfig }) {
   const showLoadingModal = !modal?.open || !modal?.component;
   return (
     <div className="ipa-loading-screen">
-      <header className="ipa-loading-screen__header">
-        <img src="/fonts/twinit.svg" alt="" className="ipa-loading-screen__logo" />
-      </header>
+      {ipaConfig?.appImage &&
+        <header className="ipa-loading-screen__header">
+          <img src={ipaConfig?.appImage} alt="" className="ipa-loading-screen__logo" />
+        </header>
+      }
       <div className="ipa-loading-screen__body">
         {showLoadingModal && (
           <LoadingModal
@@ -144,7 +147,9 @@ class IpaMainLayout extends React.Component {
                                     (contextProps) => {
                                       console.log("AppContext contextProps", contextProps)
                                       return contextProps.isLoading ? (
-                                        <LoadingScreenWithModalConnected />
+                                        <LoadingScreenWithModalConnected
+                                          ipaConfig={this.props.ipaConfig}
+                                        />
                                       ) : (
                                        <StylesProvider generateClassName={generateClassName}> 
                                           <Layout pageList={contextProps.router.pageList}

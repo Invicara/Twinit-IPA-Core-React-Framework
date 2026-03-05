@@ -27,6 +27,17 @@ const ipaConfig = {
 }
 ```
 
+## Application Logo
+
+The Application logo can be provided by configuring it in the `IpaConfig.js`. It will display in background of the Project Picker page and when loading projects or login information when using the IpaMainLayout.
+If not provided, the header of these pages will be hidden.
+
+```jsx
+const ipaConfig = {
+  appImage: "logo.png"
+}
+```
+
 ## Application Colors
 
 Your own css files can be provided in ipaCore/css to modify the default theme.
