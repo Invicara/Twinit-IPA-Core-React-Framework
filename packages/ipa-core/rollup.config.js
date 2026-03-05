@@ -10,6 +10,8 @@ import image from '@rollup/plugin-image';
 import fs from 'fs';
 import path from 'path';
 
+const rootDir = path.resolve(__dirname);
+
 // Custom plugin to create symlinks for large folders to avoid duplication
 const createSymlinksPlugin = () => ({
     name: 'create-symlinks',
@@ -98,16 +100,17 @@ const getPlugins = () => [
     commonjs(),
     copy({
         targets: [
-            {src: 'src/img/**/*', dest: 'modules/img'},
-            {src: 'src/img/twinit.svg', dest: 'modules/IpaIcons'},
-            {src: 'src/**/*.scss', dest: 'modules/styles'},
-            {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'},
-            {src: 'src/IpaFonts/**/*', dest: 'modules/IpaFonts'},
-            {src: 'src/react-ifef/img/**/*', dest: 'modules/react-ifef/img'},
-            {src: 'src/img/**/*', dest: 'esm_modules/img'},
-            {src: 'src/*/*.scss', dest: 'esm_modules/styles'},
+            { src: path.join(rootDir, 'src/img/**/*'), dest: path.join(rootDir, 'modules/img') },
+            { src: path.join(rootDir, 'src/img/twinit.svg'), dest: path.join(rootDir, 'modules/IpaIcons') },
+            { src: path.join(rootDir, 'src/**/*.scss'), dest: path.join(rootDir, 'modules/styles') },
+            { src: path.join(rootDir, 'src/IpaIcons/**/*'), dest: path.join(rootDir, 'modules/IpaIcons') },
+            { src: path.join(rootDir, 'src/IpaFonts/**/*'), dest: path.join(rootDir, 'modules/IpaFonts') },
+            { src: path.join(rootDir, 'src/react-ifef/img/**/*'), dest: path.join(rootDir, 'modules/react-ifef/img') },
+            { src: path.join(rootDir, 'src/img/**/*'), dest: path.join(rootDir, 'esm_modules/img') },
+            { src: path.join(rootDir, 'src/*/*.scss'), dest: path.join(rootDir, 'esm_modules/styles') },
         ],
-        hook: 'writeBundle'
+        hook: 'writeBundle',
+        copySync: true
     }),
     // Create symlinks after copying to avoid duplicating large folders
     createSymlinksPlugin()]
