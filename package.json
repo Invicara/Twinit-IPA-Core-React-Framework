@@ -3,8 +3,11 @@
   "private": true,
   "overrides": {
     "lerna": { "minimatch": "3.1.4" },
+    "@lerna/create": { "minimatch": "3.1.4" },
     "nx": { "minimatch": "9.0.7" },
-    "tar": ">=7.5.10"
+    "@nx/devkit": { "minimatch": "9.0.7" },
+    "tar": ">=7.5.10",
+    "js-yaml": "4.1.1"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap --no-ci",
@@ -21,7 +24,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.0",
-    "lerna": "^9.0.5",
+    "lerna": "^8.2.4",
     "lint-staged": "^15.2.2"
   },
   "lint-staged": {
