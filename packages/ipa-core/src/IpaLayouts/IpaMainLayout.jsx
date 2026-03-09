@@ -141,6 +141,7 @@ class IpaMainLayout extends React.Component {
                           onCancel={this.props.onCancel} //I don't think this is used by any app yet we should think about removing it
                           projectLoadHandlerCallback={this.props.projectLoadHandlerCallback}
                           onProjectPickerCancel={this.props.onProjectPickerCancel}
+                          pageComponentLoader={this.props.pageComponentLoader}
                         > 
                             <AppContext.Consumer>
                                 {
