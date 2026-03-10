@@ -51,9 +51,13 @@ const runScript = (...args) => {
 }
 
 const clearCache = () => {
-  cachedPromises = {}
+    cachedPromises = {}
 }
 
-const ScriptCache = { runScript, clearCache }
+const processCache = (fn) => {
+    return fn(cachedPromises)
+}
+
+const ScriptCache = { runScript, clearCache, processCache }
 
 export default ScriptCache;

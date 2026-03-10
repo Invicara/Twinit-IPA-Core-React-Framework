@@ -4,7 +4,7 @@ import EntitySelectionPanel, {TreeSelectMode} from "./EntitySelectionPanel"
 import {branchNodeRenderer, leafNodeRenderer} from "../../IpaUtils/TreeRendererHelper"
 
 export const RelatePanel = ({selectedEntityType, selectedEntities, checkedEntities, appliedFilters, fetching, entityPlural,
-                         searchedEntities, parentEntities, relate, applySearchFiltering, setSelectedSearchedEntities
+                         searchedEntities, parentEntities, relate, setSelectedSearchedEntities, resetForRelatedFilteringAndGrouping, groups
 }) => {
     const RELATIONS_WARNING_MESSAGE = "This entity is related to: ";
 
@@ -22,14 +22,19 @@ export const RelatePanel = ({selectedEntityType, selectedEntities, checkedEntiti
         <div className={'panel-title'}>Relate</div>
         <div className='tree-container'>
             {selectedEntityType && <EntitySelectionPanel
-                selectedGroups={undefined}
+                selectedGroups={groups}
                 selectedFilters={appliedFilters}
                 selectedEntities={selectedEntities}
                 fetching={fetching}
                 entities={getEntitiesWithRelationsWarnings()}
                 onSelect={(entities) => setSelectedSearchedEntities(entities)}
                 treeSelectMode={TreeSelectMode.NONE_MEANS_NONE}
-                onGroupOrFilterChange={(changes) => applySearchFiltering(changes.filters)}
+                onGroupOrFilterChange={(changes) => {
+                    resetForRelatedFilteringAndGrouping({
+                        filters: changes.filters,
+                        groups: changes.groups
+                    })
+                }}
                 leafNodeRenderer={leafNodeRenderer}
                 branchNodeRenderer={branchNodeRenderer}
                 name={selectedEntityType + "_selection_panel"}

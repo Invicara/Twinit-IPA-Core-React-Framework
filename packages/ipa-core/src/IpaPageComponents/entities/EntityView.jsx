@@ -23,7 +23,7 @@ import {getFilteredEntitiesBy} from "../../IpaUtils/entities";
 import './EntityView.scss'
 import {EntityTableContainer} from "./EntityTableContainer";
 import withEntityAvailableGroups from "./WithEntityAvailableGroups";
-
+import { BodyContext } from "../../react-ifef/components/bodyProvider";
 
 const tableComponents = {
     'EntityListView': EntityListView,
@@ -32,15 +32,29 @@ const tableComponents = {
 
 class EntityView extends React.Component {
 
-    state = {displayDetail: false}
+    state = {
+        displayDetail: false,
+        selectedEntity: [],
+        reloadToken: false
+    }
+
+     static contextType = BodyContext;
+
+     toggleReloadToken = () => {
+        this.setState(prevState => ({
+            reloadToken: !prevState.reloadToken
+        }));
+    };
 
     openDetail = entity => {
-        this.setState({displayDetail: true})
+        this.setState({displayDetail: true, selectedEntity: entity})
+        this.props.setAvailableDataGroups(entity)
         // this.props.entitiesSelected([entity]);
     }
 
     openSummary = () => {
         this.setState({displayDetail: false})
+        this.toggleReloadToken()
         // this.props.entitiesSelected([]);
     }
 
@@ -48,6 +62,7 @@ class EntityView extends React.Component {
         if (this.state.displayDetail == true && entities.length > 1) {
             this.setState({displayDetail: false})
         }
+        this.props.setFilteredBySearchEntities(entities)
         this.props.entitiesSelected(entities)
     }
 
@@ -59,13 +74,18 @@ class EntityView extends React.Component {
     }
     
     actionSuccess = (actionType, newEntity, result) => {
-    if (actionType === 'delete') this.openSummary();
+    if (actionType === 'create') {
+        this.toggleReloadToken()
+    }
+    if (actionType === 'delete') {
+        this.openSummary()
+    };
     if (actionType === 'edit') {  
         var updatedEntities = this.props.allEntities.map(a => {
             return a._id === newEntity._id ? newEntity : a;
         });
         const filteredEntities = getFilteredEntitiesBy(updatedEntities, this.props.appliedFilters)
-        if(!_.isEmpty(filteredEntities) && _.isEmpty(filteredEntities.find(e => e._id === newEntity._id))) this.openSummary()
+        if(!_.isEmpty(filteredEntities) && !_.isEmpty(filteredEntities.find(e => e._id === newEntity._id))) this.openSummary()
       }
       this.props.onEntityChange(actionType, newEntity, result);
       
@@ -86,6 +106,7 @@ class EntityView extends React.Component {
 
         let actions = {}
         let tableActions = {}
+
         if (this.props.handler.config.actions) {
             actions = Object.assign({}, this.props.handler.config.actions)
             actions.onSuccess = this.actionSuccess
@@ -96,8 +117,9 @@ class EntityView extends React.Component {
 
             let actionNames = Object.keys(actions);
             actionNames.forEach((action) => {
-                if (actions[action].showOnTable)
+                if (actions[action].showOnTable) {
                     tableActions[action] = actions[action];
+                }
             });
 
         }
@@ -110,7 +132,7 @@ class EntityView extends React.Component {
                 pageContent = <EntityDetailPanel
                     context={this.context}
                     onSummary={this.openSummary}
-                    entity={this.props.selectedEntities[0]}
+                    entity={this.state.selectedEntity || this.props.selectedEntities[0]}
                     config={this.props.handler.config}
                     actions={actions}
                     availableDataGroups={this.props.availableDataGroups}
@@ -129,7 +151,7 @@ class EntityView extends React.Component {
                     context={this.context}
                     entityPlural={this.props.entityPlural}
                     entitySingular={this.props.entitySingular}
-
+                    setIsolatedEntities={this.props.setIsolatedEntities}
                 />
             }
         } else {
@@ -154,6 +176,8 @@ class EntityView extends React.Component {
                             initialValue={query}
                             selectors={handler.config.selectBy}
                             doFetch={this._doFetch}
+                            reloadToken={this.state.reloadToken}
+                            handler={this.props.handler}
                         />
                     </div>
                 </StackableDrawer>
@@ -185,16 +209,6 @@ class EntityView extends React.Component {
     }
 }
 
-EntityView.contextTypes = {
-    actions: PropTypes.object,
-    ifefPlatform: PropTypes.object,
-    ifefSnapper: PropTypes.object,
-    ifefNavDirection: PropTypes.string,
-    ifefShowPopover: PropTypes.func,
-    ifefUpdatePopover: PropTypes.func,
-    ifefUpdatePopup: PropTypes.func,
-    ifefShowModal: PropTypes.func
-};
 
 
 const mapStateToProps = state => ({

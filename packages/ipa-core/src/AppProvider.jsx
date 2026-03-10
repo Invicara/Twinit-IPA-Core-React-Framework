@@ -11,6 +11,7 @@ import EmptyConfig, {actualPage} from './emptyConfig';
 import DefaultStyleVars from "./IpaStyles/styleVars.json";
 
 import ProjectPickerModal from "./IpaDialogs/ProjectPickerModal";
+import LoadingModal from "./IpaDialogs/LoadingModal";
 import ScriptHelper from './IpaUtils/ScriptHelper'
 
 import {parseQuery} from "./IpaUtils/helpers";
@@ -22,14 +23,17 @@ import ScriptCache from './IpaUtils/script-cache'
 import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
+import { actions as Modals } from './redux/slices/modal'
+import ModalHost from './ModalHost'
 import SetUpProject from "./ipaProjectSetup/SetupProject";
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
 import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
 import {AppContext, withAppContext} from "./appContext";
 import withAuthHoc from './withAuthHoc';
-
-class AppProvider extends React.Component {
+import { BodyContext } from './react-ifef/components/bodyProvider';
+export class AppProvider extends React.Component {
+  static contextType = BodyContext;
   constructor(props) {
     super(props);
 
@@ -196,8 +200,7 @@ class AppProvider extends React.Component {
 
   setSelectedItems(newItems) {
     const {selectedItems} = this.state;
-    //save items to session
-    let newSelecteds = Object.assign(selectedItems, newItems);
+    const newSelecteds = { ...selectedItems, ...newItems };
     localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] = JSON.stringify(newSelecteds);
     this.setState({selectedItems: newSelecteds});
   }
@@ -260,7 +263,7 @@ class AppProvider extends React.Component {
       const allHandlers = Object.values(config.handlers);
       handler = allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
     }
-    
+
     return handler;
   }
 
@@ -288,7 +291,7 @@ class AppProvider extends React.Component {
             let updatedToken = await this.props.authService.fetchToken(refreshToken, true);   //Fetch new token using refresh token
             if (updatedToken) {
               let user = await IafSession.setAuthToken(updatedToken.access_token,undefined);    //Updated token in session storage
-              this.setState({token: updatedToken.access_token})         //Set updated token 
+              this.setState({token: updatedToken.access_token})         //Set updated token
             }
           }
         }
@@ -473,30 +476,57 @@ class AppProvider extends React.Component {
       } else {
         const callback = (config, routes) => this.onConfigLoad(config, routes, token, user);
         try {
-          let projects = await IafProj.getProjects({_pageSize: 1000});
-          if (showProjectPicker)
-            self.context.ifefShowModal(
-                <ProjectPickerModal
-                    configUserType={this.props.ipaConfig.configUserType}
-                    referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
-                    appContextProps={this.state}
-                    defaultConfig={EmptyConfig}
-                    onAcceptInvite={this.state.actions.restartApp}
-                    projects={projects}
-                    testConfig={self.testConfig}
-                    userLogout = {this.state.actions.userLogout}
-                    onConfigLoad={callback}
-                    onCancel={() => self.context.ifefShowModal(false)}
-                    referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
-                        restartApp={this.state.actions.restartApp}
-                        projects={projects}
-                        onCancel={() => {
-                          this.setState((prev) => {
-                            return { ...prev, isshowProjectPickerModal: true };
-                          });
-                        }}
-                    />) }
-                />);
+          if (showProjectPicker) {
+            const projectPickerProps = {
+              configUserType: this.props.ipaConfig.configUserType,
+              referenceAppConfig: this.props.ipaConfig.referenceAppConfig,
+              appContextProps: this.state,
+              defaultConfig: EmptyConfig,
+              onAcceptInvite: this.state.actions.restartApp,
+              testConfig: self.testConfig.bind(self),
+              userLogout: this.state.actions.userLogout,
+              onConfigLoad: callback,
+              onProjectLoadStart: (hasExistingProject) => {
+                store.dispatch(Modals.destroy());
+                store.dispatch(Modals.setModal({
+                  component: LoadingModal,
+                  props: {
+                    title: 'Loading project',
+                    description: "We're loading the data. This will only take a moment...",
+                    hideOverlay: !hasExistingProject,
+                  },
+                  open: true,
+                }));
+              },
+              onCancel: () => {
+                store.dispatch(Modals.destroy());
+                this.props.onCancel && this.props.onCancel();
+              },
+              projectLoadHandlerCallback: this.props.projectLoadHandlerCallback,
+              referenceAppCreateProject: (projects) => {
+                store.dispatch(Modals.setModal({
+                  component: SetUpProject,
+                  props: {
+                    restartApp: this.state.actions.restartApp,
+                    projects,
+                    onCancel: () => {
+                      store.dispatch(Modals.setModal({
+                        component: ProjectPickerModal,
+                        props: { ...projectPickerProps, appContextProps: this.state },
+                        open: true,
+                      }));
+                    },
+                  },
+                  open: true,
+                }));
+              },
+            };
+            store.dispatch(Modals.setModal({
+              component: ProjectPickerModal,
+              props: projectPickerProps,
+              open: true,
+            }));
+          }
         } catch (error) {
           console.error(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
@@ -516,7 +546,7 @@ class AppProvider extends React.Component {
   }
 
   async testConfig(config) {
-    return await calculateRoutes(config, this.props.ipaConfig);
+    return await calculateRoutes(config, this.props.ipaConfig, this.props.pageComponentLoader);
   }
 
   showIpaModal(modalContent) {
@@ -525,7 +555,7 @@ class AppProvider extends React.Component {
   }
 
   async onConfigLoad(config, routes, token, user) {
-
+    try {
     function hasSisenseConnectors(config) {
       if (config.connectors) {
 
@@ -570,8 +600,6 @@ class AppProvider extends React.Component {
     ScriptCache.clearCache();
 
     IafScriptEngine.clearVars()
-  
-    this.context.ifefShowModal(false);
 
     let selectedProj = IafProj.getCurrent();
     if (selectedProj) {
@@ -650,7 +678,7 @@ class AppProvider extends React.Component {
           router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
         });
 
-      this.setState({isLoading: false});
+      this.setState({ isLoading: false });
 
       // Eval the "autoeval" script for any bootstrap setup of app.
       if (config.scripts && config.scripts.autoeval) {
@@ -683,6 +711,9 @@ class AppProvider extends React.Component {
 
     if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
+    } finally {
+      store.dispatch(Modals.destroy());
+    }
   }
 
   setUserConfig(config) {
@@ -698,11 +729,16 @@ class AppProvider extends React.Component {
 
   render() {
     const context = {...this.state};
-    return <AppContext.Provider value={context}>{this.props.children}</AppContext.Provider>
+    return (
+      <AppContext.Provider value={context}>
+        {this.props.children}
+        <ModalHost />
+      </AppContext.Provider>
+    );
   }
 }
 
-async function calculateRoutes(config, ipaConfig) {
+async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
   const pList = [];
   const pRoutes = [];
   const pGroups = [];
@@ -724,25 +760,31 @@ async function calculateRoutes(config, ipaConfig) {
 
   function getPageComponent(pageComponent, pageComponentProps) {
 
-    let component
-    try {
-      component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default;
-      component = asIpaPage(component, pageComponentProps)
-    } catch(e) {
-
-      component = InternalPages[pageComponent] || null
-
-      if (component) {
-        component = asIpaPage(component, pageComponentProps)
-      }
-      else {
-        console.error(e)
-        console.error("can't find page component: ", pageComponent)
-        component = null
-      }
+    if (pageComponentLoader) {
+      // Opt-in lazy loading: the consuming app supplies the import() so webpack
+      // can analyze it in app code (no IIFE transform, full recursive context).
+      const LazyComponent = React.lazy(() =>
+        pageComponentLoader(pageComponent).catch(() => {
+          const internalComponent = InternalPages[pageComponent]
+          if (internalComponent) return { default: internalComponent }
+          console.error("can't find page component: ", pageComponent)
+          return { default: () => null }
+        })
+      )
+      return asIpaPage(LazyComponent, pageComponentProps)
     }
 
-    return component
+    // Legacy fallback: synchronous require (original behavior, zero breaking changes
+    // for consumers that do not pass pageComponentLoader).
+    try {
+      const component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default
+      if (component) return asIpaPage(component, pageComponentProps)
+    } catch (e) {
+      const internalComponent = InternalPages[pageComponent]
+      if (internalComponent) return asIpaPage(internalComponent, pageComponentProps)
+    }
+    console.error("can't find page component: ", pageComponent)
+    return asIpaPage(() => null, pageComponentProps)
 
   }
 
@@ -759,7 +801,9 @@ async function calculateRoutes(config, ipaConfig) {
       title: handler.title || 'no title',
       icon: (handler.icon || ''),
       name: handlerName,
-      exact: true
+      exact: true,
+      newTab: handler?.config?.openNewTab || null,
+      newTabUrl: handler?.config?.url || null,
     };
 
     let detailItem = undefined;
@@ -894,10 +938,5 @@ async function calculateRoutes(config, ipaConfig) {
 
   return {pageList: pList, pageRoutes: pRoutes, pageGroups: pGroups};
 }
-
-AppProvider.contextTypes = {
-  ifefSnapper: PropTypes.object,
-  ifefShowModal: PropTypes.func
-};
 
 export default withAuthHoc(AppProvider);

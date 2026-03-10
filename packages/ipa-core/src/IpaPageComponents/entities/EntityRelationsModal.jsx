@@ -1,8 +1,7 @@
 import React from 'react';
 import _ from "lodash";
 import Select from 'react-select';
-import * as PropTypes from "prop-types";
-
+import { BodyContext } from '../../react-ifef/components/bodyProvider'
 
 import GenericMatButton from '../../IpaControls/GenericMatButton';
 
@@ -29,6 +28,8 @@ export default class EntityRelationsModal extends React.Component {
     asSelectOption = option => ({value: option, label: option, key: option})
 
     asSelectOptions = options => options.map(this.asSelectOption)
+
+    static contextType = BodyContext;
 
     async componentDidMount() {
       
@@ -101,8 +102,8 @@ export default class EntityRelationsModal extends React.Component {
         />
         <hr/>
         <div className="relations">
-          {!this.state.currentRelatedEntities.length && <div>No data</div>}
-          {!!this.state.currentRelatedEntities.length && this.state.currentRelatedEntities.map(re => <div key={re._id} className="selected-relations-display-row">
+          {!this.state.currentRelatedEntities?.length && <div>No data</div>}
+          {!!this.state.currentRelatedEntities?.length && this.state.currentRelatedEntities?.map(re => <div key={re._id} className="selected-relations-display-row">
               <span className="remove-from-collection" onClick={() => this.removeRelation(re)}><i className="fas fa-times"></i></span>      
               <span className="selected-relations-name-combo">{re['Entity Name']}</span>
             </div>
@@ -126,16 +127,6 @@ export default class EntityRelationsModal extends React.Component {
     }
 }
 
-EntityRelationsModal.contextTypes = {
-  ifefPlatform: PropTypes.object,
-  ifefSnapper: PropTypes.object,
-  ifefNavDirection: PropTypes.string,
-  ifefShowPopover: PropTypes.func,
-  ifefUpdatePopover: PropTypes.func,
-  ifefUpdatePopup: PropTypes.func,
-  ifefShowModal: PropTypes.func,
-  ifefModalOpen: PropTypes.bool
-};
 
 export const EntityRelationsModalFactory = {
   create: ({type, action, entity, context}) => {

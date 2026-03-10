@@ -141,18 +141,66 @@ export const updateMultipleFileAttribute = (fileUpdates) => async (dispatch) => 
     fileUpdates.forEach(fu => dispatch(updateFileAttribute(fu)))
 }
 
-export const uploadFiles = (container, processUploadScript, postProcessScript, batchSize = 5) => async (dispatch, getState) => {
-    const batches = _.chunk(getFilesMetadata(getState()), batchSize);
-    for(let batch of batches){
-        await dispatch(uploadFileBatch(container, batch, processUploadScript))
-    }
-    if(postProcessScript) dispatch(postProcessFiles(postProcessScript))
+export const updateMultipleFileAttributeAndVersion = (fileUpdates, defaultContainer, getFileContainerScript) => async (dispatch, getState) => {
+    // Update attributes first
+    fileUpdates.forEach(fu => {
+        dispatch(updateFileAttribute(fu));
+    });
+    
+    // Recompute version for each updated file based on new attributes
+    const versionUpdates = await Promise.allSettled(
+        fileUpdates.map(async (fileUpdate) => {
+            const file = getState().files.toUpload.find(f => f.name === fileUpdate.name);
+            if (!file) {
+                return null;
+            }
+            
+            let fileContainer = defaultContainer;
+            
+            // Resolve container based on updated attributes
+            if (getFileContainerScript) {
+                try {
+                    fileContainer = (await ScriptHelper.executeScript(getFileContainerScript, { file })) || defaultContainer;
+                } catch (error) {
+                    console.warn(`Failed to resolve container for file ${file.name}:`, error);
+                    // Continue with default container
+                }
+            }
+            
+            // Compute version for resolved container
+            try {
+                const { version } = await withVersion(fileContainer)(file);
+                return { name: file.name, version };
+            } catch (error) {
+                console.warn(`Failed to compute version for file ${file.name}:`, error);
+                return null; // Keep existing version
+            }
+        })
+    );
+    
+    // Update versions for successful computations
+    versionUpdates.forEach((result, index) => {
+        if (result.status === 'fulfilled' && result.value) {
+            dispatch(updateFile(result.value));
+        }
+    });
 }
 
-export const uploadFileBatch = (container, batch, processUploadScript) => async dispatch => {
+export const uploadFiles = (container, processUploadScript, postProcessScript, batchSize = 5, getFileContainerScript) => async (dispatch, getState) => {
+    const batches = _.chunk(getFilesMetadata(getState()), batchSize);
+    const allErrors = [];
+    for(let batch of batches){
+        const batchErrors = await dispatch(uploadFileBatch(container, batch, processUploadScript, getFileContainerScript))
+        allErrors.push(...batchErrors);
+    }
+    if(postProcessScript) dispatch(postProcessFiles(postProcessScript))
+    return allErrors;
+}
+
+export const uploadFileBatch = (container, batch, processUploadScript, getFileContainerScript) => async dispatch => {
     const refreshBytes = file => bytes => dispatch(updateFile({name: file.name, bytesUploaded: bytes}))
 
-    return Promise.all(batch.map(async file => {
+    const results = await Promise.all(batch.map(async file => {
 
       //allow the processUploadScript one last chance to modify the file name
       let overrideName = null;
@@ -166,15 +214,29 @@ export const uploadFileBatch = (container, batch, processUploadScript) => async 
         }
       }
 
+      let fileContainer = container;
+      // get the file container for the file if provided
+      if(getFileContainerScript){
+        fileContainer = (await ScriptHelper.executeScript(getFileContainerScript, {file})) || container;
+        // Recompute version based on resolved container just before upload
+        const { version } = await withVersion(fileContainer)(file);
+        dispatch(updateFile({name: file.name, version}))
+      }
+
       dispatch(updateFile({name: file.name, status: FileStatus.PROGRESS}))
 
       try{
-          const uploaded = await uploadFile(container, file,refreshBytes(file), processUploadScript);
+          const uploaded = await uploadFile(fileContainer, file, refreshBytes(file), processUploadScript);
           dispatch(updateFile({name: file.name, status: FileStatus.COMPLETE, uploadResult: uploaded}))
-      } catch {
+          return null;
+      } catch (error) {
           dispatch(updateFile({name: file.name, status: FileStatus.ERROR}))
+          return { fileName: file.name, error: error.message || 'Upload failed' };
       }
     }))
+    
+    // Return only the errors (filter out nulls)
+    return results.filter(result => result !== null);
 };
 
 export const loadAssociatedEntities = ({selectedEntities, script, entityType}) => async dispatch => {
@@ -198,14 +260,25 @@ export const postProcessFiles = (postProcessScript) => async (dispatch, getState
 
 //Other
 const withVersion = container => async file => {
-    const existingCheck = await IafFile.getFileItems(container, {name: file.name}, null, null, null);
-    const version = !!existingCheck && existingCheck._list.length > 0 ?
-        existingCheck._list[0].tipVersionNumber : 1;
-    return {name: file.name, version}
+    try {
+        const existingCheck = await IafFile.getFileItems(container, {name: file.name}, null, null, null);
+        const hasExisting = !!existingCheck && existingCheck._list.length > 0;
+        const tip = hasExisting ? existingCheck._list[0].tipVersionNumber : 0;
+        const version = (tip || 0) + 1; // show next version to be created
+        return {name: file.name, version}
+    } catch (error) {
+        console.error('[withVersion] Error checking existing files:', error);
+        return {name: file.name, version: 1}
+    }
 }
-
 const uploadFile = (container, file, refreshBytes) => new Promise((resolve, reject) => {
-    const newFile = new File([getBlob(file)], file.name, {type:getBlob(file).type})
+    const blob = getBlob(file);
+    // Zero-byte files cause TUS resumable upload to hang without calling any callbacks
+    if (blob.size === 0) {
+      reject(new Error('Cannot upload empty file (0 bytes)'));
+      return;
+    }
+    const newFile = new File([blob], file.name, {type: blob.type})
     newFile.fileItem = {
       fileAttributes: _.fromPairs(_.toPairs(file.fileAttributes).flatMap(([attrName, attrValue]) =>
         comesFromComplexSelect(attrValue) ? asValuePair(attrName, attrValue) : [[attrName, attrValue]]
@@ -239,6 +312,8 @@ const preProcess = async (files, script, payload = {}) => {
 }
 
 export const isComplete = file => file.status === FileStatus.COMPLETE;
+export const isError = file => file.status === FileStatus.ERROR;
+export const isFinished = file => file.status === FileStatus.COMPLETE || file.status === FileStatus.ERROR;
 export const isReadyFor = columns => file => columns.filter(col => col.required).every(col => col.isCompositeAttribute ?
         col.name.every(name => !_.isEmpty(_.get(file.fileAttributes, `${col.name}.${name}`)))
         : !!_.get(file.fileAttributes, col.name)

@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback, useRef} from "react";
+import React, {useMemo, useCallback, useRef, useEffect} from "react";
 import clsx from "clsx";
 import EntityActionsPanel from "./EntityActionsPanel";
 import _ from 'lodash'
@@ -9,7 +9,7 @@ import {isValidUrl} from '../../IpaUtils/helpers'
 import useSortEntities from "./sortEntities";
 import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 
-export const EntityListView = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity'}) => {
+export const EntityListView = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity', showModal}) => {
     const reactVirtualizedCache = useRef(new CellMeasurerCache({
         fixedWidth: true,
         defaultHeight: 100
@@ -50,6 +50,39 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         handleAllCheck = checkedObject.handleAllCheck;
         entityInstances = checkedObject.items;
     }
+
+    const autoSelectedRef = useRef(false);
+
+    useEffect(() => {
+    // Auto-select if only one Entity has been passsed through
+    if (entities.length === 1 && entityInstances.length === 1) {
+        if (!entityInstances[0].checked && !autoSelectedRef.current) {
+            autoSelectedRef.current = true;
+            handleCheck(entityInstances[0]);
+        }
+        return;
+    }
+
+    // If multiple Entities have been passed, remove auto-selection
+    if (entities.length > 1 && autoSelectedRef.current) {
+        autoSelectedRef.current = false;
+
+        // For controlled mode, call onChange directly with all unchecked
+        if (onChange) {
+            const uncheckedEntities = entityInstances.map(e => ({...e, checked: false}));
+            onChange(uncheckedEntities);
+        } else {
+            // For uncontrolled mode, call handleCheck for each checked entity
+            entityInstances.forEach(entity => {
+                if (entity.checked) {
+                    handleCheck(entity);
+                }
+            });
+        }
+    }
+}, [entities.length, entityInstances, onChange, handleCheck]);
+
+
     const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
 
     const handleColumnClick = useCallback((col) => () => sortEntitiesBy(col.accessor),[sortEntitiesBy]);
@@ -89,6 +122,7 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
                 entity={entityInstances.filter(inst => inst.checked)}
                 type={entityType}
                 context={context}
+                showModal={showModal}
             />
         </div>}
         <div className='entity-list-view-count'>

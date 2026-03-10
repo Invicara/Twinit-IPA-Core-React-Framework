@@ -2,6 +2,7 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 import Snap from '../lib/snap-invicara';
+import { BodyContext } from '../react-ifef/components/bodyProvider';
 
 class IfefSidePanelContainer extends React.Component {
 
@@ -22,6 +23,8 @@ class IfefSidePanelContainer extends React.Component {
       return null;
     }
   }
+
+  static contextType = BodyContext;
 
   componentDidUpdate(prevProps, prevState) {
     let prevElementBottomDimension = _.get(prevProps, 'settings.elementBottomDimension');
@@ -75,10 +78,6 @@ class IfefSidePanelContainer extends React.Component {
   }
 }
 
-IfefSidePanelContainer.contextTypes = {
-  ifefSnapper: PropTypes.object,
-  ifefSetSnapper: PropTypes.func
-};
 
 IfefSidePanelContainer.propTypes = {
   settings: PropTypes.object,

@@ -9,6 +9,7 @@ export const ChooseFiles = ({onAddFiles, display, iconName }) => {
     const fileInput = useRef();
 
     const handleFileSelect = () => {
+        console.log('Adam Files hancdleFileSelect fileInput', fileInput)
         if(!_.isEmpty(fileInput.current.files)) onAddFiles(fileInput.current.files);
         fileInput.current.value = null
     }

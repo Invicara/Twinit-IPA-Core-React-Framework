@@ -1,57 +1,41 @@
 $light-grey: #6d6e70;
 
+
+.project-picker-modal-dialog-content {
+  padding: 36px 44px;
+  width: 552px;
+
+  .dialog-header {
+    background-color: var(--neutral-0);
+    padding-bottom: 8px;
+  }
+  
+  .dialog-title {
+    margin-top: 32px;
+    margin-bottom: 0px;
+  }
+
+  .dialog-title__no-close-button {
+    margin-top: 0px;
+  }
+  
+  .dialog-close-button {
+    align-self: flex-start;
+    svg {
+      color: var(--neutral-5);
+    }
+  }
+
+  .dialog-body {
+    padding-bottom: 12px;
+  }
+}
+
+
+
 .project-picker-modal {
-
-
-  button {
-    text-transform: uppercase;
-    border-radius: 15px;
-    padding: 5px;
-    width: 40%;
-    margin: 5px;
-    margin-top: 20px !important;
-    border: solid black 2px;
-
-  }
-
-  button.default-load {
-    color: white;
-    background-color: var(--app-accent-color);
-    border-color: var(--app-accent-color);
-  }
-
-  button.default-cancel {
-    color: $light-grey;
-    background-color: white;
-    border-color: $light-grey;
-  }
-
-  button.setup {
-    color: white;
-    width: 23% !important;
-    background-color: var(--app-accent-color);
-    border-color: var(--app-accent-color);
-  }
-
-  button.cancel {
-    width: 23% !important;
-    color: $light-grey;
-    background-color: white;
-    border-color: $light-grey;
-  }
-
-  button.load {
-    color: white;
-    width: 23% !important;
-    background-color: var(--app-accent-color);
-    border-color: var(--app-accent-color);
-  }
-
-  button.done {
-    color: white;
-    width: 23% !important;
-    background-color: var(--app-accent-color);
-    border-color: var(--app-accent-color);
+  .hidden {
+    visibility: hidden;
   }
 
   h4 {
@@ -59,7 +43,6 @@ $light-grey: #6d6e70;
   }
 
   .invite-table {
-
     td,
     th {
       padding: 5px;
@@ -83,45 +66,82 @@ $light-grey: #6d6e70;
     }
   }
 
-  .custom-control.custom-switch {
-    z-index: unset;
+  .usergroup-loader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--app-accent-color);
   }
 
-  .custom-control-input:checked~.custom-control-label::before {
-    color: #fff;
+  .spinningLoadingIcon.userGroupLoadingIcon {
+    position: relative;
+    top: initial;
+    left: intial;
     border-color: var(--app-accent-color);
-    background-color: var(--app-accent-color);
+    border-top-color: var(--neutral-1);
+    height: 20px;
+    width: 20px;
   }
 
-.custom-single-class .select__control:hover {
-  border-color: var(--app-accent-color);
-  box-shadow: 0 0 0 0px var(--app-accent-color); 
-}
 
-.custom-single-class .select__option {
-  color: black;
-  background-color: white;
-}
 
-.custom-single-class .select__option--is-focused {
-  background-color: var(--app-accent-color) !important;
-  color: white;
-}
+  .custom-single-class .select__control:hover {
+    border-color: var(--app-accent-color);
+    box-shadow: 0 0 0 0px var(--app-accent-color);
+  }
 
-.custom-single-class .select__control {
-  border-color: #b0b0b0;
-  box-shadow: 0 0 0 0px #b0b0b0;
-}
+  .custom-single-class .select__option {
+    color: black;
+    background-color: white;
+  }
 
-.custom-single-class .select__indicator-separator {
-  display: none; /* Hide the separator between the indicator and the input */
-}
+  .custom-single-class .select__option--is-focused {
+    background-color: var(--app-accent-color) !important;
+    color: white;
+  }
 
+  .custom-single-class .select__control {
+    border-color: #b0b0b0;
+    box-shadow: 0 0 0 0px #b0b0b0;
+  }
+
+  .custom-single-class .select__indicator-separator {
+    display: none; /* Hide the separator between the indicator and the input */
+  }
+
+  .select-container {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .select-input-container {
+    width: 100%;
+  }
+
+  .select-popup {
+    width: 100%;
+  }
+
+  .select-trigger {
+    width: 100%;
+  }
 }
 
 .button-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+
+  .dialog-footer-button {
+    flex-grow: 1;
+  }
+
+  .logout-button {
+    color: var(--destructive);
+    margin-top: 16px;
+  }
 }
 
 @media screen and (max-width: 768px) {

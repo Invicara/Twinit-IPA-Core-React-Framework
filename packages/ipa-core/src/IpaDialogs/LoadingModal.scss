@@ -1,0 +1,41 @@
+/* Generic loading modal: 552px width, no header, title + description + progress in body */
+.loading-modal-dialog-content {
+  padding: 36px 44px;
+  width: 552px;
+
+  .dialog-header {
+    display: none;
+  }
+
+  .dialog-body {
+    padding-bottom: 12px;
+  }
+}
+
+.ipa-loading-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 16px;
+  min-height: 120px;
+  width: 100%;
+
+  .loading-modal-title {
+    margin: 0 0 4px 0;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--neutral-9);
+  }
+
+  .loading-modal-description {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    color: var(--neutral-6);
+  }
+
+  .loading-modal-progress {
+    width: 100%;
+  }
+}

@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import IfefSpinner from './ifefSpinner';
 
-
 class IfefLoading extends React.Component {
   constructor(props) {
     super(props);
@@ -69,7 +68,7 @@ class IfefLoading extends React.Component {
   componentDidUpdate(prevProps) {
     let options = this.getOptions(prevProps);
     if(options.duration > 0) {
-      this.setTimeout(() => this.context.ifefShowLoading(false), options.duration);
+      this.setTimeout(() => this.props.context.ifefShowLoading(false), options.duration);
     }
   }
 
@@ -107,9 +106,5 @@ IfefLoading.defaultProps = {
     show: "false"
 }
 
-IfefLoading.contextTypes = {
-    ifefShowBackdrop: PropTypes.func,
-    ifefShowLoading: PropTypes.func
-}
 
 export default IfefLoading;

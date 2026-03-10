@@ -18,9 +18,10 @@ import './Layout-MainNav.scss'
 import './Layout.scss'
 import clsx from "clsx";
 import { connect } from 'react-redux';
+import { AppContext } from '../appContext';
 
 class Layout extends React.Component {
-
+  static contextType = AppContext;
     constructor(props) {
         super(props);
         this.state = {
@@ -54,7 +55,7 @@ class Layout extends React.Component {
         this.setState({bottomPanelHeight: this.props.contextProps.defaultBottomPanelHeight})
     }
 
-    _getIcon = (icon, customClass) => {
+    _getIcon(icon, customClass) {
         let iconClass = icon;
         iconClass += icon.startsWith('icofont') ? ' icofont-2x' : ''
         iconClass += customClass ? ' ' + customClass : '';
@@ -78,7 +79,7 @@ class Layout extends React.Component {
         let pageRegex = new RegExp(page.path + '(?:/|$)');
         return (
             <li className={clsx('nav-li', pageRegex.test(loc) ? activeClass : '')} key={page.path ? page.path : page.key}>
-                <Item link={page.path} key={page.path ? page.path : page.key}
+                <Item page={page} link={page.path} key={page.path ? page.path : page.key}
                           customClasses={page.customClasses} onClick={page.onClick} item={false}>
                     {this._getIcon(page.icon, iconClass)}
                     <span className="menu-item"> {page.title}</span>
@@ -112,6 +113,19 @@ class Layout extends React.Component {
                 </FlexLeftNav>
         </li>
     )
+    }
+
+    getComponent(name) {
+        let component
+        try {
+            component = require('../../../../app/ipaCore/' + name + '.jsx').default;
+        } catch(e) {
+            console.error(e)
+            console.error("can't find page component: ", name)
+            component = null
+        }
+
+        return component
     }
 
 
@@ -150,20 +164,28 @@ class Layout extends React.Component {
           showTitle = false
         }
 
+        let customSidebar
+        if (settings.sidebarComponent) {
+            customSidebar = { component: this.getComponent(settings.sidebarComponent) }
+        }
+
         return (
             <div className={cn} onMouseMove={this._mouseMove.bind(this)} onMouseUp={this._mouseUp.bind(this)}>
                 {showTitle && <TitleBar contextProps={this.props.contextProps} parent={this} ipaConfig={this.props.ipaConfig}/>}
                 <SidePanelContainer settings={sidePanelSettings} {...this.props}>                
                 <FlexContainer {...this.props} >
-                        { showSidebar &&
-                          <FlexLeftNavs customClasses={this.props.pageGroups.length > 0 ? "grouped-left-nav-bar" : ''}>
-                              <FlexLeftNav customClasses="main-nav">
-                                  <ul>
-                                      {items}
-                                  </ul>
-                              </FlexLeftNav>
-                          </FlexLeftNavs>
-                        }
+                        {customSidebar?.component ? (
+                            <customSidebar.component {...this.props.contextProps} />
+                        ): (
+                            showSidebar &&
+                              <FlexLeftNavs customClasses={this.props.pageGroups.length > 0 ? "grouped-left-nav-bar" : ''}>
+                                  <FlexLeftNav customClasses="main-nav">
+                                      <ul>
+                                          {items}
+                                      </ul>
+                                  </FlexLeftNav>
+                              </FlexLeftNavs>
+                        )}
                         <FlexContent {...this.props} location={this.context.location} customClasses="has-left-nav">
                             {this.props.children}
                                 <BottomPanel height={this.state.bottomPanelHeight} hideOnLoad={true}>
@@ -173,27 +195,9 @@ class Layout extends React.Component {
                         </FlexContent>
                     </FlexContainer>
                 </SidePanelContainer>
-                {   
-                    this.props.modal?.open && 
-                    this.props.modal?.component && 
-                    <this.props.modal.component {...this.props.modal.props}/>
-                }
             </div>
         );
     }
 }
 
-Layout.contextTypes = {
-    ifefSnapper: PropTypes.object,
-    ifefPlatform: PropTypes.object,
-    location: PropTypes.object,
-    appContext: PropTypes.object
-};
-
-const mapStateToProps = state => ({modal: state.modal})
-
-const mapDispatchToProps = {
-}
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(Layout)
+export default connect()(Layout)

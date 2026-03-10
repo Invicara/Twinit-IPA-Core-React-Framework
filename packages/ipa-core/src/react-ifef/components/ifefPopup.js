@@ -52,7 +52,7 @@ class IfefPopup extends React.Component {
       var self = this;
       var handler =  function() {
         self.setState({ isUp: false, closing: false });
-        self.context.ifefUpdatePopup({});
+        self.props.context.ifefUpdatePopup({});
         if (typeof self.state.callback === 'function') {
           self.state.callback();
         }
@@ -195,8 +195,5 @@ class IfefPopup extends React.Component {
   }
 }
 
-IfefPopup.contextTypes = {
-  ifefUpdatePopup: PropTypes.func
-}
 
 export default IfefPopup;

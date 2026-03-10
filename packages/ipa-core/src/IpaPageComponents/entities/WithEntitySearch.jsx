@@ -87,7 +87,7 @@ const withEntitySearch = WrappedComponent => {
                     //this check is important not to mess with store
                     && queryParams.entityType === this.props.entitySingular) {
                     let fetcher = this.getFetcher(queryEntityConfig.script, queryParams.senderEntityType)
-                    fetcher({query: "<<ID_SEARCH>>"}, queryParams.selectedEntities, true)
+                    fetcher({query: "<<ID_SEARCH>>"}, queryParams.selectedEntities, true, this.onInitialFetchComplete)
                 }
                 // otherwise warn the developer if something strange happened... (possibly a user configuraiton issue?)
                 //TODO add a config validator on load
@@ -100,7 +100,13 @@ const withEntitySearch = WrappedComponent => {
             }
         }
 
-        onInitialFetchComplete = () => {
+        onInitialFetchComplete = async (entitiesFromThunk) => {
+            const entities = entitiesFromThunk || this.props.entities
+            if (!entities || entities.length === 0) {
+                console.warn("withEntitySearch Entities are empty in onInitialFetchComplete")
+                return
+            }
+
             //we assume that last query run is the one this callback is for, so we get groups and filters from here
             const queryParams = this.state.queryParamsPerEntityType[this.props.entitySingular];
             //If there were filters, be sure to apply them after entity selection
@@ -113,11 +119,14 @@ const withEntitySearch = WrappedComponent => {
             // set selectedEntities from a list of queryParam entity ids
             if (queryParams.selectedEntities) {
                 this.props.setSelecting(queryParams.selectedEntities.length === 1)
-                let selectedEntities = []
-                queryParams.selectedEntities.forEach(id =>
-                    selectedEntities.push(this.props.entities.find(e => e._id == id)))
-                if (selectedEntities.length > 0)
+                const selectedEntities = queryParams.selectedEntities
+                    .map(id => entities.find(e => e._id === id))
+                    .filter(Boolean)
+
+                if (selectedEntities.length > 0) {
+                    this.props.setFilteredBySearchEntities(selectedEntities)
                     this.props.setSelectedEntities(selectedEntities)
+                }
                 this.props.setSelecting(false)
             }
         }
@@ -237,11 +246,11 @@ const withEntitySearch = WrappedComponent => {
                 console.error(reason);
                 return Promise.reject();
             }
-            // ObservabilityView is setting the selected entity (Redux entity slice -> setSelectedEntity)
-            // fetchEntities is then calling setSelectedEntity and passing through an empty array and resetting the selected entity
-            if(this.props.handler.pageComponent !== "observability/ObservabilityView") await this.props.fetchEntities(script, selector, value, runScriptOptions);
+
+            // When moving from EntityView to Navigator via the 'navigator' action button, we send through initialPageLoad to ensure the Redux state for selectedEntities is not reset
+            const fetchedEntities = await this.props.fetchEntities(script, selector, value, runScriptOptions, initialPageLoad);
             //in case of initial query triggered by this page, this callback will still use old query
-            if(onInitialFetchComplete)onInitialFetchComplete();
+            if(onInitialFetchComplete) await onInitialFetchComplete(fetchedEntities);
             const fetchedQuery = {
                 query: {type: selector.query, id: selector.id, value},
                 senderEntityType: originalSender || this.props.entitySingular,

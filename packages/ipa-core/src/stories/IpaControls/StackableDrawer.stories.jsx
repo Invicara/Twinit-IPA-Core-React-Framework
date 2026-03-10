@@ -2,8 +2,8 @@ import React from "react";
 import { StackableDrawer } from "../../IpaDialogs/StackableDrawer";
 import StackableDrawerContainer from "../../IpaDialogs/StackableDrawerContainer";
 import "./StackableDrawer.stories.scss";
-import { Typography } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Typography } from "@mui/material";
+import { Skeleton } from '@mui/material';
 
 export default {
   title: "Controls/StackableDrawer",

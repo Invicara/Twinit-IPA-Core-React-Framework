@@ -1,4 +1,4 @@
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import React from 'react';
 import {isValidUrl} from '../../IpaUtils/helpers'
 import './Cell.scss';

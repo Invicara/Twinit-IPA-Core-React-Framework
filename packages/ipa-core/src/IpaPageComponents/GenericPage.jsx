@@ -6,13 +6,14 @@ import { PopoverMenuView } from "../IpaLayouts/PopoverMenuView";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import produce from "immer";
 import { connect } from "react-redux";
-import { Box, Container, Toolbar } from '@material-ui/core';
+import { Box, Container, Toolbar } from '@mui/material';
 
 import './GenericPage.scss'
 import GenericMatButton from "../IpaControls/GenericMatButton";
 
 import { GenericPageContext } from "./genericPageContext";
 import { compose } from "@reduxjs/toolkit";
+import { BodyContext } from '../react-ifef/components/bodyProvider';
 
 const URL_LENGTH_WARNING = 80000
 
@@ -36,6 +37,8 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       this.onLoadComplete = this.onLoadComplete.bind(this);
       this.onNavigated = this.onNavigated.bind(this);
     }
+
+    static contextType = BodyContext;
 
     async componentDidMount() {
 
@@ -290,7 +293,9 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
       if (options != undefined) {
         if (options.newTab === true) {
-          window.open(`${endPointConfig.baseRoot}/#${newPath}`, '_blank')?.focus()
+
+          let newURL = `${endPointConfig.baseRoot}${endPointConfig.baseRoot.endsWith('/') ? "" : '/'}#${newPath}`
+          window.open(newURL, '_blank')?.focus()
         } else {
           history.push(newPath);
         }
@@ -415,13 +420,19 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       </div>
     ) : (<React.Fragment>
       {this.toolbar()}
-      <PageComponent {...optionalProps} {...this.props}
-        onLoadComplete={this.onLoadComplete}
-        handler={this.state.handler}
-        onNavigate={genericPageContext.onNavigate}
-        setQueryParams={this.setQueryParams}
-        queryParams={this.state.queryParams}
-      />
+      <React.Suspense fallback={
+        <div style={{ padding: '40px' }}>
+          <div className="spinningLoadingIcon projectLoadingIcon vAlignCenter"></div>
+        </div>
+      }>
+        <PageComponent {...optionalProps} {...this.props}
+          onLoadComplete={this.onLoadComplete}
+          handler={this.state.handler}
+          onNavigate={genericPageContext.onNavigate}
+          setQueryParams={this.setQueryParams}
+          queryParams={this.state.queryParams}
+        />
+      </React.Suspense>
     </React.Fragment>)
 
     isNestedDetailPage = () => (optionalProps && optionalProps.detailPage && optionalProps.detailPage.nested);
@@ -449,15 +460,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
 
   };
 
-  GenericPage.contextTypes = {
-    ifefPlatform: PropTypes.object,
-    ifefSnapper: PropTypes.object,
-    ifefNavDirection: PropTypes.string,
-    ifefShowPopover: PropTypes.func,
-    ifefUpdatePopover: PropTypes.func,
-    ifefUpdatePopup: PropTypes.func,
-    ifefShowModal: PropTypes.func
-  };
 
   const mapStateToProps = state => ({
     //please connect here only high level generic slices

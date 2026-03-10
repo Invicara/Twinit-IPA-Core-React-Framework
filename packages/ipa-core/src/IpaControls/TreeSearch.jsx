@@ -2,13 +2,13 @@ import React, {useEffect, useReducer, useRef} from "react";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
 import _ from "lodash";
 import {TreeNodeStatus} from "../IpaUtils/TreeHelpers";
-import {parseNodeNameWithParent, stringifyNodeWithParent} from "./private/tree";
+import {parseNodeNameWithParent, parseNodeNameWithParents, stringifyNodeWithParent} from "./private/tree";
 import ReactiveTreeControl from "./ReactiveTreeControl";
 import './TreeSearch.scss';
 
 const treeControlLeafNodeRenderer = (group) => {
-    return <div>{parseNodeNameWithParent(group.name).childNodeInfo.displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
-}
+    return <div>{parseNodeNameWithParents(group.name).childNodeInfo.displayName}{!!group.count && <span className="count" style={{fontSize: "0.8em"}}>{group.count}</span>}</div>;
+  }
 
 const treeControlBranchNodeRenderer = (group) => {
     const childCount = group.count;
@@ -26,7 +26,7 @@ const treeSearchReducer = (state, action) => {
             return {...state, reloading: true};
         case 'reloaded':
             return {...state, reloading: false, nodeIndex: action.nodeIndex};
-        case 'update_node':
+        case 'update_node': {
             let nodeToUpdate = state.nodeIndex.find(action.id)
             if (nodeToUpdate === undefined) return state;
             return {
@@ -36,6 +36,7 @@ const treeSearchReducer = (state, action) => {
                     [action.id]: {...nodeToUpdate, ...action.node}
                 }
             }
+        }
         default:
             return {...state, reloading: false, nodeIndex: action.nodeIndex ? action.nodeIndex : state.nodeIndex};
     }
@@ -43,7 +44,7 @@ const treeSearchReducer = (state, action) => {
 
 const initialTreeState = {reloading: false, nodeIndex : {}};
 
-export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken, fetchAfterTreeLoad = false}) => {
+export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevels, display, reloadToken, fetchAfterTreeLoad = false, handler}) => {
 
     const [treeState, dispatch] = useReducer(treeSearchReducer, initialTreeState);
 
@@ -70,6 +71,20 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
         }
     }, [currentValue])
 
+     function toggleSelectedStatus(obj) {
+        const newObj = {}
+
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                newObj[key] = {
+                    ...obj[key],
+                    selectedStatus: obj[key].selectedStatus === "off" ? "on" : obj[key].selectedStatus
+                }
+            }
+        }
+
+        return newObj
+    }
 
     function resetNodeIndex() {
         let nodeIndex = {
@@ -97,18 +112,28 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
             newNodeIndex = await loadChildrenDeep(nodeKey, newNodeIndex, currentValue);
         }
         return newNodeIndex;
-    };
+    }
 
     async function refreshTree() {
         let newNodeIndex = await getTree();
         return newNodeIndex;
     }
 
+    useEffect(() => {
+        refreshTree()
+    },[reloadToken])
+
     async function fetchTree() {
         reloadTokenLatest.current = reloadToken;
         treeLevelsLatest.current = treeLevels;
         try {
             refreshTree().then((nodeIndex) => {
+                console.log('Adam TreeSearch handler', handler)
+                // This will auto select all entities on the page render.
+                if(handler?.config?.selectAllOnRender) {
+                    const newNodeIndex = toggleSelectedStatus(nodeIndex)
+                    handleNodeIndexChange(newNodeIndex)
+                }
                 dispatch({type: 'reloaded',nodeIndex: nodeIndex});
                 //if currentValue is empty, means nothing is selected on the tree == don't do FETCH, as it will overwrite redux state done by other components
                 //deselecting is handled by a different call to 'onFetch' inside handleNodeIndexChange()
@@ -302,6 +327,7 @@ export const TreeSearch = ({ currentValue = {}, currentState, onFetch, treeLevel
 
 
     async function handleNodeIndexChange(nodeIndex) {
+        // console.log('Adam TreeSearch, handleNodeIndexChange - nodeIndex', nodeIndex)
 
         const childrenLoaded = (childrenIds, nodeIndex) => {
             return childrenIds.every(childrenId => _.keys(nodeIndex).includes(childrenId))

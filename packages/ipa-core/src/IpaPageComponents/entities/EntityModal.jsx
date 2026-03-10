@@ -18,7 +18,7 @@ import EntityModalTextInput from './EntityModalTextInput'
 import ControlTextOverlay from '../../IpaControls/ControlTextOverlay'
 import { connect } from 'react-redux'
 import CollapsibleTextInput from '../../IpaControls/CollapsibleTextInput'
-import { FormControlLabel } from '@material-ui/core'
+import { FormControlLabel } from '@mui/material'
 import { PinkCheckbox } from '../../IpaControls/Checkboxes'
 import * as modal from '../../redux/slices/modal'
 class EntityModal extends React.Component {
@@ -846,12 +846,12 @@ class EntityModal extends React.Component {
 
     selectKeys.forEach(propertyKey => {
       const property = this.state.newEntity.properties[propertyKey]
-      const value = property.hasMultipleValues ? undefined : [property.val]
-      placeholders[propertyKey] = property.hasMultipleValues && (
+      const value = property?.hasMultipleValues ? undefined : [property?.val]
+      placeholders[propertyKey] = property?.hasMultipleValues && (
         <ControlTextOverlay text='Multiple values' />
       )
-      highlightedOptions[propertyKey] = property.hasMultipleValues
-        ? property.val
+      highlightedOptions[propertyKey] = property?.hasMultipleValues
+        ? property?.val
         : undefined
       currentValue[propertyKey] = value
     })

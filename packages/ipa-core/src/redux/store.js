@@ -15,7 +15,7 @@ import {combineReducers} from "redux"
 
 import {configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
 
-const frameworkReducers = {
+export const frameworkReducers = {
   entitiesGeneral, entitiesPluggableSearch, entityRelations, entityUI, userConfig, user, files, dashboardUI, modal, [NAMED_USER_ITEM_FEATURE_KEY] : namedUserItemReducer
 }
 
@@ -24,9 +24,9 @@ let appReducers = {}
 const combinedReducers = combineReducers({...frameworkReducers, ...appReducers})
 
 export const addReducerSlice = (addSlice) => {
-  
+
   appReducers[addSlice.name] = addSlice.slice
-  
+
   return combineReducers({
     ...frameworkReducers,
     ...appReducers
@@ -40,9 +40,17 @@ const rootReducer = (state, action) => {
   return combinedReducers(state, action)
 }
 
+// Configure default middleware to ignore known non-serializable modal.component
+const middleware = getDefaultMiddleware({
+  serializableCheck: {
+    ignoredPaths: ['modal.component'],
+    ignoredActions: ['modal/setModal'],
+  },
+})
+
 export default configureStore({
     reducer: rootReducer,
-    middleware: [...getDefaultMiddleware()],
+    middleware,
     devTools: process.env.NODE_ENV !== 'production',
 })
 

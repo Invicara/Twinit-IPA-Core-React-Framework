@@ -8,7 +8,7 @@ import ScriptCache from "../IpaUtils/script-cache";
 import { useWithLinkedSelectChange } from "./private/useWithLinkedSelectChange";
 import { asSelectOptions } from "../IpaUtils/controls";
 
-const flattenIfNotMulti = (selectValues, selects) => {
+export const flattenIfNotMulti = (selectValues, selects) => {
   //This is necessary bc script helper does not handle single-option select values as a list
   return _.mapValues(selectValues, (selectedOptions, selectId) =>
     selects[selectId].multi ? selectedOptions : selectedOptions[0],
@@ -29,7 +29,7 @@ export const ScriptedLinkedSelects = ({
   highlightedOptions,
   placeholders,
   isClearable = true,
-  isTest = false,
+  LinkedSelectValues
 }) => {
   const [selects, setSelects] = useState(
     selectsConfig.reduce(
@@ -44,7 +44,7 @@ export const ScriptedLinkedSelects = ({
   const value = currentValue || {};
 
   useEffect(() => {
-    updateFetchOptions();
+    updateFetchOptions();  
   }, [currentValue]);
 
   const getSelectedValue = (option) => {
@@ -52,22 +52,22 @@ export const ScriptedLinkedSelects = ({
   };
 
   const updateFetchOptions = async () => {
-    let newSelects = await fetchOptions(selects);
-    if (currentValue) {
-      let selectKeys = Object.keys(selects);
-      let previousSelectValues = {};
-      for (let i = 1; i < selectKeys.length; i++) {
-        if (currentValue?.[selectKeys?.[i - 1]]?.length > 0) {
-          previousSelectValues[selectKeys[i - 1]] =
-            currentValue[selectKeys[i - 1]];
-          newSelects = await fetchOptions(
-            newSelects,
-            selects[selectKeys[i - 1]],
-            previousSelectValues,
-          );
-        } else break;
+      let newSelects = await fetchOptions(selects);
+      if (currentValue) {
+        let selectKeys = Object.keys(selects);
+        let previousSelectValues = {};
+        for (let i = 1; i < selectKeys.length; i++) {
+          if (currentValue?.[selectKeys?.[i - 1]]?.length > 0) {
+            previousSelectValues[selectKeys[i - 1]] =
+              currentValue[selectKeys[i - 1]];
+            newSelects = await fetchOptions(
+              newSelects,
+              selects[selectKeys[i - 1]],
+              previousSelectValues,
+            );
+          } else break;
+        }
       }
-    }
   };
 
   const fetchOptions = async (
@@ -75,21 +75,16 @@ export const ScriptedLinkedSelects = ({
     currentSelect,
     previousSelectsValues,
   ) => {
-    const nextSelect =
-      _.values(selects)[currentSelect ? currentSelect.index + 1 : 0];
+    const nextSelect = _.values(selects)[currentSelect ? currentSelect.index + 1 : 0];
     let newSelects;
 
     if (nextSelect) {
-      let selectOptions = !isTest
-        ? await ScriptCache.runScript(
+      let selectOptions = await ScriptCache.runScript(
             nextSelect.script,
             previousSelectsValues
               ? { input: flattenIfNotMulti(previousSelectsValues, selects) }
               : undefined,
           )
-        : nextSelect?.display === "Item"
-          ? ["Hat", "Shoe", "Shirt"]
-          : ["Blue", "White", "Green"];
 
       selectOptions = selectOptions || [];
 

@@ -19,7 +19,8 @@ import {
     clearForNewEntityType,
     getSnapshot,
     loadSnapshot,
-    resetForFilteringAndGrouping, getAppliedGroups, applyGrouping
+    resetForFilteringAndGrouping, getAppliedGroups, applyGrouping,
+    setFilteredBySearchEntities
 } from "../../redux/slices/entities";
 import {connect} from "react-redux";
 import withEntityConfig from "./WithEntityConfig";
@@ -85,7 +86,9 @@ const withEntityStore = (WrappedComponent) => {
             //TODO Once filters are moved to store, refactor the queryParam logic so that it can identify when URL applied
             // filters and entity match the current ones in the store and this cleaning (and the later refetching) of the entities
             // can be removed for being unnecessary and only done when needed
-            if(!this.props.NavigatorSource) {
+
+            // We want to ignore the entity reset if we are using th IEQDashboard as it crashes the page when a user de-selects an entity.
+            if((!this.props.NavigatorSource) && (this.props.handler?.path !== "/ieqdashboard")) {
                 this.props.resetFiltering()
                 this.props.resetEntities()
             }
@@ -117,6 +120,12 @@ const withEntityStore = (WrappedComponent) => {
             //b. if we have entity in store for this handler - and it's allowed - we will use it
             if(this.props.currentEntityType && _.includes(this.props.allowedEntityTypes, this.props.currentEntityType?.singular) ){
                 return this.props.currentEntityType;
+            }
+            // This will ensure the correct Entity Config is passed through when a user selects an Asset -> selects a related Space -> and views that space in the Navigator
+             if(queryParams.entityType !== queryParams.senderEntityType) {
+                const entityOptions = _.values(this.props.perEntityConfig)
+                const selectedEntityOption = entityOptions.filter((entityConfig) => entityConfig.singular === queryParams.entityType)
+                return selectedEntityOption[0]
             }
             // else we assume we are going to use first entity from the handler config
             return _.values(this.props.perEntityConfig)[0];
@@ -195,7 +204,8 @@ const withEntityStore = (WrappedComponent) => {
         fetchEntities,
         clearForNewEntityType,
         loadSnapshot,
-        resetForFilteringAndGrouping
+        resetForFilteringAndGrouping,
+        setFilteredBySearchEntities
     }
 
     return connect(mapStateToProps, mapDispatchToProps)(withEntityConfig(EntityStoreHOC))

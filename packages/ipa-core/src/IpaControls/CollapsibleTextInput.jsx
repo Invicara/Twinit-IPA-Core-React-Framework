@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import BaseTextInput from "./BaseTextInput";
 import GenericMatButton from "./GenericMatButton";
 import "./CollapsibleTextInput.scss";
-import { TextareaAutosize } from "@material-ui/core";
+import { TextareaAutosize } from "@mui/material";
 
 const CollapsibleTextInput = (props) => {
   const [isCollapsed, setIsCollapsed] = useState(true);

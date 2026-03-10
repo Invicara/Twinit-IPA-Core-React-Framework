@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { PinkCheckbox } from "../../IpaControls/Checkboxes";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 import './DocumentTable.scss'
 import _ from 'lodash'
 import * as modal from '../../redux/slices/modal'
@@ -121,7 +121,8 @@ const DocumentTable = props => {
   const isDisabled = (doc, action) => {
     if (doc.currentVersion.length > 0) {
       if (action.key === "VIEW") {
-        if (props.tableConfig.supportedTypes.includes(doc.documentData.name.split('.')[1])) {
+        let extension = doc.documentData.name.substring(doc.documentData.name.lastIndexOf('.') + 1);
+        if (props.tableConfig.supportedTypes.includes(extension.toLowerCase())) {
           return true
         }
         else {

@@ -15,11 +15,14 @@ let initialState = {//TODO if operations on these entities get too slow, use dir
     fetchingCurrent: 0,
     appliedFilters: {},
     appliedGroups: [],
+    appliedRelateFilters: {},
+    appliedRelateGroups: [],
     selectingEntities: false,
     viewerSyncOn: false,
     allCurrent: [],
     selectedIds: [],
-    isolatedIds: []
+    isolatedIds: [],
+    filteredBySearchEntityIds: []
 };
 
 let currentFetchPromise = new Promise(res => res([]))
@@ -44,6 +47,9 @@ export const entitiesSliceFactory = (identifier = '') => {
             setSelectedEntities: (state, {payload: entities}) => {
                 state.selectedIds = mapIds(entities)
             },
+            setFilteredBySearchEntities: (state, {payload: entities}) => {
+                state.filteredBySearchEntityIds = mapIds(entities)
+            },
             applyFiltering: (state, {payload: filters}) => {
                 state.appliedFilters = filters
             },
@@ -59,6 +65,11 @@ export const entitiesSliceFactory = (identifier = '') => {
             resetForFilteringAndGrouping: (state, {payload: {groups, filters}}) => {
                 state.appliedFilters = filters ? filters : state.appliedFilters
                 state.appliedGroups = groups ? groups : state.appliedGroups
+                state.selectedIds = _.isEmpty(state.selectedIds) ? state.selectedIds : []
+            },
+            resetForRelatedFilteringAndGrouping: (state, {payload: {groups, filters}}) => {
+                state.appliedRelateFilters = filters ? filters : state.appliedFilters
+                state.appliedRelateGroups = groups ? groups : state.appliedGroups
                 state.selectedIds = _.isEmpty(state.selectedIds) ? state.selectedIds : []
             },
             setFetching: (state, {payload: fetching}) => {
@@ -96,7 +107,8 @@ export const entitiesSliceFactory = (identifier = '') => {
                 state.appliedFilters = {}
                 state.appliedGroups = []
                 state.selectedIds = [];
-                state.isolatedIds = []
+                state.isolatedIds = [],
+                state.filteredBySearchEntityIds = []
             },
             clearForNewEntityType: (state,{payload: type}) => {
                 state.allCurrent = [];
@@ -104,7 +116,8 @@ export const entitiesSliceFactory = (identifier = '') => {
                 state.appliedGroups = []
                 state.selectedIds = [];
                 state.isolatedIds = [];
-                state.currentEntityType = type
+                state.currentEntityType = type,
+                state.filteredBySearchEntityIds = []
             },
             loadSnapshot : (state,{payload: snapshot}) => {
                 state.allCurrent = snapshot.allCurrent;
@@ -116,6 +129,7 @@ export const entitiesSliceFactory = (identifier = '') => {
                 state.fetchingCurrent = snapshot.fetchingCurrent;
                 state.selectingEntities = snapshot.selectingEntities;
                 state.viewerSyncOn = snapshot.viewerSyncOn;//TODO: ?? this could be a global value?
+                state.filteredBySearchEntityIds = snapshot.filteredBySearchEntityIds;
             }
         },
     });
@@ -127,8 +141,8 @@ export const entitiesSliceFactory = (identifier = '') => {
     //Action creators
     const {
         setEntities, setFetching, resetEntities, setViewerSyncOn, setIsolatedEntities, setSelectedEntities, setCurrentEntityType, setSelecting,
-        applyFiltering, resetFiltering, applyGrouping, resetGrouping, resetForFilteringAndGrouping,
-        addEntity, deleteEntity, updateEntity, clearEntities, loadSnapshot, clearForNewEntityType
+        applyFiltering, resetFiltering, applyGrouping, resetGrouping, resetForFilteringAndGrouping, resetForRelatedFilteringAndGrouping,
+        addEntity, deleteEntity, updateEntity, clearEntities, loadSnapshot, clearForNewEntityType, setFilteredBySearchEntities
     } = actionCreators
 
     //Private selectors
@@ -140,6 +154,8 @@ export const entitiesSliceFactory = (identifier = '') => {
 
     const getSelectedEntitiesIds = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.selectedIds || [])
 
+    const getFilteredBySearchEntityIds = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.filteredBySearchEntityIds || [])
+
     const fromIDs = (entities, ids) => entities.filter(e => _.includes(ids, e._id))
 
     //Public Selectors
@@ -148,6 +164,8 @@ export const entitiesSliceFactory = (identifier = '') => {
     const getAppliedFilters = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.appliedFilters)
 
     const getAppliedGroups = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.appliedGroups)
+
+    const getAppliedRelatedGroups = createSelector(getEntitiesSlice, entitiesSlice => entitiesSlice.appliedRelateGroups)
 
     const getFilteredEntities = createSelector([getAllCurrentEntities, getAppliedFilters], (currentEntities, appliedFilters) =>
         _.isEmpty(getAppliedFilters) ? currentEntities : getFilteredEntitiesBy(currentEntities, appliedFilters)
@@ -167,7 +185,8 @@ export const entitiesSliceFactory = (identifier = '') => {
 
     const selectors = {
         getAllCurrentEntities, getAppliedFilters, getAppliedGroups, getFilteredEntities, getIsolatedEntities, getSelectedEntities,
-        getFetchingCurrent, isViewerSyncOn, isSelectingEntities, getCurrentEntityType, getSnapshot
+        getFetchingCurrent, isViewerSyncOn, isSelectingEntities, getCurrentEntityType, getSnapshot, getFilteredBySearchEntityIds,
+        getAppliedRelatedGroups
     }
 
     //Thunks
@@ -183,6 +202,13 @@ export const entitiesSliceFactory = (identifier = '') => {
             const filteredToSelect = entitiesToSelect.filter(e => e)
             if (!setIncludesBy(getAllCurrentEntities(getState()), filteredToSelect, (e) => (e?.modelData?.id || e?._id))) {
                 dispatch(setEntities({entities: filteredToSelect, shouldIsolate: false}))
+            }
+            // If the selected entity has no DT properties associated with it
+            if(filteredToSelect.length < 1) {
+                const resObj = { 
+                    noEntityFound: 'No Digital Twin entity associated with the selected object'
+                }
+                return resObj
             }
             dispatch(setSelectedEntities(filteredToSelect))
             dispatch(setSelecting(false))
@@ -202,7 +228,7 @@ export const entitiesSliceFactory = (identifier = '') => {
         (entityChanges[changeType] || defaultChangeHandler)(entity)
     }
 
-    const fetchEntities = (script, selector, value, runScriptOptions) => async (dispatch, getState) => {
+    const fetchEntities = (script, selector, value, runScriptOptions, initialPageLoad) => async (dispatch, getState) => {
         const query = ControlProvider.getQuery(value, selector);
         dispatch(setFetching(true));
 
@@ -211,24 +237,43 @@ export const entitiesSliceFactory = (identifier = '') => {
         }
 
         const getNextFetchPromise = () =>
-            query ?
-                ScriptCache.runScript(selector.altScript ? selector.altScript : script, {entityInfo: selector.altScript ? value : query}, runScriptOptions)
-                : new Promise(res => res([]));
+            query
+                ? ScriptCache.runScript(
+                    selector.altScript ? selector.altScript : script,
+                    { entityInfo: selector.altScript ? value : query },
+                    runScriptOptions
+                )
+                : Promise.resolve([]);
+
         currentFetchPromise = currentFetchPromise.then(
             () => getNextFetchPromise(),
             //ABOVE might return rejected promise, and chaining another .then is not possible without error handler resetting the promise status
-            (errorResult) => { interceptFetchError(errorResult); return getNextFetchPromise();}
+            errorResult => {
+                interceptFetchError(errorResult)
+                return getNextFetchPromise();
+            }
         )
-        let entities = await currentFetchPromise;
-        const sorted = _.sortBy(entities, a => a["Entity Name"]);
-        dispatch(setEntities({entities: sorted}));
-        dispatch(setSelectedEntities([]));
+
+        try {
+            const entities = await currentFetchPromise;
+            const sorted = _.sortBy(entities, a => a["Entity Name"]);
+
+            dispatch(setEntities({ entities: sorted }));
+            if (!initialPageLoad) {
+                dispatch(setSelectedEntities([]));
+            }
         // We do this to wait for the next tick thus allowing react to render the loading page-in between.
         // Otherwise when retrieving cached data it might happen so quickly that the loading page does not render and
         // the user has a few milliseconds while the page with updated data renders to execute a navigate action with stale data.
         // The real fix for this would be addressing the slow-render of the page, not a priority now.
-        setTimeout( () => dispatch(setFetching(false)), 0)
-    }
+            setTimeout(() => dispatch(setFetching(false)), 0);
+            return sorted;
+        } catch (err) {
+            interceptFetchError(err);
+            dispatch(setFetching(false));
+            throw err;
+        }
+    };
 
     const thunks = {
         selectEntitiesFromModels, changeEntity, fetchEntities

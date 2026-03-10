@@ -3,6 +3,9 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import {getPlatformPath} from '../IpaPaths'
+import IfefLoading from "../react-ifef/components/ifefLoading";
+
+import './DownloadsView.scss';
 
 class DownloadsView extends React.Component {
     constructor(props) {
@@ -19,7 +22,7 @@ class DownloadsView extends React.Component {
 
     async _loadAsyncData() {
         
-        fetch(getPlatformPath('DOWNLOADS')).then(async (resp) => {
+        await fetch(getPlatformPath('DOWNLOADS')).then(async (resp) => {
           let downs = await resp.json();
 
           let manifests = [];
@@ -87,56 +90,52 @@ class DownloadsView extends React.Component {
     }
 
     render() {
-
-        let headerStyles = {fontWeight: 'bold', padding: '8px'};
-        let cellStyles = {padding: '8px'};
-
         return (
                 <div>
                 {!this.state.isPageLoading && !!this.state.error && <div>{this.state.error}</div>}
-                {!this.state.isPageLoading && !this.state.error  ? <div style={{padding: '40px'}}>
-                    <div style={{marginLeft: '20%', marginRight: '20%'}}>
+                {!this.state.isPageLoading && !this.state.error  ? <div className="data-container">
+                    <div className="plugin-container">
 
                         {this.state.manifests.map((mani) => {
 
                             return  <div key={mani.system}>
                                         <h3>{mani.system}</h3>
-                                        <div style={{marginLeft: '20px', marginTop: '20px'}}>
+                                        <div className="manifest-container">
 
                                             {mani.versions.map((ver) => {
 
-                                                return <div key={ver.manifest} style={{verticalAlign: 'center'}}>
-                                                    <h4 style={{display: 'inline', marginRight: '20px'}}>{ver.details.resources.en.name}</h4>
-                                                    <i title='Info' style={{cursor: 'pointer', fontSize: '24px', display: 'inline', color: '#387ef5', marginRight: '20px'}} className='ion-ios-information-outline' onClick={(e) => this.toggleDetails(mani, ver)}></i>
+                                                return <div key={ver.manifest} className="version-container">
+                                                    <h4 className="version-name">{ver.details.resources.en.name}</h4>
+                                                    <i title='Info' className='version-icon version-info ion-ios-information-outline' onClick={(e) => this.toggleDetails(mani, ver)}></i>
                                                     <a href={getPlatformPath('PLUGIN_BASE', ver.details.filename)}>
-                                                        <i title='Download' style={{cursor: 'pointer', fontSize: '24px', display: 'inline', color: '#387ef5'}} className='icon ion-ios-cloud-download'></i>
+                                                        <i title='Download' className='version-icon icon ion-ios-cloud-download'></i>
                                                     </a>
-                                                    {ver.showDetails && <div style={{marginLeft: '20px', marginTop: '10px'}}>
+                                                    {ver.showDetails && <div className="version-details-container">
                                                             <table >
                                                             <tbody>
                                                                 <tr>
-                                                                    <th style={headerStyles}>Filename</th>
-                                                                    <td style={cellStyles}>{ver.details.filename.split('/')[1]}</td>
+                                                                    <th className="details-header">Filename</th>
+                                                                    <td className="details-cell">{ver.details.filename.split('/')[1]}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th style={headerStyles}>File Size</th>
-                                                                    <td style={cellStyles}>{(Math.round((ver.details.filesize/1000000) * 100) / 100) + ' MB'}</td>
+                                                                    <th className="details-header">File Size</th>
+                                                                    <td className="details-cell">{(Math.round((ver.details.filesize/1000000) * 100) / 100) + ' MB'}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th style={headerStyles}>Language</th>
-                                                                    <td style={cellStyles}>{ver.details.resources.en.displaylanguage}</td>
+                                                                    <th className="details-header">Language</th>
+                                                                    <td className="details-cell">{ver.details.resources.en.displaylanguage}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th style={headerStyles}>Supported Operating Systems</th>
-                                                                    <td style={cellStyles}>{ver.details.resources.en.ossupport}</td>
+                                                                    <th className="details-header">Supported Operating Systems</th>
+                                                                    <td className="details-cell">{ver.details.resources.en.ossupport}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th style={headerStyles}>Updated</th>
-                                                                    <td style={cellStyles}>{moment(parseInt(ver.details.posteddate)).format('dddd, MMMM Do YYYY')}</td>
+                                                                    <th className="details-header">Updated</th>
+                                                                    <td className="details-cell">{moment(parseInt(ver.details.posteddate)).format('dddd, MMMM Do YYYY')}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th style={headerStyles}>Version</th>
-                                                                    <td style={cellStyles}>{ver.details.version}</td>
+                                                                    <th className="details-header">Version</th>
+                                                                    <td className="details-cell">{ver.details.version}</td>
                                                                 </tr>
                                                             </tbody>
                                                             </table>
@@ -153,7 +152,7 @@ class DownloadsView extends React.Component {
                         })}
                     </div>
 
-                </div> : null}
+                </div> : <IfefLoading show={this.state.isPageLoading}/>}
                 </div>)
     }
 }

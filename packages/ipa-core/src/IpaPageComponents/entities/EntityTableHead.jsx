@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import './EntityListView.scss'
 import {RoundCheckbox} from "../../IpaControls/Checkboxes";
-import {Box, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core";
+import {Box, TableCell, TableHead, TableRow, TableSortLabel} from "@mui/material";
 
 export const EntityTableHead = ({allChecked, handleAllCheck, columns, multiselect, lastColumnSticky, currentSort, sortEntitiesBy }) => {
 

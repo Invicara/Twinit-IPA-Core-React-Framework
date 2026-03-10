@@ -1,4 +1,7 @@
   .fancy-tree {
+    height: 50vh;
+    overflow: scroll;
+
   --invisible-ink: rgba(0, 0, 0, 0);
 
   --line-height: 2em;
@@ -65,6 +68,25 @@
     }
   }
 
+  .ReactVirtualized__Grid {
+      &::-webkit-scrollbar {
+          width: 7px;
+        }
+          
+        &::-webkit-scrollbar-track {
+            background: white;
+        }
+          
+        &::-webkit-scrollbar-thumb {
+        background: #DCDCDC;
+                border-radius: 2rem;
+        }
+          
+        &::-webkit-scrollbar-thumb:hover {
+            background: #B8B8B8;
+        }
+  }
+
   ul {
     list-style: none;
     display: none;
@@ -90,9 +112,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    &:hover {
-      white-space: normal;
-    }
   }
 
   /* Channel */

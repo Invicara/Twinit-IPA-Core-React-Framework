@@ -7,9 +7,9 @@ import {
     cleanFiles, fetchColumnConfig, getAssociatedEntities, getColumnConfig,
     getFilesToUpload, getRejectedFiles,
     setRejectedFiles,
-    isComplete, isReadyFor,
-    loadAssociatedEntities, updateMultipleFileAttribute,
-    uploadFiles
+    isComplete, isError, isFinished, isReadyFor,
+    loadAssociatedEntities, updateMultipleFileAttribute, updateMultipleFileAttributeAndVersion,
+    uploadFiles, removeAllFiles
 } from "../../redux/slices/files";
 import {UploadFilesWizardSteps} from "./UploadWizardSteps";
 import {SeedAttributes} from "./SeedAttributes";
@@ -20,12 +20,17 @@ import _ from 'lodash'
 
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
 import './UploadFilesWizard.scss'
+import {fetchLinkedSelectValues} from './LinkedSelectValues'
+import ToastContainer, {useToast} from "../../IpaControls/ToastContainer";
+import {ErrorToast} from "../../IpaControls/ToastNotifications";
 
 const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete, handler: {config}, cleanFiles, files, rejectedFiles,
-                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles}) => {
+                               addFilesToUpload, selectedItems, updateMultipleFileAttribute, updateMultipleFileAttributeAndVersion, uploadFiles, associatedEntities, columnConfig, fetchColumnConfig, setRejectedFiles, removeAllFiles}) => {
 
     const [selectedStep, setSelectedStep] = useState(1);
     const [uploadContainer, setUploadContainer] = useState(selectedItems.selectedProject.rootContainer)
+    const [isloading, setIsLoading] = useState(false)
+    const [toasts, addToast] = useToast();
 
     useEffect(() => {
 
@@ -45,8 +50,11 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     }, [queryParams])
 
     const addFiles = newFiles => {
+        setIsLoading(true)
         setSelectedStep(2)
-        addFilesToUpload([...newFiles], uploadContainer, config.scripts.preprocessFiles)
+        removeAllFiles()
+        const fileRes = fileChecker(files, [...newFiles])
+        addFilesToUpload([...fileRes], uploadContainer, config.scripts.preprocessFiles)
     }
 
     const cancel = () => {
@@ -55,14 +63,47 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
     };
     const removeRejectedFiles = () => setRejectedFiles([])
 
-    const startUpload = () => {
+    const startUpload = async () => {
         setSelectedStep(3);
-        uploadFiles(uploadContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles)
+        const errors = await uploadFiles(uploadContainer, config.scripts.processUploadFile, config.scripts.postprocessFiles, 5, config.scripts.getFileContainer)
+        if (errors && errors.length > 0) {
+            errors.forEach(({fileName, error}) => {
+                addToast({
+                    toast: <ErrorToast message={`${fileName}: ${error}`} />,
+                    delay: 7000
+                });
+            });
+        }
     }
 
-    const handleFileChange = config.readonly ? _.noop : (files, field, newValue) => updateMultipleFileAttribute(
-        files.map(file =>({name: file.name, [field]: newValue}))
-    );
+    const handleFileChange = config.readonly ? _.noop : (files, field, newValue) => {
+        const normalizedField = Array.isArray(field) ? field.join(',') : field;
+        const fieldCandidates = Array.isArray(field) ? [normalizedField, ...field] : [normalizedField];
+        
+        // Check if this attribute affects container resolution
+        const containerAffectingAttributes = config.containerAffectingAttributes || [];
+        
+        const affectsContainer = containerAffectingAttributes && containerAffectingAttributes.length > 0 &&
+                                 containerAffectingAttributes.some(attr => fieldCandidates.includes(attr));
+                                 
+        const shouldRecomputeVersion = !!config.enableDynamicVersioning &&
+                                       !!config.scripts?.getFileContainer &&
+                                       affectsContainer;
+        
+        if (shouldRecomputeVersion) {
+            // Only recompute version for attributes that affect container resolution
+            updateMultipleFileAttributeAndVersion(
+                files.map(file =>({name: file.name, [normalizedField]: newValue})),
+                uploadContainer,
+                config.scripts.getFileContainer
+            );
+        } else {
+            // Use existing behavior for attributes that don't affect container
+            updateMultipleFileAttribute(
+                files.map(file =>({name: file.name, [normalizedField]: newValue}))
+            );
+        }
+    };
 
     const buildReport = () => {
         const headers = ['Name', ...columnConfig.map(col => `${col.displayAs}${col.required ? '*' : ''}`)];
@@ -76,12 +117,52 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         return ScriptHelper.executeScript(config.scripts.seedAttributes)
     }
 
+    function fileChecker(files, newFiles) {
+        // This will remove any duplicate files if they are uploaded at once
+        const seenFileNames = new Set();
+        const newFilesArr = newFiles.filter(file => {
+            if (seenFileNames.has(file.name)) {
+                return false;
+            } else {
+                seenFileNames.add(file.name);
+                return true;
+            }
+        });
+
+        // This is to check if the same file is already in the File Table
+        if(files.length >= 1) {
+            const combinedArray = [...files, ...newFilesArr];
+            const seen = new Set();
+            const filteredFiles = combinedArray.filter(file => {
+              if (seen.has(file.name)) {
+                return false;
+              }
+              seen.add(file.name);
+              return true;
+            });
+            return filteredFiles;
+        } else {
+            return newFilesArr
+        }
+      }
+
+    const [LinkedSelectValues, setLinkedSelectValues] = useState()
+
+    useEffect(() => {
+        config.columns.map(async(col) => {
+            if(col.name.includes('dtCategory')) {
+                let valueRes = await fetchLinkedSelectValues(handleFileChange)
+                setLinkedSelectValues(valueRes)
+            }
+        })
+    },[])
+
     const steps = [
         {name: 'Add Files', component: config.scripts.seedAttributes ? <SeedAttributes onClick={seedAttributes} /> : <div/>},
         {
             name: 'Enter Required Data',
             component: columnConfig ?
-                <FileTable columns={columnConfig} files={files} onFileChange={handleFileChange}/> : 'Loading...',
+                <FileTable columns={columnConfig} files={files} onFileChange={handleFileChange} setIsLoading={setIsLoading} LinkedSelectValues={LinkedSelectValues}/> : 'Loading...',
             buttons: WizardButtons({
                 primaryContent: <span className={'button-content'}><i className="fas fa-upload"/>Upload</span>,
                 secondaryContent: 'Cancel',
@@ -93,14 +174,22 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         {
             name: 'Uploading',
             component: <FileUploadTable files={files}/>,
-            buttons: WizardButtons({
-                primaryContent: files.every(isComplete) ?
-                    <span className={'button-content'}>Next<i className="fas fa-angle-right"/></span> :
-                    <span className={'button-content'}><i className="fas fa-sync"/>Uploading</span>,
-                primaryDisabled: !files.every(isComplete),
-                onPrimaryClick: () => setSelectedStep(4),
-                hideSecondary: true
-            })
+            buttons: (() => {
+                const allFinished = files.every(isFinished);
+                const hasSuccesses = files.some(isComplete);
+                const allErrors = allFinished && !hasSuccesses;
+                
+                return WizardButtons({
+                    primaryContent: allFinished && hasSuccesses ?
+                        <span className={'button-content'}>Next<i className="fas fa-angle-right"/></span> :
+                        allErrors ?
+                            <span className={'button-content'}>Cancel</span> :
+                            <span className={'button-content'}><i className="fas fa-sync"/>Uploading</span>,
+                    primaryDisabled: !allFinished,
+                    onPrimaryClick: allErrors ? cancel : () => setSelectedStep(4),
+                    hideSecondary: true
+                });
+            })()
         },
         {
             name: 'Review',
@@ -117,12 +206,18 @@ const UploadFilesWizard = ({queryParams, loadAssociatedEntities, onLoadComplete,
         },
     ]
 
-    return <UploadFilesWizardSteps steps={steps} selectedStep={selectedStep} associatedEntities={associatedEntities}
+    return <>
+        <div className="toast-container">
+            <ToastContainer toasts={toasts} />
+        </div>
+        <UploadFilesWizardSteps steps={steps} selectedStep={selectedStep} associatedEntities={associatedEntities}
                                    addFiles={addFiles} cancel={cancel} startUpload={startUpload} rejectedFiles={rejectedFiles}
                                    uploadIconName={config?.uploadIconName}
                                    removeRejectedFiles={removeRejectedFiles}
                                    hideDefaultError={config.hideDefaultRejectedError}
-    />
+                                   isloading={isloading}
+        />
+    </>
 }
 
 const mapStateToProps = state => ({
@@ -133,7 +228,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, fetchColumnConfig, setRejectedFiles
+    addFilesToUpload, cleanFiles, uploadFiles, loadAssociatedEntities, updateMultipleFileAttribute, updateMultipleFileAttributeAndVersion, fetchColumnConfig, setRejectedFiles, removeAllFiles
 }
 
 export default compose(

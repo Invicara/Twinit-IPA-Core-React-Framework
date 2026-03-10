@@ -16,6 +16,7 @@ import {JSONEditor} from "./omapi/JSONEditor";
 import useSortEntities, {ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE, usePaginateEntities} from "./entities/sortEntities";
 import withGenericPageErrorBoundary from "./GenericPageErrorBoundary";
 import withGenericErrorBoundary from "./GenericErrorBoundary";
+import InternalPages from "./InternalPages";
 
 const IpaPageComponents = {
     //higher order components
@@ -60,4 +61,5 @@ export {
     useSortEntities, usePaginateEntities,
     //static strings
     ASCENDING_ORDER, DESCENDING_ORDER, ENTITY_LIST_SORT_PREFERENCE,
+    InternalPages
 }

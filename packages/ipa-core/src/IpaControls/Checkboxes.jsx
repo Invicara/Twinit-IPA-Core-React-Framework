@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
-import CheckIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import { withStyles } from "@material-ui/core";
+import Checkbox from "@mui/material/Checkbox/Checkbox";
+import CheckIcon from "@mui/material/SvgIcon/SvgIcon";
+import { withStyles } from "@mui/styles";
 import produce from "immer";
 import _ from "lodash";
 import {
@@ -10,7 +10,7 @@ import {
   IndeterminateCheckBoxRounded,
   CheckCircle as CheckedCircle,
   RadioButtonUnchecked as UncheckedCircle,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 const iconStyle = { fontSize: 18 };
 
@@ -122,9 +122,11 @@ export const useChecked = (inputItems, checkCallback, allCheckCallback) => {
     checkCallback?.(checkedInstance, !checkedInstance.checked);
     setItems((instances) =>
       instances.map((instance) =>
-        instance === checkedInstance
+        // Use ID comparison instead of reference equality to support batched updates
+        (instance._id && instance._id === checkedInstance._id) ||
+        (instance.name && instance.name === checkedInstance.name)
           ? {
-              ...checkedInstance,
+              ...instance,
               checked: !checkedInstance.checked,
             }
           : instance,

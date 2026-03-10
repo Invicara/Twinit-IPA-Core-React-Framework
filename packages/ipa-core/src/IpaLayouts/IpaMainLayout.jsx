@@ -1,14 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {HashRouter, Switch} from 'react-router-dom';
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
 
 
 import AppProvider from "../AppProvider";
 import {AppContext} from "../appContext";
-
-import {LocalFilePlugins} from '@invicara/script-ui';
-import {DataPlugins} from '@invicara/script-data';
-import {IafPlugins} from '@invicara/script-iaf';
 
 import store from "../redux/store";
 import {Provider} from "react-redux";
@@ -17,14 +14,18 @@ import IfefBody from '../react-ifef/components/ifefBody';
 import { getPlatform } from '../IpaUtils/helpers';
 import * as qs from 'querystring';
 
-import ScriptHelper from "../IpaUtils/ScriptHelper";
 import Layout from './Layout';
+import Logo from './Logo';
+import LoadingModal from '../IpaDialogs/LoadingModal';
 
 import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
 
 import {IafAuth} from '@dtplatform/platform-ui-components';
-import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
+import StylesProvider from '@mui/styles/StylesProvider';
+import createGenerateClassName from '@mui/styles/createGenerateClassName';
+
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const {AuthProvider, AuthService} = IafAuth;
 
@@ -33,6 +34,30 @@ const generateClassName = createGenerateClassName({
 });
 
 enableMapSet()
+
+function LoadingScreenWithModal({ modal, ipaConfig }) {
+  const showLoadingModal = !modal?.open || !modal?.component;
+  return (
+    <div className="ipa-loading-screen">
+      {ipaConfig?.appImage &&
+        <header className="ipa-loading-screen__header">
+          <img src={ipaConfig?.appImage} alt="" className="ipa-loading-screen__logo" />
+        </header>
+      }
+      <div className="ipa-loading-screen__body">
+        {showLoadingModal && (
+          <LoadingModal
+            title="Signing you in"
+            description="We’re checking your details. This will only take a moment..."
+            hideOverlay={true}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+const LoadingScreenWithModalConnected = connect(state => ({ modal: state.modal }))(LoadingScreenWithModal);
 
 class App extends React.Component {
   constructor(props) {
@@ -57,10 +82,23 @@ class App extends React.Component {
   render() {
     var platform = getPlatform(this.state.platformOverride);
 
+    const theme = createTheme({
+      palette: {
+        buttonDefault: {
+          main: '#E0E0E0'
+        },
+        tabDefault: {
+          main: '#000000DE'
+        },
+      },
+    });
+
     return (
-      <IfefBody platform={platform} history={this.props.history} location={this.props.location}>
-        {this.props.children}
-      </IfefBody>
+      <ThemeProvider theme={theme}> 
+        <IfefBody platform={platform} history={this.props.history} location={this.props.location}>
+          {this.props.children}
+        </IfefBody>
+      </ThemeProvider> 
     );
   }
 }
@@ -68,9 +106,9 @@ class App extends React.Component {
 class IpaMainLayout extends React.Component {
     constructor(props) {
         super(props);
-        IafPlugins.BAM_Script.initBAMScriptPlugins();
-        LocalFilePlugins.initScriptPlugins();
-        DataPlugins.initScriptPlugins();
+        // IafPlugins.BAM_Script.initBAMScriptPlugins();
+        // LocalFilePlugins.initScriptPlugins();
+        // DataPlugins.initScriptPlugins();
         this.authService = new AuthService({        //Added authService for rotated refresh token
           clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,
           location: window.location,
@@ -89,19 +127,31 @@ class IpaMainLayout extends React.Component {
     render() {
 
         return (
-            <div>
+            <div data-theme="invicara">
+              <div id="ipa-ui-modal-root" />
               <Provider store={store}>
                 <HashRouter>
                     <App history={history} location={location}>
                     <AuthProvider authService={this.authService}>
-                        <AppProvider location={location} history={history} ipaConfig={this.props.ipaConfig} onConfigLoad={this.props.onConfigLoad}> 
+                        <AppProvider 
+                          location={location} 
+                          history={history} 
+                          ipaConfig={this.props.ipaConfig} 
+                          onConfigLoad={this.props.onConfigLoad} 
+                          onCancel={this.props.onCancel} //I don't think this is used by any app yet we should think about removing it
+                          projectLoadHandlerCallback={this.props.projectLoadHandlerCallback}
+                          onProjectPickerCancel={this.props.onProjectPickerCancel}
+                          pageComponentLoader={this.props.pageComponentLoader}
+                        > 
                             <AppContext.Consumer>
                                 {
                                     (contextProps) => {
                                       console.log("AppContext contextProps", contextProps)
-                                      return contextProps.isLoading ?
-                                        <div>{contextProps.loadingText}</div>
-                                        :
+                                      return contextProps.isLoading ? (
+                                        <LoadingScreenWithModalConnected
+                                          ipaConfig={this.props.ipaConfig}
+                                        />
+                                      ) : (
                                        <StylesProvider generateClassName={generateClassName}> 
                                           <Layout pageList={contextProps.router.pageList}
                                                   pageGroups={contextProps.router.pageGroups}
@@ -122,6 +172,7 @@ class IpaMainLayout extends React.Component {
 
                                           </Layout>
                                        </StylesProvider>
+                                      );
                                     }
                               }
                             </AppContext.Consumer>
@@ -131,7 +182,7 @@ class IpaMainLayout extends React.Component {
                 </HashRouter>
             </Provider>
           </div>
-        )
+        );
     }
 }
 

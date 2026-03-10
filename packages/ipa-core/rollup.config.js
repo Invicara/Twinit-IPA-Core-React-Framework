@@ -8,6 +8,56 @@ import copy from "rollup-plugin-copy";
 import cleaner from 'rollup-plugin-cleaner';
 import image from '@rollup/plugin-image';
 import fs from 'fs';
+import path from 'path';
+
+// Custom plugin to create symlinks for large folders to avoid duplication
+const createSymlinksPlugin = () => ({
+    name: 'create-symlinks',
+    writeBundle() {
+        const symlinks = [
+            { target: 'modules/IpaIcons', link: 'esm_modules/IpaIcons' },
+            { target: 'modules/IpaFonts', link: 'esm_modules/IpaFonts' }
+        ];
+        
+        symlinks.forEach(({ target, link }) => {
+            const targetPath = path.resolve(target);
+            const linkPath = path.resolve(link);
+            
+            // Check if target exists
+            if (!fs.existsSync(targetPath)) {
+                console.warn(`Warning: Target ${targetPath} does not exist, skipping symlink creation`);
+                return;
+            }
+            
+            // Remove existing symlink or directory if it exists
+            try {
+                if (fs.existsSync(linkPath)) {
+                    const stats = fs.lstatSync(linkPath);
+                    if (stats.isSymbolicLink()) {
+                        fs.unlinkSync(linkPath);
+                    } else if (stats.isDirectory()) {
+                        fs.rmSync(linkPath, { recursive: true, force: true });
+                    } else {
+                        fs.unlinkSync(linkPath);
+                    }
+                }
+            } catch (err) {
+                // Ignore errors if file doesn't exist
+            }
+            
+            // Create the directory structure if needed
+            const linkDir = path.dirname(linkPath);
+            if (!fs.existsSync(linkDir)) {
+                fs.mkdirSync(linkDir, { recursive: true });
+            }
+            
+            // Create symlink using relative path to ensure portability
+            const relativeTarget = path.relative(linkDir, targetPath);
+            fs.symlinkSync(relativeTarget, linkPath, 'dir');
+            console.log(`Created symlink: ${link} -> ${relativeTarget}`);
+        });
+    }
+});
 
 //We use a function and not a variable bc multi-module bundle can have trouble with shared plugin instances as per https://github.com/rollup/rollupjs.org/issues/69#issuecomment-306062235
 const getPlugins = () => [
@@ -29,16 +79,17 @@ const getPlugins = () => [
             require("@babel/plugin-proposal-object-rest-spread"),
             require("fast-async"),
             ["@babel/plugin-proposal-class-properties", {"loose": true}],
+            ["@babel/plugin-transform-private-methods", { "loose": true }],
+            ["@babel/plugin-transform-private-property-in-object", { "loose": true }],
             //make sure we do not pull the whole material ui
             //https://github.com/avocadowastaken/babel-plugin-direct-import
             [
                 "babel-plugin-direct-import",
                 {
                     "modules": [
-                        "@material-ui/lab",
-                        "@material-ui/core",
-                        "@material-ui/icons",
-                        "@material-ui/system"
+                        "@mui/material",
+                        "@mui/icons-material",
+                        "@mui/styles"
                     ]
                 }
             ]
@@ -48,16 +99,18 @@ const getPlugins = () => [
     copy({
         targets: [
             {src: 'src/img/**/*', dest: 'modules/img'},
+            {src: 'src/img/twinit.svg', dest: 'modules/IpaIcons'},
             {src: 'src/**/*.scss', dest: 'modules/styles'},
             {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'},
             {src: 'src/IpaFonts/**/*', dest: 'modules/IpaFonts'},
             {src: 'src/react-ifef/img/**/*', dest: 'modules/react-ifef/img'},
             {src: 'src/img/**/*', dest: 'esm_modules/img'},
             {src: 'src/*/*.scss', dest: 'esm_modules/styles'},
-            {src: 'src/IpaIcons/**/*', dest: 'esm_modules/IpaIcons'},
-            {src: 'src/IpaFonts/**/*', dest: 'esm_modules/IpaFonts'},
-        ]
-    })]
+        ],
+        hook: 'writeBundle'
+    }),
+    // Create symlinks after copying to avoid duplicating large folders
+    createSymlinksPlugin()]
 
 //const external = [...Object.keys(pkg.dependencies), /^node:/];
 let pkg = JSON.parse(fs.readFileSync('./package.json')),
@@ -65,7 +118,7 @@ let pkg = JSON.parse(fs.readFileSync('./package.json')),
 /*
 const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
     'react', 'react-dom', 'react-router', 'react-router-dom', 'react-transition-group',
-    '@material-ui/core', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles', '@material-ui/icons',
+    '@mui/material', '@material-ui/icons', '@material-ui/lab', '@material-ui/styles', '@material-ui/icons',
     '@nivo/bar', '@nivo/pie', '@nivo/line',
     'file-saver', 'immer', 'interactjs', 'json-schema-faker', 'jszip',
     'mime-types', 'moment', 'prop-types', 'qs', 'object-assign',
@@ -82,6 +135,7 @@ const external = ['lodash', 'lodash-es', 'bootstrap', 'classnames',
 
 export default {
     input: {
+        'index': 'src/main.js',
         'IpaControls':'src/IpaControls/main.js',
         'IpaUtils':'src/IpaUtils/main.js',
         'IpaDialogs':'src/IpaDialogs/main.js',
@@ -96,20 +150,29 @@ export default {
         format: 'cjs',
         name: 'IpaControls',
         sourcemap: false,
-        entryFileNames: '[name]/index.js',
+        entryFileNames: (chunkInfo) => {
+            // Output index.js at root, others in subdirectories
+            return chunkInfo.name === 'index' ? 'index.js' : '[name]/index.js';
+        },
+        chunkFileNames: '[name]-[hash].js',
     },{
         dir: 'esm_modules',
         format: 'esm',
         name: 'IpaControls',
         sourcemap: false,
-        entryFileNames: '[name]/index.js',
+        entryFileNames: (chunkInfo) => {
+            // Output index.js at root, others in subdirectories
+            return chunkInfo.name === 'index' ? 'index.js' : '[name]/index.js';
+        },
+        chunkFileNames: '[name]-[hash].js',
     }],
     plugins: [
         cleaner({targets: ['./modules']}),
-        cleaner({targets: ['./esm-modules']}),
+        cleaner({targets: ['./esm_modules']}),
         cleaner({targets: ['./dist']}),
         ...getPlugins()
     ],
+    preserveSymlinks: true,
     //https://gist.github.com/developit/41f088b6294e2591f53b
     //The external key accepts either an array of module names,
     // or a function which takes the module name and returns true if it should be treated as external.

@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from "react";
 import clsx from "clsx";
 import GenericMatButton from "../../IpaControls/GenericMatButton";
-import Dialog from "@material-ui/core/Dialog/Dialog";
+import Dialog from "@mui/material/Dialog/Dialog";
 import {WizardTimeline} from "./WizardTimeline";
 import {ChooseFiles} from "./ChooseFiles";
 import {PanelToggle} from "./misc";
 import _ from 'lodash'
+import { LinearProgress } from "@mui/material";
 
-export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName, hideDefaultError = false, removeRejectedFiles}) => {
+export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUpload, associatedEntities, rejectedFiles, uploadIconName, hideDefaultError = false, removeRejectedFiles, isloading}) => {
     const [panelOpen, setPanelOpen] = useState(selectedStep === 1)
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -42,6 +43,17 @@ export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUplo
     const Buttons = steps[selectedStep - 1].buttons;
 
     return <div className="upload-files-wizard-root with-buttons">
+                {isloading?  <LinearProgress sx={{ 
+                                height: '4px', 
+                                backgroundColor: '#FCE8F3', 
+                                '& .MuiLinearProgress-bar': { 
+                                    backgroundColor: '#DF158C'
+                                }
+                            }}/> 
+                : null }
+
+                           
+
         <div className={clsx('wizard-panel', panelOpen && 'wizard-panel-expanded')}>
             <WizardTimeline steps={steps.map(({name}) => name)}
                             selectedStep={selectedStep}/>

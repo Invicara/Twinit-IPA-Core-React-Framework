@@ -9,7 +9,7 @@ import './EntityActionsPanel.scss';
 import '../../IpaStyles/DbmTooltip.scss'
 import ActionButton from "../../IpaControls/ActionButton";
 
-const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer}) => {
+const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComponent, iconRenderer, showModal}) => {
   let icons = []
 
   const reduxStore = useStore();
@@ -65,15 +65,19 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       newEntity = await runPreEntityActionScript({action, entity: newEntity, type})
       // the factory create method can use the app context to display the component
       // e.g. context.ifefShowModal(modal)
-      factory.create({action, entity: newEntity, type, context, reduxStore})
+      // Issue with context being set to null which meant context.ifefShowModal was undefined. Passing through showModal from AppProvider as an alternative. 
+      factory.create({action, entity: newEntity, type, context, reduxStore, showModal})
     } else {
       // if there's no component execute the action directly
       let newEntity = action.showOnTable && Array.isArray(entity) ? [...entity] : Object.assign({}, entity)
 
       newEntity = await runPreEntityActionScript({action, entity: newEntity, type});
 
-      let origEntity = action.showOnTable && !Array.isArray(entity) ? [{...entity}] : entity;
+      let origEntity
+      origEntity = action.showOnTable && !Array.isArray(entity) ? [{...entity}] : entity;
 
+      if(action.name === 'View' && !action.showOnTable) origEntity = [{...entity}]
+      
       let result = await action.doEntityAction(action.name, {new: newEntity, original: origEntity}, type);
       if (result?.success) {
         if (action.onSuccess) {
@@ -86,9 +90,19 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
     }
   }
 
+  const isEntityEmpty = () => {
+    if (Array.isArray(entity)) {
+      return entity.length === 0;
+    }
+    return !entity || Object.keys(entity).length === 0;
+  };
+
   if (actions) {
     Object.keys(actions).forEach(actionName => {
       let action = actions[actionName];
+
+      // Disable Export button if no entities are selected
+      const shouldDisable = actionName === 'Export' && isEntityEmpty();
 
       if (action?.allow)
         icons.push(
@@ -97,6 +111,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
             icon={action.icon} 
             title={action.title || actionName} 
             onClick={e=>doAction(actionName)}
+            disabled={shouldDisable}
           />
         )
     })
