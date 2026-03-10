@@ -1,519 +1,628 @@
-import React from 'react';
-import Select from 'react-select';
-import {IafProj, IafUserGroup, IafSession, IafPassSvc} from '@dtplatform/platform-api';
-import _ from 'lodash';
-import GenericModal from "./GenericModal";
-import SimpleTable from "../IpaControls/SimpleTable"
+import React, { useCallback, useEffect, useState } from 'react'
+import Select from 'react-select'
+import { IafProj, IafUserGroup, IafPassSvc } from '@dtplatform/platform-api'
+import _ from 'lodash'
+import { Dialog, Button, SingleSelect, Checkbox } from '@dtplatform/ipa-ui'
+import GenericModal from './GenericModal'
+import SimpleTable from '../IpaControls/SimpleTable'
 import SimpleTextThrobber from '../IpaControls/SimpleTextThrobber'
 
 import './ProjectPickerModal.scss'
 import '../IpaControls/SpinningLoadingIcon.scss'
 
-const PROJECT_ID_KEY = "ipaSelectedProjectId"
-
-export default class ProjectPickerModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loadingModal: true,
-      projects: [],
-      appUserGroups: [],
-      selectedProjectId: null,
-      userGroupOptions: [],
-      selectedUserGroupId: null,
-      remember: true,
-      projectUserGroups: [],
-      showLoadButton: false,
-      inviteStatus: {}
-    };
-
-    this.getUserGroupOptions = this.getUserGroupOptions.bind(this)
-  }
-
-  componentDidMount = async () => {
-    this.checkUserAccess();
-    this.loadModal();
-    this.setCssVariables();
-
-  }
-
-  componentDidUpdate = async (prevProps, prevState) => {
-
-    if (this.props.projects !== prevProps.projects)
-      this.loadModal();
-
-  }
-  checkUserAccess = async () => {
-    if (this.props.referenceAppConfig?.refApp) {
-      try {
-        let createTestProject = await IafPassSvc.createWorkspaces([]);
-        if (createTestProject && createTestProject?._total == 0) {
-          this.setState({
-            user: {
-              has_access: true,
-            },
-          });
-        }
-      } catch (err) {
-        console.error(err);
-      }
+const PROJECT_ID_KEY = 'ipaSelectedProjectId'
+const USER_GROUP_ID_KEY = 'ipaSelectedUserGroupId'
+const CONFIG_DATA_KEY = 'ipadt_configData'
+const InviteTable = ({
+  invites,
+  expired,
+  inviteStatus,
+  acceptInvite,
+  rejectInvite
+}) => (
+  <SimpleTable
+    className='invite-table'
+    header={
+      expired
+        ? ['', 'Expired Invites', 'Role', '']
+        : ['', 'Project', 'Role', '']
     }
-  };
-  setCssVariables = async() => {
-    const { referenceAppConfig } = this.props;
+    rows={invites.map(inv => {
+      let status = inviteStatus[inv._id]
+      let statusOrButtons = status ? (
+        <span className={'invite-state-' + status.toLowerCase()}>{status}</span>
+      ) : (
+        <div>
+          {expired ? (
+            ''
+          ) : (
+            <span className='invite-action' onClick={e => acceptInvite(inv)}>
+              <i className='fa fa-check'></i> Accept Invite
+            </span>
+          )}
+          <span className='invite-action' onClick={e => rejectInvite(inv)}>
+            <i className='fa fa-times'></i> {expired ? 'Remove' : 'Reject'}{' '}
+            Invite
+          </span>
+        </div>
+      )
+      return [
+        <span>&bull;</span>,
+        inv._params.name,
+        inv._usergroup._name,
+        statusOrButtons
+      ]
+    })}
+  />
+)
 
-    // Check if referenceAppConfig is defined and refApp is true
-    if (referenceAppConfig?.refApp) {
-      const result = await IafPassSvc.getConfigs();
-      const root = document.documentElement;
-      console.log(result.themes.login);
+const InviteSection = ({ onAcceptInvite }) => {
+  const [invites, setInvites] = useState(null)
+  const [inviteStatus, setInviteStatus] = useState({})
 
-      const accentColor = result.themes.login === "mirrana" ? "#E04F29" : "#4bade8";
-      const fancytreeOneColor =
-        result.themes.login === "mirrana" ? "#E04F29" : "#4bade8";
-      const fancytreeOneChannelColor =
-        result.themes.login === "mirrana" ? "#e98469" : "#dbecee";
+  let currentInvites =
+    invites && invites.filter(inv => inv._status == 'PENDING')
+  let expiredInvites =
+    invites && invites.filter(inv => inv._status == 'EXPIRED')
 
-      root.style.setProperty("--app-accent-color", accentColor);
-      root.style.setProperty("--fancytree-one-color", fancytreeOneColor);
-      root.style.setProperty(
-        "--fancytree-one-channel-color",
-        fancytreeOneChannelColor
-      );
-    }
-  };
-
-  getUserGroupOptions = (projectid) => {
-    return this.state.appUserGroups[projectid] ? this.state.appUserGroups[projectid].map((ug) => {return {'value': ug._id, 'label': ug._name}}) : [];
+  if (
+    (!currentInvites || currentInvites.length === 0) &&
+    (!expiredInvites || expiredInvites.length === 0)
+  ) {
+    return null
   }
 
-  loadModal = async () => {
-
-    function getFirstMatchingConfig(group, configs) {
-
-      let match = null
-      for (let i = 0; i < group._userAttributes.userConfigs.length; i++) {
-        let found = _.find(configs, {_id: group._userAttributes.userConfigs[i]._id})
-        if (found) {
-          match = found
-          break
-        }
-      }
-      
-      return match
-    }
-
-    const {projects} = this.props;
-    this.getInvites()
-    if(projects && projects.length > 0) {
-
-      let myProjects = []
-      let myUserGroups = {}
-
-      //for each project get the user's userGroups
-      for (let i = 0; i < projects.length; i++) {
-
-        let userGroups = await IafProj.getUserGroupsForCurrentUser(projects[i])
-
-        //filter out groups with no configs
-        if (userGroups)
-          userGroups = userGroups.filter(ug => !!ug._userAttributes.userConfigs)
-        else {
-          console.log('no userGroups')
-          console.log(projects[i])
-          continue
-        }
-
-        //get all userConfigs in the project
-        let userConfigs = await IafProj.getUserConfigs(projects[i], {_userType: this.props.configUserType})
-        
-        //get userConfig for each remaining userGroup
-        userGroups.forEach((ug) => [
-          ug.userConfig = getFirstMatchingConfig(ug, userConfigs)
-        ])
-
-        //find the userGroups in the project that have application configs
-        userGroups = userGroups.filter(ug => ug.userConfig)
-
-        //if a project has no userGroups remove the project
-        if (userGroups && userGroups.length) {
-          myProjects.push(projects[i])
-          myUserGroups[projects[i]._id] = userGroups
-        }
-
-      }
-
-      console.log(myProjects, myUserGroups)
-      
-      //serve projects and usergroups from state
-      this.setState({projects: myProjects, appUserGroups: myUserGroups})
-
-      //check selectedItems and see if project and usergroup apply and if so set them to current
-      let projectid, usergroupid;
-      if (!this.props.appContextProps.selectedItems.selectedProject || !myUserGroups[this.props.appContextProps.selectedItems.selectedProject._id]){
-          IafSession.setSessionStorage('project', {_namespaces: _.get(projects, '0._namespaces')});
-          projectid = myProjects[0] ? myProjects[0]._id : null;
-          usergroupid = projectid ? myUserGroups[myProjects[0]._id][0]._id : null
-      }
-      else {
-
-          projectid = this.props.appContextProps.selectedItems.selectedProject._id;
-
-          if(this.state.selectedUserGroupId && projectid == this.state.selectedProjectId){
-            usergroupid = this.state.selectedUserGroupId;
-          }else if (this.props.appContextProps.selectedItems.selectedUserGroupId)
-            usergroupid = this.props.appContextProps.selectedItems.selectedUserGroupId;
-          else
-            usergroupid = myUserGroups[myProjects[0]._id][0]._id
-      }
-
-      const selectUserGroupOptions = myUserGroups[projectid]
-        ? myUserGroups[projectid].map((ug) => ({ value: ug._id, label: ug._name }))
-        : []
-
-      this.setState({selectedProjectId: projectid, showLoadButton: true,
-        projectUserGroups: myUserGroups[projectid],
-        userGroupOptions: selectUserGroupOptions,
-        userGroupValue: _.find(selectUserGroupOptions, {value: usergroupid}),
-        selectedUserGroupId: usergroupid,
-        loadingModal: false});
-    }
-    else {
-      this.setState({loadingModal: false})
-    }
+  const updateInviteStatus = (invite, status) => {
+    setInvites(currentInvites =>
+      currentInvites
+        ? currentInvites.filter(inv => inv._id != invite._id)
+        : currentInvites
+    )
+    setInviteStatus(currentStatus => ({
+      ...currentStatus,
+      [invite._id]: status
+    }))
   }
 
-  saveChoice = (configData) => {
-    sessionStorage.ipadt_configData = JSON.stringify(configData);
+  const inviteFailed = (invite, e) => {
+    console.error(e)
+    setInviteStatus(currentStatus => ({
+      ...currentStatus,
+      [invite._id]: 'Failed: ' + e.message
+    }))
   }
 
-  clearSavedChoice = () => {
-    delete sessionStorage.ipadt_configData;
-  }
-
-  getInvites = () => {
-      IafPassSvc.getUserInvites().then((invites) => {
-        this.setState({invites});
-    });
-  }
-
-  loadConfig = async (userConfig) => {
-    const {testConfig, onConfigLoad, defaultConfig} = this.props;
-    try {
-      if(userConfig) {
-
-        let latestUserConfigVersion = _.find(userConfig._versions, {_version: userConfig._tipVersion})
-        let _userData = JSON.parse(latestUserConfigVersion._userData)
-
-        _userData._id = userConfig._id;
-
-        const routes = await testConfig(_userData);
-
-        if (this.state.remember) {
-          this.saveChoice(_userData)
-        } else {
-          this.clearSavedChoice();
-        }
-
-        onConfigLoad(_userData, routes);
-      }else{
-        onConfigLoad(defaultConfig, testConfig(defaultConfig));
-      }
-    } catch (e) {
-      console.log(e);
-      onConfigLoad(defaultConfig, testConfig(defaultConfig));
-    }
-  }
-
-  loadProject = async (project) => {
-    let userConfigs = [];
-
-    let { projectUserGroups, selectedUserGroupId } = this.state;
-    let selectedUserGroup = _.filter(projectUserGroups, u => u._id === selectedUserGroupId)[0];
-    if(!selectedUserGroup && projectUserGroups) {
-        selectedUserGroup = projectUserGroups[0];
-    }
-    if(!selectedUserGroup) {
-      userConfigs = await IafProj.getUserConfigs(project, {_userType: this.props.configUserType});
-    }else {
-      userConfigs.push(selectedUserGroup.userConfig);
-    }
-
-    if (userConfigs) {
-      if (userConfigs.length > 1) {
-        console.warn('There are ' + userConfigs.length + ' user configs found');
-      }
-      return this.loadConfig(userConfigs[0]);
-    } else {
-        return this.loadConfig();
-    }
-  }
-
-  onRememberChange = (event) => {
-    this.setState({remember: event.target.checked})
-  }
-
-  onProjectPicked = async (selectedOption) => {
-    const projectId = selectedOption.value;
-    this.setState({showLoadButton: false, projectUserGroups:[], userGroupOptions: []});
-
-    let projectUserGroups = this.state.appUserGroups[projectId]
-    let selectedUserGroupId = this.state.appUserGroups[projectId][0]._id
-
-    const selectUserGroupOptions = this.getUserGroupOptions(projectId)
-
-    this.setState({selectedProjectId: projectId, showLoadButton: true,
-      projectUserGroups: projectUserGroups,
-      userGroupOptions: selectUserGroupOptions,
-      userGroupValue: selectUserGroupOptions[0],
-      selectedUserGroupId: selectedUserGroupId});
-  }
-
-  onUserGroupPicked = (selectedOption) => {
-    const selectedUserGroupId = selectedOption.value;
-    this.setState({selectedUserGroupId: selectedUserGroupId, userGroupValue: selectedOption});
-    console.log("selectedOption", selectedOption)
-    console.log("selectedUserGroupId",selectedUserGroupId)
-    window.localStorage.setItem("selectedUserGroup", selectedOption.label);
-    window.localStorage.setItem("selectedUserGroupId",selectedUserGroupId)
-  }
-
-  submitProjSelection = async () => {
-    const {appContextProps, projects, projectLoadHandlerCallback} = this.props;
-    for (const project of projects) {
-      if (project._id === this.state.selectedProjectId) {
-        await IafProj.switchProject(project._id);
-        let currProject = await IafProj.getCurrent();
-        await this.loadProject(project);
-
-        sessionStorage.setItem(PROJECT_ID_KEY, project._id)
-        const selectedUserGroupId = this.state.projectUserGroups?.length === 1 ? this.state.projectUserGroups[0]._id : this.state.selectedUserGroupId;
-
-        projectLoadHandlerCallback && projectLoadHandlerCallback({ selectedProject: currProject, userGroup: this.state.projectUserGroups?.find((UG)=>UG._id === selectedUserGroupId) })
-
-        appContextProps.actions.setSelectedItems({ selectedProject: currProject, selectedUserGroupId });
-        window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
-
-        // After a user accepts an invite, we make sure to remove the 'inviteId' from the URL
-        if(window.location.href.includes('inviteId')) {
-          window.location.href = `${window.location.origin}/`
-        }
-        if (this.props.referenceAppConfig?.refApp) {
-          window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
-        }
-        return;
-      }
-    }
-  }
-
-  acceptInvite = (invite) => {
-    let inviteStatus = {...this.state.inviteStatus}
-    inviteStatus[invite._id] = "Accepting..."
-    this.setState({inviteStatus})
+  const acceptInvite = invite => {
+    setInviteStatus(currentStatus => ({
+      ...currentStatus,
+      [invite._id]: 'Accepting...'
+    }))
     IafUserGroup.addUserToGroupByInvite(invite._usergroup, invite)
-      .then((r) => {
-        this.updateInviteStatus(invite, "Accepted");
-        this.props.onAcceptInvite();
+      .then(() => {
+        updateInviteStatus(invite, 'Accepted')
+        onAcceptInvite && onAcceptInvite()
       })
-      .catch(e => this.inviteFailed(invite, e))
+      .catch(e => inviteFailed(invite, e))
   }
 
-  rejectInvite = (invite) => {
-    let inviteStatus = {...this.state.inviteStatus}
-    inviteStatus[invite._id] = "Rejecting..."
-    this.setState({inviteStatus})
+  const rejectInvite = invite => {
+    setInviteStatus(currentStatus => ({
+      ...currentStatus,
+      [invite._id]: 'Rejecting...'
+    }))
 
     IafUserGroup.rejectInvite(invite._usergroup, invite._id)
-      .then(r => this.updateInviteStatus(invite, "Rejected"))
-      .catch(e => this.inviteFailed(e))
+      .then(() => updateInviteStatus(invite, 'Rejected'))
+      .catch(e => inviteFailed(invite, e))
   }
 
-  updateInviteStatus = (invite, status) => {
-    let invites = this.state.invites.filter(inv => inv._id != invite._id)
-    let inviteStatus = {...this.state.inviteStatus}
-    inviteStatus[invite._id] = status
-    this.setState({invites, inviteStatus})
-  }
-
-  inviteFailed = (invite, e) => {
-    console.error(e)
-    let inviteStatus = {...this.state.inviteStatus}
-    inviteStatus[invite._id] = "Failed: " + e.message
-    this.setState({invites, inviteStatus})
-  }
-
-  render() {
-    const {onCancel} = this.props;
-    const {projects, remember, projectUserGroups, showLoadButton, invites} = this.state;
-    const loadBtn = showLoadButton ? (<div>
-          <div className='custom-control custom-switch' style={{marginTop: '15px', zIndex: '0'}}>
-                <input type="checkbox" className="custom-control-input" id="remswitch" value={remember} checked={remember} onChange={this.onRememberChange.bind(this)}/>
-                <label className="custom-control-label" htmlFor="remswitch">Remember my choice</label>
-          </div>
-          <div className='button-container'>
-          {this.props.referenceAppConfig?.refApp &&
-          <button 
-            onClick={()=>this.props.userLogout()} 
-            className={this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"}
-          >
-            Logout
-          </button>
-          }
-          <button
-            onClick={onCancel}
-            className={
-              this.props.referenceAppConfig?.refApp ? "cancel" : "default-cancel"
-            }
-          >
-            Cancel
-          </button>
-          <button
-            onClick={this.submitProjSelection}
-            className={
-              this.props.referenceAppConfig?.refApp ? "load" : "default-load"
-            }
-          >
-            Load Project
-          </button>
-          {this.props.referenceAppConfig?.refApp && (
-            <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
-              Create Project
-            </button>
-          )}
-          </div>
+  return (
+    <div>
+      {currentInvites && currentInvites.length > 0 && (
+        <div>
+          <h4>You have pending invitations:</h4>
+          <InviteTable
+            invites={currentInvites}
+            expired={false}
+            inviteStatus={inviteStatus}
+            acceptInvite={acceptInvite}
+            rejectInvite={rejectInvite}
+          />
         </div>
-      ) : <div className="spinningLoadingIcon projectLoadingIcon"></div>;
-    //TODO handle user modal manual close -> load default config
-    const selectProjectOptions = (!projects || projects.length == 0) ? [{value: 'none', label: ''}] :
-        projects.map((project) => {return {'value': project._id, 'label': project._name}});
-
-    //We don't want to always set the selects to the first option.
-    //We want to be able to display the last choices the user made in the dialog.
-    //So we default to the first option, but if we find selectedItems in the appContext we use them
-    //to open the dialog with settings they last chose
-    let defaultProjectOption = selectProjectOptions[0];
-    if (this.state.selectedProjectId) defaultProjectOption = _.find(selectProjectOptions, {value: this.state.selectedProjectId})
-
-    let currentInvites = invites && invites.filter(inv => inv._status == "PENDING")
-    let expiredInvites = invites && invites.filter(inv => inv._status == "EXPIRED")
-
-    const buildInviteTable = (invites, expired) => <SimpleTable
-        className="invite-table"
-        header = { expired ? ["", "Expired Invites", "Role", ""] : ["", "Project", "Role", ""]}
-        rows={invites.map(inv => {
-          let status = this.state.inviteStatus[inv._id]
-          let statusOrButtons =
-            status
-              ? <span className={"invite-state-"+status.toLowerCase()}>{status}</span>
-              : <div>
-                  { expired  ? "" : <span className='invite-action' onClick={e=>this.acceptInvite(inv)}><i className="fa fa-check"></i> Accept Invite</span> }
-                  <span className='invite-action' onClick={e=>this.rejectInvite(inv)}><i className="fa fa-times"></i> {expired ? "Remove" : "Reject"} Invite</span>
-                </div>
-          return [<span>&bull;</span>,inv._params.name, inv._usergroup._name, statusOrButtons]})}
-        />
-
-    let title = <span>Project Selection</span>
-    return (
-      <GenericModal
-        title={title}
-        modalBody={
-          <div className="project-picker-modal">
-            {
-              (!this.state.loadingModal && (!projects || projects.length === 0)) &&
-              <div>
-                You are not yet a member of any projects, please
-                {(!currentInvites || currentInvites.length === 0) && <span> contact your project admin for an invite</span>}
-
-                {this.props.referenceAppConfig?.refApp && this.state.user?.has_access && (
-                  <div>
-            <button onClick={() => this.props.referenceAppCreateProject()} className="setup">
-              Create Project
-            </button>
-            <button onClick={()=>this.props.userLogout()}>
-            Logout
-          </button>
-          </div>
-          )}
-                {(currentInvites && currentInvites.length > 0) && <span> accept an invite</span>}
-              </div>
-            }
-
-            {this.state.loadingModal && <SimpleTextThrobber throbberText="Loading your project information" />}
-            {this.props.referenceAppConfig?.refApp &&
-            !showLoadButton &&
-            !this.state.loadingModal &&
-            !this.state.user?.has_access ? (
-              <>
-                <br />
-                <div>
-                  <span className="text-danger">
-                    You don't have permission to create a project in the Reference App.
-                    Please contact the Admin.
-                  </span>
-                </div>
-                <button onClick={()=>this.props.userLogout()}>
-                  Logout
-                </button>
-              </>
-            ) : (
-              <></>
-            )}
-            <div>
-              {currentInvites && currentInvites.length > 0 &&
-                <div>
-                  <h4>You have pending invitations:</h4>
-                  { buildInviteTable(currentInvites, false) }
-                </div>
-              }
-              {expiredInvites && expiredInvites.length > 0 &&
-                <div>
-                  { buildInviteTable(expiredInvites, true) }
-                </div>
-              }
-            </div>
-
-            {
-              !this.state.loadingModal && projects && projects.length > 0 &&
-              <div>
-                <h4>Project</h4>
-                <Select
-                    name="projectSelect"
-                    options={selectProjectOptions}
-                    defaultValue={defaultProjectOption}
-                    className={this.props.referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
-                    classNamePrefix="select"
-                    placeholder={'Select Project...'}
-                    onChange={this.onProjectPicked.bind(this)}
-                    isDisabled={!showLoadButton}
-                    isSearchable={false}
-                    menuPosition='fixed'
-                />
-
-                {
-                  projectUserGroups && projectUserGroups.length > 1 &&
-                  <div>
-                    <h4>User Group</h4>
-                    <Select
-                        name="userGroupSelect"
-                        options={this.state.userGroupOptions}
-                        value={this.state.userGroupValue}
-                        className={this.props.referenceAppConfig?.refApp ? "custom-single-class" : "basic-single"}
-                        classNamePrefix="select"
-                        placeholder={'Select User Group...'}
-                        onChange={this.onUserGroupPicked.bind(this)}
-                        isSearchable={false}
-                        menuPosition='fixed'
-                    />
-                  </div>
-                }
-
-                {loadBtn}
-
-              </div>
-            }
-          </div>
-        }
-      />
-    );
-  }
+      )}
+      {expiredInvites && expiredInvites.length > 0 && (
+        <div>
+          <InviteTable
+            invites={expiredInvites}
+            expired={true}
+            inviteStatus={inviteStatus}
+            acceptInvite={acceptInvite}
+            rejectInvite={rejectInvite}
+          />
+        </div>
+      )}
+    </div>
+  )
 }
+
+const ProjectPickerModal = props => {
+  const {
+    configUserType,
+    appContextProps,
+    projectLoadHandlerCallback,
+    testConfig,
+    onConfigLoad,
+    onProjectLoadStart,
+    defaultConfig,
+    referenceAppConfig,
+    onCancel,
+    userLogout,
+    referenceAppCreateProject,
+    onAcceptInvite
+  } = props
+
+  const [projects, setProjects] = useState([])
+  const [loadingProjects, setLoadingProjects] = useState(true)
+  const [selectedProjectId, setSelectedProjectId] = useState(null)
+  const [loadingUserGroups, setLoadingUserGroups] = useState(false)
+  const [userGroups, setUserGroups] = useState([])
+  const [selectedUserGroupId, setSelectedUserGroupId] = useState(null)
+  const [remember, setRemember] = useState(true)
+  const [user, setUser] = useState(null)
+
+  const checkUserAccess = async () => {
+    if (referenceAppConfig?.refApp) {
+      try {
+        let createTestProject = await IafPassSvc.createWorkspaces([])
+        if (createTestProject && createTestProject?._total == 0) {
+          setUser({
+            has_access: true
+          })
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  }
+
+  const setCssVariables = async () => {
+    // Check if referenceAppConfig is defined and refApp is true
+    if (referenceAppConfig?.refApp) {
+      const result = await IafPassSvc.getConfigs()
+      const root = document.documentElement
+
+      const accentColor =
+        result.themes.login === 'mirrana' ? '#E04F29' : '#4bade8'
+      const fancytreeOneColor =
+        result.themes.login === 'mirrana' ? '#E04F29' : '#4bade8'
+      const fancytreeOneChannelColor =
+        result.themes.login === 'mirrana' ? '#e98469' : '#dbecee'
+
+      root.style.setProperty('--app-accent-color', accentColor)
+      root.style.setProperty('--fancytree-one-color', fancytreeOneColor)
+      root.style.setProperty(
+        '--fancytree-one-channel-color',
+        fancytreeOneChannelColor
+      )
+    }
+  }
+
+  const saveChoice = configData => {
+    sessionStorage.setItem(CONFIG_DATA_KEY, JSON.stringify(configData))
+
+    if (selectedProjectId) {
+      sessionStorage.setItem(PROJECT_ID_KEY, selectedProjectId)
+    }
+    if (selectedUserGroupId) {
+      sessionStorage.setItem(USER_GROUP_ID_KEY, selectedUserGroupId)
+    }
+  }
+
+  const clearSavedChoice = () => {
+    sessionStorage.removeItem(CONFIG_DATA_KEY)
+    sessionStorage.removeItem(PROJECT_ID_KEY)
+    sessionStorage.removeItem(USER_GROUP_ID_KEY)
+  }
+
+  const loadConfig = async userConfig => {
+    try {
+      if (userConfig) {
+        let latestUserConfigVersion = _.find(userConfig._versions, {
+          _version: userConfig._tipVersion
+        })
+        let _userData = JSON.parse(latestUserConfigVersion._userData)
+        _userData._id = userConfig._id
+
+        const routes = await testConfig(_userData)
+        if (remember) {
+          saveChoice(_userData)
+        } else {
+          clearSavedChoice()
+        }
+
+        onConfigLoad(_userData, routes)
+      } else {
+        onConfigLoad(defaultConfig, testConfig(defaultConfig))
+      }
+    } catch (e) {
+      onConfigLoad(defaultConfig, testConfig(defaultConfig))
+    }
+  }
+
+  const loadProject = async project => {
+    let userConfigs = []
+    let selectedUserGroup = _.filter(
+      userGroups,
+      u => u._id === selectedUserGroupId
+    )[0]
+    //If usergroups are loaded but the selected user group is not found in it, we recover by using the first usergroup
+    if (!selectedUserGroup && userGroups) {
+      selectedUserGroup = userGroups[0]
+    }
+    if (!selectedUserGroup) {
+      //There is not selectedUserGroup because userGroups were not loaded, se we fetch user configs from the project
+      userConfigs = await IafProj.getUserConfigs(project, {
+        _userType: configUserType
+      })
+    } else {
+      //now, we know we have a usergroup, so we add the user config from the usergroup to the empty user configs array
+      userConfigs.push(selectedUserGroup._userAttributes.userConfigs[0])
+    }
+    //If we have user configs by now, we load the config, if not loadConfig should manage with a default config.
+    if (userConfigs) {
+      if (userConfigs.length > 1) {
+        console.warn('There are ' + userConfigs.length + ' user configs found')
+      }
+      //We fetch the full user config from the project, not just the user config from the usergroup
+      const fullUserConfigs = await IafProj.getUserConfigs(project, {
+        _id: userConfigs[0]._id
+      })
+      if (fullUserConfigs && fullUserConfigs.length > 0) {
+        return loadConfig(fullUserConfigs[0])
+      } else {
+        console.error('Full user could not be fetched', userConfigs[0])
+      }
+    } else {
+      return loadConfig()
+    }
+  }
+
+  const onProjectPicked = selectedOption => {
+    console.log('onProjectPicked selectedOption', selectedOption)
+    const selectedProjectIdLocal = selectedOption
+    setSelectedProjectId(selectedProjectIdLocal)
+
+    //Clear the selected user group when a project is picked
+    setSelectedUserGroupId(undefined)
+
+    fetchUserGroups(projects, selectedProjectIdLocal)
+  }
+  const onUserGroupPicked = selectedOption => {
+    const selectedUserGroupIdLocal = selectedOption
+    setSelectedUserGroupId(selectedUserGroupIdLocal)
+  }
+
+  const submitProjSelection = async () => {
+    const hasExistingProject = !!sessionStorage.getItem(CONFIG_DATA_KEY)
+    onProjectLoadStart && onProjectLoadStart(hasExistingProject)
+    for (const project of projects) {
+      if (project._id === selectedProjectId) {
+        await IafProj.switchProject(project._id)
+        let currProject = await IafProj.getCurrent()
+        await loadProject(project)
+
+        //Let the AppProvider know what project is selected
+        const selectedUserGroupIdLocal = selectedUserGroupId
+        projectLoadHandlerCallback &&
+          projectLoadHandlerCallback({
+            selectedProject: currProject,
+            userGroup: userGroups?.find(
+              UG => UG._id === selectedUserGroupIdLocal
+            )
+          })
+        appContextProps.actions.setSelectedItems({
+          selectedProject: currProject,
+          selectedUserGroupId: selectedUserGroupIdLocal
+        })
+
+        window.location.hash = '/' //Since we're outside the react router scope, we need to deal with the location object directly
+
+        // After a user accepts an invite, we make sure to remove the 'inviteId' from the URL
+        if (window.location.href.includes('inviteId')) {
+          window.location.href = `${window.location.origin}/`
+        }
+        if (referenceAppConfig?.refApp) {
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname + window.location.hash
+          )
+        }
+        return
+      }
+    }
+  }
+
+  const fetchProjects = async () => {
+    setLoadingProjects(true)
+    const projects = await IafProj.getProjects({ _pageSize: 1000 })
+
+    setProjects(projects)
+    setLoadingProjects(false)
+
+    if (!projects || projects.length === 0) {
+      return
+    }
+    //Find the project in session or set the first project as the selected project by default
+    let sessionSelectedProjectId = sessionStorage.getItem(PROJECT_ID_KEY)
+    let selectedProjectIdLocal
+    if (
+      sessionSelectedProjectId &&
+      projects.find(project => project._id === sessionSelectedProjectId)
+    ) {
+      //could not find the project in the session, so we set the first project as the selected project by default
+      selectedProjectIdLocal = sessionSelectedProjectId
+      setSelectedProjectId(sessionSelectedProjectId)
+    } else {
+      //We could not find the project in the session, so we set the first project as the selected project by default
+      selectedProjectIdLocal = projects?.[0]?._id
+      setSelectedProjectId(projects?.[0]?._id)
+    }
+    fetchUserGroups(projects, selectedProjectIdLocal)
+  }
+
+  const fetchUserGroups = async (projects, selectedProjectIdLocal) => {
+    if (!projects || projects.length === 0) {
+      //Usergroups cannot be loaded
+      return
+    }
+    setLoadingUserGroups(true)
+
+    const selectedProject = projects.find(
+      project => project._id === selectedProjectIdLocal
+    )
+
+    let userGroups = await IafProj.getUserGroups(selectedProject)
+    setUserGroups(userGroups)
+    //We fetch the selected project user configs with a userType matching the client's userType.
+    let userConfigs = await IafProj.getUserConfigs(selectedProject, {
+      _userType: configUserType
+    })
+    //Now we can remove all userGroups that don't have a user config with the same userType.
+    userGroups = userGroups.filter(userGroup =>
+      userConfigs.find(
+        userConfig =>
+          userConfig._id === userGroup._userAttributes.userConfigs[0]._id
+      )
+    )
+
+    //Find the usergroup in session or set the first user group of the project as the selected user group by default
+    let sessionSelectedUserGroupId = sessionStorage.getItem(USER_GROUP_ID_KEY)
+    if (
+      sessionSelectedUserGroupId &&
+      userGroups.find(userGroup => userGroup._id === sessionSelectedUserGroupId)
+    ) {
+      //We found the usergroup in the session and it exists in the project
+      setSelectedUserGroupId(sessionSelectedUserGroupId)
+    } else {
+      //We could not find the usergroup in the session or it does not exist in the project, so we set the first user group of the project as the selected user group by default
+      setSelectedUserGroupId(userGroups?.[0]?._id)
+    }
+
+    setLoadingUserGroups(false)
+  }
+
+  //load projects when the modal is mounted
+  useEffect(() => {
+    checkUserAccess()
+    setCssVariables()
+
+    fetchProjects()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  //TODO handle user modal manual close -> load default config
+  const projectOptions =
+    !projects || projects.length == 0
+      ? [{ value: 'none', label: '' }]
+      : projects.map(project => {
+          return { value: project._id, label: project._name }
+        })
+
+  //We don't want to always set the selects to the first option.
+  //We want to be able to display the last choices the user made in the dialog.
+  //So we default to the first option, but if we find selectedItems in the appContext we use them
+  //to open the dialog with settings they last chose
+  let defaultProjectOption = projectOptions[0]
+  if (selectedProjectId)
+    defaultProjectOption = _.find(projectOptions, {
+      value: selectedProjectId
+    })
+
+  const userGroupOptions = (userGroups || []).map(userGroup => {
+    return { value: userGroup._id, label: userGroup._name }
+  })
+
+  let defaultUserGroupOption = userGroupOptions[0]
+  if (selectedUserGroupId) {
+    defaultUserGroupOption = _.find(userGroupOptions, {
+      value: selectedUserGroupId
+    })
+  }
+  const loading = loadingUserGroups || loadingProjects
+
+  const hasExistingProject = !!sessionStorage.getItem(CONFIG_DATA_KEY)
+
+  return (
+    <Dialog
+      title={!hasExistingProject ? "Project access" : "Switch project"}
+      open={true}
+      disableCloseButton={!hasExistingProject}
+      disableClickOutside={!hasExistingProject}
+      hideOverlay={!hasExistingProject}
+      disableEscapeKey={!hasExistingProject}
+      onOpenChange={open => {
+        if (!open) onCancel?.()
+      }}
+      classNames={{
+        content: 'project-picker-modal-dialog-content',
+        header: 'dialog-header',
+        title: `dialog-title ${!hasExistingProject ? 'dialog-title__no-close-button' : ''}`,
+        closeButton: 'dialog-close-button',
+        body: 'dialog-body',
+      }}
+      children={
+        <div className='project-picker-modal'>
+          {!loading && (!projects || projects.length === 0) && (
+            <div>
+              You are not yet a member of any projects, please
+              {(!currentInvites || currentInvites.length === 0) && (
+                <span> contact your project admin for an invite</span>
+              )}
+              {referenceAppConfig?.refApp && user?.has_access && (
+                <div>
+                  <Button
+                    onClick={() => referenceAppCreateProject(projects)}
+                  >
+                    Create Project
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={userLogout}
+                  >
+                    Logout
+                  </Button>
+                </div>
+              )}
+              {currentInvites && currentInvites.length > 0 && (
+                <span> accept an invite</span>
+              )}
+            </div>
+          )}
+
+          {loadingProjects && (
+            <SimpleTextThrobber throbberText='Loading your project information' />
+          )}
+          {referenceAppConfig?.refApp &&
+          !loadingProjects &&
+          !user?.has_access ? (
+            <>
+              <br />
+              <div>
+                <span className='text-danger'>
+                  You don't have permission to create a project in the Reference
+                  App. Please contact the Admin.
+                </span>
+              </div>
+              <Button
+                variant="secondary"
+                onClick={userLogout}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
+          <InviteSection onAcceptInvite={onAcceptInvite} />
+
+          {!loadingProjects && projects && projects.length > 0 && (
+            <div>
+              <h4>Project</h4>
+              <SingleSelect
+                name='projectSelect'
+                options={projectOptions}
+                value={selectedProjectId}
+                className={
+                  referenceAppConfig?.refApp
+                    ? 'select custom-single-class'
+                    : 'select basic-single'
+                }
+                classNames={{
+                  container: 'select-container',
+                  inputContainer: 'select-input-container',
+                  trigger: 'select-trigger',
+                  popup: 'select-popup'
+                }}
+                placeholder={'Select Project...'}
+                onChange={onProjectPicked}
+                disabled={projects.length < 2}
+                filter={false}
+              />
+
+              {userGroups && userGroups.length > 0 && (
+                <div>
+                    <div className={`usergroup-select-container ${loadingUserGroups ? 'hidden' : ''}`}>
+                      <h4>User Group</h4>
+                      <SingleSelect
+                        name='userGroupSelect'
+                        options={userGroupOptions}
+                        value={selectedUserGroupId}
+                        className={
+                          referenceAppConfig?.refApp
+                            ? 'select custom-single-class'
+                            : 'select basic-single'
+                        }
+                        classNames={{
+                          container: `select-container`,
+                          inputContainer: 'select-input-container',
+                          trigger: 'select-trigger',
+                          popup: 'select-popup'
+                        }}
+                        placeholder={'Select User Group...'}
+                        onChange={onUserGroupPicked}
+                        disabled={userGroups.length < 2}
+                        filter={false}
+                      />
+                    </div>
+                    {loadingUserGroups && (
+                      <SimpleTextThrobber throbberText='Loading user groups' />
+                    )}
+                  </div>
+              )}
+
+              <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Checkbox
+                  id='remswitch'
+                  checked={remember}
+                  onCheckedChange={(checked) => setRemember(checked === true)}
+                />
+                <label htmlFor='remswitch' style={{ cursor: 'pointer', userSelect: 'none' }}>
+                  Remember my choice
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+      }
+      footer={
+        <div className='button-container'>
+          <Button
+            onClick={submitProjSelection}
+            disabled={!selectedProjectId || !selectedUserGroupId || loadingUserGroups || loadingProjects}
+            className={'dialog-footer-button'}
+          >
+            {hasExistingProject ? 'Switch Project' : 'Load Project'}
+          </Button>
+          {referenceAppConfig?.refApp && (
+            <Button
+              onClick={() => referenceAppCreateProject(projects)}
+              className={'dialog-footer-button'}
+            >
+              Create Project
+            </Button>
+          )}
+          <Button
+            variant="tertiary"
+            onClick={userLogout}
+            className={'dialog-footer-button logout-button'}
+          >
+            Sign out
+          </Button>
+        </div>
+      }
+    />
+  )
+}
+
+export default ProjectPickerModal

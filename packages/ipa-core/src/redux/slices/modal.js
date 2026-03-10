@@ -13,10 +13,8 @@ const slice = createSlice({
     reducers: {
         setModal: (state, {payload: {component, props, open}}) => {
             state.component = component
-            state.props = props
-            if(_.isBoolean(open)) {
-                state.open = open
-            }
+            state.props = props ?? initialState.props
+            state.open = typeof open === 'boolean' ? open : true
         },
         setOpen: (state, {payload}) => {
             state.open = payload;

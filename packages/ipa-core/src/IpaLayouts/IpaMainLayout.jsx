@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {HashRouter, Switch} from 'react-router-dom';
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
 
@@ -14,6 +15,8 @@ import { getPlatform } from '../IpaUtils/helpers';
 import * as qs from 'querystring';
 
 import Layout from './Layout';
+import Logo from './Logo';
+import LoadingModal from '../IpaDialogs/LoadingModal';
 
 import '../IpaStyles/theme.scss'
 import '../IpaIcons/icons.scss'
@@ -31,6 +34,30 @@ const generateClassName = createGenerateClassName({
 });
 
 enableMapSet()
+
+function LoadingScreenWithModal({ modal, ipaConfig }) {
+  const showLoadingModal = !modal?.open || !modal?.component;
+  return (
+    <div className="ipa-loading-screen">
+      {ipaConfig?.appImage &&
+        <header className="ipa-loading-screen__header">
+          <img src={ipaConfig?.appImage} alt="" className="ipa-loading-screen__logo" />
+        </header>
+      }
+      <div className="ipa-loading-screen__body">
+        {showLoadingModal && (
+          <LoadingModal
+            title="Signing you in"
+            description="We’re checking your details. This will only take a moment..."
+            hideOverlay={true}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+const LoadingScreenWithModalConnected = connect(state => ({ modal: state.modal }))(LoadingScreenWithModal);
 
 class App extends React.Component {
   constructor(props) {
@@ -100,19 +127,31 @@ class IpaMainLayout extends React.Component {
     render() {
 
         return (
-            <div>
+            <div data-theme="invicara">
+              <div id="ipa-ui-modal-root" />
               <Provider store={store}>
                 <HashRouter>
                     <App history={history} location={location}>
                     <AuthProvider authService={this.authService}>
-                        <AppProvider location={location} history={history} ipaConfig={this.props.ipaConfig} onConfigLoad={this.props.onConfigLoad} onCancel={this.props.onCancel} projectLoadHandlerCallback={this.props.projectLoadHandlerCallback} pageComponentLoader={this.props.pageComponentLoader}> 
+                        <AppProvider 
+                          location={location} 
+                          history={history} 
+                          ipaConfig={this.props.ipaConfig} 
+                          onConfigLoad={this.props.onConfigLoad} 
+                          onCancel={this.props.onCancel} //I don't think this is used by any app yet we should think about removing it
+                          projectLoadHandlerCallback={this.props.projectLoadHandlerCallback}
+                          onProjectPickerCancel={this.props.onProjectPickerCancel}
+                          pageComponentLoader={this.props.pageComponentLoader}
+                        > 
                             <AppContext.Consumer>
                                 {
                                     (contextProps) => {
                                       console.log("AppContext contextProps", contextProps)
-                                      return contextProps.isLoading ?
-                                        <div>{contextProps.loadingText}</div>
-                                        :
+                                      return contextProps.isLoading ? (
+                                        <LoadingScreenWithModalConnected
+                                          ipaConfig={this.props.ipaConfig}
+                                        />
+                                      ) : (
                                        <StylesProvider generateClassName={generateClassName}> 
                                           <Layout pageList={contextProps.router.pageList}
                                                   pageGroups={contextProps.router.pageGroups}
@@ -133,6 +172,7 @@ class IpaMainLayout extends React.Component {
 
                                           </Layout>
                                        </StylesProvider>
+                                      );
                                     }
                               }
                             </AppContext.Consumer>
@@ -142,7 +182,7 @@ class IpaMainLayout extends React.Component {
                 </HashRouter>
             </Provider>
           </div>
-        )
+        );
     }
 }
 

@@ -11,6 +11,7 @@ import EmptyConfig, {actualPage} from './emptyConfig';
 import DefaultStyleVars from "./IpaStyles/styleVars.json";
 
 import ProjectPickerModal from "./IpaDialogs/ProjectPickerModal";
+import LoadingModal from "./IpaDialogs/LoadingModal";
 import ScriptHelper from './IpaUtils/ScriptHelper'
 
 import {parseQuery} from "./IpaUtils/helpers";
@@ -22,6 +23,8 @@ import ScriptCache from './IpaUtils/script-cache'
 import store, { addReducerSlice } from './redux/store'
 import { addDashboardComponents } from './redux/slices/dashboardUI'
 import { addEntityComponents } from './redux/slices/entityUI'
+import { actions as Modals } from './redux/slices/modal'
+import ModalHost from './ModalHost'
 import SetUpProject from "./ipaProjectSetup/SetupProject";
 import withGenericPage from './IpaPageComponents/GenericPage'
 import InternalPages from './IpaPageComponents/InternalPages'
@@ -197,8 +200,7 @@ export class AppProvider extends React.Component {
 
   setSelectedItems(newItems) {
     const {selectedItems} = this.state;
-    //save items to session
-    let newSelecteds = Object.assign(selectedItems, newItems);
+    const newSelecteds = { ...selectedItems, ...newItems };
     localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] = JSON.stringify(newSelecteds);
     this.setState({selectedItems: newSelecteds});
   }
@@ -474,34 +476,57 @@ export class AppProvider extends React.Component {
       } else {
         const callback = (config, routes) => this.onConfigLoad(config, routes, token, user);
         try {
-          let projects = await IafProj.getProjects({_pageSize: 1000});
-          if (showProjectPicker)
-            self.context.ifefShowModal(
-                <ProjectPickerModal
-                    configUserType={this.props.ipaConfig.configUserType}
-                    referenceAppConfig={this.props.ipaConfig.referenceAppConfig}
-                    appContextProps={this.state}
-                    defaultConfig={EmptyConfig}
-                    onAcceptInvite={this.state.actions.restartApp}
-                    projects={projects}
-                    testConfig={self.testConfig}
-                    userLogout = {this.state.actions.userLogout}
-                    onConfigLoad={callback}
-                    onCancel={() => {
-                      self.context.ifefShowModal(false);
-                      this.props.onCancel && this.props.onCancel()
-                    }}
-                    projectLoadHandlerCallback = {this.props.projectLoadHandlerCallback}
-                    referenceAppCreateProject={() => self.context.ifefShowModal(<SetUpProject
-                        restartApp={this.state.actions.restartApp}
-                        projects={projects}
-                        onCancel={() => {
-                          this.setState((prev) => {
-                            return { ...prev, isshowProjectPickerModal: true };
-                          });
-                        }}
-                    />) }
-                />);
+          if (showProjectPicker) {
+            const projectPickerProps = {
+              configUserType: this.props.ipaConfig.configUserType,
+              referenceAppConfig: this.props.ipaConfig.referenceAppConfig,
+              appContextProps: this.state,
+              defaultConfig: EmptyConfig,
+              onAcceptInvite: this.state.actions.restartApp,
+              testConfig: self.testConfig.bind(self),
+              userLogout: this.state.actions.userLogout,
+              onConfigLoad: callback,
+              onProjectLoadStart: (hasExistingProject) => {
+                store.dispatch(Modals.destroy());
+                store.dispatch(Modals.setModal({
+                  component: LoadingModal,
+                  props: {
+                    title: 'Loading project',
+                    description: "We're loading the data. This will only take a moment...",
+                    hideOverlay: !hasExistingProject,
+                  },
+                  open: true,
+                }));
+              },
+              onCancel: () => {
+                store.dispatch(Modals.destroy());
+                this.props.onCancel && this.props.onCancel();
+              },
+              projectLoadHandlerCallback: this.props.projectLoadHandlerCallback,
+              referenceAppCreateProject: (projects) => {
+                store.dispatch(Modals.setModal({
+                  component: SetUpProject,
+                  props: {
+                    restartApp: this.state.actions.restartApp,
+                    projects,
+                    onCancel: () => {
+                      store.dispatch(Modals.setModal({
+                        component: ProjectPickerModal,
+                        props: { ...projectPickerProps, appContextProps: this.state },
+                        open: true,
+                      }));
+                    },
+                  },
+                  open: true,
+                }));
+              },
+            };
+            store.dispatch(Modals.setModal({
+              component: ProjectPickerModal,
+              props: projectPickerProps,
+              open: true,
+            }));
+          }
         } catch (error) {
           console.error(error);
           callback(EmptyConfig, self.testConfig(EmptyConfig));
@@ -530,7 +555,7 @@ export class AppProvider extends React.Component {
   }
 
   async onConfigLoad(config, routes, token, user) {
-
+    try {
     function hasSisenseConnectors(config) {
       if (config.connectors) {
 
@@ -575,8 +600,6 @@ export class AppProvider extends React.Component {
     ScriptCache.clearCache();
 
     IafScriptEngine.clearVars()
-
-    this.context.ifefShowModal(false);
 
     let selectedProj = IafProj.getCurrent();
     if (selectedProj) {
@@ -655,7 +678,7 @@ export class AppProvider extends React.Component {
           router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
         });
 
-      this.setState({isLoading: false});
+      this.setState({ isLoading: false });
 
       // Eval the "autoeval" script for any bootstrap setup of app.
       if (config.scripts && config.scripts.autoeval) {
@@ -688,6 +711,9 @@ export class AppProvider extends React.Component {
 
     if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
 
+    } finally {
+      store.dispatch(Modals.destroy());
+    }
   }
 
   setUserConfig(config) {
@@ -703,7 +729,12 @@ export class AppProvider extends React.Component {
 
   render() {
     const context = {...this.state};
-    return <AppContext.Provider value={context}>{this.props.children}</AppContext.Provider>
+    return (
+      <AppContext.Provider value={context}>
+        {this.props.children}
+        <ModalHost />
+      </AppContext.Provider>
+    );
   }
 }
 
