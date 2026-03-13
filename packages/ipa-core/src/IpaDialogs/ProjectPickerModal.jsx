@@ -288,7 +288,6 @@ const ProjectPickerModal = props => {
   }
 
   const onProjectPicked = selectedOption => {
-    console.log('onProjectPicked selectedOption', selectedOption)
     const selectedProjectIdLocal = selectedOption
     setSelectedProjectId(selectedProjectIdLocal)
 
@@ -383,18 +382,23 @@ const ProjectPickerModal = props => {
     )
 
     let userGroups = await IafProj.getUserGroups(selectedProject)
-    setUserGroups(userGroups)
     //We fetch the selected project user configs with a userType matching the client's userType.
     let userConfigs = await IafProj.getUserConfigs(selectedProject, {
       _userType: configUserType
     })
-    //Now we can remove all userGroups that don't have a user config with the same userType.
-    userGroups = userGroups.filter(userGroup =>
-      userConfigs.find(
-        userConfig =>
-          userConfig._id === userGroup._userAttributes.userConfigs[0]._id
+
+    if(userConfigs && userConfigs.length > 0) {
+      //Now we can remove all userGroups that don't have a user config with the same userType.
+      userGroups = userGroups.filter(userGroup => 
+        userConfigs.find(
+          userConfig =>
+            userConfig._id === userGroup._userAttributes.userConfigs[0]._id
+        )
       )
-    )
+    } else {
+      console.log('no userConfigs found', userGroups)
+      userGroups = []; //If no matching user configs are found, no userGroups are allowed to be selected
+    }
 
     //Find the usergroup in session or set the first user group of the project as the selected user group by default
     let sessionSelectedUserGroupId = sessionStorage.getItem(USER_GROUP_ID_KEY)
@@ -409,6 +413,7 @@ const ProjectPickerModal = props => {
       setSelectedUserGroupId(userGroups?.[0]?._id)
     }
 
+    setUserGroups(userGroups)
     setLoadingUserGroups(false)
   }
 
@@ -579,6 +584,12 @@ const ProjectPickerModal = props => {
                       <SimpleTextThrobber throbberText='Loading user groups' />
                     )}
                   </div>
+              )}
+
+              {!loadingUserGroups && userGroups && userGroups.length === 0 && (
+                <div className='project-picker-modal-no-usergroups'>
+                  <p>No user groups available for this project. Please choose another project or contact your project admin.</p>
+                </div>
               )}
 
               <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>

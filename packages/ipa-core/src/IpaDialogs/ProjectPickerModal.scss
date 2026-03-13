@@ -66,6 +66,19 @@ $light-grey: #6d6e70;
     }
   }
 
+  .project-picker-modal-no-usergroups {
+    margin-top: 12px;
+    padding: 12px;
+    background-color: var(--neutral-1, #f5f5f5);
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--neutral-6, #6d6e70);
+
+    p {
+      margin: 0;
+    }
+  }
+
   .usergroup-loader {
     display: flex;
     align-items: center;
