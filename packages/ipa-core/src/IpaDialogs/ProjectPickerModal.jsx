@@ -389,12 +389,13 @@ const ProjectPickerModal = props => {
 
     if(userConfigs && userConfigs.length > 0) {
       //Now we can remove all userGroups that don't have a user config with the same userType.
-      userGroups = userGroups.filter(userGroup => 
-        userConfigs.find(
-          userConfig =>
-            userConfig._id === userGroup._userAttributes.userConfigs[0]._id
-        )
-      )
+      userGroups = userGroups.filter((userGroup) => {
+        if(!userGroup._userAttributes?.userConfigs?.[0]?._id) return false
+        return !!userConfigs.find((userConfig) => {
+          if(!userConfig._id) return false
+          return userConfig._id === userGroup._userAttributes?.userConfigs?.[0]?._id
+        })
+      })
     } else {
       console.log('no userConfigs found', userGroups)
       userGroups = []; //If no matching user configs are found, no userGroups are allowed to be selected
