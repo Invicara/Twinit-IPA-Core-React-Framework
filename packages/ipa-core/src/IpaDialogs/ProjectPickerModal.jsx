@@ -265,8 +265,8 @@ const ProjectPickerModal = props => {
         _userType: configUserType
       })
     } else {
-      //now, we know we have a usergroup, so we add the user config from the usergroup to the empty user configs array
-      userConfigs.push(selectedUserGroup._userAttributes.userConfigs[0])
+      //now, we know we have a usergroup, so we add the user configs matching the client's userType from the usergroup to the empty user configs array
+      userConfigs.push(...selectedUserGroup.matchingUserConfigs)
     }
     //If we have user configs by now, we load the config, if not loadConfig should manage with a default config.
     if (userConfigs) {
@@ -370,6 +370,20 @@ const ProjectPickerModal = props => {
     fetchUserGroups(projects, selectedProjectIdLocal)
   }
 
+  const filterUserGroups = (projectUserGroups, projectUserConfigsMap) => {
+    //We filter the project userGroups by checking if any of the user group's user configs are in the project user configs.
+    //For this to work, we need to pass a map of the project user configs by their _id that has been filtered by the client's userType.
+    return projectUserGroups.filter((userGroup) => {
+      if(!userGroup._userAttributes?.userConfigs) return false
+    
+      let userConfigsWithMatchingUserType = userGroup._userAttributes?.userConfigs.filter((userConfig) => {
+        return !!projectUserConfigsMap[userConfig._id]
+      })
+      userGroup.matchingUserConfigs = userConfigsWithMatchingUserType;
+      return userGroup.matchingUserConfigs.length > 0
+    })
+  }
+
   const fetchUserGroups = async (projects, selectedProjectIdLocal) => {
     if (!projects || projects.length === 0) {
       //Usergroups cannot be loaded
@@ -381,21 +395,22 @@ const ProjectPickerModal = props => {
       project => project._id === selectedProjectIdLocal
     )
 
-    let userGroups = await IafProj.getUserGroups(selectedProject)
+    let projectUserGroups = await IafProj.getUserGroups(selectedProject)
     //We fetch the selected project user configs with a userType matching the client's userType.
     let userConfigs = await IafProj.getUserConfigs(selectedProject, {
       _userType: configUserType
     })
 
+    //This map is used to quickly check if a user config exists in the project user configs.
+    let userConfigsMap = {};
+    userConfigs.forEach((userConfig) => {
+      userConfigsMap[userConfig._id] = userConfig;
+    })
+
+    let userGroups;
     if(userConfigs && userConfigs.length > 0) {
       //Now we can remove all userGroups that don't have a user config with the same userType.
-      userGroups = userGroups.filter((userGroup) => {
-        if(!userGroup._userAttributes?.userConfigs?.[0]?._id) return false
-        return !!userConfigs.find((userConfig) => {
-          if(!userConfig._id) return false
-          return userConfig._id === userGroup._userAttributes?.userConfigs?.[0]?._id
-        })
-      })
+      userGroups = filterUserGroups(projectUserGroups, userConfigsMap)
     } else {
       console.log('no userConfigs found', userGroups)
       userGroups = []; //If no matching user configs are found, no userGroups are allowed to be selected
