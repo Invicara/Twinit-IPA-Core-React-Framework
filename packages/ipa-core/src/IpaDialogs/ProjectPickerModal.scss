@@ -34,6 +34,12 @@ $light-grey: #6d6e70;
 
 
 .project-picker-modal {
+  /* ipa-ui SingleSelect defaults root + .container to width: fit-content */
+  .project-picker-modal-single-select,
+  .project-picker-modal-single-select__inner {
+    width: 100%;
+  }
+
   .hidden {
     visibility: hidden;
   }

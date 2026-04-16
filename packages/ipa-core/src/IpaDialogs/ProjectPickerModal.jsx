@@ -16,6 +16,14 @@ const PROJECT_ID_KEY = 'ipaSelectedProjectId'
 const USER_GROUP_ID_KEY = 'ipaSelectedUserGroupId'
 const CONFIG_DATA_KEY = 'ipadt_configData'
 
+const PROJECT_PICKER_SELECT_STYLE_OVERRIDES = {
+  singleSelect: 'project-picker-modal-single-select',
+  container:
+    'select-container select-input-container project-picker-modal-single-select__inner',
+  trigger: 'select-trigger',
+  popup: 'select-popup'
+}
+
 /** Tooltip for “Choose a user group” — Figma Sign-in / Project access (node 2822:1441). */
 const USER_GROUP_FIELD_TOOLTIP =
   'Your user group controls what you can see and edit in the app'
@@ -491,12 +499,14 @@ const ProjectPickerModal = props => {
       onOpenChange={open => {
         if (!open) onCancel?.()
       }}
-      classNames={{
+      styleOverrides={{
         content: 'project-picker-modal-dialog-content',
         header: 'dialog-header',
-        title: `dialog-title ${!hasExistingProject ? 'dialog-title__no-close-button' : ''}`,
+        title: !hasExistingProject
+          ? 'dialog-title dialog-title__no-close-button'
+          : 'dialog-title',
         closeButton: 'dialog-close-button',
-        body: 'dialog-body',
+        body: 'dialog-body'
       }}
       children={
         <div className='project-picker-modal'>
@@ -565,12 +575,7 @@ const ProjectPickerModal = props => {
                     ? 'select custom-single-class'
                     : 'select basic-single'
                 }
-                classNames={{
-                  container: 'select-container',
-                  inputContainer: 'select-input-container',
-                  trigger: 'select-trigger',
-                  popup: 'select-popup'
-                }}
+                styleOverrides={PROJECT_PICKER_SELECT_STYLE_OVERRIDES}
                 placeholder={'Select Project...'}
                 onChange={onProjectPicked}
                 disabled={projects.length < 2}
@@ -627,12 +632,7 @@ const ProjectPickerModal = props => {
                             ? 'select custom-single-class'
                             : 'select basic-single'
                         }
-                        classNames={{
-                          container: `select-container`,
-                          inputContainer: 'select-input-container',
-                          trigger: 'select-trigger',
-                          popup: 'select-popup'
-                        }}
+                        styleOverrides={PROJECT_PICKER_SELECT_STYLE_OVERRIDES}
                         placeholder={'Select User Group...'}
                         onChange={onUserGroupPicked}
                         disabled={userGroups.length < 2}
