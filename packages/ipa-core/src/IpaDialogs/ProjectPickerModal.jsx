@@ -488,6 +488,12 @@ const ProjectPickerModal = props => {
 
   const hasExistingProject = !!sessionStorage.getItem(CONFIG_DATA_KEY)
 
+  /** Portals SingleSelect listbox inside dialog DOM so Radix dismissable layer treats clicks correctly. */
+  const [dropdownPortalContainer, setDropdownPortalContainer] = useState(null)
+  const dropdownPortalContainerRef = useCallback(node => {
+    setDropdownPortalContainer(node)
+  }, [])
+
   return (
     <Dialog
       title={!hasExistingProject ? "Project access" : "Switch project"}
@@ -506,10 +512,11 @@ const ProjectPickerModal = props => {
           ? 'dialog-title dialog-title__no-close-button'
           : 'dialog-title',
         closeButton: 'dialog-close-button',
-        body: 'dialog-body'
+        body: 'dialog-body project-picker-modal__dialog-body'
       }}
       children={
-        <div className='project-picker-modal'>
+        <div className='project-picker-modal' ref={dropdownPortalContainerRef}>
+          <div className='project-picker-modal__scroll'>
           {!loading && (!projects || projects.length === 0) && (
             <div>
               You are not yet a member of any projects, please
@@ -575,6 +582,7 @@ const ProjectPickerModal = props => {
                     ? 'select custom-single-class'
                     : 'select basic-single'
                 }
+                portalContainer={dropdownPortalContainer ?? undefined}
                 styleOverrides={PROJECT_PICKER_SELECT_STYLE_OVERRIDES}
                 placeholder={'Select Project...'}
                 onChange={onProjectPicked}
@@ -632,6 +640,7 @@ const ProjectPickerModal = props => {
                             ? 'select custom-single-class'
                             : 'select basic-single'
                         }
+                        portalContainer={dropdownPortalContainer ?? undefined}
                         styleOverrides={PROJECT_PICKER_SELECT_STYLE_OVERRIDES}
                         placeholder={'Select User Group...'}
                         onChange={onUserGroupPicked}
@@ -663,6 +672,7 @@ const ProjectPickerModal = props => {
               </div>
             </div>
           )}
+          </div>
         </div>
       }
       footer={
