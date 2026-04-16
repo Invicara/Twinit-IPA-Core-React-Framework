@@ -42,6 +42,54 @@ $light-grey: #6d6e70;
     font-size: 14px;
   }
 
+  .project-picker-modal-field-label {
+    display: flex;
+    align-items: center;
+    column-gap: 4px;
+    margin-bottom: 4px;
+
+    &__text {
+      margin: 0;
+      font-weight: 500;
+      line-height: 22px;
+      color: #1d1d1d;
+    }
+
+    &__info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 12px;
+      height: 12px;
+      margin: 0;
+      padding: 0;
+      color: #999999;
+      background: transparent;
+      border: none;
+      border-radius: 2px;
+      cursor: help;
+      outline: none;
+    }
+
+    &__info:hover,
+    &__info:focus-visible {
+      color: #737373;
+    }
+
+    &__info:focus-visible {
+      box-shadow:
+        0 0 0 2px var(--neutral-0, #ffffff),
+        0 0 0 4px var(--app-accent-color, #4bade8);
+    }
+
+    &__info-icon {
+      font-size: 12px !important;
+      width: 12px !important;
+      height: 12px !important;
+    }
+  }
+
   .invite-table {
     td,
     th {
@@ -155,6 +203,26 @@ $light-grey: #6d6e70;
     color: var(--destructive);
     margin-top: 16px;
   }
+}
+
+/* Portaled MUI tooltip — Figma “tooltip / container” (neutral/8 fill, neutral/1 text) */
+.project-picker-modal-field-tooltip.MuiTooltip-tooltip {
+  max-width: 180px;
+  padding: 8px;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0;
+  text-align: left;
+  color: #f3f3f3 !important;
+  background-color: #3e3e3e !important;
+  border-radius: 2px;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.16), 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.project-picker-modal-field-tooltip-arrow.MuiTooltip-arrow {
+  color: #3e3e3e !important;
 }
 
 @media screen and (max-width: 768px) {

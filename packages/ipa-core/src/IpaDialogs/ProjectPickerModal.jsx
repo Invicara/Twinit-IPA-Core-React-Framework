@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Select from 'react-select'
+import { Tooltip } from '@mui/material'
+import InfoIcon from '@mui/icons-material/Info'
 import { IafProj, IafUserGroup, IafPassSvc } from '@dtplatform/platform-api'
 import _ from 'lodash'
 import { Dialog, Button, SingleSelect, Checkbox } from '@dtplatform/ipa-ui'
@@ -13,6 +15,10 @@ import '../IpaControls/SpinningLoadingIcon.scss'
 const PROJECT_ID_KEY = 'ipaSelectedProjectId'
 const USER_GROUP_ID_KEY = 'ipaSelectedUserGroupId'
 const CONFIG_DATA_KEY = 'ipadt_configData'
+
+/** Tooltip for “Choose a user group” — Figma Sign-in / Project access (node 2822:1441). */
+const USER_GROUP_FIELD_TOOLTIP =
+  'Your user group controls what you can see and edit in the app'
 const InviteTable = ({
   invites,
   expired,
@@ -549,7 +555,7 @@ const ProjectPickerModal = props => {
 
           {!loadingProjects && projects && projects.length > 0 && (
             <div>
-              <h4>Project</h4>
+              <h4>Choose a project</h4>
               <SingleSelect
                 name='projectSelect'
                 options={projectOptions}
@@ -574,7 +580,44 @@ const ProjectPickerModal = props => {
               {userGroups && userGroups.length > 0 && (
                 <div>
                     <div className={`usergroup-select-container ${loadingUserGroups ? 'hidden' : ''}`}>
-                      <h4>User Group</h4>
+                      <div className='project-picker-modal-field-label'>
+                        <h4 className='project-picker-modal-field-label__text'>
+                          Choose a user group
+                        </h4>
+                        <Tooltip
+                          title={USER_GROUP_FIELD_TOOLTIP}
+                          placement='top'
+                          arrow
+                          enterDelay={200}
+                          PopperProps={{
+                            modifiers: [
+                              {
+                                name: 'offset',
+                                options: { offset: [0, -8] }
+                              }
+                            ]
+                          }}
+                          componentsProps={{
+                            tooltip: {
+                              className: 'project-picker-modal-field-tooltip'
+                            },
+                            arrow: {
+                              className: 'project-picker-modal-field-tooltip-arrow'
+                            }
+                          }}
+                        >
+                          <span
+                            className='project-picker-modal-field-label__info'
+                            tabIndex={0}
+                            aria-label='About user groups'
+                          >
+                            <InfoIcon
+                              className='project-picker-modal-field-label__info-icon'
+                              aria-hidden
+                            />
+                          </span>
+                        </Tooltip>
+                      </div>
                       <SingleSelect
                         name='userGroupSelect'
                         options={userGroupOptions}
