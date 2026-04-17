@@ -29,11 +29,28 @@ $light-grey: #6d6e70;
   .dialog-body {
     padding-bottom: 12px;
   }
+
+  /* Let SingleSelect listbox (portaled into .project-picker-modal) extend past body without clipping */
+  .project-picker-modal__dialog-body {
+    overflow-y: visible;
+    max-height: none;
+  }
 }
 
 
 
 .project-picker-modal {
+  /* ipa-ui SingleSelect defaults root + .container to width: fit-content */
+  .project-picker-modal-single-select,
+  .project-picker-modal-single-select__inner {
+    width: 100%;
+  }
+
+  .project-picker-modal__scroll {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
   .hidden {
     visibility: hidden;
   }

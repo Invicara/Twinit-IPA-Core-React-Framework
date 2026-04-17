@@ -17,11 +17,11 @@ const LoadingModal = ({
     disableClickOutside
     disableEscapeKey
     hideOverlay={hideOverlay}
-    classNames={{
+    styleOverrides={{
       content: 'loading-modal-dialog-content',
       header: 'dialog-header',
       title: 'dialog-title',
-      body: 'dialog-body',
+      body: 'dialog-body'
     }}
     {...dialogProps}
     children={
