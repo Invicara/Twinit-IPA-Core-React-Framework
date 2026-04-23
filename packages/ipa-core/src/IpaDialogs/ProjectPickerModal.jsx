@@ -415,6 +415,10 @@ const ProjectPickerModal = props => {
       _userType: configUserType
     })
 
+    if(!userConfigs) {
+      userConfigs = []
+    }
+
     //This map is used to quickly check if a user config exists in the project user configs.
     let userConfigsMap = {};
     userConfigs.forEach((userConfig) => {
