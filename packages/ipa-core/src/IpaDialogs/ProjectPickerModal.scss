@@ -108,6 +108,8 @@ $light-grey: #6d6e70;
   }
 
   .invite-table {
+    margin-bottom: 32px;
+
     td,
     th {
       padding: 5px;
@@ -117,16 +119,29 @@ $light-grey: #6d6e70;
       min-width: 250px;
     }
 
+    .invite-actions {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      padding-left: 16px;
+    }
+
     .invite-action {
-      display: block;
-      margin-left: 20px;
-      margin-bottom: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
       cursor: pointer;
       color: var(--app-accent-color);
 
       i {
-        padding-right: 0px;
-        width: 20px;
+        padding-right: 0;
+      }
+
+      &:hover {
+        background-color: var(--neutral-1, #f5f5f5);
       }
     }
   }

@@ -46,18 +46,19 @@ const InviteTable = ({
       let statusOrButtons = status ? (
         <span className={'invite-state-' + status.toLowerCase()}>{status}</span>
       ) : (
-        <div>
-          {expired ? (
-            ''
-          ) : (
-            <span className='invite-action' onClick={e => acceptInvite(inv)}>
-              <i className='fa fa-check'></i> Accept Invite
-            </span>
+        <div className='invite-actions'>
+          {!expired && (
+            <Tooltip title='Accept Invite' placement='top' arrow>
+              <span className='invite-action invite-action--accept' onClick={() => acceptInvite(inv)}>
+                <i className='fa fa-check'></i>
+              </span>
+            </Tooltip>
           )}
-          <span className='invite-action' onClick={e => rejectInvite(inv)}>
-            <i className='fa fa-times'></i> {expired ? 'Remove' : 'Reject'}{' '}
-            Invite
-          </span>
+          <Tooltip title={expired ? 'Remove' : 'Reject Invite'} placement='top' arrow>
+            <span className='invite-action invite-action--reject' onClick={() => rejectInvite(inv)}>
+              <i className='fa fa-times'></i>
+            </span>
+          </Tooltip>
         </div>
       )
       return [
@@ -74,10 +75,20 @@ const InviteSection = ({ onAcceptInvite }) => {
   const [invites, setInvites] = useState(null)
   const [inviteStatus, setInviteStatus] = useState({})
 
+  useEffect(() => {
+    IafPassSvc.getUserInvites()
+      .then(fetchedInvites => setInvites(fetchedInvites || []))
+      .catch(() => setInvites([]))
+  }, [])
+
   let currentInvites =
     invites && invites.filter(inv => inv._status == 'PENDING')
   let expiredInvites =
     invites && invites.filter(inv => inv._status == 'EXPIRED')
+
+  if (invites === null) {
+    return null
+  }
 
   if (
     (!currentInvites || currentInvites.length === 0) &&
@@ -291,6 +302,7 @@ const ProjectPickerModal = props => {
       const fullUserConfigs = await IafProj.getUserConfigs(project, {
         _id: userConfigs[0]._id
       })
+      console.log('fullUserConfigs', fullUserConfigs, userConfigs)
       if (fullUserConfigs && fullUserConfigs.length > 0) {
         return loadConfig(fullUserConfigs[0])
       } else {
