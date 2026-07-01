@@ -2,13 +2,13 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna bootstrap --no-ci",
+    "bootstrap": "npm install",
     "build": "lerna run build",
     "build-dev": "lerna run build-dev",
     "release": "npm run build && lerna version --exact",
     "quickrelease": "lerna version --exact",
     "changed": "lerna changed",
-    "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes",
+    "publish": "npm install && lerna run build && lerna publish from-package --yes",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -24,5 +24,8 @@
       "npx prettier --write",
       "npx eslint --fix"
     ]
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
