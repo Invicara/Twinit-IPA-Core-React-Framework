@@ -8,7 +8,7 @@
     "release": "npm run build && lerna version --exact",
     "quickrelease": "lerna version --exact",
     "changed": "lerna changed",
-    "publish": "npm install && lerna run build && lerna publish from-package --yes",
+    "publish": "lerna run build && lerna publish from-package --yes",
     "prepare": "husky install"
   },
   "devDependencies": {
