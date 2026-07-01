@@ -2,13 +2,13 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna bootstrap --no-ci",
+    "bootstrap": "npm install",
     "build": "lerna run build",
     "build-dev": "lerna run build-dev",
     "release": "npm run build && lerna version --exact",
     "quickrelease": "lerna version --exact",
     "changed": "lerna changed",
-    "publish": "lerna bootstrap --no-ci && lerna run build && lerna publish from-package --yes",
+    "publish": "lerna run build && lerna publish from-package --yes",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -16,7 +16,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.0",
-    "lerna": "^3.19.0",
+    "lerna": "^9.0.7",
     "lint-staged": "^15.2.2"
   },
   "lint-staged": {
@@ -24,5 +24,13 @@
       "npx prettier --write",
       "npx eslint --fix"
     ]
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "overrides": {
+    "flatted": "^3.4.2",
+    "minimatch@<3.1.3": "^3.1.4",
+    "lodash": "^4.18.1"
   }
 }
