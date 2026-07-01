@@ -71,7 +71,7 @@ const InviteTable = ({
   />
 )
 
-const InviteSection = ({ onAcceptInvite }) => {
+const InviteSection = ({ onAcceptInvite, onPendingInvitesChange }) => {
   const [invites, setInvites] = useState(null)
   const [inviteStatus, setInviteStatus] = useState({})
 
@@ -80,6 +80,12 @@ const InviteSection = ({ onAcceptInvite }) => {
       .then(fetchedInvites => setInvites(fetchedInvites || []))
       .catch(() => setInvites([]))
   }, [])
+
+  useEffect(() => {
+    if (invites === null) return
+    const pending = invites.filter(inv => inv._status == 'PENDING')
+    onPendingInvitesChange?.(pending.length > 0)
+  }, [invites, onPendingInvitesChange])
 
   let currentInvites =
     invites && invites.filter(inv => inv._status == 'PENDING')
@@ -194,6 +200,7 @@ const ProjectPickerModal = props => {
   const [selectedUserGroupId, setSelectedUserGroupId] = useState(null)
   const [remember, setRemember] = useState(true)
   const [user, setUser] = useState(null)
+  const [hasPendingInvites, setHasPendingInvites] = useState(false)
 
   const checkUserAccess = async () => {
     if (referenceAppConfig?.refApp) {
@@ -536,7 +543,7 @@ const ProjectPickerModal = props => {
           {!loading && (!projects || projects.length === 0) && (
             <div>
               You are not yet a member of any projects, please
-              {(!currentInvites || currentInvites.length === 0) && (
+              {!hasPendingInvites && (
                 <span> contact your project admin for an invite</span>
               )}
               {referenceAppConfig?.refApp && user?.has_access && (
@@ -554,7 +561,7 @@ const ProjectPickerModal = props => {
                   </Button>
                 </div>
               )}
-              {currentInvites && currentInvites.length > 0 && (
+              {hasPendingInvites && (
                 <span> accept an invite</span>
               )}
             </div>
@@ -584,7 +591,10 @@ const ProjectPickerModal = props => {
           ) : (
             <></>
           )}
-          <InviteSection onAcceptInvite={onAcceptInvite} />
+          <InviteSection
+            onAcceptInvite={onAcceptInvite}
+            onPendingInvitesChange={setHasPendingInvites}
+          />
 
           {!loadingProjects && projects && projects.length > 0 && (
             <div>
