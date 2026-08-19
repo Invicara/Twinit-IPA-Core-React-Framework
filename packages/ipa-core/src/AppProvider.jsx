@@ -127,14 +127,14 @@ export class AppProvider extends React.Component {
   async userLogout() {
     try {
       await IafSession.logout();
-    } catch (e) {console.error("An unexpected error happened while logging out.")}
+    } finally {
+      this.sisenseLogout();
 
-    this.sisenseLogout()
-
-    // delete cached config
-    delete sessionStorage.ipadt_configData;
-    delete localStorage.ipadt_selectedItems;
-    window.location = this.authUrl;
+      // delete cached config
+      delete sessionStorage.ipadt_configData;
+      delete localStorage.ipadt_selectedItems;
+      this.props.authService.authorize();
+    }
   }
 
   closeBottomPanel() {
