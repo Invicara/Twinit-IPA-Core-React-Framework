@@ -131,7 +131,7 @@ const InviteSection = ({ onAcceptInvite, onPendingInvitesChange }) => {
     IafUserGroup.addUserToGroupByInvite(invite._usergroup, invite)
       .then(() => {
         updateInviteStatus(invite, 'Accepted')
-        onAcceptInvite && onAcceptInvite()
+        onAcceptInvite && onAcceptInvite(invite)
       })
       .catch(e => inviteFailed(invite, e))
   }
@@ -375,32 +375,47 @@ const ProjectPickerModal = props => {
     }
   }
 
-  const fetchProjects = async () => {
+  const fetchProjects = async preferredProjectName => {
     setLoadingProjects(true)
-    const projects = await IafProj.getProjects({ _pageSize: 1000 })
+    const fetchedProjects = await IafProj.getProjects({ _pageSize: 1000 })
 
-    setProjects(projects)
+    setProjects(fetchedProjects)
     setLoadingProjects(false)
 
-    if (!projects || projects.length === 0) {
-      return
+    if (!fetchedProjects || fetchedProjects.length === 0) {
+      return fetchedProjects
     }
+
+    //A preferred project takes precedence over the session, so a project the user just
+    //joined can be pre-selected for them
+    const preferredProject =
+      preferredProjectName &&
+      fetchedProjects.find(project => project._name === preferredProjectName)
     //Find the project in session or set the first project as the selected project by default
     let sessionSelectedProjectId = sessionStorage.getItem(PROJECT_ID_KEY)
     let selectedProjectIdLocal
-    if (
+    if (preferredProject) {
+      selectedProjectIdLocal = preferredProject._id
+    } else if (
       sessionSelectedProjectId &&
-      projects.find(project => project._id === sessionSelectedProjectId)
+      fetchedProjects.find(project => project._id === sessionSelectedProjectId)
     ) {
-      //could not find the project in the session, so we set the first project as the selected project by default
       selectedProjectIdLocal = sessionSelectedProjectId
-      setSelectedProjectId(sessionSelectedProjectId)
     } else {
       //We could not find the project in the session, so we set the first project as the selected project by default
-      selectedProjectIdLocal = projects?.[0]?._id
-      setSelectedProjectId(projects?.[0]?._id)
+      selectedProjectIdLocal = fetchedProjects?.[0]?._id
     }
-    fetchUserGroups(projects, selectedProjectIdLocal)
+    setSelectedProjectId(selectedProjectIdLocal)
+
+    await fetchUserGroups(fetchedProjects, selectedProjectIdLocal)
+    return fetchedProjects
+  }
+
+  //Accepting an invite makes the user a member of another project, so the project list
+  //has to be refetched for the new project to be selectable without reloading the app
+  const handleInviteAccepted = async invite => {
+    await fetchProjects(invite?._params?.name)
+    onAcceptInvite && onAcceptInvite(invite)
   }
 
   const filterUserGroups = (projectUserGroups, projectUserConfigsMap) => {
@@ -592,7 +607,7 @@ const ProjectPickerModal = props => {
             <></>
           )}
           <InviteSection
-            onAcceptInvite={onAcceptInvite}
+            onAcceptInvite={handleInviteAccepted}
             onPendingInvitesChange={setHasPendingInvites}
           />
 
