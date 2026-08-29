@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,30 +20,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Pull-only role: this build's sole ECR use is fetching the semgrep
-      # image. See github-actions-iam in Invicara/terraform for the subjects.
-      # This repo is public, so a pull request opened from a fork gets neither
-      # an OIDC token nor secrets and will stop at this step.
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::550983980260:role/github-actions-ecr-readonly
-          aws-region: us-west-2
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # Replaces the Jenkins runSAST stage. Scans a clean tree, before
-      # node_modules exists. Self-skips on pull_request events; Advanced
-      # Security covers those. filter: false because the default redacts
-      # findings by rewriting files in place, and `lerna publish` then refuses
-      # to run against the dirty tree (EUNCOMMIT).
-      - name: Scan for secrets
-        uses: Invicara/github-actions/actions/scan-and-filter-secrets@v1
-        with:
-          registry: ${{ steps.login-ecr.outputs.registry }}
-          filter: false
+      # There is no secret-scanning step here, unlike the other npm monorepos
+      # converted off Jenkins. Those use
+      # Invicara/github-actions/actions/scan-and-filter-secrets, and GitHub
+      # only lets a private repository share its actions with other PRIVATE
+      # repositories; this repo is public, so the reference fails to resolve
+      # with `Unable to resolve action invicara/github-actions, not found`.
+      #
+      # Advanced Security still covers pull requests, which is what the shared
+      # action falls back on anyway since it self-skips on pull_request. What
+      # is lost relative to the Jenkins job is the semgrep run on pushes.
+      #
+      # This is also why the job needs no AWS credentials and no id-token
+      # permission: pulling the semgrep image from ECR was the only thing that
+      # required them, so no role ARN or registry hostname appears in this
+      # public file.
 
       - name: Set up Node
         uses: actions/setup-node@v4
