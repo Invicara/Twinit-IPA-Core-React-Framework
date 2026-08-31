@@ -482,7 +482,6 @@ export class AppProvider extends React.Component {
               referenceAppConfig: this.props.ipaConfig.referenceAppConfig,
               appContextProps: this.state,
               defaultConfig: EmptyConfig,
-              onAcceptInvite: this.state.actions.restartApp,
               testConfig: self.testConfig.bind(self),
               userLogout: this.state.actions.userLogout,
               onConfigLoad: callback,
