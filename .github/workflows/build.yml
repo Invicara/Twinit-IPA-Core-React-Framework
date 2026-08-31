@@ -1,0 +1,80 @@
+name: Build
+
+on:
+  push:
+    branches: [master, STAGING, NEXT-RELEASE]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on:
+      - codebuild-ops1-general-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # There is no secret-scanning step here, unlike the other npm monorepos
+      # converted off Jenkins. Those use
+      # Invicara/github-actions/actions/scan-and-filter-secrets, and GitHub
+      # only lets a private repository share its actions with other PRIVATE
+      # repositories; this repo is public, so the reference fails to resolve
+      # with `Unable to resolve action invicara/github-actions, not found`.
+      #
+      # Advanced Security still covers pull requests, which is what the shared
+      # action falls back on anyway since it self-skips on pull_request. What
+      # is lost relative to the Jenkins job is the semgrep run on pushes.
+      #
+      # This is also why the job needs no AWS credentials and no id-token
+      # permission: pulling the semgrep image from ECR was the only thing that
+      # required them, so no role ARN or registry hostname appears in this
+      # public file.
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # Written by hand rather than via setup-node's registry-url: without a
+      # scope that option sets the DEFAULT registry, and GitHub Packages does
+      # not proxy npmjs, so every public dependency would 404.
+      #
+      # GH_PACKAGES_TOKEN is a REPOSITORY secret here, not the organization one
+      # the other converted repos use: that org secret's visibility is private,
+      # and this repo is public, so it would never be exposed to this workflow.
+      # The token is needed to read the @dtplatform dependencies, not only to
+      # publish, so without it the install fails rather than the publish.
+      - name: Configure GitHub Packages auth
+        env:
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: |
+          if [ -z "$GH_PACKAGES_TOKEN" ]; then
+            echo "::error::GH_PACKAGES_TOKEN is empty; cannot read @dtplatform packages or publish @invicara ones"
+            exit 1
+          fi
+          {
+            echo "@dtplatform:registry=https://npm.pkg.github.com/"
+            echo "@invicara:registry=https://npm.pkg.github.com/"
+            echo "//npm.pkg.github.com/:_authToken=$GH_PACKAGES_TOKEN"
+          } > "$HOME/.npmrc"
+
+      # This repo is on lerna 9 with npm workspaces, so there is no bootstrap
+      # step: the root install links the packages.
+      - name: Install
+        run: npm install --no-package-lock
+
+      - name: Build
+        run: npm run build
+
+      # `from-package` publishes only packages whose version is not yet on the
+      # registry. Called directly instead of `npm run publish`, which would
+      # re-run the build.
+      - name: Publish
+        if: github.event_name == 'push'
+        run: npx lerna publish from-package --yes
