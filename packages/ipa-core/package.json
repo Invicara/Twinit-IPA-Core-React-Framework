@@ -9,6 +9,9 @@
   },
   "keywords": [],
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },

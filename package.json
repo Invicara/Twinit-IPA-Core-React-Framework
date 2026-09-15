@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "bootstrap": "npm install",
     "build": "lerna run build",

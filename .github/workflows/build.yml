@@ -66,6 +66,16 @@ jobs:
 
       # This repo is on lerna 9 with npm workspaces, so there is no bootstrap
       # step: the root install links the packages.
+      #
+      # .nvmrc pins Node 24, which ships npm 11. npm 11 no longer runs a
+      # dependency's install/postinstall scripts unless the package is listed
+      # in `allowScripts`, so the install logs a warning naming core-js,
+      # esbuild, nodent-runtime, nx and @parcel/watcher. That warning is
+      # expected and the build does not need any of those scripts: each of
+      # those packages gets its platform binary from an optionalDependency,
+      # and the rollup output is byte-for-byte identical to the Node 20 build.
+      # Approving them (`npm install-scripts approve <pkg>`) is a deliberate
+      # supply-chain decision, not a prerequisite for green CI.
       - name: Install
         run: npm install --no-package-lock
 

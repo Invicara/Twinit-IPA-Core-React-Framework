@@ -1,4 +1,4 @@
-import json from 'rollup-plugin-json'
+import json from '@rollup/plugin-json'
 import resolve from 'rollup-plugin-node-resolve'
 // Convert CJS modules to ES6 so they can be included in bundle
 import commonjs from 'rollup-plugin-commonjs'
