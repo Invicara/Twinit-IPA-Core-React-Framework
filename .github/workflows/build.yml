@@ -18,7 +18,7 @@ jobs:
       - codebuild-ops1-general-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # There is no secret-scanning step here, unlike the other npm monorepos
       # converted off Jenkins. Those use
@@ -36,10 +36,19 @@ jobs:
       # required them, so no role ARN or registry hostname appears in this
       # public file.
 
+      # v5 of both actions requires runner v2.327.1 or newer. This job runs on
+      # CodeBuild-hosted runners, which already force Node 20 actions onto
+      # Node 24, so they are well past that floor.
+      #
+      # package-manager-cache is pinned off to keep the action bump behaviour
+      # neutral: setup-node v5 began caching automatically, and this job has
+      # never cached. Turning it on is a worthwhile speedup, but it is a
+      # separate change with its own cache-poisoning tradeoffs.
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+          package-manager-cache: false
 
       # Written by hand rather than via setup-node's registry-url: without a
       # scope that option sets the DEFAULT registry, and GitHub Packages does
