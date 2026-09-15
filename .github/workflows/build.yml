@@ -83,8 +83,16 @@ jobs:
         run: npm run build
 
       # `from-package` publishes only packages whose version is not yet on the
-      # registry. Called directly instead of `npm run publish`, which would
+      # registry. Called directly instead of `npm run publish-all`, which would
       # re-run the build.
+      #
+      # That script is named publish-all, not publish, on purpose. `publish` is
+      # an npm lifecycle name, and lerna runs the root package's lifecycle
+      # scripts around this command, so a root script called `publish` gets
+      # fired by the very command it wraps and re-enters lerna publish. The
+      # lifecycle hook runs after the tarball is uploaded, so the symptom is a
+      # red job for a release that actually published: see 3.0.86-alpha.0,
+      # which reached the registry and still exited 1.
       - name: Publish
         if: github.event_name == 'push'
         run: npx lerna publish from-package --yes
