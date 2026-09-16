@@ -58,5 +58,14 @@
     "d3-interpolate": "^3.0.1",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "isomorphic-fetch": "^3.0.0"
+  },
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "core-js": false,
+    "esbuild": false,
+    "fsevents": false,
+    "nodent-runtime": false,
+    "nx": false,
+    "unrs-resolver": false
   }
 }
