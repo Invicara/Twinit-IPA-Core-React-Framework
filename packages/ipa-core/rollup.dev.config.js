@@ -27,7 +27,14 @@ export default {
       mainFields: ['main'],
       extensions: ['.js', '.jsx', '.css', '.scss', '.svg']
     }),
-    postcss(),
+    postcss({
+        // rollup-plugin-postcss 4.x calls Dart Sass's legacy render() API, which
+        // warns once per stylesheet (75 times in a full build). The deprecation is
+        // the plugin's to fix, not ours, and the plugin is unmaintained. Loader
+        // options are spread straight into sass.render, so this silences that one
+        // deprecation without hiding any coming from our own stylesheets.
+        use: {sass: {silenceDeprecations: ['legacy-js-api']}}
+    }),
     image({include:['src/IpaIcons/**/*']}),
     babel({
       exclude: 'node_modules/**',
