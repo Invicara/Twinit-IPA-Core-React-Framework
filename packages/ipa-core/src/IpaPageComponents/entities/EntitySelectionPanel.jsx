@@ -21,10 +21,8 @@ const FILTER_SELECT_STYLES = {
     container: styles => ({...styles, display: 'block', width: '100%', marginBottom: '0px'})
 };
 
-export const TreeSelectMode = {
-    NONE_MEANS_ALL: "noneMeansAll",
-    NONE_MEANS_NONE:"noneMeansNone"
-};
+import {TreeSelectMode} from './TreeSelectMode';
+export {TreeSelectMode} from './TreeSelectMode';
 
 class EntitySelectionPanel extends React.Component {
   constructor(props) {

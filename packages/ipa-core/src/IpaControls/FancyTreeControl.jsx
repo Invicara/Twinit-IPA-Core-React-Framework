@@ -1,6 +1,6 @@
 import React, {useEffect,useCallback,useReducer,useRef} from "react";
 
-import {TreeSelectMode} from "../IpaPageComponents/entities/EntitySelectionPanel";
+import {TreeSelectMode} from "../IpaPageComponents/entities/TreeSelectMode";
 import _ from 'lodash'
 import clsx from "clsx";
 

@@ -10,10 +10,17 @@ import image from '@rollup/plugin-image';
 import fs from 'fs';
 import path from 'path';
 
-// Custom plugin to create symlinks for large folders to avoid duplication
+// Custom plugin to create symlinks for large folders to avoid duplication.
+//
+// Runs on closeBundle, not writeBundle. writeBundle fires once per output, so
+// the esm_modules pass used to race rollup-plugin-copy's population of
+// modules/: the target often did not exist yet, which is where the repeated
+// "Target ... does not exist, skipping symlink creation" warnings came from.
+// closeBundle fires once, after every output has been written. (copy's own
+// duplicate-pass race is fixed separately, on the copy plugin below.)
 const createSymlinksPlugin = () => ({
     name: 'create-symlinks',
-    writeBundle() {
+    closeBundle() {
         const symlinks = [
             { target: 'modules/IpaIcons', link: 'esm_modules/IpaIcons' },
             { target: 'modules/IpaFonts', link: 'esm_modules/IpaFonts' }
@@ -77,6 +84,9 @@ const getPlugins = () => [
     image({include:['src/IpaIcons/**/*']}),
     babel({
         exclude: 'node_modules/**',
+        // Explicit rather than inherited: this is the value the plugin already
+        // defaults to, stated so it stops warning on every build.
+        babelHelpers: 'bundled',
         sourceMaps: false,
         presets: [
             "@babel/preset-env",
@@ -114,9 +124,18 @@ const getPlugins = () => [
             {src: 'src/img/**/*', dest: 'esm_modules/img'},
             {src: 'src/*/*.scss', dest: 'esm_modules/styles'},
         ],
+        // Stays on writeBundle. Moving it to closeBundle would make it run
+        // once instead of once per output, but closeBundle is a PARALLEL hook
+        // in rollup, so copy would then race the symlink plugin below and the
+        // symlinks would silently not be created. Running copy here keeps its
+        // output in place before closeBundle starts. The cost is that copy runs
+        // twice over the same destinations, which is the known source of
+        // intermittent ENOENT from its own unlink/chmod; that is unfixed.
         hook: 'writeBundle'
     }),
-    // Create symlinks after copying to avoid duplicating large folders
+    // Create symlinks after copying to avoid duplicating large folders.
+    // Runs on closeBundle, which is after every writeBundle, so copy's output
+    // is guaranteed to be in place.
     createSymlinksPlugin()]
 
 //const external = [...Object.keys(pkg.dependencies), /^node:/];

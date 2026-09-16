@@ -38,6 +38,9 @@ export default {
     image({include:['src/IpaIcons/**/*']}),
     babel({
       exclude: 'node_modules/**',
+      // Explicit rather than inherited: this is the value the plugin already
+      // defaults to, stated so it stops warning on every build.
+      babelHelpers: 'bundled',
       sourceMaps: false,
       presets: [
         "@babel/preset-env",

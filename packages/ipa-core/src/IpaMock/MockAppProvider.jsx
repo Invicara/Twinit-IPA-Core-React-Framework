@@ -20,8 +20,7 @@ import { createLegacyContextSupport } from "./util/legacyContext";
 import { addDashboardComponents } from "../redux/slices/dashboardUI";
 import { addEntityComponents } from "../redux/slices/entityUI";
 import ScriptHelper from "../IpaUtils/ScriptHelper";
-import {StyledEngineProvider, ThemeProvider} from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
+import {ThemeProvider} from "@mui/material/styles";
 
 const {AuthService, AuthProvider} = IafAuth
 

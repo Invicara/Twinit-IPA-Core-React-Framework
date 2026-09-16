@@ -12,7 +12,10 @@ import {Provider} from "react-redux";
 import {enableMapSet} from "immer"
 import IfefBody from '../react-ifef/components/ifefBody';
 import { getPlatform } from '../IpaUtils/helpers';
-import * as qs from 'querystring';
+// qs rather than node's querystring: this is a browser bundle, and the
+// builtin forces every consumer to polyfill it. ignoreQueryPrefix strips
+// the leading '?' of location.search, which querystring.parse did not.
+import qs from 'qs';
 
 import Layout from './Layout';
 import Logo from './Logo';
@@ -63,14 +66,14 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {platformOverride: this.props.location.search ?
-                        qs.parse(this.props.location.search).platformOverride : 
+                        qs.parse(this.props.location.search, {ignoreQueryPrefix: true}).platformOverride : 
                         ""};
   }
 
 
   UNSAFE_componentWillReceiveProps(newProps) {
     var newPlatformOverride = newProps.location.search ? 
-                              qs.parse(newProps.location.search).platformOverride :
+                              qs.parse(newProps.location.search, {ignoreQueryPrefix: true}).platformOverride :
                               "";
     if (newPlatformOverride) {
       if (newPlatformOverride !== this.state.platformOverride) {
