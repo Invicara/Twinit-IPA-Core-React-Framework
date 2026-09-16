@@ -12,6 +12,14 @@ import pkg from './package.json'
 const externals =  [...Object.keys(pkg.dependencies || {}),"clsx","@dtplatform/ui-utils","uid", "query-string", "redux"];
 
 export default {
+  // ScriptHelper.evalExpressions() evaluates caller-supplied expression
+  // strings; that eval is the scripting feature, not an oversight. Scoped to
+  // that one module and that one warning code, so an accidental eval
+  // anywhere else still shows up.
+  onwarn(warning, warn) {
+      if (warning.code === 'EVAL' && warning.id && warning.id.includes('IpaUtils/ScriptHelper')) return;
+      warn(warning);
+  },
   input: 'src/main.js',
   output: {
     file: 'dist/ipa-core.js',
