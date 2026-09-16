@@ -173,6 +173,12 @@ export default {
     // anywhere else still shows up.
     onwarn(warning, warn) {
         if (warning.code === 'EVAL' && warning.id && warning.id.includes('IpaUtils/ScriptHelper')) return;
+        // Entries that export a default alongside named exports. Deliberate:
+        // consumers reach the default through .default, which is the published
+        // API. Unlike the warning above, rollup does not gate this one on
+        // output.exports, and the suggested 'named' would change what the
+        // default-only entries emit, so it is filtered here instead.
+        if (warning.code === 'MIXED_EXPORTS') return;
         warn(warning);
     },
     input: {
@@ -191,6 +197,13 @@ export default {
         format: 'cjs',
         name: 'IpaControls',
         sourcemap: false,
+        // Already the implicit default, stated explicitly. rollup gates its
+        // "implicitly using default export mode" warning on this option being
+        // unset, so naming it silences that warning and emits identical code.
+        // NOT 'named': that would force the two default-only entries
+        // (src/main.js and src/react-ifef/main.js) from `module.exports = X`
+        // to `exports.default = X`, breaking every CommonJS consumer.
+        exports: 'auto',
         entryFileNames: (chunkInfo) => {
             // Output index.js at root, others in subdirectories
             return chunkInfo.name === 'index' ? 'index.js' : '[name]/index.js';

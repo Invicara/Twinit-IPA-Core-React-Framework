@@ -18,6 +18,7 @@ export default {
   // anywhere else still shows up.
   onwarn(warning, warn) {
       if (warning.code === 'EVAL' && warning.id && warning.id.includes('IpaUtils/ScriptHelper')) return;
+      if (warning.code === 'MIXED_EXPORTS') return;
       warn(warning);
   },
   input: 'src/main.js',
@@ -25,6 +26,7 @@ export default {
     file: 'dist/ipa-core.js',
     format: 'cjs',
     name: 'DTFFCore',
+    exports: 'auto',
     sourcemap: false
   },
 
