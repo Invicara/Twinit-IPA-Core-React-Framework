@@ -1,24 +1,24 @@
 .data-container {
+  margin-top: 64px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .loading-text {
+    font-size: 1.2em;
+    font-weight: 500;
+  }
+
+  .fallback {
     margin-top: 64px;
-    padding: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 
-    .loading-text {
-        font-size: 1.2em;
-        font-weight: 500;
+    .fallback-text {
+      margin-bottom: 24px;
     }
-
-    .fallback {
-        margin-top: 64px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .fallback-text {
-            margin-bottom: 24px;
-        }
-    }
+  }
 }

@@ -34,11 +34,7 @@ The following list are valid systems supported by the platform:
   "shortName": "down",
   "description": "Downloads",
   "pageComponent": "DownloadsView",
-  "systems": [
-    "Autodesk Revit", 
-    "Autodesk Navisworks", 
-    "Autodesk Civil 3D"
-  ],
+  "systems": ["Autodesk Revit", "Autodesk Navisworks", "Autodesk Civil 3D"],
   "path": "/downloads"
 }
 ```

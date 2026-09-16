@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { any, bool, element, func, object, shape, string } from "prop-types";
-import "./BaseTextInput.scss";
-import ControlLabel from "./ControlLabel";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { any, bool, element, func, object, shape, string } from 'prop-types';
+import './BaseTextInput.scss';
+import ControlLabel from './ControlLabel';
 
-const BaseTextInput = (props) => {
+const BaseTextInput = props => {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = () => {
@@ -17,8 +17,8 @@ const BaseTextInput = (props) => {
     props.inputProps.onFocusChange?.(false);
   };
 
-  const baseClassName = "base-text-input";
-  let classNameModifiers = isFocused ? `${baseClassName}--is-focused` : "";
+  const baseClassName = 'base-text-input';
+  let classNameModifiers = isFocused ? `${baseClassName}--is-focused` : '';
 
   let inputProps = {
     value: props.inputProps.value,
@@ -33,15 +33,9 @@ const BaseTextInput = (props) => {
   };
 
   return (
-    <div
-      className={`${baseClassName} ${props.className} ${classNameModifiers}`}
-    >
+    <div className={`${baseClassName} ${props.className} ${classNameModifiers}`}>
       {props.labelProps && <ControlLabel {...props.labelProps} />}
-      {props.component ? (
-        <props.component {...inputProps} />
-      ) : (
-        <input {...inputProps} />
-      )}
+      {props.component ? <props.component {...inputProps} /> : <input {...inputProps} />}
       {props.children}
     </div>
   );

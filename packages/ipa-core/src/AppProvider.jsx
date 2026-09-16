@@ -1,35 +1,35 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
-import {Route, Redirect} from 'react-router-dom';
-import _ from "lodash";
+import { Route, Redirect } from 'react-router-dom';
+import _ from 'lodash';
 
-import {IafSession, IafProj, IafDataSource} from '@dtplatform/platform-api';
-import {IafScriptEngine} from "@dtplatform/iaf-script-engine";
+import { IafSession, IafProj, IafDataSource } from '@dtplatform/platform-api';
+import { IafScriptEngine } from '@dtplatform/iaf-script-engine';
 
-import EmptyConfig, {actualPage} from './emptyConfig';
+import EmptyConfig, { actualPage } from './emptyConfig';
 
-import DefaultStyleVars from "./IpaStyles/styleVars.json";
+import DefaultStyleVars from './IpaStyles/styleVars.json';
 
-import ProjectPickerModal from "./IpaDialogs/ProjectPickerModal";
-import LoadingModal from "./IpaDialogs/LoadingModal";
-import ScriptHelper from './IpaUtils/ScriptHelper'
+import ProjectPickerModal from './IpaDialogs/ProjectPickerModal';
+import LoadingModal from './IpaDialogs/LoadingModal';
+import ScriptHelper from './IpaUtils/ScriptHelper';
 
-import {parseQuery} from "./IpaUtils/helpers";
+import { parseQuery } from './IpaUtils/helpers';
 
-import {addUserConfig} from "./redux/slices/user-config";
-import {addUser} from "./redux/slices/user";
+import { addUserConfig } from './redux/slices/user-config';
+import { addUser } from './redux/slices/user';
 
-import ScriptCache from './IpaUtils/script-cache'
-import store, { addReducerSlice } from './redux/store'
-import { addDashboardComponents } from './redux/slices/dashboardUI'
-import { addEntityComponents } from './redux/slices/entityUI'
-import { actions as Modals } from './redux/slices/modal'
-import ModalHost from './ModalHost'
-import SetUpProject from "./ipaProjectSetup/SetupProject";
-import withGenericPage from './IpaPageComponents/GenericPage'
-import InternalPages from './IpaPageComponents/InternalPages'
-import withGenericPageErrorBoundary from "./IpaPageComponents/GenericPageErrorBoundary";
-import {AppContext, withAppContext} from "./appContext";
+import ScriptCache from './IpaUtils/script-cache';
+import store, { addReducerSlice } from './redux/store';
+import { addDashboardComponents } from './redux/slices/dashboardUI';
+import { addEntityComponents } from './redux/slices/entityUI';
+import { actions as Modals } from './redux/slices/modal';
+import ModalHost from './ModalHost';
+import SetUpProject from './ipaProjectSetup/SetupProject';
+import withGenericPage from './IpaPageComponents/GenericPage';
+import InternalPages from './IpaPageComponents/InternalPages';
+import withGenericPageErrorBoundary from './IpaPageComponents/GenericPageErrorBoundary';
+import { AppContext, withAppContext } from './appContext';
 import withAuthHoc from './withAuthHoc';
 import { BodyContext } from './react-ifef/components/bodyProvider';
 export class AppProvider extends React.Component {
@@ -42,12 +42,15 @@ export class AppProvider extends React.Component {
     //this is a workaround for a platform issue
     //platform needs the url to have a forward slash prior to the ? for query params
     //so if the baseroot does not already have one we add it here
-    let authRoot = endPointConfig ? endPointConfig.baseRoot : this.props.ipaConfig.endPointConfig.baseRoot
-    if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/'
+    let authRoot = endPointConfig
+      ? endPointConfig.baseRoot
+      : this.props.ipaConfig.endPointConfig.baseRoot;
+    if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/';
 
-
-    let appId = endPointConfig?.applicationId ? endPointConfig.applicationId : this.props.ipaConfig?.applicationId
-    if (!appId) console.error('Application ID missing from endPointConfig or ipaConfig')
+    let appId = endPointConfig?.applicationId
+      ? endPointConfig.applicationId
+      : this.props.ipaConfig?.applicationId;
+    if (!appId) console.error('Application ID missing from endPointConfig or ipaConfig');
 
     this.authUrl = IafSession.getAuthUrl(authRoot, appId);
 
@@ -69,11 +72,11 @@ export class AppProvider extends React.Component {
       router: {
         pageList: [],
         pageRoutes: [],
-        pageGroups: []
+        pageGroups: [],
       },
       selectedItems: localStorage[`ipadt_selectedItems${appId}`]
-          ? JSON.parse(localStorage[`ipadt_selectedItems${appId}`])
-          : {},
+        ? JSON.parse(localStorage[`ipadt_selectedItems${appId}`])
+        : {},
       actions: {
         reloadConfig: this.initialize.bind(this, false),
         restartApp: this.initialize.bind(this),
@@ -85,8 +88,8 @@ export class AppProvider extends React.Component {
         openBottomPanelMax: this.openBottomPanelMax.bind(this),
         getCurrentHandler: this.getCurrentHandler.bind(this),
         showModal: this.showIpaModal.bind(this),
-        handlePageHandlerLoadError:  this.handlePageHandlerLoadError.bind(this),
-      }
+        handlePageHandlerLoadError: this.handlePageHandlerLoadError.bind(this),
+      },
     };
 
     this.handleRequestError = this.handleRequestError.bind(this);
@@ -100,27 +103,27 @@ export class AppProvider extends React.Component {
     this.state.actions.restartApp();
   }
   handleClick() {
-    this.setState((prev) => {
+    this.setState(prev => {
       return { ...prev, isshowProjectPickerModal: true };
     });
   }
 
   async sisenseLogout() {
-    let sisUrl = sessionStorage.getItem('sisenseBaseUrl')
+    let sisUrl = sessionStorage.getItem('sisenseBaseUrl');
 
     if (sisUrl) {
-      let sisenselogout_url = sisUrl + "/api/auth/logout"
+      let sisenselogout_url = sisUrl + '/api/auth/logout';
       fetch(sisenselogout_url, {
         method: 'GET',
         mode: 'cors',
         cache: 'no-cache',
         redirect: 'manual',
-        credentials: 'include'
-      }).catch((err) => {
-        console.error("ERROR LOGGING OUT OF SISENSE: " + sisenselogout_url)
-        console.error(err)
-      })
-      delete sessionStorage.sisenseBaseUrl
+        credentials: 'include',
+      }).catch(err => {
+        console.error('ERROR LOGGING OUT OF SISENSE: ' + sisenselogout_url);
+        console.error(err);
+      });
+      delete sessionStorage.sisenseBaseUrl;
     }
   }
 
@@ -138,7 +141,6 @@ export class AppProvider extends React.Component {
   }
 
   closeBottomPanel() {
-
     let modelPopupContainerStyle = document.querySelector('div.asf-modal.threeDModelPopup').style;
     let opacityValue = 1;
     let intervalObj = setInterval(() => {
@@ -150,10 +152,9 @@ export class AppProvider extends React.Component {
       }
     }, 50);
     setTimeout(() => {
-      this.setState({show3DModelPopUp: false});
+      this.setState({ show3DModelPopUp: false });
       modelPopupContainerStyle.opacity = 1;
     }, 600);
-
   }
 
   showBottomPanel() {
@@ -166,7 +167,7 @@ export class AppProvider extends React.Component {
     let viewer = document.getElementById('BottomPanel');
     viewer.style.display = 'block';
     viewer.style.height = window.innerHeight - 80;
-    this.setState({viewerResizeCanvas: true})
+    this.setState({ viewerResizeCanvas: true });
 
     let toolbar = document.getElementsByClassName('model-viewer-toolbar');
     toolbar[0].style.display = 'none';
@@ -174,13 +175,11 @@ export class AppProvider extends React.Component {
 
   toggleBottomPanel() {
     // the following should probably be in ifefSnaper.toggle?
-    let body = document.querySelector('body')
-    let wasOpen = body.classList.contains('snapjs-bottom')
+    let body = document.querySelector('body');
+    let wasOpen = body.classList.contains('snapjs-bottom');
     // end
 
-    document.getElementById('BottomPanel').style.display = wasOpen
-        ? 'none'
-        : 'block';
+    document.getElementById('BottomPanel').style.display = wasOpen ? 'none' : 'block';
     document.getElementById('BottomPanel').style.height = this.defaultBottomPanelHeight;
 
     this.context.ifefSnapper.toggle('bottom');
@@ -188,7 +187,7 @@ export class AppProvider extends React.Component {
     // the following should probably be in ifefSnaper.toggle?
     if (wasOpen) {
       body.classList.remove('snapjs-bottom');
-      this.setState({viewerResizeCanvas: false})
+      this.setState({ viewerResizeCanvas: false });
     }
 
     // end
@@ -199,12 +198,15 @@ export class AppProvider extends React.Component {
   }
 
   setSelectedItems(newItems) {
-    const {selectedItems} = this.state;
+    const { selectedItems } = this.state;
     const newSelecteds = { ...selectedItems, ...newItems };
-    localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] = JSON.stringify(newSelecteds);
-    this.setState({selectedItems: newSelecteds});
+    localStorage[`ipadt_selectedItems${this.props.ipaConfig.applicationId}`] =
+      JSON.stringify(newSelecteds);
+    this.setState({ selectedItems: newSelecteds });
   }
-  getPageArray(){return window.location.href.split('?')[0].split('/')}
+  getPageArray() {
+    return window.location.href.split('?')[0].split('/');
+  }
 
   getCurrentHandler() {
     let config = this.state.userConfig;
@@ -212,8 +214,7 @@ export class AppProvider extends React.Component {
     //location will be:  pathPrefix ? (pathPrefix + handler.path) : (handler.path || '/' + handlerName)
     //where handlerName comes from page.handler - but it will not be used it handler.path is specified
     let page = _pageArray.pop();
-    if (page === "")
-      page = _pageArray.pop();
+    if (page === '') page = _pageArray.pop();
     let handler = null;
     let pageNames = config.pages ? Object.keys(config.pages) : Object.keys(config.groupedPages);
     let pagesConfig = config.pages || config.groupedPages;
@@ -221,22 +222,19 @@ export class AppProvider extends React.Component {
 
     if (page.endsWith('#') && config.homepage && config.homepage.handler) {
       handler = config.handlers[config.homepage.handler];
-    }
-    else if (page.endsWith('#')){
-      if (!pagesHavePositions)
-        handler = config.handlers[actualPage(config, pageNames[0]).handler];
+    } else if (page.endsWith('#')) {
+      if (!pagesHavePositions) handler = config.handlers[actualPage(config, pageNames[0]).handler];
       else {
         let lowestPos = pagesConfig[pageNames[0]].position;
         let lowestHandler = actualPage(config, pageNames[0]).handler;
-        pageNames.forEach((pn) => {
+        pageNames.forEach(pn => {
           if (pagesConfig[pn].position < lowestPos) {
             lowestPos = pagesConfig[pn].position;
             lowestHandler = actualPage(config, pn).handler;
           }
-        })
+        });
         handler = config.handlers[lowestHandler];
       }
-
     }
 
     /*
@@ -252,7 +250,6 @@ export class AppProvider extends React.Component {
     //   handler = config.pages ? config.handlers[config.pages[page].handler] : config.handlers[pageGroup.pages[page].handler] ;
     // }
 
-
     //if the handler is not found in the page list
     //look for it in the list of handlers
     //this might be necessary for pages that appear in action handlers
@@ -261,7 +258,9 @@ export class AppProvider extends React.Component {
       const requestPathAsArray = this.getPageArray();
       const lastButOnePathElement = requestPathAsArray[requestPathAsArray.length - 2]; //For detail components where the last element is the pathParam
       const allHandlers = Object.values(config.handlers);
-      handler = allHandlers.find( h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`);
+      handler = allHandlers.find(
+        h => h.path === `/${page}` || h.path === `/${lastButOnePathElement}`
+      );
     }
 
     return handler;
@@ -273,25 +272,28 @@ export class AppProvider extends React.Component {
 
   // Updated handleRequestError with a condition if authType is pkce then using refresh token generate a new access token
   async handleRequestError(error) {
-    console.error(error)
-    let requiredAuthenticationErrorMessage = "401: Full authentication is required to access this resource";
-    if (_.get(error,'errorResult.status') === 401) {
+    console.error(error);
+    let requiredAuthenticationErrorMessage =
+      '401: Full authentication is required to access this resource';
+    if (_.get(error, 'errorResult.status') === 401) {
       if (!this.isSigningOut) {
         this.isSigningOut = true;
-        if (endPointConfig.authType === 'implicit') {           //If authType is implicit it user will logout
+        if (endPointConfig.authType === 'implicit') {
+          //If authType is implicit it user will logout
           this.state.actions.userLogout();
-        } else if (endPointConfig.authType === 'pkce') {        //If authType is pkce, fetch auth token
+        } else if (endPointConfig.authType === 'pkce') {
+          //If authType is pkce, fetch auth token
           if (error.message == requiredAuthenticationErrorMessage) {
             this.state.actions.userLogout();
-            return
+            return;
           }
           const tokens = await this.props.authService.getAuthTokens();
           const refreshToken = tokens && Object.keys(tokens).length > 0 ? tokens.refresh_token : '';
           if (refreshToken) {
-            let updatedToken = await this.props.authService.fetchToken(refreshToken, true);   //Fetch new token using refresh token
+            let updatedToken = await this.props.authService.fetchToken(refreshToken, true); //Fetch new token using refresh token
             if (updatedToken) {
-              let user = await IafSession.setAuthToken(updatedToken.access_token,undefined);    //Updated token in session storage
-              this.setState({token: updatedToken.access_token})         //Set updated token
+              let user = await IafSession.setAuthToken(updatedToken.access_token, undefined); //Updated token in session storage
+              this.setState({ token: updatedToken.access_token }); //Set updated token
             }
           }
         }
@@ -325,7 +327,7 @@ export class AppProvider extends React.Component {
       return;
     }
 
-    store.dispatch({type: "PROJECT_SWITCHED"})
+    store.dispatch({ type: 'PROJECT_SWITCHED' });
 
     //check for invites. If so - redirect to signup
     if (window.location.search) {
@@ -350,7 +352,7 @@ export class AppProvider extends React.Component {
 
     const authTokens = this.props.authService.getAuthTokens();
     if (authTokens && Object.keys(authTokens).length > 0) {
-      sessionManage = { ...authTokens }
+      sessionManage = { ...authTokens };
     }
 
     // if we don't have a token yet and we have something in the session then
@@ -362,10 +364,9 @@ export class AppProvider extends React.Component {
         if (user !== undefined) {
           token = temp_token;
         }
-      } catch(e) {
-        console.error("Session token expired")
+      } catch (e) {
+        console.error('Session token expired');
       }
-
     }
 
     // if we don't have a valid token at this point redirect to login page
@@ -373,8 +374,7 @@ export class AppProvider extends React.Component {
       //go to login page
       this.props.authService.authorize(inviteId);
     } else {
-
-      if (this.props.ipaConfig) self.setSelectedItems({ipaConfig: this.props.ipaConfig})
+      if (this.props.ipaConfig) self.setSelectedItems({ ipaConfig: this.props.ipaConfig });
 
       /* load redux extended slices provided by the app */
 
@@ -388,19 +388,24 @@ export class AppProvider extends React.Component {
        *
        * Reducer (slice) files must be located in ./app/ipaCore/redux
        */
-      if (this.props.ipaConfig && this.props.ipaConfig.redux && this.props.ipaConfig.redux.slices && this.props.ipaConfig.redux.slices.length) {
-        this.props.ipaConfig.redux.slices.forEach((sliceFile) => {
+      if (
+        this.props.ipaConfig &&
+        this.props.ipaConfig.redux &&
+        this.props.ipaConfig.redux.slices &&
+        this.props.ipaConfig.redux.slices.length
+      ) {
+        this.props.ipaConfig.redux.slices.forEach(sliceFile => {
           try {
-            let slice = require('../../../../app/ipaCore/redux/' + sliceFile.file).default
-            let newReducer = addReducerSlice({name: sliceFile.name, slice: slice})
-            store.replaceReducer(newReducer)
-          } catch(e) {
-            console.error(e)
-            console.error('Slice not able to be loaded: ' + sliceFile.name)
+            let slice = require('../../../../app/ipaCore/redux/' + sliceFile.file).default;
+            let newReducer = addReducerSlice({ name: sliceFile.name, slice: slice });
+            store.replaceReducer(newReducer);
+          } catch (e) {
+            console.error(e);
+            console.error('Slice not able to be loaded: ' + sliceFile.name);
           }
-        })
+        });
       } else {
-        console.warn("No ipa-core redux configuration found")
+        console.warn('No ipa-core redux configuration found');
       }
 
       /* load redux extended dashboard components */
@@ -414,65 +419,82 @@ export class AppProvider extends React.Component {
        */
 
       if (this.props.ipaConfig && this.props.ipaConfig.components) {
-        if (this.props.ipaConfig.components.dashboard && this.props.ipaConfig.components.dashboard.length) {
-          let dashComponents = []
-          this.props.ipaConfig.components.dashboard.forEach((dashCompFile) => {
+        if (
+          this.props.ipaConfig.components.dashboard &&
+          this.props.ipaConfig.components.dashboard.length
+        ) {
+          let dashComponents = [];
+          this.props.ipaConfig.components.dashboard.forEach(dashCompFile => {
             try {
-              let dashComp = require('../../../../app/ipaCore/components/' + dashCompFile.file).default
-              dashComponents.push({name: dashCompFile.name, component: dashComp})
-            } catch(e) {
-              console.error(e)
-              console.error('Dashboard component not able to be loaded: ' + dashCompFile.name)
+              let dashComp = require(
+                '../../../../app/ipaCore/components/' + dashCompFile.file
+              ).default;
+              dashComponents.push({ name: dashCompFile.name, component: dashComp });
+            } catch (e) {
+              console.error(e);
+              console.error('Dashboard component not able to be loaded: ' + dashCompFile.name);
             }
-          })
-          if (dashComponents.length) store.dispatch(addDashboardComponents(dashComponents))
+          });
+          if (dashComponents.length) store.dispatch(addDashboardComponents(dashComponents));
         }
 
         /* load redux extended dashboard components */
 
         /*
-        * Here we load the entity components provided by the local application into redux
-        * These components if named the same as a framework component can override the
-        * framework component.
-        *
-        * entity compnent files must be located in ./app/ipaCore/components
-        */
-        if (this.props.ipaConfig.components.entityAction && this.props.ipaConfig.components.entityAction.length) {
-          let entityActionComponents = []
-          this.props.ipaConfig.components.entityAction.forEach((actionCompFile) => {
+         * Here we load the entity components provided by the local application into redux
+         * These components if named the same as a framework component can override the
+         * framework component.
+         *
+         * entity compnent files must be located in ./app/ipaCore/components
+         */
+        if (
+          this.props.ipaConfig.components.entityAction &&
+          this.props.ipaConfig.components.entityAction.length
+        ) {
+          let entityActionComponents = [];
+          this.props.ipaConfig.components.entityAction.forEach(actionCompFile => {
             try {
-              let actComp = require('../../../../app/ipaCore/components/'+ actionCompFile.file)[actionCompFile.name+'Factory']
-              entityActionComponents.push({name: actionCompFile.name, component: actComp})
-            } catch(e) {
-              console.error(e)
-              console.error('Entity Action component not able to be loaded: ' + actionCompFile.name)
+              let actComp = require('../../../../app/ipaCore/components/' + actionCompFile.file)[
+                actionCompFile.name + 'Factory'
+              ];
+              entityActionComponents.push({ name: actionCompFile.name, component: actComp });
+            } catch (e) {
+              console.error(e);
+              console.error(
+                'Entity Action component not able to be loaded: ' + actionCompFile.name
+              );
             }
-          })
-          if (entityActionComponents.length) store.dispatch(addEntityComponents('action',entityActionComponents))
+          });
+          if (entityActionComponents.length)
+            store.dispatch(addEntityComponents('action', entityActionComponents));
         }
 
-        if (this.props.ipaConfig.components.entityData && this.props.ipaConfig.components.entityData.length) {
-          let entityDataComponents = []
-          this.props.ipaConfig.components.entityData.forEach((dataCompFile) => {
+        if (
+          this.props.ipaConfig.components.entityData &&
+          this.props.ipaConfig.components.entityData.length
+        ) {
+          let entityDataComponents = [];
+          this.props.ipaConfig.components.entityData.forEach(dataCompFile => {
             try {
-              let dataComp = require('../../../../app/ipaCore/components/'+ dataCompFile.file)
-              let dataCompFactory = dataComp[dataCompFile.name+'Factory']
-              entityDataComponents.push({name: dataCompFile.name, component: dataCompFactory})
-            } catch(e) {
-              console.error(e)
-              console.error('Entity Action component not able to be loaded: ' + dataCompFile.name)
+              let dataComp = require('../../../../app/ipaCore/components/' + dataCompFile.file);
+              let dataCompFactory = dataComp[dataCompFile.name + 'Factory'];
+              entityDataComponents.push({ name: dataCompFile.name, component: dataCompFactory });
+            } catch (e) {
+              console.error(e);
+              console.error('Entity Action component not able to be loaded: ' + dataCompFile.name);
             }
-          })
-          if (entityDataComponents.length) store.dispatch(addEntityComponents('data',entityDataComponents))
+          });
+          if (entityDataComponents.length)
+            store.dispatch(addEntityComponents('data', entityDataComponents));
         }
       } else {
-        console.warn("No ipa-core component configuration found")
+        console.warn('No ipa-core component configuration found');
       }
 
       //config loader
       if (loadConfigFromCache && sessionStorage.ipadt_configData) {
         const jsonData = JSON.parse(sessionStorage.ipadt_configData);
-        this.onConfigLoad(jsonData, this.testConfig(jsonData), token, user)
+        this.onConfigLoad(jsonData, this.testConfig(jsonData), token, user);
       } else {
         const callback = (config, routes) => this.onConfigLoad(config, routes, token, user);
         try {
@@ -485,46 +507,54 @@ export class AppProvider extends React.Component {
               testConfig: self.testConfig.bind(self),
               userLogout: this.state.actions.userLogout,
               onConfigLoad: callback,
-              onProjectLoadStart: (hasExistingProject) => {
+              onProjectLoadStart: hasExistingProject => {
                 store.dispatch(Modals.destroy());
-                store.dispatch(Modals.setModal({
-                  component: LoadingModal,
-                  props: {
-                    title: 'Loading project',
-                    description: "We're loading the data. This will only take a moment...",
-                    hideOverlay: !hasExistingProject,
-                  },
-                  open: true,
-                }));
+                store.dispatch(
+                  Modals.setModal({
+                    component: LoadingModal,
+                    props: {
+                      title: 'Loading project',
+                      description: "We're loading the data. This will only take a moment...",
+                      hideOverlay: !hasExistingProject,
+                    },
+                    open: true,
+                  })
+                );
               },
               onCancel: () => {
                 store.dispatch(Modals.destroy());
                 this.props.onCancel && this.props.onCancel();
               },
               projectLoadHandlerCallback: this.props.projectLoadHandlerCallback,
-              referenceAppCreateProject: (projects) => {
-                store.dispatch(Modals.setModal({
-                  component: SetUpProject,
-                  props: {
-                    restartApp: this.state.actions.restartApp,
-                    projects,
-                    onCancel: () => {
-                      store.dispatch(Modals.setModal({
-                        component: ProjectPickerModal,
-                        props: { ...projectPickerProps, appContextProps: this.state },
-                        open: true,
-                      }));
+              referenceAppCreateProject: projects => {
+                store.dispatch(
+                  Modals.setModal({
+                    component: SetUpProject,
+                    props: {
+                      restartApp: this.state.actions.restartApp,
+                      projects,
+                      onCancel: () => {
+                        store.dispatch(
+                          Modals.setModal({
+                            component: ProjectPickerModal,
+                            props: { ...projectPickerProps, appContextProps: this.state },
+                            open: true,
+                          })
+                        );
+                      },
                     },
-                  },
-                  open: true,
-                }));
+                    open: true,
+                  })
+                );
               },
             };
-            store.dispatch(Modals.setModal({
-              component: ProjectPickerModal,
-              props: projectPickerProps,
-              open: true,
-            }));
+            store.dispatch(
+              Modals.setModal({
+                component: ProjectPickerModal,
+                props: projectPickerProps,
+                open: true,
+              })
+            );
           }
         } catch (error) {
           console.error(error);
@@ -533,13 +563,13 @@ export class AppProvider extends React.Component {
       }
 
       if (this.props.ipaConfig && Array.isArray(_.get(this.props.ipaConfig, 'css'))) {
-        this.props.ipaConfig.css.forEach((styleSheet) => {
+        this.props.ipaConfig.css.forEach(styleSheet => {
           try {
-            let customCss = require('../../../../app/ipaCore/css/'+ styleSheet)
-          } catch(e) {
-            console.error("Failed to load custom css styleSheet: ", styleSheet)
+            let customCss = require('../../../../app/ipaCore/css/' + styleSheet);
+          } catch (e) {
+            console.error('Failed to load custom css styleSheet: ', styleSheet);
           }
-        })
+        });
       }
     }
   }
@@ -549,167 +579,176 @@ export class AppProvider extends React.Component {
   }
 
   showIpaModal(modalContent) {
-    const self = this
-    self.context.ifefShowModal(modalContent)
+    const self = this;
+    self.context.ifefShowModal(modalContent);
   }
 
   async onConfigLoad(config, routes, token, user) {
     try {
-    function hasSisenseConnectors(config) {
-      if (config.connectors) {
+      function hasSisenseConnectors(config) {
+        if (config.connectors) {
+          let sisenseConnector =
+            _.find(config.connectors, { name: 'SisenseIframe' }) ||
+            _.find(config.connectors, { name: 'SisenseConnect' });
+          if (sisenseConnector) {
+            let sisUrl = sisenseConnector.config.url;
+            let lastChar = sisUrl.slice(-1);
+            if (lastChar === '/' || lastChar === '\\') sisUrl = sisUrl.slice(0, -1);
 
-        let sisenseConnector = _.find(config.connectors, {name: "SisenseIframe"}) || _.find(config.connectors, {name: "SisenseConnect"})
-        if (sisenseConnector) {
-
-          let sisUrl = sisenseConnector.config.url
-          let lastChar = sisUrl.slice(-1)
-          if (lastChar === '/' || lastChar === '\\')
-            sisUrl = sisUrl.slice(0, -1)
-
-          sessionStorage.setItem('sisenseBaseUrl', sisUrl)
-          return sisUrl
-        }
-        else return false
-
-      } else return false
-    }
-
-    //clear routes immediately so that the UI removes the last project's routes
-    this.setState({
-      token,
-      user,
-      router: {
-        pageList: [],
-        pageRoutes: [],
-        pageGroups: [],
-      }
-    });
-
-    //ONE ROUTES ARE CLEARED, UPDATE CONFIG!
-    this.setUserConfig(config);
-
-    //DOMI: now we can safetly prepare new routes once userConfig is updated on state and in REDUX
-    routes = await routes
-
-
-
-    this.sisenseLogout()
-
-    //Clear all script state in cache and in script engine
-    ScriptCache.clearCache();
-
-    IafScriptEngine.clearVars()
-
-    let selectedProj = IafProj.getCurrent();
-    if (selectedProj) {
-
-      /*
-      * If Sisense Connectors are configured then we need to sign in to Sisense
-      * This must be doen before any sisense content is needed
-      */
-      let sisenseUrl = hasSisenseConnectors(config)
-      if (sisenseUrl) {
-        const allOrchestrators = await IafDataSource.getOrchestrators();
-        const sisenseSSOOrch = _.find(allOrchestrators._list, {_userType: 'Sisense_SSO_JWT_Generator'});
-
-        if (!sisenseSSOOrch) {
-          console.error('Sisense is configured in the project but the Sisense SSO Orchestrator is not present')
-        } else {
-          const orchId = sisenseSSOOrch.id;
-
-          const params = {
-            orchestratorId: orchId,
-            _actualparams: [
-              {
-                sequence_type_id: _.get(sisenseSSOOrch, "orchsteps.0._compid"),
-                params: {
-                  userGroupId: this.state.selectedItems.selectedUserGroupId,
-                  projectNamespace: this.state.selectedItems.selectedProject._namespaces[0]
-                }
-              }
-            ]
-          }
-
-          const orchResult = await IafDataSource.runOrchestrator(orchId, params);
-          const encodedToken = _.get(orchResult, '_result.jwt');
-
-          let sisensejwt_url = sisenseUrl + "/jwt?jwt=" + encodedToken;
-
-          fetch(sisensejwt_url, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'no-cache',
-            redirect: 'manual',
-            credentials: 'include'
-          }).catch((err) => {
-            console.error("ERROR SIGNING IN TO SISENSE: " + sisensejwt_url)
-            console.error(err)
-          })
-        }
+            sessionStorage.setItem('sisenseBaseUrl', sisUrl);
+            return sisUrl;
+          } else return false;
+        } else return false;
       }
 
-      //load all config level scripts
-      if (!!config.onConfigLoad && !!config.onConfigLoad.load && config.onConfigLoad.load.length > 0) {
-
-        //load each script
-        let loadThese = config.onConfigLoad.load;
-        for (let i = 0; i < loadThese.length; i++) {
-
-          await ScriptHelper.loadScript({_userType: loadThese[i]});
-        }
-      }
-
-      //execute all config level scripts
-      if (!!config.onConfigLoad && !!config.onConfigLoad.exec && config.onConfigLoad.exec.length > 0) {
-
-        //load each script
-        let execThese = config.onConfigLoad.exec;
-        for (let i = 0; i < execThese.length; i++) {
-
-          await ScriptHelper.executeScript(execThese[i]);
-        }
-      }
-
-      //need to enable the router after we load all the scripts in the config
-      //to make sure all pages have data loaded into the script engine beforehand
-      if (routes)
-        this.setState({
-          router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
-        });
-
-      this.setState({ isLoading: false });
-
-      // Eval the "autoeval" script for any bootstrap setup of app.
-      if (config.scripts && config.scripts.autoeval) {
-        if(!ScriptHelper.isProjectNextGenJs()) ScriptHelper.evalExpressions(config.scripts.autoeval);
-      }
-
-      let rootStyles =  config.settings?.styles || this.props.ipaConfig.styleVars || DefaultStyleVars;
-
-      //Load all custom styles from userConfig
-      if(rootStyles) {
-        var r = document.querySelector(':root');
-        Object.entries(rootStyles).map(([key, value]) => {
-          r.style.setProperty(key, value)
-        })
-      }
-
-    } else {
-      //This is state where the user has an account but no accepted invites
-      if (routes)
-        this.setState({
-          router: {pageList: routes.pageList, pageRoutes: routes.pageRoutes, pageGroups: routes.pageGroups},
-        });
+      //clear routes immediately so that the UI removes the last project's routes
       this.setState({
-        isLoading: false
+        token,
+        user,
+        router: {
+          pageList: [],
+          pageRoutes: [],
+          pageGroups: [],
+        },
       });
-    }
 
+      //ONE ROUTES ARE CLEARED, UPDATE CONFIG!
+      this.setUserConfig(config);
 
-    store.dispatch(addUser(user))
+      //DOMI: now we can safetly prepare new routes once userConfig is updated on state and in REDUX
+      routes = await routes;
 
-    if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state)
+      this.sisenseLogout();
 
+      //Clear all script state in cache and in script engine
+      ScriptCache.clearCache();
+
+      IafScriptEngine.clearVars();
+
+      let selectedProj = IafProj.getCurrent();
+      if (selectedProj) {
+        /*
+         * If Sisense Connectors are configured then we need to sign in to Sisense
+         * This must be doen before any sisense content is needed
+         */
+        let sisenseUrl = hasSisenseConnectors(config);
+        if (sisenseUrl) {
+          const allOrchestrators = await IafDataSource.getOrchestrators();
+          const sisenseSSOOrch = _.find(allOrchestrators._list, {
+            _userType: 'Sisense_SSO_JWT_Generator',
+          });
+
+          if (!sisenseSSOOrch) {
+            console.error(
+              'Sisense is configured in the project but the Sisense SSO Orchestrator is not present'
+            );
+          } else {
+            const orchId = sisenseSSOOrch.id;
+
+            const params = {
+              orchestratorId: orchId,
+              _actualparams: [
+                {
+                  sequence_type_id: _.get(sisenseSSOOrch, 'orchsteps.0._compid'),
+                  params: {
+                    userGroupId: this.state.selectedItems.selectedUserGroupId,
+                    projectNamespace: this.state.selectedItems.selectedProject._namespaces[0],
+                  },
+                },
+              ],
+            };
+
+            const orchResult = await IafDataSource.runOrchestrator(orchId, params);
+            const encodedToken = _.get(orchResult, '_result.jwt');
+
+            let sisensejwt_url = sisenseUrl + '/jwt?jwt=' + encodedToken;
+
+            fetch(sisensejwt_url, {
+              method: 'GET',
+              mode: 'cors',
+              cache: 'no-cache',
+              redirect: 'manual',
+              credentials: 'include',
+            }).catch(err => {
+              console.error('ERROR SIGNING IN TO SISENSE: ' + sisensejwt_url);
+              console.error(err);
+            });
+          }
+        }
+
+        //load all config level scripts
+        if (
+          !!config.onConfigLoad &&
+          !!config.onConfigLoad.load &&
+          config.onConfigLoad.load.length > 0
+        ) {
+          //load each script
+          let loadThese = config.onConfigLoad.load;
+          for (let i = 0; i < loadThese.length; i++) {
+            await ScriptHelper.loadScript({ _userType: loadThese[i] });
+          }
+        }
+
+        //execute all config level scripts
+        if (
+          !!config.onConfigLoad &&
+          !!config.onConfigLoad.exec &&
+          config.onConfigLoad.exec.length > 0
+        ) {
+          //load each script
+          let execThese = config.onConfigLoad.exec;
+          for (let i = 0; i < execThese.length; i++) {
+            await ScriptHelper.executeScript(execThese[i]);
+          }
+        }
+
+        //need to enable the router after we load all the scripts in the config
+        //to make sure all pages have data loaded into the script engine beforehand
+        if (routes)
+          this.setState({
+            router: {
+              pageList: routes.pageList,
+              pageRoutes: routes.pageRoutes,
+              pageGroups: routes.pageGroups,
+            },
+          });
+
+        this.setState({ isLoading: false });
+
+        // Eval the "autoeval" script for any bootstrap setup of app.
+        if (config.scripts && config.scripts.autoeval) {
+          if (!ScriptHelper.isProjectNextGenJs())
+            ScriptHelper.evalExpressions(config.scripts.autoeval);
+        }
+
+        let rootStyles =
+          config.settings?.styles || this.props.ipaConfig.styleVars || DefaultStyleVars;
+
+        //Load all custom styles from userConfig
+        if (rootStyles) {
+          let r = document.querySelector(':root');
+          Object.entries(rootStyles).map(([key, value]) => {
+            r.style.setProperty(key, value);
+          });
+        }
+      } else {
+        //This is state where the user has an account but no accepted invites
+        if (routes)
+          this.setState({
+            router: {
+              pageList: routes.pageList,
+              pageRoutes: routes.pageRoutes,
+              pageGroups: routes.pageGroups,
+            },
+          });
+        this.setState({
+          isLoading: false,
+        });
+      }
+
+      store.dispatch(addUser(user));
+
+      if (this.props.onConfigLoad) this.props.onConfigLoad(store, config, this.state);
     } finally {
       store.dispatch(Modals.destroy());
     }
@@ -717,17 +756,15 @@ export class AppProvider extends React.Component {
 
   setUserConfig(config) {
     store.dispatch(addUserConfig(config));
-    this.setState({userConfig : config});
+    this.setState({ userConfig: config });
   }
 
   navigateToHomepage() {
     window.location.hash = '/'; //Since we're outside the react router scope, we need to deal with the location object directly
   }
 
-
-
   render() {
-    const context = {...this.state};
+    const context = { ...this.state };
     return (
       <AppContext.Provider value={context}>
         {this.props.children}
@@ -754,51 +791,53 @@ async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
    * pageComponents must be in the ./app/ipaCore/pageComponents folder
    */
   function asIpaPage(rawPageComponent, optionalProps) {
-    return withAppContext(withGenericPageErrorBoundary(withGenericPage(rawPageComponent, optionalProps)))
+    return withAppContext(
+      withGenericPageErrorBoundary(withGenericPage(rawPageComponent, optionalProps))
+    );
   }
 
   function getPageComponent(pageComponent, pageComponentProps) {
-
     if (pageComponentLoader) {
       // Opt-in lazy loading: the consuming app supplies the import() so webpack
       // can analyze it in app code (no IIFE transform, full recursive context).
       const LazyComponent = React.lazy(() =>
         pageComponentLoader(pageComponent).catch(() => {
-          const internalComponent = InternalPages[pageComponent]
-          if (internalComponent) return { default: internalComponent }
-          console.error("can't find page component: ", pageComponent)
-          return { default: () => null }
+          const internalComponent = InternalPages[pageComponent];
+          if (internalComponent) return { default: internalComponent };
+          console.error("can't find page component: ", pageComponent);
+          return { default: () => null };
         })
-      )
-      return asIpaPage(LazyComponent, pageComponentProps)
+      );
+      return asIpaPage(LazyComponent, pageComponentProps);
     }
 
     // Legacy fallback: synchronous require (original behavior, zero breaking changes
     // for consumers that do not pass pageComponentLoader).
     try {
-      const component = require('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').default
-      if (component) return asIpaPage(component, pageComponentProps)
+      const component = require(
+        '../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx'
+      ).default;
+      if (component) return asIpaPage(component, pageComponentProps);
     } catch (e) {
-      const internalComponent = InternalPages[pageComponent]
-      if (internalComponent) return asIpaPage(internalComponent, pageComponentProps)
+      const internalComponent = InternalPages[pageComponent];
+      if (internalComponent) return asIpaPage(internalComponent, pageComponentProps);
     }
-    console.error("can't find page component: ", pageComponent)
-    return asIpaPage(() => null, pageComponentProps)
-
+    console.error("can't find page component: ", pageComponent);
+    return asIpaPage(() => null, pageComponentProps);
   }
 
   function addRoute(handlerName, handler, addPage, pathPrefix, pageGroup) {
     if (!handler.pageComponent) {
-      console.error("This version of AppProvider only supports handlers with a pageComponent")
-      return
+      console.error('This version of AppProvider only supports handlers with a pageComponent');
+      return;
     }
 
-    const handlerPath = (handler.path || '/' + handlerName);
+    const handlerPath = handler.path || '/' + handlerName;
 
     let item = {
       path: pathPrefix ? pathPrefix + handlerPath : handlerPath,
       title: handler.title || 'no title',
-      icon: (handler.icon || ''),
+      icon: handler.icon || '',
       name: handlerName,
       exact: true,
       newTab: handler?.config?.openNewTab || null,
@@ -807,7 +846,7 @@ async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
 
     let detailItem = undefined;
     let detailComponent = undefined;
-    if(handler.detailPage){
+    if (handler.detailPage) {
       const detailComponentPath = `${item.path}/${handler.detailPage.pathParam}`;
       detailItem = {
         path: detailComponentPath,
@@ -819,52 +858,69 @@ async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
         exact: item.exact,
       };
       //if our route is nested, parent cannot be exact
-      if(handler.detailPage.nested){
+      if (handler.detailPage.nested) {
         item.exact = false;
       }
     }
 
-    let component = getPageComponent(handler.pageComponent, {masterPage : item, detailPage: detailItem});
-    if (!component) return
+    let component = getPageComponent(handler.pageComponent, {
+      masterPage: item,
+      detailPage: detailItem,
+    });
+    if (!component) return;
 
-    if(handler.detailPage){
-      detailComponent = getPageComponent(handler.detailPage.component,  {masterPage : item});
+    if (handler.detailPage) {
+      detailComponent = getPageComponent(handler.detailPage.component, { masterPage: item });
       if (detailComponent) {
-        detailItem.nestedRoute = buildRoute(detailItem,detailComponent);
+        detailItem.nestedRoute = buildRoute(detailItem, detailComponent);
       }
     }
 
-    if(handler.detailPage && handler.detailPage.nested){
+    if (handler.detailPage && handler.detailPage.nested) {
       //nested routes will only work with react-roure v6 and <Outlet/>, this is why we render only master at the moment
       //pRoutes.push(buildRoute(item,component,detailItem,detailComponent));
-      pRoutes.push(buildRoute(item,component));
-    } else if (handler.detailPage){
-      pRoutes.push(buildRoute(item,component));
-      detailComponent && pRoutes.push(buildRoute(detailItem,detailComponent));//we will use this route in master component
+      pRoutes.push(buildRoute(item, component));
+    } else if (handler.detailPage) {
+      pRoutes.push(buildRoute(item, component));
+      detailComponent && pRoutes.push(buildRoute(detailItem, detailComponent)); //we will use this route in master component
     } else {
-      pRoutes.push(buildRoute(item,component));
+      pRoutes.push(buildRoute(item, component));
     }
 
     if (addPage) {
       pList.push(item);
-      if(pageGroup){
+      if (pageGroup) {
         pGroups.find(g => g.groupName == pageGroup).items.push(item);
       }
     }
   }
 
-  function buildRoute(masterItem, masterComponent, detailItem, detailComponent){
-    return <Route path={masterItem.path} key={masterItem.path} component={masterComponent} exact={masterItem.exact}>
-      {(detailItem && detailComponent) ? <Route path={detailItem.path} key={detailItem.nestedPath} component={detailComponent} exact={detailItem.exact}/> : null}
-    </Route>
+  function buildRoute(masterItem, masterComponent, detailItem, detailComponent) {
+    return (
+      <Route
+        path={masterItem.path}
+        key={masterItem.path}
+        component={masterComponent}
+        exact={masterItem.exact}
+      >
+        {detailItem && detailComponent ? (
+          <Route
+            path={detailItem.path}
+            key={detailItem.nestedPath}
+            component={detailComponent}
+            exact={detailItem.exact}
+          />
+        ) : null}
+      </Route>
+    );
   }
 
-  function addGroup(groupName, icon){
+  function addGroup(groupName, icon) {
     let group = {
       groupName: groupName,
       icon: icon || '',
-      items: []
-    }
+      items: [],
+    };
     pGroups.push(group);
   }
 
@@ -872,23 +928,22 @@ async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
   const pagesConfig = config.pages || config.groupedPages;
   const usingGroupedConfig = !!config.groupedPages;
   if (pages.length == 0) {
-    console.error("No pages to display = no routes to add")
-    return
+    console.error('No pages to display = no routes to add');
+    return;
   }
 
   // Sort the pages as specified in config, or alphabetically
   if (pagesConfig[pages[0]].position) {
-    pages.sort((a, b) => pagesConfig[a].position > pagesConfig[b].position ? 1 : -1)
-  }
-  else {
+    pages.sort((a, b) => (pagesConfig[a].position > pagesConfig[b].position ? 1 : -1));
+  } else {
     pages.sort();
   }
 
-  let alreadyRoutedPages = []
+  let alreadyRoutedPages = [];
 
   // Add the component for each page (dynamically requires the JSX)
   pages.forEach(key => {
-    if(usingGroupedConfig){
+    if (usingGroupedConfig) {
       addGroup(key, pagesConfig[key].icon);
       pagesConfig[key].pages.forEach(page => {
         if (page.handler) {
@@ -896,8 +951,8 @@ async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
           alreadyRoutedPages.push(page.handler);
           addRoute(page.handler, handler, true, undefined, key);
         }
-      })
-    }else{
+      });
+    } else {
       let page = config.pages[key];
       if (page.handler) {
         let handler = config.handlers[page.handler];
@@ -907,35 +962,33 @@ async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
     }
   });
 
-
   //Add handlers that are not present in pages or groupedPages
   // We also skip the homepage as it's handled differently later
-  Object.entries(config.handlers)
-    .forEach(([key, value]) => {
-      const isAlreadyRouted = alreadyRoutedPages.includes(key)
-      const isHomepage = key === config.homepage?.handler
-      if(!isAlreadyRouted && !isHomepage) {
-        addRoute(key, value, true);
-      }
-    })
+  Object.entries(config.handlers).forEach(([key, value]) => {
+    const isAlreadyRouted = alreadyRoutedPages.includes(key);
+    const isHomepage = key === config.homepage?.handler;
+    if (!isAlreadyRouted && !isHomepage) {
+      addRoute(key, value, true);
+    }
+  });
 
   // Add homepage
-  let homePageHandler
+  let homePageHandler;
   if (config.homepage) {
-    homePageHandler = config.handlers[config.homepage.handler]
-  }
-  else {
-    console.warn("no homepage specified, defaulting to first page")
+    homePageHandler = config.handlers[config.homepage.handler];
+  } else {
+    console.warn('no homepage specified, defaulting to first page');
     homePageHandler = config.handlers[actualPage(config, pages[0]).handler];
   }
   let HomePage = getPageComponent(homePageHandler.pageComponent);
-  if (!HomePage) console.error("can't find page component, no homepage", homePageHandler.pageComponent)
+  if (!HomePage)
+    console.error("can't find page component, no homepage", homePageHandler.pageComponent);
   else {
-    pRoutes.unshift(<Route path='/' key='/' exact={true} component={HomePage} />);
-    pRoutes.push(<Redirect to={'/'} key={'redirect_to_root'}/>);
+    pRoutes.unshift(<Route path="/" key="/" exact={true} component={HomePage} />);
+    pRoutes.push(<Redirect to={'/'} key={'redirect_to_root'} />);
   }
 
-  return {pageList: pList, pageRoutes: pRoutes, pageGroups: pGroups};
+  return { pageList: pList, pageRoutes: pRoutes, pageGroups: pGroups };
 }
 
 export default withAuthHoc(AppProvider);

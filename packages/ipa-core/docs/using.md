@@ -12,7 +12,7 @@ To use the UI framework, render the `IpaMainLayout` component in the client appl
 <ImportModulesCodeBlock modules={['IpaMainLayout']} />
 
 ```jsx
-import { ipaConfig } from './ipaCore/ipaConfig'
+import { ipaConfig } from './ipaCore/ipaConfig';
 
 render(<IpaMainLayout ipaConfig={ipaConfig} />, document.getElementById('app'));
 ```
@@ -22,16 +22,26 @@ The `IpaMainLayout` component also supports an optional `onConfigLoad` property.
 This callback function will be passed to the framework's Redux store, the selected user config, and the framework's application context.
 
 ```jsx
-render(<IpaMainLayout ipaConfig={ipaConfig} onConfigLoad={onConfigLoad}/>, document.getElementById('app'));
+render(
+  <IpaMainLayout ipaConfig={ipaConfig} onConfigLoad={onConfigLoad} />,
+  document.getElementById('app')
+);
 ```
 
 The `IpaMainLayout` can also take an optional component to display in the bottom panel of the framework UI.
 
 ```jsx
-render(<IpaMainLayout ipaConfig={ipaConfig} onConfigLoad={onConfigLoad} bottomPanelContent={MyBottomPanelComponent} />, document.getElementById('app'));
+render(
+  <IpaMainLayout
+    ipaConfig={ipaConfig}
+    onConfigLoad={onConfigLoad}
+    bottomPanelContent={MyBottomPanelComponent}
+  />,
+  document.getElementById('app')
+);
 ```
 
-## Add New Pages 
+## Add New Pages
 
 To add a new page to your application:
 

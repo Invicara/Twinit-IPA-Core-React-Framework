@@ -1,9 +1,9 @@
-import sampleSelectedItems from "../stories/IpaPageComponents/sample_selectedItems.json";
+import sampleSelectedItems from '../stories/IpaPageComponents/sample_selectedItems.json';
 
-const noop = () => {}
-Object.defineProperty(window, "scrollTo", { value: noop, writable: true });
+const noop = () => {};
+Object.defineProperty(window, 'scrollTo', { value: noop, writable: true });
 
-sessionStorage.setItem("project",JSON.stringify(sampleSelectedItems.selectedProject));
+sessionStorage.setItem('project', JSON.stringify(sampleSelectedItems.selectedProject));
 /*
 const localStorageMock = (() => {
     let store = {};

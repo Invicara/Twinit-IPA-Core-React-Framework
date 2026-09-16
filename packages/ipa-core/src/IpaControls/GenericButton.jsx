@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
 export default class GenericButton extends React.Component {
   render() {
@@ -7,7 +7,7 @@ export default class GenericButton extends React.Component {
       <button
         type="button"
         className="btn btn-outline-primary"
-        style={{ width: "100px", ...this.props.styles }}
+        style={{ width: '100px', ...this.props.styles }}
         onClick={this.props.onClick}
         disabled={this.props.disabled}
       >

@@ -7,7 +7,6 @@
 
   // LHS of the Entity Detail Panel
   .entity-detail-summary {
-
     border-right: solid 1px lightgray;
 
     h1 {
@@ -18,13 +17,13 @@
 
     .entity-data-groups-selector {
       margin-top: 30px;
-      
+
       div {
         margin-bottom: 10px;
         position: relative;
       }
       label {
-        position:absolute;
+        position: absolute;
         top: -3px;
         margin-left: 5px;
         pointer-events: none;
@@ -39,11 +38,11 @@
         border: 3px solid black;
         cursor: pointer;
         margin-right: 2px;
-        position:relative;
+        position: relative;
       }
 
       input:after {
-        content: " ";
+        content: ' ';
         position: absolute;
         display: block;
         cursor: pointer;
@@ -72,7 +71,6 @@
   .entity-detail-data {
     padding-left: 20px;
   }
-
 }
 
 .entity-data-container {
@@ -85,7 +83,7 @@
     font-size: 24px;
     font-weight: bold;
 
-    .entity-data-toggle{
+    .entity-data-toggle {
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -94,19 +92,21 @@
       transition: transform 1s;
     }
 
-    .entity-data-toggle-collapsed{
+    .entity-data-toggle-collapsed {
       transform: rotateX(0deg);
     }
   }
 
-  .entity-data-content{
+  .entity-data-content {
     overflow: hidden;
     max-height: 500px;
     opacity: 1;
-    transition: max-height,opacity 1s;
+    transition:
+      max-height,
+      opacity 1s;
   }
 
-  .entity-data-content-collapsed{
+  .entity-data-content-collapsed {
     max-height: 0;
     opacity: 0;
   }

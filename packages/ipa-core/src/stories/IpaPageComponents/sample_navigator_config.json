@@ -81,35 +81,13 @@
         ]
       },
       "showGroupNames": true,
-      "hidden": [
-        "dtCategory",
-        "dtType",
-        "Revit Blob"
-      ],
-      "disabledInMulti": [
-        "Revit Family",
-        "Revit Type"
-      ],
+      "hidden": ["dtCategory", "dtType", "Revit Blob"],
+      "disabledInMulti": ["Revit Family", "Revit Type"],
       "groups": {
-        "Asset Properties": [
-          "Containing Floor",
-          "Mark",
-          "Room Number",
-          "BA Name"
-        ],
-        "Product": [
-          "Manufacturer",
-          "Model"
-        ],
-        "Classification": [
-          "Revit Type",
-          "Revit Family"
-        ],
-        "General": [
-          "Date",
-          "Image Url",
-          "Matterport Url"
-        ]
+        "Asset Properties": ["Containing Floor", "Mark", "Room Number", "BA Name"],
+        "Product": ["Manufacturer", "Model"],
+        "Classification": ["Revit Type", "Revit Family"],
+        "General": ["Date", "Image Url", "Matterport Url"]
       },
       "okButtonText": "Save"
     }
@@ -141,27 +119,10 @@
       },
       "showGroupNames": true,
       "groups": {
-        "Asset Properties": [
-          "Containing Floor",
-          "Mark",
-          "Room Number",
-          "BA Name"
-        ],
-        "Product": [
-          "Manufacturer",
-          "Model"
-        ],
-        "Classification": [
-          "Revit Family",
-          "Revit Type",
-          "dtCategory",
-          "dtType"
-        ],
-        "General": [
-          "Date",
-          "Image Url",
-          "Matterport Url"
-        ]
+        "Asset Properties": ["Containing Floor", "Mark", "Room Number", "BA Name"],
+        "Product": ["Manufacturer", "Model"],
+        "Classification": ["Revit Family", "Revit Type", "dtCategory", "dtType"],
+        "General": ["Date", "Image Url", "Matterport Url"]
       },
       "okButtonText": "Save"
     }

@@ -8,7 +8,7 @@ Use iaf-kgraph-ui to render a knowledge graph with the Canvas component and util
 npm install @dtplatform/iaf-kgraph-ui
 ```
 
-## Import 
+## Import
 
 ```js
 import {
@@ -20,7 +20,7 @@ import {
   store,
   NodeMenuController,
   LoadMoreDialogController,
-} from "@dtplatform/iaf-kgraph-ui";
+} from '@dtplatform/iaf-kgraph-ui';
 ```
 
 ## Usage
@@ -35,7 +35,7 @@ To add a right-click menu for nodes, see [RightMenuController](#rightmenucontrol
 
 To add functionality to load an additional 25 nodes at each button click, see [LoadMoreDialogController](#loadmoredialogcontroller).
 
-> **Important:** To ensure that your KnowledgeGraph component has access to the necessary context data and functions, when you import and use the component in a parent component, wrap it in the context controllers described in [Higher-level wrappers](#higher-level-wrappers). 
+> **Important:** To ensure that your KnowledgeGraph component has access to the necessary context data and functions, when you import and use the component in a parent component, wrap it in the context controllers described in [Higher-level wrappers](#higher-level-wrappers).
 
 ### Basic knowledge graph canvas
 
@@ -90,15 +90,15 @@ function GraphContainer({ children }: { children: React.ReactNode }) {
 You can then wrap the `Canvas` component with your `GraphContainer` component.
 
 ```jsx
-  <ConfigController graphConfig={graphConfig}>
-    <Provider store={store}>
-      <GraphBoundsController>
-        <GraphContainer>
-          <Canvas />
-        </GraphContainer>
-      </GraphBoundsController>
-    </Provider>
-  </ConfigController>
+<ConfigController graphConfig={graphConfig}>
+  <Provider store={store}>
+    <GraphBoundsController>
+      <GraphContainer>
+        <Canvas />
+      </GraphContainer>
+    </GraphBoundsController>
+  </Provider>
+</ConfigController>
 ```
 
 #### GraphBoundsController
@@ -118,20 +118,20 @@ Maintains context of your config
 To add a menu for each node that the user can use to edit, delete, or hightlight the clicked node, or add a new node in relation to the current, use the NodeMenu component and wrap it with the `NodeMenuController` context component:
 
 ```jsx
-  <ConfigController graphConfig={graphConfig}>
-    <Provider store={store}>
-      {/* Controls the node menu */}
-      <NodeMenuController> 
-        <GraphBoundsController>
-          <GraphContainer>
-            <Canvas />
-            {/* Added NodeMenu component */}
-            <NodeMenu />
-          </GraphContainer>
-        </GraphBoundsController>
-      </NodeMenuController>
-    </Provider>
-  </ConfigController>
+<ConfigController graphConfig={graphConfig}>
+  <Provider store={store}>
+    {/* Controls the node menu */}
+    <NodeMenuController>
+      <GraphBoundsController>
+        <GraphContainer>
+          <Canvas />
+          {/* Added NodeMenu component */}
+          <NodeMenu />
+        </GraphContainer>
+      </GraphBoundsController>
+    </NodeMenuController>
+  </Provider>
+</ConfigController>
 ```
 
 ### RightMenuController
@@ -139,21 +139,21 @@ To add a menu for each node that the user can use to edit, delete, or hightlight
 To add a right-click menu for nodes, import and use the `RightMenuController` wrapper component:
 
 ```jsx
-  <ConfigController graphConfig={graphConfig}>
-    <Provider store={store}>
-      {/* Added RightMenuController wrapper */}
-      <RightMenuController>
-        <NodeMenuController>
-          <GraphBoundsController>
-            <GraphContainer>
-              <Canvas />
-              <NodeMenu />
-            </GraphContainer>
-          </GraphBoundsController>
-        </NodeMenuController>
-      </RightMenuController>
-    </Provider>
-  </ConfigController>
+<ConfigController graphConfig={graphConfig}>
+  <Provider store={store}>
+    {/* Added RightMenuController wrapper */}
+    <RightMenuController>
+      <NodeMenuController>
+        <GraphBoundsController>
+          <GraphContainer>
+            <Canvas />
+            <NodeMenu />
+          </GraphContainer>
+        </GraphBoundsController>
+      </NodeMenuController>
+    </RightMenuController>
+  </Provider>
+</ConfigController>
 ```
 
 ### LoadMoreDialogController
@@ -229,7 +229,7 @@ function Graph(graphConfig) {
         width: "100vw",
         overflow: "hidden",
       }}
-    >   
+    >
       <div style={{ position: "relative" }}>
         <ConfigController graphConfig={graphConfig}>
           <Provider store={store}>
@@ -255,7 +255,7 @@ function Graph(graphConfig) {
   );
 }
 
-export default memo(Graph); 
+export default memo(Graph);
 
 ```
 
@@ -264,22 +264,19 @@ export default memo(Graph);
 In the parent component that imports and uses your knowledge graph component, wrap the knowledge graph component in the `DataStateProvider` and `ActiveGraphController` wrappers.
 
 ```jsx
-  return (
-    <div onContextMenu={preventDefaultContextMenu}>
-      <DataStateProvider>
-        <ActiveGraphController>
-          <Grid container spacing={1}>
-            <Grid item xs={6}>
-              <KnowledgeGraph
-                explore={getConnection}
-                onClickAddon={handleClickAddon}
-              />
-            </Grid>
+return (
+  <div onContextMenu={preventDefaultContextMenu}>
+    <DataStateProvider>
+      <ActiveGraphController>
+        <Grid container spacing={1}>
+          <Grid item xs={6}>
+            <KnowledgeGraph explore={getConnection} onClickAddon={handleClickAddon} />
           </Grid>
-        </ActiveGraphController>
-      </DataStateProvider>
-    </div>
-  );
+        </Grid>
+      </ActiveGraphController>
+    </DataStateProvider>
+  </div>
+);
 ```
 
 ### ActiveGraphController

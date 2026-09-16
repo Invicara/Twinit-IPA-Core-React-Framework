@@ -1,23 +1,23 @@
-import React, { useState } from "react";
-import Table from "../Table/Table";
-import BaseTextInput from "../BaseTextInput";
-import "./AlertTable.scss";
-import { Tooltip } from "@mui/material";
-import { withGenericPageContext } from "../../IpaPageComponents/genericPageContext";
-import ScriptHelper from "../../IpaUtils/ScriptHelper";
-import _ from "lodash";
+import React, { useState } from 'react';
+import Table from '../Table/Table';
+import BaseTextInput from '../BaseTextInput';
+import './AlertTable.scss';
+import { Tooltip } from '@mui/material';
+import { withGenericPageContext } from '../../IpaPageComponents/genericPageContext';
+import ScriptHelper from '../../IpaUtils/ScriptHelper';
+import _ from 'lodash';
 
-const getHeaders = (columns) => {
-  let headers = columns.filter((c) => c.active === true).map((c) => c.name);
-  headers.push("");
-  headers.splice(1, 0, "");
+const getHeaders = columns => {
+  let headers = columns.filter(c => c.active === true).map(c => c.name);
+  headers.push('');
+  headers.splice(1, 0, '');
   return headers;
 };
 
 const URGENCY_CLASSNAMES = {
-  High: "cell--urgency cell--urgency-high",
-  Medium: "cell--urgency cell--urgency-medium",
-  Low: "cell--urgency cell--urgency-low",
+  High: 'cell--urgency cell--urgency-high',
+  Medium: 'cell--urgency cell--urgency-medium',
+  Low: 'cell--urgency cell--urgency-low',
 };
 
 const inactivateAlert = (alert, setAcknowledgedAlert, scriptName) => {
@@ -33,31 +33,23 @@ const getRowFromAlert = (
   navigationConfig,
   onNavigate,
   setAcknowledgedAlert,
-  scriptName,
+  scriptName
 ) => {
-  const row = activeColumns.map((c) => {
+  const row = activeColumns.map(c => {
     let className = undefined;
     let property = _.get(alert, c.accessor);
-    if (property?.dname === "Urgency") {
+    if (property?.dname === 'Urgency') {
       className = URGENCY_CLASSNAMES[property.val];
     }
     return { ..._.get(alert, c.accessor), className };
   });
 
   row.unshift({
-    type: "action",
+    type: 'action',
     val: alert.properties.Acknowledged.val ? (
-      <Tooltip
-        key="cell-tooltip"
-        title="Alert has been acknowledged"
-        enterDelay={500}
-      >
+      <Tooltip key="cell-tooltip" title="Alert has been acknowledged" enterDelay={500}>
         <button className="alert-table__row-action-button">
-          <i
-            className="fa fa-check"
-            style={{ color: "#1A8817" }}
-            aria-hidden="true"
-          ></i>
+          <i className="fa fa-check" style={{ color: '#1A8817' }} aria-hidden="true"></i>
         </button>
       </Tooltip>
     ) : (
@@ -72,22 +64,22 @@ const getRowFromAlert = (
         </button>
       </Tooltip>
     ),
-    className: "alert-table__row-action",
+    className: 'alert-table__row-action',
   });
 
   //TODO create and push the action menu
   row.push({
-    type: "action",
+    type: 'action',
     val: (
       <Tooltip key="cell-tooltip" title="Navigate to Source" enterDelay={500}>
         <button
           className="alert-table__row-action-button"
           onClick={() => {
-            console.log("button onClick alert", alert);
-            console.log("button onClick navigationConfig", navigationConfig);
+            console.log('button onClick alert', alert);
+            console.log('button onClick navigationConfig', navigationConfig);
             if (alert.Source !== null) {
               const entityType = alert.Source.entityType;
-              const selectedEntities = alert.Source.entities.map((e) => e._id);
+              const selectedEntities = alert.Source.entities.map(e => e._id);
 
               let selectionInfo = {
                 entityType,
@@ -97,7 +89,7 @@ const getRowFromAlert = (
                   query: { value: selectedEntities },
                 },
               };
-              console.log("button onClick selectionInfo", selectionInfo);
+              console.log('button onClick selectionInfo', selectionInfo);
               onNavigate(navigationConfig[entityType], selectionInfo);
             }
           }}
@@ -106,7 +98,7 @@ const getRowFromAlert = (
         </button>
       </Tooltip>
     ),
-    className: "alert-table__row-action",
+    className: 'alert-table__row-action',
   });
 
   return row;
@@ -118,24 +110,24 @@ const getRowsFromAlerts = (
   navigationConfig,
   onNavigate,
   setAcknowledgedAlert,
-  scriptName,
+  scriptName
 ) => {
-  let activeColumns = columns.filter((c) => c.active === true);
+  let activeColumns = columns.filter(c => c.active === true);
 
-  let rows = alerts.map((a) =>
+  let rows = alerts.map(a =>
     getRowFromAlert(
       a,
       activeColumns,
       navigationConfig,
       onNavigate,
       setAcknowledgedAlert,
-      scriptName,
-    ),
+      scriptName
+    )
   );
   return rows;
 };
 
-const AlertTable = (props) => {
+const AlertTable = props => {
   const [filterInput, setFilterInput] = useState(null);
 
   return (
@@ -148,9 +140,9 @@ const AlertTable = (props) => {
             className="alert-table__filter-input"
             inputProps={{
               disabled: true,
-              type: "text",
+              type: 'text',
               value: filterInput,
-              onChange: (e) => setFilterInput(e.target.value),
+              onChange: e => setFilterInput(e.target.value),
             }}
           />
           <button
@@ -169,11 +161,11 @@ const AlertTable = (props) => {
             props.navigateTo,
             props.onNavigate,
             props.setAcknowledgedAlert,
-            props.scriptName,
+            props.scriptName
           )}
           options={{
-            emptyMessage: "No data",
-            emptyMessageClassName: "alert-table__empty-message",
+            emptyMessage: 'No data',
+            emptyMessageClassName: 'alert-table__empty-message',
           }}
         />
       </div>

@@ -1,2 +1,1 @@
-export const curriedFlip = f => a => b => f(b)(a)
-
+export const curriedFlip = f => a => b => f(b)(a);

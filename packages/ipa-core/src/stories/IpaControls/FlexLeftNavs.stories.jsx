@@ -1,21 +1,21 @@
-import FlexLeftNavs from "../../IpaLayouts/FlexLeftNavs";
+import FlexLeftNavs from '../../IpaLayouts/FlexLeftNavs';
 
 export default {
-  title: "Layouts/FlexLeftNavs",
+  title: 'Layouts/FlexLeftNavs',
   component: FlexLeftNavs,
   parameters: {
-    backgrounds: { default: "light" },
+    backgrounds: { default: 'light' },
   },
   argTypes: {},
 };
 
-const Template = (args) => {
+const Template = args => {
   return <FlexLeftNavs {...args} />;
 };
 
 export const Default = Template.bind({});
 
 Default.args = {
-  height: "250px",
+  height: '250px',
   children: <div></div>,
 };

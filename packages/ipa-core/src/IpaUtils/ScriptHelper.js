@@ -45,13 +45,8 @@ async function loadScript(query, ctx) {
       let loadedScripts = await IafScriptEngine.getVar('loadedScripts');
       console.log('ScriptHelper loadScript loadedScripts', loadedScripts);
 
-      let loadedScriptsByUserTypes = await IafScriptEngine.getVar(
-        'loadedScriptsByUserTypes',
-      );
-      console.log(
-        'ScriptHelper loadScript loadedScriptsByUserTypes',
-        loadedScriptsByUserTypes,
-      );
+      let loadedScriptsByUserTypes = await IafScriptEngine.getVar('loadedScriptsByUserTypes');
+      console.log('ScriptHelper loadScript loadedScriptsByUserTypes', loadedScriptsByUserTypes);
 
       if (!loadedScripts) {
         loadedScripts = scriptModule.default;
@@ -67,18 +62,10 @@ async function loadScript(query, ctx) {
       console.log('ScriptHelper loadScript loadedScripts2', loadedScripts);
       await IafScriptEngine.setVar('loadedScripts', loadedScripts);
 
-      console.log(
-        'ScriptHelper loadScriptByUserTypes loadedScripts2',
-        loadedScriptsByUserTypes,
-      );
-      await IafScriptEngine.setVar(
-        'loadedScriptsByUserTypes',
-        loadedScriptsByUserTypes,
-      );
+      console.log('ScriptHelper loadScriptByUserTypes loadedScripts2', loadedScriptsByUserTypes);
+      await IafScriptEngine.setVar('loadedScriptsByUserTypes', loadedScriptsByUserTypes);
     } else {
-      console.warn(
-        `ScriptHelper loadScript: No script type ${query._userType} found.`,
-      );
+      console.warn(`ScriptHelper loadScript: No script type ${query._userType} found.`);
     }
   } //else { // COMMENTING OUT WITH INTENT TO REMOVE IN THE FUTURE NOW THAT WE DON'T SUPPORT OLD EXPRESSIONS SCRIPTS
   // There should only be one, but API gets all, filters and then passes back.  Test return
@@ -103,22 +90,13 @@ async function loadScript(query, ctx) {
 }
 
 async function evalExpressions(str, operand, ctx) {
-  let res = await expression.evalExpressions(
-    eval(str),
-    operand,
-    ctx || _expressionExecCtx,
-  );
+  let res = await expression.evalExpressions(eval(str), operand, ctx || _expressionExecCtx);
   return res;
 }
 
 // Internal function for executing a script and (optionally) retrieving a scriptResVar
 async function _execScript(scriptName, operand, scriptResVar, ctx) {
-  let scriptRes = await expression.execScript(
-    scriptName,
-    operand,
-    scriptResVar,
-    ctx,
-  );
+  let scriptRes = await expression.execScript(scriptName, operand, scriptResVar, ctx);
 
   return scriptRes;
 }
@@ -130,13 +108,8 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback) {
     let loadedScripts = IafScriptEngine.getVar('loadedScripts');
     console.log('ScriptHelper executeScript loadedScripts', loadedScripts);
 
-    let loadedScriptsByUserTypes = IafScriptEngine.getVar(
-      'loadedScriptsByUserTypes',
-    );
-    console.log(
-      'ScriptHelper executeScript loadedScriptsByUserTypes',
-      loadedScriptsByUserTypes,
-    );
+    let loadedScriptsByUserTypes = IafScriptEngine.getVar('loadedScriptsByUserTypes');
+    console.log('ScriptHelper executeScript loadedScriptsByUserTypes', loadedScriptsByUserTypes);
 
     if (!scriptName) {
       console.error('Script information is required!');
@@ -146,9 +119,7 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback) {
     let scriptToExecute;
     if (typeof scriptName === 'string') {
       if (!loadedScripts || !loadedScripts[scriptName]) {
-        console.error(
-          `executeScript "${scriptName}" not found on loadedScripts!`,
-        );
+        console.error(`executeScript "${scriptName}" not found on loadedScripts!`);
         return `executeScript "${scriptName}" not found on loadedScripts!`;
       } else {
         scriptToExecute = loadedScripts[scriptName];
@@ -168,8 +139,7 @@ async function executeScript(scriptName, operand, scriptResVar, ctx, callback) {
         return 'Script Info missing userType and/or script!';
       }
 
-      scriptToExecute =
-        loadedScriptsByUserTypes[scriptName.userType][scriptName.script];
+      scriptToExecute = loadedScriptsByUserTypes[scriptName.userType][scriptName.script];
     }
 
     if (scriptToExecute) {
@@ -226,12 +196,7 @@ async function executeScriptCallback(callbackName, operand, scriptResVar, ctx) {
 
   let scriptRes;
   if (scriptName) {
-    scriptRes = await _execScript(
-      scriptName,
-      operand,
-      scriptResVar,
-      ctx || _expressionExecCtx,
-    );
+    scriptRes = await _execScript(scriptName, operand, scriptResVar, ctx || _expressionExecCtx);
   }
 
   return scriptRes;
@@ -244,8 +209,7 @@ function getScriptVar(scriptVar, ctx) {
 
 function setScriptVar(scriptVar, value, ctx) {
   if (isProjectNextGenJs()) return IafScriptEngine.setVar(scriptVar, value);
-  else
-    return expression.setHeapVar(scriptVar, value, ctx || _expressionExecCtx);
+  else return expression.setHeapVar(scriptVar, value, ctx || _expressionExecCtx);
 }
 
 // Replacements for the above; decouple from IAF_EXT_ specifics.  jl 01/26/19
@@ -269,7 +233,7 @@ function isProjectNextGenJs() {
   if (sessionProject?._userAttributes?.hasOwnProperty('nextScriptEngine')) {
     console.log(
       'sessionProject._userAttributes.nextScriptEngine',
-      sessionProject?._userAttributes?.nextScriptEngine,
+      sessionProject?._userAttributes?.nextScriptEngine
     );
     return sessionProject?._userAttributes?.nextScriptEngine;
   } else {

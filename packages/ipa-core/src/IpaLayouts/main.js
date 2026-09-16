@@ -1,8 +1,8 @@
-import IpaMainLayout from "./IpaMainLayout";
+import IpaMainLayout from './IpaMainLayout';
 
 const IpaLayouts = {
-   IpaMainLayout
-}
+  IpaMainLayout,
+};
 
-export default IpaLayouts
-export {IpaMainLayout}
+export default IpaLayouts;
+export { IpaMainLayout };

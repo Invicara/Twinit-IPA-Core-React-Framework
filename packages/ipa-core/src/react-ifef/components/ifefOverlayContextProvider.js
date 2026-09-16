@@ -19,14 +19,11 @@ import React from 'react';
 
 export const OverlayContext = React.createContext();
 
-export const withOverlayContext = (Component) =>
-  (props) =>
-    (<OverlayContext.Consumer>
-      {
-        (contextProps) =>
-          <Component {...props} {...contextProps}/>
-      }
-    </OverlayContext.Consumer>);
+export const withOverlayContext = Component => props => (
+  <OverlayContext.Consumer>
+    {contextProps => <Component {...props} {...contextProps} />}
+  </OverlayContext.Consumer>
+);
 
 export class OverlayContextProvider extends React.Component {
   constructor(props) {
@@ -36,7 +33,7 @@ export class OverlayContextProvider extends React.Component {
       shownViews: [],
       shownPanels: [],
       panelSizes: {},
-      overlayOps:{
+      overlayOps: {
         showOverlayView: this.showOverlayView.bind(this),
         hideOverlayView: this.hideOverlayView.bind(this),
         isOverlayViewShown: this.isOverlayViewShown.bind(this),
@@ -48,74 +45,73 @@ export class OverlayContextProvider extends React.Component {
         hasShownPanels: this.hasShownPanels.bind(this),
 
         setPanelSize: this.setPanelSize.bind(this),
-        getPanelSize: this.getPanelSize.bind(this)
-      }
+        getPanelSize: this.getPanelSize.bind(this),
+      },
     };
   }
 
   setOverlayContext(newContext) {
-    const {overlayCtx} = this.state;
+    const { overlayCtx } = this.state;
     let newState = Object.assign(overlayCtx, newContext);
-    this.setState({overlayCtx: newState});
+    this.setState({ overlayCtx: newState });
   }
 
-
   showOverlayView(view) {
-    let {shownViews} = this.state,
+    let { shownViews } = this.state,
       idx = shownViews.indexOf(view);
     if (idx < 0) {
       shownViews.push(view);
-      this.setState({shownViews: shownViews});
+      this.setState({ shownViews: shownViews });
     }
   }
 
   hideOverlayView(view) {
-    let {shownViews} = this.state,
-         idx = shownViews.indexOf(view);
+    let { shownViews } = this.state,
+      idx = shownViews.indexOf(view);
     if (idx > -1) {
       shownViews.splice(idx);
-      this.setState({shownViews: shownViews});
+      this.setState({ shownViews: shownViews });
     }
   }
 
   isOverlayViewShown(view) {
-    return (this.state.shownViews.indexOf(view) > -1);
+    return this.state.shownViews.indexOf(view) > -1;
   }
 
   hasShownViews() {
-    return (this.state.shownViews.length > 0);
+    return this.state.shownViews.length > 0;
   }
 
   showOverlayPanel(side) {
-    let {shownPanels} = this.state,
+    let { shownPanels } = this.state,
       idx = shownPanels.indexOf(side);
     if (idx < 0) {
       shownPanels.push(side);
-      this.setState({shownPanels: shownPanels});
+      this.setState({ shownPanels: shownPanels });
     }
   }
 
   hideOverlayPanel(side) {
-    let {shownPanels} = this.state,
+    let { shownPanels } = this.state,
       idx = shownPanels.indexOf(side);
     if (idx > -1) {
       shownPanels.splice(idx, 1);
-      this.setState({shownPanels: shownPanels});
+      this.setState({ shownPanels: shownPanels });
     }
   }
 
   isOverlayPanelShown(side) {
-    return (this.state.shownPanels.indexOf(side) > -1);
+    return this.state.shownPanels.indexOf(side) > -1;
   }
 
   hasShownPanels() {
-    return (this.state.shownPanels.length > 0);
+    return this.state.shownPanels.length > 0;
   }
 
   setPanelSize(side, size) {
-    let {panelSizes} = this.state;
+    let { panelSizes } = this.state;
     panelSizes[side] = size;
-    this.setState({panelSizes: panelSizes})
+    this.setState({ panelSizes: panelSizes });
   }
 
   getPanelSize(side) {
@@ -123,6 +119,8 @@ export class OverlayContextProvider extends React.Component {
   }
 
   render() {
-    return <OverlayContext.Provider value={this.state}>{this.props.children}</OverlayContext.Provider>
+    return (
+      <OverlayContext.Provider value={this.state}>{this.props.children}</OverlayContext.Provider>
+    );
   }
 }

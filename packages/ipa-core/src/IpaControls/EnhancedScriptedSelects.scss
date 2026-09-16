@@ -8,11 +8,11 @@
     margin-bottom: 25px;
   }
 
-  &.horizontal{
+  &.horizontal {
     flex-direction: row;
   }
 
-  &.compact{
+  &.compact {
     margin-bottom: 0;
     .select-element {
       margin-bottom: 0;
@@ -37,5 +37,4 @@
     font-size: 16px;
     margin: 0 0 10px 0;
   }
-
 }

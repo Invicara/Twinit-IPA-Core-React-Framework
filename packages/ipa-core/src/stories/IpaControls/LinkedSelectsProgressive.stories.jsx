@@ -1,39 +1,39 @@
-import LinkedSelectsProgressive from "../../IpaControls/LinkedSelectsProgressive";
+import LinkedSelectsProgressive from '../../IpaControls/LinkedSelectsProgressive';
 
 export default {
-  title: "Controls/LinkedSelectsProgressive",
+  title: 'Controls/LinkedSelectsProgressive',
   component: LinkedSelectsProgressive,
   argTypes: {
-    attributes: { control: "object" },
-    options: { control: "object" },
-    onChange: { action: "onChange" }, // Define action for onChange event
+    attributes: { control: 'object' },
+    options: { control: 'object' },
+    onChange: { action: 'onChange' }, // Define action for onChange event
   },
 };
 
-const Template = (args) => <LinkedSelectsProgressive {...args} />;
+const Template = args => <LinkedSelectsProgressive {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
   attributes: [
     {
-      name: "Color",
+      name: 'Color',
       isMulti: false,
-      values: ["Red", "Green", "Blue"],
-      placeholder: "Select Color",
+      values: ['Red', 'Green', 'Blue'],
+      placeholder: 'Select Color',
     },
     {
-      name: "Sizes",
+      name: 'Sizes',
       isMulti: true,
-      values: ["Small", "Medium", "Large"],
-      placeholder: "Select Size(s)",
+      values: ['Small', 'Medium', 'Large'],
+      placeholder: 'Select Size(s)',
     },
   ],
   options: {
-    direction: "horizontal", // Set direction to 'horizontal'
+    direction: 'horizontal', // Set direction to 'horizontal'
     hasLabel: true,
     isRequired: true,
   },
-  onChange: (values) => console.log("Selected Values:", values), // Log selected values to console
+  onChange: values => console.log('Selected Values:', values), // Log selected values to console
 };
 
 // Additional story to demonstrate component behavior with different props
@@ -41,28 +41,28 @@ export const VerticalLayout = Template.bind({});
 VerticalLayout.args = {
   attributes: [
     {
-      name: "Category",
+      name: 'Category',
       isMulti: false,
-      values: ["Electronics", "Clothing", "Books"],
-      placeholder: "Select Category",
+      values: ['Electronics', 'Clothing', 'Books'],
+      placeholder: 'Select Category',
     },
     {
-      name: "Brand",
+      name: 'Brand',
       isMulti: true,
-      values: ["Apple", "Nike", "Amazon"],
-      placeholder: "Select Brand(s)",
+      values: ['Apple', 'Nike', 'Amazon'],
+      placeholder: 'Select Brand(s)',
     },
     {
-      name: "Price Range",
+      name: 'Price Range',
       isMulti: false,
-      values: ["Low", "Medium", "High"],
-      placeholder: "Select Price Range",
+      values: ['Low', 'Medium', 'High'],
+      placeholder: 'Select Price Range',
     },
   ],
   options: {
-    direction: "vertical", // Set direction to 'vertical'
+    direction: 'vertical', // Set direction to 'vertical'
     hasLabel: false,
     isRequired: false,
   },
-  onChange: (values) => console.log("Selected Values:", values), // Log selected values to console
+  onChange: values => console.log('Selected Values:', values), // Log selected values to console
 };

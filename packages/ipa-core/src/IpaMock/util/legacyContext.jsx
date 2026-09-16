@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 /**
  * Legacy context support thanks to:
@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
  * this post was only missing info about `childContextTypes` which I got from here:
  * https://reactjs.org/docs/legacy-context.html
  */
-export const createLegacyContextSupport = (contextTypes) => {
+export const createLegacyContextSupport = contextTypes => {
   const LegacyContextSupport = class extends React.Component {
     getChildContext() {
       return this.props.context;
@@ -16,13 +16,13 @@ export const createLegacyContextSupport = (contextTypes) => {
     render() {
       return this.props.children;
     }
-  }
+  };
 
   LegacyContextSupport.propTypes = {
-        context: PropTypes.object.isRequired,
-        children: PropTypes.node,
+    context: PropTypes.object.isRequired,
+    children: PropTypes.node,
   };
   LegacyContextSupport.contextTypes = contextTypes;
   LegacyContextSupport.childContextTypes = contextTypes;
   return LegacyContextSupport;
-}
+};

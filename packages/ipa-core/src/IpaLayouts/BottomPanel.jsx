@@ -1,5 +1,5 @@
-import React from "react";
-import "./BottomPanel.css";
+import React from 'react';
+import './BottomPanel.css';
 
 // There is only one BottomPanel, which we make work like the Right/Left drawers
 // We provide an id so apps can find it to load app-specific content in it.
@@ -19,12 +19,12 @@ class BottomPanel extends React.Component {
   }
 
   componentDidMount() {
-    this.sidePanelStyle = document.getElementById("SidePanelContent")?.style;
-    this.bottomPanelStyle = document.getElementById("BottomPanel")?.style;
+    this.sidePanelStyle = document.getElementById('SidePanelContent')?.style;
+    this.bottomPanelStyle = document.getElementById('BottomPanel')?.style;
   }
 
   render() {
-    let display = this.props.hideOnLoad ? "none" : "block";
+    let display = this.props.hideOnLoad ? 'none' : 'block';
     return (
       <div
         className="asf-panel snap-drawer-bottom asf-panel-bottom"

@@ -1,17 +1,17 @@
-import MiniButton from "../../IpaControls/MiniButton";
+import MiniButton from '../../IpaControls/MiniButton';
 
 export default {
-  title: "Controls/MiniButton",
+  title: 'Controls/MiniButton',
   component: MiniButton,
-  argTypes: { onClick: { action: "onClick" } },
+  argTypes: { onClick: { action: 'onClick' } },
 };
 
-const Template = (args) => {
+const Template = args => {
   return <MiniButton {...args} />;
 };
 
 export const Default = Template.bind({});
 
 Default.args = {
-  value: "Submit",
+  value: 'Submit',
 };

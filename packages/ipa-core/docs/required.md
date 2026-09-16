@@ -22,7 +22,7 @@ const endPointConfig = {
   fileServiceOrigin: 'https://api.platform.com',
   datasourceServiceOrigin: 'https://api.platform.com',
   graphicsServiceOrigin: 'https://api.platform.com',
-  baseRoot: 'http://localhost:8083/app'
+  baseRoot: 'http://localhost:8083/app',
 };
 ```
 
@@ -73,34 +73,30 @@ All Redux slices and components will be loaded from `app/ipaCore` folder.
 
 ```jsx
 const ipaConfig = {
-  appName: "My Platform Application",
-  applicationId: "07b8b191-b465-461d-be7e-8f3e9b492708",
+  appName: 'My Platform Application',
+  applicationId: '07b8b191-b465-461d-be7e-8f3e9b492708',
   configUserType: 'my-ipa',
   css: ['myTheme.css'],
   redux: {
-    slices: [
-      {name: 'connections', file: 'connections.js'}
-    ]
+    slices: [{ name: 'connections', file: 'connections.js' }],
   },
   components: {
     dashboard: [
-      {name: "SisenseWidgets", file: "SisenseWidgets.jsx"},
-      {name: "SisenseIframe", file: "SisenseIframe.jsx"},
-      {name: "PropertyInfoTable", file: "PropertyInfoTable.jsx"},
-      {name: "MatterportViewer", file: "MatterportViewer.jsx"},
+      { name: 'SisenseWidgets', file: 'SisenseWidgets.jsx' },
+      { name: 'SisenseIframe', file: 'SisenseIframe.jsx' },
+      { name: 'PropertyInfoTable', file: 'PropertyInfoTable.jsx' },
+      { name: 'MatterportViewer', file: 'MatterportViewer.jsx' },
     ],
     entityData: [
-      {name: "SisenseWidgets", file: "SisenseWidgets.jsx"},
-      {name: "HaystackPointReadingTable", file: "HaystackPointReadingTable.jsx"},
-      {name: "MatterportViewer", file: "MatterportViewer.jsx"}
+      { name: 'SisenseWidgets', file: 'SisenseWidgets.jsx' },
+      { name: 'HaystackPointReadingTable', file: 'HaystackPointReadingTable.jsx' },
+      { name: 'MatterportViewer', file: 'MatterportViewer.jsx' },
     ],
-    entityAction: [
-      {name: "ServiceRequestModal", file: "ServiceRequestModal.jsx"}
-    ]
-  }
-}
+    entityAction: [{ name: 'ServiceRequestModal', file: 'ServiceRequestModal.jsx' }],
+  },
+};
 
-export default ipaConfig
+export default ipaConfig;
 ```
 
 ## The Types of Components

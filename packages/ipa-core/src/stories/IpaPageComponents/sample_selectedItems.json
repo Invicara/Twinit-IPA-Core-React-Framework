@@ -2,14 +2,9 @@
   "ipaConfig": {
     "appName": "",
     "configUserType": "hoarelea-dt",
-    "css": [
-      "myTheme.css"
-    ],
+    "css": ["myTheme.css"],
     "applicationId": "b42525d3-0e42-4bf9-b069-7fc16daf67e6",
-    "scriptPlugins": [
-      "ipa-dt-script-plugins.js",
-      "file-perm-script-plugins.js"
-    ],
+    "scriptPlugins": ["ipa-dt-script-plugins.js", "file-perm-script-plugins.js"],
     "redux": {
       "slices": [
         {
@@ -73,9 +68,7 @@
     "_name": "Western Transit Shed",
     "_shortName": "wts",
     "_userType": "project_workspace",
-    "_namespaces": [
-      "wts_lQR0P0EZ"
-    ],
+    "_namespaces": ["wts_lQR0P0EZ"],
     "_userAttributes": {
       "user_group": [
         "14c6b828-8eb4-46ee-9862-7d20459267d6",
@@ -114,9 +107,7 @@
         }
       ],
       "_irn": "itemsvc:nameduseritem:62ffd4c6d5cd1e06f1570754",
-      "_namespaces": [
-        "wts_lQR0P0EZ"
-      ],
+      "_namespaces": ["wts_lQR0P0EZ"],
       "_nextVersion": 2,
       "_shortName": "Root Container",
       "_tipVersion": 1,
@@ -165,11 +156,7 @@
       }
     ],
     "_irn": "itemsvc:nameduseritem:63067e58d5cd1e06f157d2b1",
-    "_namespaces": [
-      "wts_lQR0P0EZ",
-      "wts_lQR0P0EZ",
-      "wts_lQR0P0EZ"
-    ],
+    "_namespaces": ["wts_lQR0P0EZ", "wts_lQR0P0EZ", "wts_lQR0P0EZ"],
     "_nextVersion": 3,
     "_shortName": "HL-ZZ-ZZ-ME_modelver",
     "_tipVersion": 2,

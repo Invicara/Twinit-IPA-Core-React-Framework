@@ -1,28 +1,22 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { FetchButton } from "./FetchButton";
-import FilterControl from "./FilterControl";
-import { FILTER2OP } from "./private/filter";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { FetchButton } from './FetchButton';
+import FilterControl from './FilterControl';
+import { FILTER2OP } from './private/filter';
 
 const FILTER_SELECT_STYLES = {
-  control: (styles) => ({ ...styles, width: "100%", margin: "10px 0" }),
-  container: (styles) => ({ ...styles, display: "block", width: "100%" }),
+  control: styles => ({ ...styles, width: '100%', margin: '10px 0' }),
+  container: styles => ({ ...styles, display: 'block', width: '100%' }),
 };
 
-export const AdvancedSearch = (props) => {
+export const AdvancedSearch = props => {
   let { currentValue, onChange, touched, onFetch, display } = props;
 
-  let [filters, setFilters] = useState(
-    currentValue ? currentValue.fitlers : {},
-  );
-  let [includeAll, setIncludeAll] = useState(
-    currentValue ? currentValue.includeAll : true,
-  );
-  let [ignoreCase, setIgnoreCase] = useState(
-    currentValue ? currentValue.ignoreCase : true,
-  );
+  let [filters, setFilters] = useState(currentValue ? currentValue.fitlers : {});
+  let [includeAll, setIncludeAll] = useState(currentValue ? currentValue.includeAll : true);
+  let [ignoreCase, setIgnoreCase] = useState(currentValue ? currentValue.ignoreCase : true);
 
-  const onChangeFilters = (newFilters) => {
+  const onChangeFilters = newFilters => {
     setFilters(newFilters);
     onChange({ filters: newFilters, includeAll, ignoreCase });
   };
@@ -38,9 +32,7 @@ export const AdvancedSearch = (props) => {
   };
 
   let disabled =
-    !currentValue ||
-    !currentValue.filters ||
-    Object.keys(currentValue.filters).length == 0;
+    !currentValue || !currentValue.filters || Object.keys(currentValue.filters).length == 0;
 
   return (
     <div className="advanced-search text-search">
@@ -65,7 +57,7 @@ export const AdvancedSearch = (props) => {
       <FetchButton
         disabled={disabled}
         onClick={onFetch}
-        customClasses={touched && !disabled && "attention"}
+        customClasses={touched && !disabled && 'attention'}
       >
         Search
       </FetchButton>

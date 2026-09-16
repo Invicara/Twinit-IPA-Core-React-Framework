@@ -1,20 +1,20 @@
-import React, { Fragment, useEffect, useState } from "react";
-import Select from "react-select";
-import CreatableSelect from "react-select/creatable";
-import clsx from "clsx";
-import _ from "lodash";
-import { loadPlainInitialValueWithScriptedSelectFormat } from "../IpaUtils/ScriptedSelectsHelpers";
-import ScriptCache from "../IpaUtils/script-cache";
-import { useWithLinkedSelectChange } from "./private/useWithLinkedSelectChange";
-import { selectStyles } from "./private/selectStyles";
+import React, { Fragment, useEffect, useState } from 'react';
+import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
+import clsx from 'clsx';
+import _ from 'lodash';
+import { loadPlainInitialValueWithScriptedSelectFormat } from '../IpaUtils/ScriptedSelectsHelpers';
+import ScriptCache from '../IpaUtils/script-cache';
+import { useWithLinkedSelectChange } from './private/useWithLinkedSelectChange';
+import { selectStyles } from './private/selectStyles';
 
-export const asSelectOption = (option) => ({
+export const asSelectOption = option => ({
   value: option.value,
   label: option.display,
   key: option.display,
 });
 
-export const asSelectOptions = (options) => options?.map(asSelectOption);
+export const asSelectOptions = options => options?.map(asSelectOption);
 
 export const EnhancedPickListSelect = ({
   currentValue,
@@ -38,23 +38,21 @@ export const EnhancedPickListSelect = ({
           display: select.display,
           index: i,
           options: [],
-          createPickListOnUpdate:
-            select.createPickListOnUpdate && canCreateItems,
+          createPickListOnUpdate: select.createPickListOnUpdate && canCreateItems,
         },
       }),
-      {},
-    ),
+      {}
+    )
   );
 
   const value = currentValue || {};
 
-  const getSelectedValue = (option) => {
+  const getSelectedValue = option => {
     return { value: option.value, display: option.label };
   };
 
   const fetchOptions = async (currentSelect, currentSelectValue) => {
-    const nextSelect =
-      _.values(selects)[currentSelect ? currentSelect.index + 1 : 0];
+    const nextSelect = _.values(selects)[currentSelect ? currentSelect.index + 1 : 0];
     if (nextSelect) {
       const selectOptions = await ScriptCache.runScript(pickListScript, {
         type: currentSelect
@@ -62,22 +60,16 @@ export const EnhancedPickListSelect = ({
           : initialPickListType,
       });
 
-      setSelects((selects) => ({
+      setSelects(selects => ({
         ...selects,
         [nextSelect.display]: {
           ...nextSelect,
           type: selectOptions?.[0].type,
-          options: selectOptions?.[0].values.sort((a, b) =>
-            a.display.localeCompare(b.display),
-          ),
+          options: selectOptions?.[0].values.sort((a, b) => a.display.localeCompare(b.display)),
         },
       }));
     }
-    loadPlainInitialValueWithScriptedSelectFormat(
-      onChange,
-      currentValue,
-      selects,
-    );
+    loadPlainInitialValueWithScriptedSelectFormat(onChange, currentValue, selects);
   };
 
   const [onLinkedSelectChange] = useWithLinkedSelectChange(
@@ -86,7 +78,7 @@ export const EnhancedPickListSelect = ({
     value,
     getSelectedValue,
     onChange,
-    fetchOptions,
+    fetchOptions
   );
 
   useEffect(() => {
@@ -100,10 +92,10 @@ export const EnhancedPickListSelect = ({
       let selectKeys = Object.keys(selects);
       Promise.all(
         selectKeys
-          .filter((k) => currentValue[k] && currentValue[k].length)
-          .map((selectKey) => {
+          .filter(k => currentValue[k] && currentValue[k].length)
+          .map(selectKey => {
             fetchOptions(selects[selectKey], currentValue);
-          }),
+          })
       );
     }
   };
@@ -119,28 +111,28 @@ export const EnhancedPickListSelect = ({
     return await ScriptCache.runScript(updateScript, { pickList: scriptArgs });
   };
 
-  const refreshParentPickListCachedResult = async (selectId) => {
+  const refreshParentPickListCachedResult = async selectId => {
     const index = selects[selectId].index;
     let parentPickListType = initialPickListType;
     if (index > 0) {
       let parentPickList = Object.entries(selects)
-        .filter((e) => e[1].index === index - 1)
-        .map((s) => s[0]);
+        .filter(e => e[1].index === index - 1)
+        .map(s => s[0]);
       parentPickListType = value[parentPickList[0]][0].value;
     }
     await ScriptCache.runScript(
       pickListScript,
       { type: parentPickListType },
-      { ignoreCachedScriptResult: true },
+      { ignoreCachedScriptResult: true }
     );
   };
 
-  const parentHasValue = (selectId) => {
+  const parentHasValue = selectId => {
     const index = selects[selectId].index;
     if (index === 0) return true;
     let parentPickList = Object.entries(selects)
-      .filter((e) => e[1].index === index - 1)
-      .map((s) => s[0]);
+      .filter(e => e[1].index === index - 1)
+      .map(s => s[0]);
     return value[parentPickList[0]] && value[parentPickList[0]].length;
   };
 
@@ -154,16 +146,14 @@ export const EnhancedPickListSelect = ({
         display: selected.value,
         value: newSelectValue,
       });
-      tempSelects[selectId].options.sort((a, b) =>
-        a.display.localeCompare(b.display),
-      );
+      tempSelects[selectId].options.sort((a, b) => a.display.localeCompare(b.display));
       setSelects(tempSelects);
       updatePickList(select, selected.value, newSelectValue);
       refreshParentPickListCachedResult(selectId);
       onLinkedSelectChange(
         selectId,
         { label: selected.value, value: newSelectValue },
-        selects[selectId],
+        selects[selectId]
       );
     } else {
       onLinkedSelectChange(selectId, selected, selects[selectId]);
@@ -172,19 +162,13 @@ export const EnhancedPickListSelect = ({
 
   return (
     <div
-      className={clsx(
-        "scripted-selects-control",
-        compact && "compact",
-        horizontal && "horizontal",
-      )}
+      className={clsx('scripted-selects-control', compact && 'compact', horizontal && 'horizontal')}
     >
       {_.values(
         _.mapValues(selects, (select, selectId) => (
           <Fragment key={selectId}>
             {!compact && (
-              <span
-                className={clsx("select-title", select.required && "required")}
-              >
+              <span className={clsx('select-title', select.required && 'required')}>
                 {selectId}
               </span>
             )}
@@ -193,9 +177,7 @@ export const EnhancedPickListSelect = ({
                 styles={selectOverrideStyles || { control: selectStyles }}
                 isMulti={false}
                 value={value[selectId] ? asSelectOptions(value[selectId]) : []}
-                onChange={(selected) =>
-                  onLinkedSelectChange(selectId, selected, select)
-                }
+                onChange={selected => onLinkedSelectChange(selectId, selected, select)}
                 options={asSelectOptions(select.options)}
                 className="select-element"
                 closeMenuOnSelect={true}
@@ -210,12 +192,8 @@ export const EnhancedPickListSelect = ({
               <CreatableSelect
                 styles={selectOverrideStyles || { control: selectStyles }}
                 isMulti={false}
-                value={
-                  value[selectId] ? asSelectOptions(value[selectId]) : null
-                }
-                onChange={(selected) =>
-                  handleCreatableChange(selectId, selected, select)
-                }
+                value={value[selectId] ? asSelectOptions(value[selectId]) : null}
+                onChange={selected => handleCreatableChange(selectId, selected, select)}
                 options={asSelectOptions(select.options)}
                 className="select-element"
                 closeMenuOnSelect={true}
@@ -227,7 +205,7 @@ export const EnhancedPickListSelect = ({
               />
             )}
           </Fragment>
-        )),
+        ))
       )}
     </div>
   );

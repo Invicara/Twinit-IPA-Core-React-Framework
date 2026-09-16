@@ -9,15 +9,15 @@ class IfefActionSheet extends React.Component {
     super(props);
     this.state = {
       isUp: false,
-      callback: () => {}
+      callback: () => {},
     };
-    
+
     // bind various event handlers
     this.cancelAction = this.cancelAction.bind(this);
     this.destructiveButtonClicked = this.destructiveButtonClicked.bind(this);
     this.buttonClicked = this.buttonClicked.bind(this);
     this.close = this.close.bind(this);
-  }  
+  }
 
   cancelAction(e) {
     e && e.stopPropagation();
@@ -52,8 +52,8 @@ class IfefActionSheet extends React.Component {
     }
 
     if (!this.state.isUp && prevState.isUp) {
-      var self = this;
-      var handler =  function() {
+      let self = this;
+      let handler = function () {
         self.props.context.ifefUpdateActionSheet({});
         wrapper.removeEventListener(transitionend, handler);
         if (typeof self.state.callback === 'function') {
@@ -75,55 +75,74 @@ class IfefActionSheet extends React.Component {
   */
 
   render() {
-    var ifefActionSheet = this.props.ifefActionSheet;
+    let ifefActionSheet = this.props.ifefActionSheet;
 
-    var willMount = true;
+    let willMount = true;
     if (_.isEmpty(ifefActionSheet)) willMount = false;
 
-    var titleText = ifefActionSheet.titleText;
-    var destructiveText = ifefActionSheet.destructiveText;
-    var cancelText = ifefActionSheet.cancelText;
-    var buttons = ifefActionSheet.buttons;
-    var cancel = ifefActionSheet.cancel;
-    var buttonClicked = ifefActionSheet.buttonClicked;
-    var destructiveButtonClicked = ifefActionSheet.destructiveButtonClicked;
-    var onclickCancel = (e) => { this.cancelAction(e); };
-    var onclickDelete = (e) => { this.destructiveButtonClicked(e); };
+    let titleText = ifefActionSheet.titleText;
+    let destructiveText = ifefActionSheet.destructiveText;
+    let cancelText = ifefActionSheet.cancelText;
+    let buttons = ifefActionSheet.buttons;
+    let cancel = ifefActionSheet.cancel;
+    let buttonClicked = ifefActionSheet.buttonClicked;
+    let destructiveButtonClicked = ifefActionSheet.destructiveButtonClicked;
+    let onclickCancel = e => {
+      this.cancelAction(e);
+    };
+    let onclickDelete = e => {
+      this.destructiveButtonClicked(e);
+    };
 
-    
-    titleText = titleText ? <div className="action-sheet-title">{titleText}</div> : <div/>;
-    
+    titleText = titleText ? <div className="action-sheet-title">{titleText}</div> : <div />;
+
     if (buttons) {
       let self = this;
-      buttons = buttons.map(function(button, idx) {
+      buttons = buttons.map(function (button, idx) {
         if (button.text) {
-          return <button className="button" key={idx} onClick={(e) => self.buttonClicked(e, idx)}>{button.text}</button>;
+          return (
+            <button className="button" key={idx} onClick={e => self.buttonClicked(e, idx)}>
+              {button.text}
+            </button>
+          );
         } else {
           return null;
         }
       });
     } else {
-      buttons = <div/>
-    }   
-    
-    destructiveText = destructiveText ? <div className="action-sheet-group"><button className="button destructive" onClick={onclickDelete}>{destructiveText}</button></div> : <div/>
-    
-    cancelText = cancelText ? <div className="action-sheet-group"><button className="button" onClick={onclickCancel}>{cancelText}</button></div> : <div/>
-    
-    
-    var backdropClasses = classnames(
-      {'action-sheet-backdrop': willMount, 'active': this.state.isUp}
+      buttons = <div />;
+    }
+
+    destructiveText = destructiveText ? (
+      <div className="action-sheet-group">
+        <button className="button destructive" onClick={onclickDelete}>
+          {destructiveText}
+        </button>
+      </div>
+    ) : (
+      <div />
     );
-    var classes = classnames(
-      {'action-sheet-wrapper': true, 'action-sheet-up': this.state.isUp}
+
+    cancelText = cancelText ? (
+      <div className="action-sheet-group">
+        <button className="button" onClick={onclickCancel}>
+          {cancelText}
+        </button>
+      </div>
+    ) : (
+      <div />
     );
-    var groupClasses = classnames(
-      {'action-sheet-group': this.state.isUp}
-    );
+
+    let backdropClasses = classnames({
+      'action-sheet-backdrop': willMount,
+      active: this.state.isUp,
+    });
+    let classes = classnames({ 'action-sheet-wrapper': true, 'action-sheet-up': this.state.isUp });
+    let groupClasses = classnames({ 'action-sheet-group': this.state.isUp });
 
     return (
       <div className={backdropClasses} onClick={onclickCancel}>
-        <div className={classes} ref={wrapper => this.wrapper = wrapper}>
+        <div className={classes} ref={wrapper => (this.wrapper = wrapper)}>
           <div className="action-sheet">
             <div className={groupClasses}>
               {titleText}
@@ -137,6 +156,5 @@ class IfefActionSheet extends React.Component {
     );
   }
 }
-
 
 export default IfefActionSheet;

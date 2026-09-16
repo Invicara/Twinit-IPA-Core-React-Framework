@@ -3,15 +3,15 @@ import {
   getAllCurrentEntities,
   getAppliedFilters,
   getFetchingCurrent,
-  getFilteredEntities
-} from "../../redux/slices/entities";
-import {compose} from "@reduxjs/toolkit";
-import withEntitySearch from "../../IpaPageComponents/entities/WithEntitySearch";
-import withEntityAvailableGroups from "../../IpaPageComponents/entities/WithEntityAvailableGroups";
-import {connect} from "react-redux";
+  getFilteredEntities,
+} from '../../redux/slices/entities';
+import { compose } from '@reduxjs/toolkit';
+import withEntitySearch from '../../IpaPageComponents/entities/WithEntitySearch';
+import withEntityAvailableGroups from '../../IpaPageComponents/entities/WithEntityAvailableGroups';
+import { connect } from 'react-redux';
 
-const EntityFullViewMock = (props) => {
-  return <div/>;
+const EntityFullViewMock = props => {
+  return <div />;
 };
 
 const mapStateToProps = state => ({
@@ -22,6 +22,7 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-    withEntitySearch,withEntityAvailableGroups,
-    connect(mapStateToProps),
+  withEntitySearch,
+  withEntityAvailableGroups,
+  connect(mapStateToProps)
 )(EntityFullViewMock);

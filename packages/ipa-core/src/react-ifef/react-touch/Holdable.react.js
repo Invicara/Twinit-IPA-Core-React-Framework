@@ -7,11 +7,9 @@ import clamp from 'lodash/clamp';
 import defineHold from './defineHold';
 import TouchHandler from './TouchHandler';
 
-
 const DEFAULT_HOLD = { initial: null, current: null, duration: 0 };
 
 class Holdable extends React.Component {
-
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
     onHoldProgress: T.func,
@@ -41,7 +39,7 @@ class Holdable extends React.Component {
     this._touchHandler = new TouchHandler(
       this.handleTouchStart.bind(this),
       this.handleTouchMove.bind(this),
-      this.handleTouchEnd.bind(this),
+      this.handleTouchEnd.bind(this)
     );
   }
 

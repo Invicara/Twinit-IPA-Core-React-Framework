@@ -1,76 +1,81 @@
-@use "sass:meta";
+@use 'sass:meta';
 @font-face {
-    font-family: 'Inter';
-    src: url('fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
-    font-weight: 100 1000;
-    font-stretch: 25% 151%;
+  font-family: 'Inter';
+  src: url('fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-stretch: 25% 151%;
 }
 
 body {
-    font-family: 'Inter', Arial, Helvetica, sans-serif !important;
-    background-color: var(--neutral-3) !important;
+  font-family: 'Inter', Arial, Helvetica, sans-serif !important;
+  background-color: var(--neutral-3) !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', Arial, Helvetica, sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
 }
 
 header {
-    background-color: var(--head-bkg-color) !important;
+  background-color: var(--head-bkg-color) !important;
 }
 
 nav {
-    background-color: var(--nav-bkg-color) !important;
+  background-color: var(--nav-bkg-color) !important;
+
+  a {
+    color: var(--nav-icon-color) !important;
+  }
+
+  .main-nav li:hover {
+    background-color: var(--nav-hover-color) !important;
+  }
+
+  .main-nav-active {
+    background-color: var(--nav-activegrp-bkg-color) !important;
+    border-left: 10px solid var(--app-accent-color) !important;
 
     a {
-        color: var(--nav-icon-color) !important;
+      color: var(--app-accent-color) !important;
     }
-
-    .main-nav li:hover {
-        background-color: var(--nav-hover-color) !important;
-    }
-
-    .main-nav-active {
-        background-color: var(--nav-activegrp-bkg-color) !important;
-        border-left: 10px solid var(--app-accent-color) !important;
-
-        a {
-            color: var(--app-accent-color) !important;
-        }
-    }
+  }
 }
 
 // Full-page loading screen shown while AppProvider is loading
 .ipa-loading-screen {
-    min-height: 100vh;
-    background-color: var(--neutral-0) !important;
-    display: flex;
-    flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--neutral-0) !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .ipa-loading-screen__header {
-    height: 80px;
-    background-color: transparent;
-    box-shadow: none;
-    border-bottom: 1px solid var(--neutral-3);
-    display: flex;
-    align-items: center;
+  height: 80px;
+  background-color: transparent;
+  box-shadow: none;
+  border-bottom: 1px solid var(--neutral-3);
+  display: flex;
+  align-items: center;
 }
 
 .ipa-loading-screen__logo {
-    margin-left: 64px;
-    height: 24px;
-    width: auto;
-    display: block;
+  margin-left: 64px;
+  height: 24px;
+  width: auto;
+  display: block;
 }
 
 .ipa-loading-screen__body {
-    flex: 1;
-    background-color: #F6F9FC;
-    background-image: url('/fonts/bg.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
+  flex: 1;
+  background-color: #f6f9fc;
+  background-image: url('/fonts/bg.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 
-@include meta.load-css("../react-ifef/styles/react_ifef")
+@include meta.load-css('../react-ifef/styles/react_ifef');

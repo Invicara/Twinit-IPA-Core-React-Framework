@@ -3,7 +3,6 @@ import React from 'react';
 import classnames from 'classnames';
 
 class IfefNavView extends React.Component {
-
   // catch the new NavView mounting so we can close modals, alerts, etc.
   componentDidMount() {
     //console.log("NavView mounted.");
@@ -11,38 +10,32 @@ class IfefNavView extends React.Component {
   }
 
   render() {
-    var platform = this.context.ifefPlatform;
-    var classes = classnames(
+    let platform = this.context.ifefPlatform;
+    let classes = classnames(
       'nav-view',
-      {'nav-view-transition-android': platform.isAndroid,
-       'nav-view-transition-ios': !platform.isAndroid
+      {
+        'nav-view-transition-android': platform.isAndroid,
+        'nav-view-transition-ios': !platform.isAndroid,
       },
       'nav-view-direction-' + this.context.ifefNavDirection,
       this.props.customClasses
     );
-    return (
-      <div className={ classes } >
-
-          { this.props.children }
-
-      </div>
-
-    );
+    return <div className={classes}>{this.props.children}</div>;
   }
 }
 
 IfefNavView.propTypes = {
-  customClasses: PropTypes.string
+  customClasses: PropTypes.string,
 };
 
 IfefNavView.defaultProps = {
-  customClasses: ''
+  customClasses: '',
 };
 
 IfefNavView.contextTypes = {
   ifefPlatform: PropTypes.object,
   ifefNavDirection: PropTypes.string,
-  ifefCloseForTransition: PropTypes.func
+  ifefCloseForTransition: PropTypes.func,
 };
 
 export default IfefNavView;

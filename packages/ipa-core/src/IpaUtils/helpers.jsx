@@ -1,16 +1,16 @@
 import _ from 'lodash';
 import * as XLSX from 'xlsx';
 
-var getPlatform = function (platformOverride) {
-  var isCordova = typeof Meteor !== 'undefined' && Meteor.isCordova;
-  var iOS = {
+let getPlatform = function (platformOverride) {
+  let isCordova = typeof Meteor !== 'undefined' && Meteor.isCordova;
+  let iOS = {
     isIOS: true,
     isAndroid: false,
     isCordova: isCordova,
     transitionTimeOut: 450,
     name: 'iOS',
   };
-  var android = {
+  let android = {
     isIOS: false,
     isAndroid: true,
     isCordova: isCordova,
@@ -59,9 +59,7 @@ var getPlatform = function (platformOverride) {
 
 function parseQuery(queryString) {
   const query = {};
-  const pairs = (
-    queryString[0] === '?' ? queryString.substr(1) : queryString
-  ).split('&');
+  const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i].split('=');
     query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
@@ -74,20 +72,16 @@ function getTitleBarInfoFromProps(pageName, props) {
     pageName,
     projectName: _.get(props, 'selectedItems.selectedProject._name', ''),
     switchProject: props.actions ? props.actions.reloadConfig : null,
-    userName: props.user
-      ? props.user._firstname + ' ' + props.user._lastname
-      : '',
+    userName: props.user ? props.user._firstname + ' ' + props.user._lastname : '',
     logout: props.actions ? props.actions.userLogout : null,
   };
 }
 
-const getRandomString = (prefix) =>
-  (prefix || '') + Math.random().toString(36).substring(2, 15);
+const getRandomString = prefix => (prefix || '') + Math.random().toString(36).substring(2, 15);
 
 const group = (assets, groupProperty, getPropertyValue) => {
   return assets.reduce((result, a) => {
-    let groupName =
-      getPropertyValue(a, groupProperty) || `${groupProperty} not set`;
+    let groupName = getPropertyValue(a, groupProperty) || `${groupProperty} not set`;
     let groupContents = result[groupName] || [];
     groupContents.push(a);
     result[groupName] = groupContents;
@@ -103,16 +97,12 @@ const nestedGroup = (values, keys, getPropertyValue) => {
     return a[0].localeCompare(b[0]);
   });
   return entries.reduce((result, [groupName, groupValues]) => {
-    result[groupName] = nestedGroup(
-      groupValues,
-      remainingKeys,
-      getPropertyValue,
-    );
+    result[groupName] = nestedGroup(groupValues, remainingKeys, getPropertyValue);
     return result;
   }, {});
 };
 
-const isValidUrl = (testString) => {
+const isValidUrl = testString => {
   let url = null;
   try {
     url = new URL(testString);
@@ -123,15 +113,13 @@ const isValidUrl = (testString) => {
   return url.protocol === 'http:' || url.protocol === 'https:';
 };
 
-const makePromiseIgnorable = (promise) => {
+const makePromiseIgnorable = promise => {
   let hadIgnored = false;
 
   const wrappedPromise = new Promise((resolve, reject) => {
     promise
-      .then((val) => (hadIgnored ? reject({ isIgnored: true }) : resolve(val)))
-      .catch((error) =>
-        hadIgnored ? reject({ isIgnored: true }) : reject(error),
-      );
+      .then(val => (hadIgnored ? reject({ isIgnored: true }) : resolve(val)))
+      .catch(error => (hadIgnored ? reject({ isIgnored: true }) : reject(error)));
   });
 
   return {

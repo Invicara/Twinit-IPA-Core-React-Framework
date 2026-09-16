@@ -7,6 +7,6 @@
  * unaffected.
  */
 export const TreeSelectMode = {
-    NONE_MEANS_ALL: "noneMeansAll",
-    NONE_MEANS_NONE:"noneMeansNone"
+  NONE_MEANS_ALL: 'noneMeansAll',
+  NONE_MEANS_NONE: 'noneMeansNone',
 };

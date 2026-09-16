@@ -1,22 +1,22 @@
-import FlexContainer from "../../IpaLayouts/FlexContainer";
+import FlexContainer from '../../IpaLayouts/FlexContainer';
 
 export default {
-  title: "Layouts/FlexContainer",
+  title: 'Layouts/FlexContainer',
   component: FlexContainer,
   parameters: {
-    backgrounds: { default: "light" },
+    backgrounds: { default: 'light' },
   },
   argTypes: {},
 };
 
-const Template = (args) => {
+const Template = args => {
   return <FlexContainer {...args} />;
 };
 
 export const Default = Template.bind({});
 
 Default.args = {
-  height: "250px",
+  height: '250px',
   hideOnLoad: false,
-  children: "Hello",
+  children: 'Hello',
 };

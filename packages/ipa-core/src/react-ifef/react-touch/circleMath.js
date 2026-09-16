@@ -29,5 +29,5 @@ export const computeSectorIdx = (dx, dy) => {
   }
   // since we're dealing with floating point calculations here, floor
   // anything that comes out of the calculation back to the sectorIdx.
-  return Math.floor(angle / CIRCLE_RADS * RESOLUTION);
+  return Math.floor((angle / CIRCLE_RADS) * RESOLUTION);
 };

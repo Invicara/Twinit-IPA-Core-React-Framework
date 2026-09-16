@@ -1,5 +1,5 @@
-@use "../scss/mixins";
-@use "../scss/variables";
+@use '../scss/mixins';
+@use '../scss/variables';
 
 // Attempt to reduce CSS Animation flickering
 // http://nathanhoad.net/how-to-stop-css-animation-flicker-in-webkit
@@ -13,18 +13,19 @@
 // iOS View Transitions
 // -------------------------------
 
-$ios-transition-duration:              450ms !default;
-$ios-transition-timing-function:       cubic-bezier(.3, .9, .4, 1) !default;
-$ios-transition-container-bg-color:    #000 !default;
-$ios-transition-box-shadow:            0px 0px 12px rgba(0,0,0,0.5);
+$ios-transition-duration: 450ms !default;
+$ios-transition-timing-function: cubic-bezier(0.3, 0.9, 0.4, 1) !default;
+$ios-transition-container-bg-color: #000 !default;
+$ios-transition-box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.5);
 
 .nav-view-transition-ios {
-
   &.nav-view-enter-active,
   &.nav-view-exit-active {
-    @include mixins.transition-duration( $ios-transition-duration );
-    @include mixins.transition-timing-function( $ios-transition-timing-function );
-    -webkit-transition-property: opacity, -webkit-transform;
+    @include mixins.transition-duration($ios-transition-duration);
+    @include mixins.transition-timing-function($ios-transition-timing-function);
+    -webkit-transition-property:
+      opacity,
+      -webkit-transform;
     transition-property: opacity, transform;
   }
 
@@ -41,10 +42,10 @@ $ios-transition-box-shadow:            0px 0px 12px rgba(0,0,0,0.5);
     &.nav-view-enter {
       box-shadow: $ios-transition-box-shadow;
       opacity: 1;
-      z-index: variables.$z-index-view-above;      
+      z-index: variables.$z-index-view-above;
       @include mixins.translate3d(98%, 0, 0);
     }
-    
+
     &.nav-view-enter.nav-view-enter-active {
       opacity: 1;
       @include mixins.translate3d(0, 0, 0);
@@ -55,7 +56,7 @@ $ios-transition-box-shadow:            0px 0px 12px rgba(0,0,0,0.5);
       opacity: 1;
       @include mixins.translate3d(0, 0, 0);
     }
-    
+
     &.nav-view-exit.nav-view-exit-active {
       z-index: variables.$z-index-view-below;
       opacity: 0.9;
@@ -86,22 +87,20 @@ $ios-transition-box-shadow:            0px 0px 12px rgba(0,0,0,0.5);
       @include mixins.translate3d(101%, 0, 0);
     }
   }
-
 }
-
-
 
 // iOS Nav Bar Transitions
 // -------------------------------
 
 .nav-bar-transition-ios {
-
   .title,
   .button,
   .back-text {
-    @include mixins.transition-duration( $ios-transition-duration );
-    @include mixins.transition-timing-function( $ios-transition-timing-function );
-    -webkit-transition-property: opacity, -webkit-transform;
+    @include mixins.transition-duration($ios-transition-duration);
+    @include mixins.transition-timing-function($ios-transition-timing-function);
+    -webkit-transition-property:
+      opacity,
+      -webkit-transform;
     transition-property: opacity, transform;
   }
 
@@ -160,7 +159,8 @@ $ios-transition-box-shadow:            0px 0px 12px rgba(0,0,0,0.5);
     }
   }
 
-  &.nav-bar-direction-forward, &.nav-bar-direction-back {
+  &.nav-bar-direction-forward,
+  &.nav-bar-direction-back {
     .button-enter.button-stage {
       opacity: 0;
     }
@@ -174,24 +174,19 @@ $ios-transition-box-shadow:            0px 0px 12px rgba(0,0,0,0.5);
       opacity: 0;
     }
   }
-
 }
-
-
 
 // Android View Transitions
 // -------------------------------
 
-$android-transition-duration:             320ms !default;
-$android-transition-timing-function:      cubic-bezier(0.4, 0.6, 0.2, 1) !default;
-
+$android-transition-duration: 320ms !default;
+$android-transition-timing-function: cubic-bezier(0.4, 0.6, 0.2, 1) !default;
 
 .nav-view-transition-android {
-
   .nav-view-entering,
   .nav-view-leaving {
-    @include mixins.transition-duration( $android-transition-duration );
-    @include mixins.transition-timing-function( $android-transition-timing-function );
+    @include mixins.transition-duration($android-transition-duration);
+    @include mixins.transition-timing-function($android-transition-timing-function);
     -webkit-transition-property: -webkit-transform;
     transition-property: transform;
   }
@@ -227,25 +222,22 @@ $android-transition-timing-function:      cubic-bezier(0.4, 0.6, 0.2, 1) !defaul
       @include mixins.translate3d(100%, 0, 0);
     }
   }
-
 }
-
-
 
 // Android Nav Bar Transitions
 // -------------------------------
 
 .nav-bar-transition-android {
-
   .title,
   .button {
-    @include mixins.transition-duration( $android-transition-duration );
-    @include mixins.transition-timing-function( $android-transition-timing-function );
+    @include mixins.transition-duration($android-transition-duration);
+    @include mixins.transition-timing-function($android-transition-timing-function);
     -webkit-transition-property: opacity;
     transition-property: opacity;
   }
 
-  &.nav-bar-direction-forward, &.nav-bar-direction-back {
+  &.nav-bar-direction-forward,
+  &.nav-bar-direction-back {
     .title-enter.title-stage {
       opacity: 0;
     }
@@ -260,7 +252,8 @@ $android-transition-timing-function:      cubic-bezier(0.4, 0.6, 0.2, 1) !defaul
     }
   }
 
-  &.nav-bar-direction-forward, &.nav-bar-direction-back {
+  &.nav-bar-direction-forward,
+  &.nav-bar-direction-back {
     .button-enter.button-stage {
       opacity: 0;
     }
@@ -291,5 +284,4 @@ $android-transition-timing-function:      cubic-bezier(0.4, 0.6, 0.2, 1) !defaul
       display: none;
     }
   }
-
 }

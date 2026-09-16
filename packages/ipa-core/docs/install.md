@@ -9,7 +9,7 @@ import { InstallCodeBlock } from './docComponents/InstallCodeBlock'
 
 <InstallCodeBlock />
 
-##  Client application Structure
+## Client application Structure
 
 In order for the framework to load your pages and components, your
 client application must have the following structure:

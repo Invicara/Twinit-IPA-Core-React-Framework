@@ -1,26 +1,15 @@
 export default {
-  scripts: {
-      
-  },
-  
-  handlers: {
-    
-  },
+  scripts: {},
 
-  pages: {
-    
-  },
+  handlers: {},
 
-  settings: {
-    
-  },
+  pages: {},
 
-  groupedPages: {
+  settings: {},
 
-  },  
+  groupedPages: {},
 };
 
-export const actualPage = (config, path) => {  
+export const actualPage = (config, path) => {
   return config.pages ? config.pages[path] : config.groupedPages[path].pages[0];
-}
-
+};

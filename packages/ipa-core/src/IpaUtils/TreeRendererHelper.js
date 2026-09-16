@@ -1,34 +1,39 @@
-import React from "react";
-import '../IpaStyles/DbmTooltip.scss'
+import React from 'react';
+import '../IpaStyles/DbmTooltip.scss';
 
 //TODO Remove once fancy tree is everywhere replaced by ReactiveTree
-export const leafNodeRenderer = (entity) => 
-(<div title={entity["Entity Name"]} style={{whiteSpace: "nowrap"}}>{entity["Entity Name"]}
-    { entity["EntityWarningMessage"] && 
-    <div className="tooltip-wrapper">
+export const leafNodeRenderer = entity => (
+  <div title={entity['Entity Name']} style={{ whiteSpace: 'nowrap' }}>
+    {entity['Entity Name']}
+    {entity['EntityWarningMessage'] && (
+      <div className="tooltip-wrapper">
         <div className="dbm-tooltip">
-            <i className="fas fa-exclamation-circle"/>
-            <span className="dbm-tooltiptext">{entity["EntityWarningMessage"]}</span>
+          <i className="fas fa-exclamation-circle" />
+          <span className="dbm-tooltiptext">{entity['EntityWarningMessage']}</span>
         </div>
-    </div>}
-</div>);
+      </div>
+    )}
+  </div>
+);
 
 export const branchNodeRenderer = (groupName, values) => {
-    const sumChildren = (values, acc) => {
-        if (Array.isArray(values)) {
-            return acc + values.length
-        }
-        Object.keys(values).forEach(key => {
-            acc = sumChildren(values[key], acc)
-        })
-        return acc
+  const sumChildren = (values, acc) => {
+    if (Array.isArray(values)) {
+      return acc + values.length;
     }
-    return (
-        <span>
-            {groupName}
-            <span className="count" style={{fontSize: "0.8em"}}>{sumChildren(values, 0)}</span>
-          </span>
-    )
+    Object.keys(values).forEach(key => {
+      acc = sumChildren(values[key], acc);
+    });
+    return acc;
+  };
+  return (
+    <span>
+      {groupName}
+      <span className="count" style={{ fontSize: '0.8em' }}>
+        {sumChildren(values, 0)}
+      </span>
+    </span>
+  );
 };
 
 /**
@@ -36,9 +41,8 @@ export const branchNodeRenderer = (groupName, values) => {
  * Otherwise, use {@link ./TreeHelpers} instead
  */
 const TreeRendererHelper = {
-    leafNodeRenderer,
-    branchNodeRenderer
-}
+  leafNodeRenderer,
+  branchNodeRenderer,
+};
 
-export default TreeRendererHelper
-
+export default TreeRendererHelper;

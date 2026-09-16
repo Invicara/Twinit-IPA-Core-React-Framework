@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 class IfefButton extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.onClick = this.onClick.bind(this);
   }
 
@@ -32,41 +32,47 @@ class IfefButton extends React.Component {
   }
 
   render() {
-    var colorClass = this.props.color ? 'button-' + this.props.color : null;
-    var classes = classnames(
-      {'button': true,
-       'button-block' : this.props.expand === 'block',
-       'button-full' : this.props.expand === 'full',
-       'button-small' : this.props.size === 'small',
-       'button-large' : this.props.size === 'large',
-       'button-outline' : this.props.type === 'outline',
-       'button-clear' : this.props.type === 'clear',
-       'icon-left' : this.props.iconPosition === 'left',
-       'icon-right' : this.props.iconPosition === 'right',
-       'icon': !this.props.iconPosition && this.props.icon,
-       'button-icon' : !this.props.children && this.props.icon && this.props.type === 'icon-clear'
+    let colorClass = this.props.color ? 'button-' + this.props.color : null;
+    let classes = classnames(
+      {
+        button: true,
+        'button-block': this.props.expand === 'block',
+        'button-full': this.props.expand === 'full',
+        'button-small': this.props.size === 'small',
+        'button-large': this.props.size === 'large',
+        'button-outline': this.props.type === 'outline',
+        'button-clear': this.props.type === 'clear',
+        'icon-left': this.props.iconPosition === 'left',
+        'icon-right': this.props.iconPosition === 'right',
+        icon: !this.props.iconPosition && this.props.icon,
+        'button-icon': !this.props.children && this.props.icon && this.props.type === 'icon-clear',
       },
       this.props.icon,
       colorClass,
       this.props.customClasses
     );
-    var button;
+    let button;
     if (this.props.link) {
       button = (
-        <Link className={ classes } to={this.props.link} onClick={this.onClick}>
-          { this.props.children }
+        <Link className={classes} to={this.props.link} onClick={this.onClick}>
+          {this.props.children}
         </Link>
       );
     } else if (this.props.href) {
       button = (
-        <a className={ classes } href={this.props.href} target={this.props.target} onClick={this.onClick}>
-          { this.props.children }
+        <a
+          className={classes}
+          href={this.props.href}
+          target={this.props.target}
+          onClick={this.onClick}
+        >
+          {this.props.children}
         </a>
       );
     } else {
       button = (
-        <button type={this.props.htmlType} className={ classes } onClick={this.onClick}>
-          { this.props.children }
+        <button type={this.props.htmlType} className={classes} onClick={this.onClick}>
+          {this.props.children}
         </button>
       );
     }
@@ -75,10 +81,7 @@ class IfefButton extends React.Component {
 }
 
 IfefButton.propTypes = {
-  link: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.element
-  ]),
+  link: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   href: PropTypes.string,
   target: PropTypes.string,
   customClasses: PropTypes.string,
@@ -90,7 +93,7 @@ IfefButton.propTypes = {
   color: PropTypes.string,
   onClick: PropTypes.func,
   backButton: PropTypes.bool,
-  htmlType: PropTypes.oneOf(['submit', 'button', 'reset']) // the value to put in <button type="???">
+  htmlType: PropTypes.oneOf(['submit', 'button', 'reset']), // the value to put in <button type="???">
 };
 
 IfefButton.defaultProps = {
@@ -111,7 +114,7 @@ IfefButton.defaultProps = {
 
 IfefButton.contextTypes = {
   ifefSetTransitionDirection: PropTypes.func,
-  history: PropTypes.object
+  history: PropTypes.object,
 };
 
 export default IfefButton;

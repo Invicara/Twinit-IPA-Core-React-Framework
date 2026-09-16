@@ -1,12 +1,12 @@
-import GenericButton from "../../IpaControls/GenericButton";
+import GenericButton from '../../IpaControls/GenericButton';
 
 export default {
-  title: "Controls/GenericButton",
+  title: 'Controls/GenericButton',
   component: GenericButton,
-  argTypes: { onClick: { action: "onClick" } },
+  argTypes: { onClick: { action: 'onClick' } },
 };
 
-const Template = (args) => {
+const Template = args => {
   return <GenericButton {...args} />;
 };
 
@@ -14,14 +14,14 @@ export const Default = Template.bind({});
 export const CustomStyle = Template.bind({});
 
 Default.args = {
-  text: "Submit",
+  text: 'Submit',
 };
 
 CustomStyle.args = {
-  text: "Custom Button",
+  text: 'Custom Button',
   styles: {
-    backgroundColor: "green",
-    color: "white",
-    borderColor: "white",
+    backgroundColor: 'green',
+    color: 'white',
+    borderColor: 'white',
   },
 };

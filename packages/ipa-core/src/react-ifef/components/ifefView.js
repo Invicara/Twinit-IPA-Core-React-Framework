@@ -5,19 +5,19 @@ import classnames from 'classnames';
 class IfefView extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       ifefHasTabs: false,
       ifefHasTabsTop: false,
       ifefHasHeader: false,
       ifefHasSubheader: false,
       ifefHasFooter: false,
-      ifefHasSubfooter: false
-    }
-    
+      ifefHasSubfooter: false,
+    };
+
     this.ifefUpdateHasX = this.ifefUpdateHasX.bind(this);
   }
-  
+
   getChildContext() {
     return {
       ifefUpdateHasX: this.ifefUpdateHasX,
@@ -26,10 +26,10 @@ class IfefView extends React.Component {
       ifefHasHeader: this.state.ifefHasHeader,
       ifefHasSubheader: this.state.ifefHasSubheader,
       ifefHasFooter: this.state.ifefHasFooter,
-      ifefHasSubfooter: this.state.ifefHasSubfooter
-    }
+      ifefHasSubfooter: this.state.ifefHasSubfooter,
+    };
   }
-  
+
   ifefUpdateHasX(hasX, value) {
     if (hasX in this.state) {
       this.setState({ [hasX]: value });
@@ -43,24 +43,17 @@ class IfefView extends React.Component {
   }
 
   render() {
-    var classes = classnames(
-      {'view': true},
-      this.props.customClasses
-    );
-    return (
-      <div className={ classes } >
-        { this.props.children }
-      </div>
-    );
+    let classes = classnames({ view: true }, this.props.customClasses);
+    return <div className={classes}>{this.props.children}</div>;
   }
 }
 
 IfefView.propTypes = {
-  customClasses: PropTypes.string
+  customClasses: PropTypes.string,
 };
 
 IfefView.defaultProps = {
-  customClasses: ''
+  customClasses: '',
 };
 
 IfefView.contextTypes = {
@@ -74,7 +67,7 @@ IfefView.childContextTypes = {
   ifefHasHeader: PropTypes.bool,
   ifefHasSubheader: PropTypes.bool,
   ifefHasFooter: PropTypes.bool,
-  ifefHasSubfooter: PropTypes.bool
+  ifefHasSubfooter: PropTypes.bool,
 };
 
 export default IfefView;

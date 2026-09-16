@@ -1,21 +1,21 @@
-import ActionButton from "../../IpaControls/ActionButton";
+import ActionButton from '../../IpaControls/ActionButton';
 
 export default {
-  title: "Controls/ActionButtonToolTip",
+  title: 'Controls/ActionButtonToolTip',
   component: ActionButton,
   parameters: {
-    backgrounds: { default: "dark" },
+    backgrounds: { default: 'dark' },
   },
-  argTypes: { onClick: { action: "onClick" } },
+  argTypes: { onClick: { action: 'onClick' } },
 };
 
-const Template = (args) => {
+const Template = args => {
   return <ActionButton {...args} />;
 };
 
 export const WithTitleAndIcon = Template.bind({});
 
 WithTitleAndIcon.args = {
-  title: "Action Button Tooltip",
-  icon: "fa fa-info",
+  title: 'Action Button Tooltip',
+  icon: 'fa fa-info',
 };

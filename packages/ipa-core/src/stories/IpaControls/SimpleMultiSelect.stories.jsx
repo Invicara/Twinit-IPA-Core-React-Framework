@@ -1,25 +1,24 @@
-import SimpleMultiSelect from "../../IpaControls/SimpleMultiSelect";
-import Select from "../../IpaControls/SimpleMultiSelect";
-import { useArgs } from "@storybook/client-api";
+import SimpleMultiSelect from '../../IpaControls/SimpleMultiSelect';
+import Select from '../../IpaControls/SimpleMultiSelect';
+import { useArgs } from '@storybook/client-api';
 
 export default {
-  title: "Controls/SimpleMultiSelect",
+  title: 'Controls/SimpleMultiSelect',
   component: SimpleMultiSelect,
-  argTypes: { onClick: { action: "onClick" } },
+  argTypes: { onClick: { action: 'onClick' } },
 };
 
-const Template = (args) => {
+const Template = args => {
   const [props, updateArgs] = useArgs();
 
   const handleChange = (e, f) => {
-    if (e.target.innerHTML[0] !== "<") {
+    if (e.target.innerHTML[0] !== '<') {
       const updateSelections = props.selections.filter(
-        (selection) => selection != e.target.innerHTML,
+        selection => selection != e.target.innerHTML
       );
       updateArgs({ ...args, selections: updateSelections });
     } else {
-      e.target.value !== "Choose another value..." &&
-      e.target.value !== "Choose a value..."
+      e.target.value !== 'Choose another value...' && e.target.value !== 'Choose a value...'
         ? props.selections.push(e.target.value)
         : null;
 
@@ -28,7 +27,7 @@ const Template = (args) => {
   };
 
   return (
-    <div onClick={handleChange} style={{ width: "200px" }}>
+    <div onClick={handleChange} style={{ width: '200px' }}>
       <SimpleMultiSelect {...args} />
     </div>
   );
@@ -37,8 +36,8 @@ const Template = (args) => {
 export const Default = Template.bind({});
 
 Default.args = {
-  propName: "",
-  available: ["Blue", "Red", "Green", "Purple", "Orange"],
+  propName: '',
+  available: ['Blue', 'Red', 'Green', 'Purple', 'Orange'],
   selections: [],
-  update: (e) => {},
+  update: e => {},
 };

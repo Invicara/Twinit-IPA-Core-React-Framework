@@ -1,30 +1,27 @@
-import React from 'react'
-import _ from 'lodash'
-import * as PropTypes from 'prop-types'
-import DatePicker from 'react-date-picker'
-import DateTimePicker from 'react-datetime-picker'
-import clsx from 'clsx'
+import React from 'react';
+import _ from 'lodash';
+import * as PropTypes from 'prop-types';
+import DatePicker from 'react-date-picker';
+import DateTimePicker from 'react-datetime-picker';
+import clsx from 'clsx';
 
-import GenericMatButton from '../../IpaControls/GenericMatButton'
-import { ScriptedLinkedSelects } from '../../IpaControls/EnhancedScriptedLinkedSelects'
-import { ControlProvider } from '../../IpaControls/ControlProvider'
+import GenericMatButton from '../../IpaControls/GenericMatButton';
+import { ScriptedLinkedSelects } from '../../IpaControls/EnhancedScriptedLinkedSelects';
+import { ControlProvider } from '../../IpaControls/ControlProvider';
 
-import produce from 'immer'
+import produce from 'immer';
 
-import GenericModal from '../../IpaDialogs/GenericModal'
-import '../../lib/mobiscroll.scss'
-import './EntityModal.scss'
-import EntityModalTextInput from './EntityModalTextInput'
-import ControlTextOverlay from '../../IpaControls/ControlTextOverlay'
-import { connect } from 'react-redux'
-import CollapsibleTextInput from '../../IpaControls/CollapsibleTextInput'
-import { FormControlLabel } from '@mui/material'
-import { PinkCheckbox } from '../../IpaControls/Checkboxes'
-import * as modal from '../../redux/slices/modal'
+import GenericModal from '../../IpaDialogs/GenericModal';
+import '../../lib/mobiscroll.scss';
+import './EntityModal.scss';
+import EntityModalTextInput from './EntityModalTextInput';
+import ControlTextOverlay from '../../IpaControls/ControlTextOverlay';
+import { connect } from 'react-redux';
+import CollapsibleTextInput from '../../IpaControls/CollapsibleTextInput';
+import { FormControlLabel } from '@mui/material';
+import { PinkCheckbox } from '../../IpaControls/Checkboxes';
+import * as modal from '../../redux/slices/modal';
 class EntityModal extends React.Component {
-
-
-
   INITIAL_STATE = {
     intialNewEntity: null,
     newEntity: null,
@@ -35,25 +32,26 @@ class EntityModal extends React.Component {
     formError: null,
     modalOpen: false,
     shouldLoadForm: true,
-    config: {}
-  }
-  constructor (props) {
-    super(props)
+    config: {},
+  };
+  constructor(props) {
+    super(props);
 
-    this.state = this.INITIAL_STATE
+    this.state = this.INITIAL_STATE;
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     try {
-      this.initiateModal()
-    } catch(err) {
+      this.initiateModal();
+    } catch (err) {
       if (err?.message === 'ENTITY_NOT_VALID') {
         this.setState({
           shouldLoadForm: false,
           error: (
-            <div className='entity-modal-error-container'> 
+            <div className="entity-modal-error-container">
               <div>
-                Cannot edit, selected entities have different properties, or they are missing properties. You should check you project's configuration
+                Cannot edit, selected entities have different properties, or they are missing
+                properties. You should check you project's configuration
               </div>
               <GenericMatButton
                 onClick={this.onCancel}
@@ -63,202 +61,214 @@ class EntityModal extends React.Component {
                 Go back
               </GenericMatButton>
             </div>
-          )
-        })
+          ),
+        });
       }
     }
-    
   }
 
   resetState = () => {
-    this.setState(this.INITIAL_STATE)
-  }
+    this.setState(this.INITIAL_STATE);
+  };
 
   initiateModal = (overridingState = {}) => {
-
-    if(this.props.action.name === 'Edit' && !this.checkEntityIsValid()) {
-      throw new Error("ENTITY_NOT_VALID")
+    if (this.props.action.name === 'Edit' && !this.checkEntityIsValid()) {
+      throw new Error('ENTITY_NOT_VALID');
     }
 
     this.setState({
       ...this.INITIAL_STATE,
       modalOpen: true,
-      ...overridingState
-    })
+      ...overridingState,
+    });
 
-    let intialNewEntity = this.getControlValues()
-    this.setState({intialNewEntity})
-  }
+    let intialNewEntity = this.getControlValues();
+    this.setState({ intialNewEntity });
+  };
 
   shouldDisableAllControls = _.memoize(
     () => this.state?.working || !!this.props.action?.component?.disableAll,
-    () =>
-      `${this.state?.working == true}_${this.props.action?.component
-        ?.disableAll == true}`
-  )
+    () => `${this.state?.working == true}_${this.props.action?.component?.disableAll == true}`
+  );
 
   normalizeEntityProperties = entity => {
-    let normalizedEntity = {}
-    _.defaultsDeep(normalizedEntity, entity)
+    let normalizedEntity = {};
+    _.defaultsDeep(normalizedEntity, entity);
 
     Object.keys(normalizedEntity.properties).forEach(pk => {
       if (!normalizedEntity.properties[pk].val) {
         normalizedEntity.properties[pk] = {
           ...normalizedEntity.properties[pk],
-          val: ''
-        }
+          val: '',
+        };
       }
-    })
-    return normalizedEntity
-  }
+    });
+    return normalizedEntity;
+  };
 
   getBulkEntityProperties = entities => {
-    if (this.props.action.name !== "Create" && entities.length === 0) {
-      throw new Error('No entity to edit')
+    if (this.props.action.name !== 'Create' && entities.length === 0) {
+      throw new Error('No entity to edit');
     }
 
     let bulkEntityProperties = {
-      ...this.normalizeEntityProperties(entities[0]).properties
-    }
+      ...this.normalizeEntityProperties(entities[0]).properties,
+    };
 
     if (entities.length > 1) {
       Object.entries(bulkEntityProperties).forEach(([key, value]) => {
         let entitiesValues = entities.map(
           entity => this.normalizeEntityProperties(entity).properties[key].val
-        )
-        let keepBulkProperty = entitiesValues.every(val => val === value.val)
+        );
+        let keepBulkProperty = entitiesValues.every(val => val === value.val);
 
         if (keepBulkProperty) {
           bulkEntityProperties[key] = {
             ...bulkEntityProperties[key],
-            hasMultipleValues: false
-          }
+            hasMultipleValues: false,
+          };
         } else {
           bulkEntityProperties[key] = {
             ...bulkEntityProperties[key],
             val: entitiesValues,
-            hasMultipleValues: true
-          }
+            hasMultipleValues: true,
+          };
         }
-      })
+      });
     }
 
-    return bulkEntityProperties
-  }
+    return bulkEntityProperties;
+  };
 
-  isBulkEdit = () => _.isArray(this.props.entity) && this.props.entity.length > 1
+  isBulkEdit = () => _.isArray(this.props.entity) && this.props.entity.length > 1;
 
   getBulkEntity = entities => ({
     'Entity Name': entities.map(entity => entity['Entity Name'] || entity['Name']),
-    properties: this.getBulkEntityProperties(entities)
-  })
+    properties: this.getBulkEntityProperties(entities),
+  });
 
-  checkEntitiesHaveSameProperties = (entities) => {
-    let propertyKeys = []
+  checkEntitiesHaveSameProperties = entities => {
+    let propertyKeys = [];
 
-    let i = 0
-    let differenceFound = false
+    let i = 0;
+    let differenceFound = false;
 
-    while(i < entities.length && !differenceFound) {
+    while (i < entities.length && !differenceFound) {
       let entity = entities[i];
-      if(i === 0) {
-        propertyKeys = Object.keys(entity.properties)
+      if (i === 0) {
+        propertyKeys = Object.keys(entity.properties);
       } else {
-        differenceFound = !_.isEqual(_.sortBy(propertyKeys), _.sortBy(Object.keys(entity.properties)))
+        differenceFound = !_.isEqual(
+          _.sortBy(propertyKeys),
+          _.sortBy(Object.keys(entity.properties))
+        );
       }
       i++;
     }
-    return !differenceFound
-  }
+    return !differenceFound;
+  };
 
   canEditEntityProperty = (entity, propertyKey) => {
-    let isHidden = _.defaultTo(this.props.action?.component?.hidden, [])
-      .find(prop => prop === propertyKey);
-    if(isHidden) {
+    let isHidden = _.defaultTo(this.props.action?.component?.hidden, []).find(
+      prop => prop === propertyKey
+    );
+    if (isHidden) {
       return true;
     }
 
-    let propertyUiType = this.props.action?.component?.propertyUiTypes?.[propertyKey]
+    let propertyUiType = this.props.action?.component?.propertyUiTypes?.[propertyKey];
     if (propertyUiType) {
-      let Control = ControlProvider.getControlComponent(propertyUiType)
-      if(Control) return true
+      let Control = ControlProvider.getControlComponent(propertyUiType);
+      if (Control) return true;
     }
 
-    let propType = entity?.properties[propertyKey]?.type
+    let propType = entity?.properties[propertyKey]?.type;
 
-    if(!propType) {
-      console.warn("Property ", propertyKey, " from entity ", entity?.['EntityName'], " is missing a type or a propertyUiTypes in the user config")
+    if (!propType) {
+      console.warn(
+        'Property ',
+        propertyKey,
+        ' from entity ',
+        entity?.['EntityName'],
+        ' is missing a type or a propertyUiTypes in the user config'
+      );
     }
-    
+
     return !!propType;
-  }
+  };
 
-  isEntityMissingProperties = (entity) => {
-    let propertyUiTypes = this.props.action?.component?.propertyUiTypes 
+  isEntityMissingProperties = entity => {
+    let propertyUiTypes = this.props.action?.component?.propertyUiTypes;
     propertyUiTypes = _.isObject(propertyUiTypes) ? propertyUiTypes : {};
 
     let propertyUiTypesProperties = Object.keys(propertyUiTypes);
-    let groupedProperties = _.flatten(_.values(this.props.action.component.groups))
+    let groupedProperties = _.flatten(_.values(this.props.action.component.groups));
 
     const hiddenProps = this.props.action.component?.hidden || [];
 
-    let neededProperties = _.difference([...groupedProperties, ...propertyUiTypesProperties], hiddenProps);
-    
-    let propertyKeys = Object.keys(entity.properties)
+    let neededProperties = _.difference(
+      [...groupedProperties, ...propertyUiTypesProperties],
+      hiddenProps
+    );
 
-    let missingProperties = _.difference(neededProperties, propertyKeys)
+    let propertyKeys = Object.keys(entity.properties);
+
+    let missingProperties = _.difference(neededProperties, propertyKeys);
     let isMissingProperties = missingProperties.length > 0;
 
-    if(isMissingProperties){
-      let entityName = entity?.["Entity Name"];
-      console.warn("Entity ", entityName, " is missing the following properties : ", missingProperties)
+    if (isMissingProperties) {
+      let entityName = entity?.['Entity Name'];
+      console.warn(
+        'Entity ',
+        entityName,
+        ' is missing the following properties : ',
+        missingProperties
+      );
     }
 
     return isMissingProperties;
-  }
+  };
 
-  canEditEntityProperties = (entity) => {
+  canEditEntityProperties = entity => {
     let entityIsMissingProperties = this.isEntityMissingProperties(entity);
 
-    let canEditAllEntityProperties = Object.keys(entity.properties).every(key => this.canEditEntityProperty(entity, key))
+    let canEditAllEntityProperties = Object.keys(entity.properties).every(key =>
+      this.canEditEntityProperty(entity, key)
+    );
 
     return !entityIsMissingProperties && canEditAllEntityProperties;
-  }
-
+  };
 
   checkEntityIsValid = () => {
-    let entities = []
-    if(_.isArray(this.props.entity)) {
-      entities = [...this.props.entity]
+    let entities = [];
+    if (_.isArray(this.props.entity)) {
+      entities = [...this.props.entity];
     } else {
-      entities = [this.props.entity]
+      entities = [this.props.entity];
     }
 
-
-    if(!this.checkEntitiesHaveSameProperties(entities)) {
-      console.warn("Entities do not have the same properties")
-      return false
+    if (!this.checkEntitiesHaveSameProperties(entities)) {
+      console.warn('Entities do not have the same properties');
+      return false;
     }
 
     return entities.every(this.canEditEntityProperties);
-  }
+  };
 
   getControlValues = () => {
-    let entity
-    let newEntity
+    let entity;
+    let newEntity;
     if (_.isArray(this.props.entity)) {
-      entity = !!this.props.entity ? this.props.entity : []
+      entity = this.props.entity ? this.props.entity : [];
       try {
-        newEntity = this.getBulkEntity(entity)
+        newEntity = this.getBulkEntity(entity);
       } catch (err) {
         if (err?.message === 'No entity to edit') {
           this.setState({
             shouldLoadForm: false,
             error: (
-              <div className='entity-modal-error-container'> 
-                <div>
-                  No entity selected
-                </div>
+              <div className="entity-modal-error-container">
+                <div>No entity selected</div>
                 <GenericMatButton
                   onClick={this.onCancel}
                   disabled={this.state.working}
@@ -267,13 +277,13 @@ class EntityModal extends React.Component {
                   Go back
                 </GenericMatButton>
               </div>
-            )
-          })
+            ),
+          });
         } else {
           this.setState({
             error: (
               <>
-                <div className='entity-modal-error'>
+                <div className="entity-modal-error">
                   An unexpected error happened, please try again later.
                 </div>
                 <GenericMatButton
@@ -284,21 +294,21 @@ class EntityModal extends React.Component {
                   Go back
                 </GenericMatButton>
               </>
-            )
-          })
+            ),
+          });
         }
       }
     } else {
-      entity = !!this.props.entity ? this.props.entity : {}
-      newEntity = this.normalizeEntityProperties(entity)
+      entity = this.props.entity ? this.props.entity : {};
+      newEntity = this.normalizeEntityProperties(entity);
     }
 
-    this.setState({ newEntity })
-    return newEntity
-  }
+    this.setState({ newEntity });
+    return newEntity;
+  };
 
   onChangeMulti = attObj => {
-    let atts = Object.keys(attObj)
+    let atts = Object.keys(attObj);
 
     const newMultiUpdatedEntity = atts.reduce(
       (partiallyUpdatedEntity, att) =>
@@ -309,116 +319,106 @@ class EntityModal extends React.Component {
           attObj[att]
         ),
       this.state.newEntity
-    )
-    this.setState({ newEntity: newMultiUpdatedEntity })
-  }
+    );
+    this.setState({ newEntity: newMultiUpdatedEntity });
+  };
 
   onChange = (att, propInfo, value) => {
-    const newEntity = this.getNewUpdatedEntity(
-      this.state.newEntity,
-      att,
-      propInfo,
-      value
-    )
-    this.setState({ newEntity })
-  }
+    const newEntity = this.getNewUpdatedEntity(this.state.newEntity, att, propInfo, value);
+    this.setState({ newEntity });
+  };
 
-  getNewUpdatedEntity (originalEntity, att, propInfo, value) {
+  getNewUpdatedEntity(originalEntity, att, propInfo, value) {
     return produce(originalEntity, newEntity => {
-      if (Array.isArray(value) && propInfo.type !== 'tags') value = value[0]
+      if (Array.isArray(value) && propInfo.type !== 'tags') value = value[0];
 
-      if (propInfo && propInfo.type === 'tags' && value === undefined)
-        value = []
+      if (propInfo && propInfo.type === 'tags' && value === undefined) value = [];
 
-      if(newEntity?.properties?.[att]) {
-        newEntity.properties[att].hasMultipleValues = false
+      if (newEntity?.properties?.[att]) {
+        newEntity.properties[att].hasMultipleValues = false;
       }
 
       if (att === 'name') {
-        newEntity['Entity Name'] = value
+        newEntity['Entity Name'] = value;
       } else if (propInfo.type === 'date' || propInfo.type === 'datetime') {
-        const epoch = !!value ? value.getTime() : null
-        const localeString = !!value ? new Date(value).toLocaleDateString() : ""
-  
+        const epoch = value ? value.getTime() : null;
+        const localeString = value ? new Date(value).toLocaleDateString() : '';
+
         newEntity.properties[att].epoch = epoch;
         newEntity.properties[att].val = localeString;
       } else {
-        newEntity.properties[att].val = value
+        newEntity.properties[att].val = value;
       }
-    })
+    });
   }
 
   close = () => {
-    this.props.destroyModal()
-  }
+    this.props.destroyModal();
+  };
 
   onCancel = async () => {
-    if (this.props.action.onCancel) this.props.action.onCancel()
-    this.close()
-  }
+    if (this.props.action.onCancel) this.props.action.onCancel();
+    this.close();
+  };
 
   hasAllRequiredProperties = entity => {
-    let pass = true
+    let pass = true;
 
-    if (!entity['Entity Name']) pass = false
+    if (!entity['Entity Name']) pass = false;
     else {
       if (this.props.action.component.requiredProperties) {
-        let propNames = Object.keys(entity.properties)
+        let propNames = Object.keys(entity.properties);
 
         for (let i = 0; i < propNames.length; i++) {
           let prop = entity.properties[propNames[i]];
-          if (
-            this.propIsRequired(prop.dName) &&
-            !prop.val
-          ) {
-            pass = false
-            break
+          if (this.propIsRequired(prop.dName) && !prop.val) {
+            pass = false;
+            break;
           }
         }
       }
     }
 
-    return pass
-  }
+    return pass;
+  };
 
   mergeEntityWithActionResult = (actionName, entity, createResult) => {
-    if (actionName !== 'Create') return entity
-    return { ...entity, ...createResult }
-  }
+    if (actionName !== 'Create') return entity;
+    return { ...entity, ...createResult };
+  };
 
   prepareEntityForAction = entity => {
-    let newEntity = _.cloneDeep(entity)
+    let newEntity = _.cloneDeep(entity);
 
-    if(_.isArray(newEntity['Entity Name'])) {
-      newEntity['Entity Name'] = newEntity['Entity Name'].map(name => name.trim())
+    if (_.isArray(newEntity['Entity Name'])) {
+      newEntity['Entity Name'] = newEntity['Entity Name'].map(name => name.trim());
     } else {
-      newEntity['Entity Name'] = newEntity['Entity Name'].trim()
+      newEntity['Entity Name'] = newEntity['Entity Name'].trim();
     }
     Object.keys(newEntity.properties).forEach(prop => {
       let propertyCanBeTrimmed =
-        newEntity.properties[prop].val &&
-        newEntity.properties[prop].type === 'text'
+        newEntity.properties[prop].val && newEntity.properties[prop].type === 'text';
       newEntity.properties[prop].val = propertyCanBeTrimmed
         ? newEntity.properties[prop].val.trim()
-        : newEntity.properties[prop].val
-    })
+        : newEntity.properties[prop].val;
+    });
 
     if (!this.hasAllRequiredProperties(newEntity)) {
-      throw new Error('MISSING_REQUIRED_PROPERTIES')
+      throw new Error('MISSING_REQUIRED_PROPERTIES');
     } else {
-      return newEntity
+      return newEntity;
     }
-  }
+  };
 
   doEntityAction = async (newEntity, oldEntity) => {
-    let result = await this.props.action.doEntityAction(
-      this.props.action.name,
-      { new: newEntity, original: oldEntity }
-    )
-    this.setState({ working: false })
+    let result = await this.props.action.doEntityAction(this.props.action.name, {
+      new: newEntity,
+      original: oldEntity,
+    });
+    this.setState({ working: false });
 
-    if(!result && !_.isObjectLike(result)) {
-      throw new Error("Scripting error: no result object yielded")
+    if (!result && !_.isObjectLike(result)) {
+      throw new Error('Scripting error: no result object yielded');
     }
 
     if (result.success) {
@@ -426,196 +426,186 @@ class EntityModal extends React.Component {
         this.props.action.name,
         newEntity,
         result.result
-      )
+      );
 
-      return result
-      
+      return result;
     } else {
-      this.props.action.onError?.(this.props.action.type, result, newEntity)
-      throw new Error(result?.message)
+      this.props.action.onError?.(this.props.action.type, result, newEntity);
+      throw new Error(result?.message);
     }
-  }
+  };
 
   filterObjectProperties = (initialObject, filterCallback) => {
     return Object.entries(initialObject)
       .filter(filterCallback)
       .reduce((obj, [key]) => {
-        obj[key] = initialObject[key]
-        return obj
-      }, {})
-  }
+        obj[key] = initialObject[key];
+        return obj;
+      }, {});
+  };
 
   prepareEntityAndDoAction = async (onlyOnChangedEntity = false) => {
     if (this.props.action.doEntityAction) {
       if (_.isArray(this.props.entity)) {
-        let preparedEntities = []
-        let oldEntities = []
+        let preparedEntities = [];
+        let oldEntities = [];
         this.props.entity.forEach(entity => {
           let newProperties = this.filterObjectProperties(
             this.state.newEntity.properties,
-            ([propertyKey, propertyValue]) =>
-              propertyValue.hasMultipleValues === false
-          )
-          const countNewProperties = Object.keys(newProperties).length
+            ([propertyKey, propertyValue]) => propertyValue.hasMultipleValues === false
+          );
+          const countNewProperties = Object.keys(newProperties).length;
           if (onlyOnChangedEntity === false || countNewProperties > 0) {
             let newEntity = {
               ...entity,
-              properties: { ...entity.properties, ...newProperties }
-            }
-            preparedEntities.push(this.prepareEntityForAction(newEntity))
-            oldEntities.push(entity)
+              properties: { ...entity.properties, ...newProperties },
+            };
+            preparedEntities.push(this.prepareEntityForAction(newEntity));
+            oldEntities.push(entity);
           }
-        })
+        });
 
         let entityActionPromises = preparedEntities.map((preparedEntity, i) =>
           this.doEntityAction(preparedEntity, oldEntities[i])
-        )
+        );
 
-        let results = await Promise.all(entityActionPromises)
-        this.props.action.onSuccess?.(
-          this.props.action.type,
-          preparedEntities,
-          results[0]
-        )
+        let results = await Promise.all(entityActionPromises);
+        this.props.action.onSuccess?.(this.props.action.type, preparedEntities, results[0]);
       } else {
-        let preparedEntity = this.prepareEntityForAction(this.state.newEntity)
-        let result = await this.doEntityAction(preparedEntity, this.props.entity)
-        this.props.action.onSuccess?.(
-          this.props.action.type,
-          preparedEntity,
-          result
-        )
+        let preparedEntity = this.prepareEntityForAction(this.state.newEntity);
+        let result = await this.doEntityAction(preparedEntity, this.props.entity);
+        this.props.action.onSuccess?.(this.props.action.type, preparedEntity, result);
       }
-      
-      this.close()
+
+      this.close();
       this.resetState();
     }
-  }
+  };
 
   startEdit = async () => {
-    if(_.isEqual(this.state.intialNewEntity, this.state.newEntity)) {
-      this.close()
-      return
-    }    
+    if (_.isEqual(this.state.intialNewEntity, this.state.newEntity)) {
+      this.close();
+      return;
+    }
 
     try {
       await this.prepareEntityAndDoAction(true);
     } catch (err) {
       let formErrorMessage =
-        'Unexpected error while preparing the entities for saving, please try again later'
-      
-      switch(err?.message) {
-        case "MISSING_REQUIRED_PROPERTIES":
-          formErrorMessage = 'Required properties are missing values!'
+        'Unexpected error while preparing the entities for saving, please try again later';
+
+      switch (err?.message) {
+        case 'MISSING_REQUIRED_PROPERTIES':
+          formErrorMessage = 'Required properties are missing values!';
           break;
         default:
-          formErrorMessage = err.message
+          formErrorMessage = err.message;
           break;
       }
-      const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
-      this.setState({formError})
+      const formError = <div className="entity-modal-error">{formErrorMessage}</div>;
+      this.setState({ formError });
     }
-  }
+  };
 
   startCreate = async () => {
     try {
       await this.prepareEntityAndDoAction(true);
     } catch (err) {
       let formErrorMessage =
-        'Unexpected error while preparing the entities for saving, please try again later'
-      
-      switch(err?.message) {
-        case "MISSING_REQUIRED_PROPERTIES":
-          formErrorMessage = 'Required properties are missing values!'
+        'Unexpected error while preparing the entities for saving, please try again later';
+
+      switch (err?.message) {
+        case 'MISSING_REQUIRED_PROPERTIES':
+          formErrorMessage = 'Required properties are missing values!';
           break;
         default:
-          formErrorMessage = err.message
+          formErrorMessage = err.message;
           break;
       }
-      const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
-      this.setState({formError})
+      const formError = <div className="entity-modal-error">{formErrorMessage}</div>;
+      this.setState({ formError });
     }
-  }
+  };
 
   startDelete = async () => {
     try {
       await this.prepareEntityAndDoAction();
     } catch (err) {
       let formErrorMessage =
-        'Unexpected error while preparing the entities for deletion, please try again later'
-      
-      switch(err?.message) {
-        case "MISSING_REQUIRED_PROPERTIES":
-          formErrorMessage = 'Required properties are missing values!'
+        'Unexpected error while preparing the entities for deletion, please try again later';
+
+      switch (err?.message) {
+        case 'MISSING_REQUIRED_PROPERTIES':
+          formErrorMessage = 'Required properties are missing values!';
           break;
         default:
-          formErrorMessage = err.message
+          formErrorMessage = err.message;
           break;
       }
-      const formError = <div className='entity-modal-error'>{formErrorMessage}</div>
-      this.setState({formError})
+      const formError = <div className="entity-modal-error">{formErrorMessage}</div>;
+      this.setState({ formError });
     }
-  }
+  };
 
   onConfirm = async () => {
-    this.setState({ working: true, error: null, formError: null })
-    switch(this.props.action.name) {
-      case "Edit":
+    this.setState({ working: true, error: null, formError: null });
+    switch (this.props.action.name) {
+      case 'Edit':
         await this.startEdit();
         break;
-      case "Create":
+      case 'Create':
         await this.startCreate();
         break;
-      case "Delete":
+      case 'Delete':
         await this.startDelete();
         break;
       default:
-        console.warn("Unexpected action name : ", this.props.action.name);
+        console.warn('Unexpected action name : ', this.props.action.name);
         break;
-      }
-      this.setState({working: false})
-  }
+    }
+    this.setState({ working: false });
+  };
 
   dashPropDName = propDName => {
-    if(!_.isString(propDName)) return propDName
-    return propDName.split(' ').join('-')
-  }
+    if (!_.isString(propDName)) return propDName;
+    return propDName.split(' ').join('-');
+  };
 
   propIsRequired = prop => {
-    let componentCfg = this.props.action.component
-    let hasReqProps = !!componentCfg.requiredProperties
+    let componentCfg = this.props.action.component;
+    let hasReqProps = !!componentCfg.requiredProperties;
 
-    return hasReqProps && componentCfg.requiredProperties.includes(prop)
-  }
+    return hasReqProps && componentCfg.requiredProperties.includes(prop);
+  };
 
   canEditProperty = (entity, propertyKey) => {
-    let propType = entity?.properties[propertyKey]?.type
-    if(!propType) {
-      return false
+    let propType = entity?.properties[propertyKey]?.type;
+    if (!propType) {
+      return false;
     }
 
-    let propertyUiType = this.props.action?.component?.propertyUiTypes?.[propertyKey]
+    let propertyUiType = this.props.action?.component?.propertyUiTypes?.[propertyKey];
 
     if (propertyUiType) {
-      let Control = ControlProvider.getControlComponent(propertyUiType)
-      return !!Control
+      let Control = ControlProvider.getControlComponent(propertyUiType);
+      return !!Control;
     }
 
     return true;
-  }
+  };
 
   getControl = prop => {
-    let { newEntity } = this.state
-    
-    const showUOMProperty = !this.props.action?.component?.isUOMHidden && !!this.state.newEntity?.properties[prop]?.uom
+    let { newEntity } = this.state;
 
-    let propInfo = this.state.newEntity.properties[prop]
-    let propType = propInfo && propInfo.type ? propInfo.type : 'missing'
+    const showUOMProperty =
+      !this.props.action?.component?.isUOMHidden && !!this.state.newEntity?.properties[prop]?.uom;
+
+    let propInfo = this.state.newEntity.properties[prop];
+    let propType = propInfo && propInfo.type ? propInfo.type : 'missing';
     let disableControl =
       this.shouldDisableAllControls() ||
       this.props?.action?.component?.disabled?.includes(prop) ||
-      this.isBulkEdit() && this.props?.action?.component?.disabledInMulti?.includes(prop);
-
+      (this.isBulkEdit() && this.props?.action?.component?.disabledInMulti?.includes(prop));
 
     switch (propType) {
       case 'number':
@@ -624,19 +614,15 @@ class EntityModal extends React.Component {
         if (this.props.action?.component?.propertyUiTypes?.[prop]) {
           let Control = ControlProvider.getControlComponent(
             this.props.action.component.propertyUiTypes[prop]
-          )
+          );
 
           if (!Control)
             return (
-              <div key={prop}>
-                Configured propertyUiType Component for {prop} Doesn't Exist
-              </div>
-            )
+              <div key={prop}>Configured propertyUiType Component for {prop} Doesn't Exist</div>
+            );
           else {
-            let currentValue = {}
-            currentValue[prop] = Array.isArray(propInfo.val)
-              ? propInfo.val
-              : [propInfo.val]
+            let currentValue = {};
+            currentValue[prop] = Array.isArray(propInfo.val) ? propInfo.val : [propInfo.val];
 
             return (
               <div
@@ -646,39 +632,32 @@ class EntityModal extends React.Component {
                   this.propIsRequired(prop) && 'required'
                 )}
               >
-                <div className='entity-property-control-row'>
+                <div className="entity-property-control-row">
                   <Control
                     {...this.props.action.component.propertyUiTypes[prop]}
-                    currentValue={
-                      propInfo.hasMultipleValues ? undefined : currentValue
-                    }
+                    currentValue={propInfo.hasMultipleValues ? undefined : currentValue}
                     onChange={e => this.onChange(prop, propInfo, e[prop])}
                     noFetch={true}
-                    highlightedOptions={
-                      propInfo.hasMultipleValues ? propInfo.val : []
-                    }
+                    highlightedOptions={propInfo.hasMultipleValues ? propInfo.val : []}
                     placeholder={
-                      propInfo.hasMultipleValues && (
-                        <ControlTextOverlay text='Multiple values' />
-                      )
+                      propInfo.hasMultipleValues && <ControlTextOverlay text="Multiple values" />
                     }
                     id={prop}
                     filterInfo={
-                      this.props.action.component.propertyUiTypes[prop]
-                        .queryFilter
+                      this.props.action.component.propertyUiTypes[prop].queryFilter
                         ? newEntity
                         : null
                     }
                     disabled={disableControl}
                   />
                   {showUOMProperty && (
-                    <span className='property-uom'>
+                    <span className="property-uom">
                       {this.state.newEntity.properties[prop].uom}
                     </span>
                   )}
                 </div>
               </div>
-            )
+            );
           }
         } else {
           return (
@@ -690,33 +669,31 @@ class EntityModal extends React.Component {
               )}
             >
               <EntityModalTextInput
-                className='entity-property-control-row'
+                className="entity-property-control-row"
                 key={prop}
                 labelProps={{
-                  text: prop
+                  text: prop,
                 }}
                 inputProps={{
                   type: propInfo.type,
                   value: propInfo.hasMultipleValues ? undefined : propInfo.val,
                   onChange: e => this.onChange(prop, propInfo, e.target.value),
-                  disabled: disableControl
+                  disabled: disableControl,
                 }}
                 hasMultipleValues={propInfo.hasMultipleValues}
               />
               {showUOMProperty && (
-                <span className='property-uom'>
-                  {this.state.newEntity.properties[prop].uom}
-                </span>
+                <span className="property-uom">{this.state.newEntity.properties[prop].uom}</span>
               )}
             </div>
-          )
+          );
         }
       }
 
       case 'date': {
-        let displayDate = !!this.state.newEntity.properties[prop].epoch
+        let displayDate = this.state.newEntity.properties[prop].epoch
           ? new Date(this.state.newEntity.properties[prop].epoch)
-          : null
+          : null;
         return (
           <div
             key={propInfo.dName + '_div'}
@@ -726,9 +703,9 @@ class EntityModal extends React.Component {
             )}
           >
             <label style={{ margin: '10px', fontWeight: 'bold' }}>{prop}</label>
-            <div className='entity-property-control-row'>
+            <div className="entity-property-control-row">
               <ControlTextOverlay
-                text='Multiple values'
+                text="Multiple values"
                 textStyle={{ backgroundColor: 'white' }}
                 hide={!propInfo.hasMultipleValues}
               >
@@ -736,20 +713,20 @@ class EntityModal extends React.Component {
                   key={prop}
                   onChange={e => this.onChange(prop, propInfo, e)}
                   value={displayDate}
-                  className='form-control'
+                  className="form-control"
                   calendarIcon={null}
                   disabled={disableControl}
                 />
               </ControlTextOverlay>
             </div>
           </div>
-        )
+        );
       }
 
       case 'datetime': {
-        let displayDate = !!this.state.newEntity.properties[prop].epoch
+        let displayDate = this.state.newEntity.properties[prop].epoch
           ? new Date(this.state.newEntity.properties[prop].epoch)
-          : null
+          : null;
         return (
           <div
             key={propInfo.dName + '_div'}
@@ -759,28 +736,28 @@ class EntityModal extends React.Component {
             )}
           >
             <label style={{ margin: '10px', fontWeight: 'bold' }}>{prop}</label>
-            <div className='entity-property-control-row'>
+            <div className="entity-property-control-row">
               <DateTimePicker
                 key={prop}
                 onChange={e => this.onChange(prop, propInfo, e)}
                 value={displayDate}
-                className='form-control'
+                className="form-control"
                 calendarIcon={null}
                 disableClock={true}
                 disabled={disableControl}
               />
             </div>
           </div>
-        )
+        );
       }
 
       case 'boolean': {
-        let value = propInfo.val
-        let multipleValues = _.isArray(value) && value.length > 1
+        let value = propInfo.val;
+        let multipleValues = _.isArray(value) && value.length > 1;
         let checked = multipleValues ? checked : !!value;
-        let shouldDisplayValueAsLabel = ![true, false, undefined, null].includes(value) 
-        let label = shouldDisplayValueAsLabel ? value.toString() : ""; 
-        label = multipleValues ? "Multiple values" : label;
+        let shouldDisplayValueAsLabel = ![true, false, undefined, null].includes(value);
+        let label = shouldDisplayValueAsLabel ? value.toString() : '';
+        label = multipleValues ? 'Multiple values' : label;
         return (
           <div
             key={propInfo.dName + '_div'}
@@ -790,8 +767,9 @@ class EntityModal extends React.Component {
             )}
           >
             <label style={{ margin: '10px', fontWeight: 'bold' }}>{prop}</label>
-            <div className='entity-property-control-row'>
-              <FormControlLabel control={
+            <div className="entity-property-control-row">
+              <FormControlLabel
+                control={
                   <PinkCheckbox
                     checked={checked}
                     id={propInfo.dName}
@@ -803,73 +781,64 @@ class EntityModal extends React.Component {
               />
             </div>
           </div>
-        )
+        );
       }
 
       case 'missing': {
         return (
-          <div
-            key={prop + '_div'}
-            className={clsx(this.dashPropDName(prop) + '-div')}
-          >
+          <div key={prop + '_div'} className={clsx(this.dashPropDName(prop) + '-div')}>
             <label style={{ margin: '10px', fontWeight: 'bold' }}>{prop}</label>
-            <div className='entity-property-control-row'>
+            <div className="entity-property-control-row">
               <div style={{ color: 'red' }}>
                 {prop + ' is missing a valid property type configuration'}
               </div>
             </div>
           </div>
-        )
+        );
       }
 
       default: {
-        return null
+        return null;
       }
     }
-  }
+  };
 
   getScriptedHierarchyInputs = () => {
-    let selects = this.props.action.component.hierarchySelects.selects
+    let selects = this.props.action.component.hierarchySelects.selects;
 
-    selects = selects.map((s) => {
-      let newS = {...s};
-      if (this.propIsRequired(s.display)) newS.required = true
-      return newS
-    })
+    selects = selects.map(s => {
+      let newS = { ...s };
+      if (this.propIsRequired(s.display)) newS.required = true;
+      return newS;
+    });
 
-    let currentValue = {}
-    let selectKeys = selects.map(select => select.display)
+    let currentValue = {};
+    let selectKeys = selects.map(select => select.display);
 
-    let highlightedOptions = {}
+    let highlightedOptions = {};
 
-    let placeholders = {}
+    let placeholders = {};
 
     selectKeys.forEach(propertyKey => {
-      const property = this.state.newEntity.properties[propertyKey]
-      const value = property?.hasMultipleValues ? undefined : [property?.val]
+      const property = this.state.newEntity.properties[propertyKey];
+      const value = property?.hasMultipleValues ? undefined : [property?.val];
       placeholders[propertyKey] = property?.hasMultipleValues && (
-        <ControlTextOverlay text='Multiple values' />
-      )
-      highlightedOptions[propertyKey] = property?.hasMultipleValues
-        ? property?.val
-        : undefined
-      currentValue[propertyKey] = value
-    })
+        <ControlTextOverlay text="Multiple values" />
+      );
+      highlightedOptions[propertyKey] = property?.hasMultipleValues ? property?.val : undefined;
+      currentValue[propertyKey] = value;
+    });
 
-    const isAlwaysDisabled = _.isArray(this.props.action?.component?.disabled) &&
-      selectKeys.some(prop =>
-        this.props.action.component.disabled.includes(prop)
-      )
+    const isAlwaysDisabled =
+      _.isArray(this.props.action?.component?.disabled) &&
+      selectKeys.some(prop => this.props.action.component.disabled.includes(prop));
 
-    const isDisabledInBulkEdit = this.isBulkEdit() &&
+    const isDisabledInBulkEdit =
+      this.isBulkEdit() &&
       _.isArray(this.props.action?.component?.disabledInMulti) &&
-      selectKeys.some(prop =>
-        this.props.action.component.disabledInMulti.includes(prop)
-      )
+      selectKeys.some(prop => this.props.action.component.disabledInMulti.includes(prop));
 
-    const disabled = this.shouldDisableAllControls() || 
-      isAlwaysDisabled || 
-      isDisabledInBulkEdit
+    const disabled = this.shouldDisableAllControls() || isAlwaysDisabled || isDisabledInBulkEdit;
 
     return (
       <div>
@@ -884,52 +853,51 @@ class EntityModal extends React.Component {
           selects={selects}
         />
       </div>
-    )
-  }
+    );
+  };
 
-  render () {
-
-    let body = null
-    let entityType = 'Entity'
-    if (this.props.type && this.props.type.singular)
-      entityType = this.props.type.singular
+  render() {
+    let body = null;
+    let entityType = 'Entity';
+    if (this.props.type && this.props.type.singular) entityType = this.props.type.singular;
 
     if (this.state.newEntity) {
-      const groups = this.getGroups()
-      let name = this.state.newEntity['Entity Name']
-      const multipleValues = _.isArray(name) && name.length > 1
+      const groups = this.getGroups();
+      let name = this.state.newEntity['Entity Name'];
+      const multipleValues = _.isArray(name) && name.length > 1;
       const valuesCount = multipleValues && name.length;
-      name = multipleValues ? name.join('; ') : name
-      const shouldDisableControl = this.shouldDisableAllControls() || 
+      name = multipleValues ? name.join('; ') : name;
+      const shouldDisableControl =
+        this.shouldDisableAllControls() ||
         multipleValues ||
         this.props.action.component.disabled?.includes('Entity Name') ||
-        this.isBulkEdit() && this.props.action.component.disabledInMulti?.includes('Entity Name')
-        
+        (this.isBulkEdit() && this.props.action.component.disabledInMulti?.includes('Entity Name'));
 
       const InputComponent = multipleValues ? CollapsibleTextInput : EntityModalTextInput;
 
       body = (
-        <div className='entity-modal-body'>
-          <div key={'namediv'} className='required'>
+        <div className="entity-modal-body">
+          <div key={'namediv'} className="required">
             <InputComponent
               labelProps={{
                 text: `${entityType} Name`,
               }}
               inputProps={{
-                collapsedText: multipleValues ? `Multiple ${this.props.type.plural} (${valuesCount})` : name,
+                collapsedText: multipleValues
+                  ? `Multiple ${this.props.type.plural} (${valuesCount})`
+                  : name,
                 key: 'entityname',
-                type: "text",
-                onChange: (e) => {
+                type: 'text',
+                onChange: e => {
                   this.onChange('name', null, e.target.value);
                 },
                 value: name,
-                disabled: shouldDisableControl
+                disabled: shouldDisableControl,
               }}
             />
           </div>
-          <div id='hierarchy-selects'>
-            {this.props.action.component.hierarchySelects &&
-              this.getScriptedHierarchyInputs()}
+          <div id="hierarchy-selects">
+            {this.props.action.component.hierarchySelects && this.getScriptedHierarchyInputs()}
           </div>
           {!this.props.action.component.showGroupNames && <hr />}
           <div>
@@ -941,22 +909,17 @@ class EntityModal extends React.Component {
                     <div className={'group-name'}>{groupName}</div>
                   )}
                   {groups[groupName]
-                    .filter(
-                      prop =>
-                        !(this.props.action.component.hidden || []).includes(
-                          prop
-                        )
-                    )
+                    .filter(prop => !(this.props.action.component.hidden || []).includes(prop))
                     .map(prop => this.getControl(prop))}
                 </div>
               ))}
           </div>
         </div>
-      )
+      );
     }
 
     let modalBody = (
-      <div className='mbsc-grid'>
+      <div className="mbsc-grid">
         {this.state.error || (
           <>
             {body}
@@ -967,7 +930,7 @@ class EntityModal extends React.Component {
                 width: '100%',
                 display: 'inline-flex',
                 justifyContent: 'flex-end',
-                marginTop: '20px'
+                marginTop: '20px',
               }}
             >
               <GenericMatButton
@@ -980,7 +943,7 @@ class EntityModal extends React.Component {
               <GenericMatButton
                 onClick={this.onConfirm}
                 disabled={this.state.working}
-                customClasses='attention'
+                customClasses="attention"
               >
                 {this.props.action.component.okButtonText
                   ? this.props.action.component.okButtonText
@@ -989,43 +952,45 @@ class EntityModal extends React.Component {
             </div>
           </>
         )}
-        
       </div>
-    )
+    );
 
-    const title = this.props.action.title || this.props.action.name + ' ' + entityType
-    const titleEl = <span>{title}</span>
+    const title = this.props.action.title || this.props.action.name + ' ' + entityType;
+    const titleEl = <span>{title}</span>;
 
-    return <GenericModal
-      title={titleEl}
-      customClasses={'ipa-modal ipa-modal-no-x-close'}
-      modalBody={modalBody}
-    />
+    return (
+      <GenericModal
+        title={titleEl}
+        customClasses={'ipa-modal ipa-modal-no-x-close'}
+        modalBody={modalBody}
+      />
+    );
   }
 
-  getGroups () {
-    const hiddenProps = this.props.action.component?.hidden || []
-    const allProps = _.difference(_.keys(this.state.newEntity.properties), hiddenProps)
-    const groupedProps = _.difference(_.flatten(_.values(this.props.action.component.groups)), hiddenProps)
-    const otherProps = _.difference(allProps, groupedProps)
+  getGroups() {
+    const hiddenProps = this.props.action.component?.hidden || [];
+    const allProps = _.difference(_.keys(this.state.newEntity.properties), hiddenProps);
+    const groupedProps = _.difference(
+      _.flatten(_.values(this.props.action.component.groups)),
+      hiddenProps
+    );
+    const otherProps = _.difference(allProps, groupedProps);
 
-    let groups = {...this.props.action.component.groups};
-    if(otherProps) {
-      groups["Other"] = otherProps;
+    let groups = { ...this.props.action.component.groups };
+    if (otherProps) {
+      groups['Other'] = otherProps;
     }
-    return groups
+    return groups;
   }
 }
 
 const mapStateToProps = state => ({
-  modal: state.modal
-})
+  modal: state.modal,
+});
 
 const mapDispatchToProps = {
-  destroyModal: modal.actions.destroy
-}
-
-
+  destroyModal: modal.actions.destroy,
+};
 
 EntityModal.contextTypes = {
   ifefPlatform: PropTypes.object,
@@ -1035,20 +1000,20 @@ EntityModal.contextTypes = {
   ifefUpdatePopover: PropTypes.func,
   ifefUpdatePopup: PropTypes.func,
   ifefShowModal: PropTypes.func,
-  ifefModalOpen: PropTypes.bool
-}
+  ifefModalOpen: PropTypes.bool,
+};
 
-const ConnectedEntityModal =  connect(mapStateToProps, mapDispatchToProps)(EntityModal)
-export default ConnectedEntityModal
+const ConnectedEntityModal = connect(mapStateToProps, mapDispatchToProps)(EntityModal);
+export default ConnectedEntityModal;
 
 export const EntityModalFactory = {
-  create: ({ type, action, entity, context, reduxStore}) => {
-    reduxStore.dispatch(modal.actions.setModal({
-      component: ConnectedEntityModal, 
-      props: {action, entity, type}, 
-      open: true
-    }))
-  }
-}
-
-
+  create: ({ type, action, entity, context, reduxStore }) => {
+    reduxStore.dispatch(
+      modal.actions.setModal({
+        component: ConnectedEntityModal,
+        props: { action, entity, type },
+        open: true,
+      })
+    );
+  },
+};

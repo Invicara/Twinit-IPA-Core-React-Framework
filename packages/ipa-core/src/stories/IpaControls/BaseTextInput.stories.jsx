@@ -1,16 +1,16 @@
-import BaseTextInput from "../../IpaControls/BaseTextInput";
-import { useArgs } from "@storybook/client-api";
+import BaseTextInput from '../../IpaControls/BaseTextInput';
+import { useArgs } from '@storybook/client-api';
 
 export default {
-  title: "Controls/BaseTextInput",
+  title: 'Controls/BaseTextInput',
   component: BaseTextInput,
   parameters: {
-    backgrounds: { default: "light" },
+    backgrounds: { default: 'light' },
   },
   argTypes: {},
 };
 
-const Template = (args) => {
+const Template = args => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = (e, f) => {
@@ -23,7 +23,7 @@ const Template = (args) => {
     });
   };
   return (
-    <div onChange={handleChange} style={{ maxWidth: "200px" }}>
+    <div onChange={handleChange} style={{ maxWidth: '200px' }}>
       <BaseTextInput {...args} />
     </div>
   );
@@ -33,35 +33,35 @@ export const Unrequired = Template.bind({});
 export const Required = Template.bind({});
 
 Unrequired.args = {
-  className: "",
+  className: '',
   labelProps: {
     styles: {},
-    text: "Address",
-    className: "",
+    text: 'Address',
+    className: '',
     required: false,
   },
   inputProps: {
-    type: "text",
-    value: "",
+    type: 'text',
+    value: '',
     styles: {},
-    placeholder: "",
+    placeholder: '',
     disabled: false,
   },
 };
 
 Required.args = {
-  className: "",
+  className: '',
   labelProps: {
     styles: {},
-    text: "Surname",
-    className: "",
+    text: 'Surname',
+    className: '',
     required: true,
   },
   inputProps: {
-    type: "text",
-    value: "",
+    type: 'text',
+    value: '',
     styles: {},
-    placeholder: "",
+    placeholder: '',
     disabled: false,
   },
 };

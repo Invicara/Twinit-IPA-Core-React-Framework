@@ -7,9 +7,7 @@
       "iaf_dt_types",
       "iaf_ext_val_scr"
     ],
-    "exec": [
-      "loadProjectAndCollections"
-    ]
+    "exec": ["loadProjectAndCollections"]
   },
   "entityDataConfig": {
     "Model Element": {
@@ -21,11 +19,7 @@
           "className": "simple-property-grid",
           "groupClassName": "simple-table-group-name",
           "groups": {
-            "Base Properties": [
-              "Revit Family",
-              "Revit Type",
-              "SystemelementId"
-            ]
+            "Base Properties": ["Revit Family", "Revit Type", "SystemelementId"]
           }
         }
       }
@@ -40,25 +34,10 @@
           "groupClassName": "simple-table-group-name",
           "hidden": [],
           "groups": {
-            "Identification": [
-              "Mark",
-              "Type Mark",
-              "Manufacturer",
-              "Description"
-            ],
-            "Sensor Information": [
-              "SensorIDs"
-            ],
-            "Location": [
-              "Level",
-              "Room Name",
-              "Room Number"
-            ],
-            "System Information": [
-              "System Name",
-              "System Classification",
-              "Workset"
-            ],
+            "Identification": ["Mark", "Type Mark", "Manufacturer", "Description"],
+            "Sensor Information": ["SensorIDs"],
+            "Location": ["Level", "Room Name", "Room Number"],
+            "System Information": ["System Name", "System Classification", "Workset"],
             "Classification": [
               "dtCategory",
               "dtType",
@@ -76,12 +55,7 @@
               "Hoare Lea Schedule",
               "CISfb Code"
             ],
-            "Revit Data": [
-              "Revit Family",
-              "Revit Type",
-              "revitGuid",
-              "revitId"
-            ]
+            "Revit Data": ["Revit Family", "Revit Type", "revitGuid", "revitId"]
           }
         }
       },
@@ -138,19 +112,10 @@
           "name": "SimpleTableGroup",
           "className": "simple-property-grid",
           "groupClassName": "simple-table-group-name",
-          "hidden": [
-            "Area Num"
-          ],
+          "hidden": ["Area Num"],
           "groups": {
-            "Location Information": [
-              "Level",
-              "Name",
-              "Number",
-              "Area"
-            ],
-            "Sensor Information": [
-              "SensorIDs"
-            ],
+            "Location Information": ["Level", "Name", "Number", "Area"],
+            "Sensor Information": ["SensorIDs"],
             "Revit Information": [
               "Revit Family",
               "Revit Type",
@@ -195,9 +160,7 @@
               "axisLabel": "Occupancy",
               "axisLabelPosition": "middle",
               "displayInTooltip": "Occupancy",
-              "colors": [
-                "#7AAABE"
-              ],
+              "colors": ["#7AAABE"],
               "curve": "monotoneX",
               "yScale": {
                 "type": "linear",
@@ -210,10 +173,7 @@
               "lineWidth": 4
             },
             "line2": {
-              "colors": [
-                "#9B8DC6",
-                "#DBCBE8"
-              ],
+              "colors": ["#9B8DC6", "#DBCBE8"],
               "curve": "monotoneX",
               "axisLabel": "CO2",
               "axisLabelPosition": "middle",
@@ -430,9 +390,7 @@
       "description": "Home",
       "pageComponent": "dashboards/DashboardView",
       "path": "/homepage",
-      "scriptTypes": [
-        "iaf_dashboard"
-      ],
+      "scriptTypes": ["iaf_dashboard"],
       "config": {
         "layout": "grid",
         "className": "homepage",
@@ -583,11 +541,7 @@
                 "className": "simple-property-grid",
                 "groupClassName": "simple-table-group-name",
                 "groups": {
-                  "Base Properties": [
-                    "Revit Family",
-                    "Revit Type",
-                    "SystemelementId"
-                  ]
+                  "Base Properties": ["Revit Family", "Revit Type", "SystemelementId"]
                 }
               }
             }
@@ -602,25 +556,10 @@
                 "groupClassName": "simple-table-group-name",
                 "hidden": [],
                 "groups": {
-                  "Identification": [
-                    "Mark",
-                    "Type Mark",
-                    "Manufacturer",
-                    "Description"
-                  ],
-                  "Sensor Information": [
-                    "SensorIDs"
-                  ],
-                  "Location": [
-                    "Level",
-                    "Room Name",
-                    "Room Number"
-                  ],
-                  "System Information": [
-                    "System Name",
-                    "System Classification",
-                    "Workset"
-                  ],
+                  "Identification": ["Mark", "Type Mark", "Manufacturer", "Description"],
+                  "Sensor Information": ["SensorIDs"],
+                  "Location": ["Level", "Room Name", "Room Number"],
+                  "System Information": ["System Name", "System Classification", "Workset"],
                   "Classification": [
                     "dtCategory",
                     "dtType",
@@ -638,12 +577,7 @@
                     "Hoare Lea Schedule",
                     "CISfb Code"
                   ],
-                  "Revit Data": [
-                    "Revit Family",
-                    "Revit Type",
-                    "revitGuid",
-                    "revitId"
-                  ]
+                  "Revit Data": ["Revit Family", "Revit Type", "revitGuid", "revitId"]
                 }
               }
             },
@@ -658,9 +592,7 @@
               "alerts": {
                 "script": "getAlertsForAssetDemo",
                 "query": {
-                  "tags": [
-                    "AHU"
-                  ]
+                  "tags": ["AHU"]
                 }
               }
             },
@@ -708,19 +640,10 @@
                 "name": "SimpleTableGroup",
                 "className": "simple-property-grid",
                 "groupClassName": "simple-table-group-name",
-                "hidden": [
-                  "Area Num"
-                ],
+                "hidden": ["Area Num"],
                 "groups": {
-                  "Location Information": [
-                    "Level",
-                    "Name",
-                    "Number",
-                    "Area"
-                  ],
-                  "Sensor Information": [
-                    "SensorIDs"
-                  ],
+                  "Location Information": ["Level", "Name", "Number", "Area"],
+                  "Sensor Information": ["SensorIDs"],
                   "Revit Information": [
                     "Revit Family",
                     "Revit Type",
@@ -765,9 +688,7 @@
                     "axisLabel": "Occupancy",
                     "axisLabelPosition": "middle",
                     "displayInTooltip": "Occupancy",
-                    "colors": [
-                      "#7AAABE"
-                    ],
+                    "colors": ["#7AAABE"],
                     "curve": "monotoneX",
                     "yScale": {
                       "type": "linear",
@@ -780,10 +701,7 @@
                     "lineWidth": 4
                   },
                   "line2": {
-                    "colors": [
-                      "#9B8DC6",
-                      "#DBCBE8"
-                    ],
+                    "colors": ["#9B8DC6", "#DBCBE8"],
                     "curve": "monotoneX",
                     "axisLabel": "CO2",
                     "axisLabelPosition": "middle",
@@ -801,18 +719,14 @@
                 "alerts": {
                   "script": "getAlertsForSpaceDemo",
                   "query": {
-                    "tags": [
-                      "CO2"
-                    ]
+                    "tags": ["CO2"]
                   }
                 }
               },
               "alerts": {
                 "script": "getAlertsForSpaceDemo",
                 "query": {
-                  "tags": [
-                    "CO2"
-                  ]
+                  "tags": ["CO2"]
                 }
               }
             }
@@ -907,21 +821,9 @@
                 },
                 "showGroupNames": true,
                 "groups": {
-                  "Asset Properties": [
-                    "Floor",
-                    "Mark",
-                    "Room"
-                  ],
-                  "Product": [
-                    "Manufacturer",
-                    "Model"
-                  ],
-                  "Classification": [
-                    "Revit Family",
-                    "Revit Type",
-                    "dtCategory",
-                    "dtType"
-                  ],
+                  "Asset Properties": ["Floor", "Mark", "Room"],
+                  "Product": ["Manufacturer", "Model"],
+                  "Classification": ["Revit Family", "Revit Type", "dtCategory", "dtType"],
                   "General": [
                     "Date",
                     "DateTime",
@@ -942,10 +844,7 @@
               "showOnTable": true,
               "component": {
                 "name": "EntityModal",
-                "requiredProperties": [
-                  "dtCategory",
-                  "dtType"
-                ],
+                "requiredProperties": ["dtCategory", "dtType"],
                 "hierarchySelects": {
                   "id": "edithierarchyselects",
                   "query": "<<SCRIPTED_LINKED_SELECTS>>",
@@ -964,35 +863,13 @@
                   ]
                 },
                 "showGroupNames": true,
-                "hidden": [
-                  "dtCategory",
-                  "dtType",
-                  "Revit Blob"
-                ],
-                "disabledInMulti": [
-                  "Revit Family",
-                  "Revit Type"
-                ],
+                "hidden": ["dtCategory", "dtType", "Revit Blob"],
+                "disabledInMulti": ["Revit Family", "Revit Type"],
                 "groups": {
-                  "Asset Properties": [
-                    "Containing Floor",
-                    "Mark",
-                    "Room Number",
-                    "BA Name"
-                  ],
-                  "Product": [
-                    "Manufacturer",
-                    "Model"
-                  ],
-                  "Classification": [
-                    "Revit Type",
-                    "Revit Family"
-                  ],
-                  "General": [
-                    "Date",
-                    "Image Url",
-                    "Matterport Url"
-                  ]
+                  "Asset Properties": ["Containing Floor", "Mark", "Room Number", "BA Name"],
+                  "Product": ["Manufacturer", "Model"],
+                  "Classification": ["Revit Type", "Revit Family"],
+                  "General": ["Date", "Image Url", "Matterport Url"]
                 },
                 "okButtonText": "Save"
               }
@@ -1064,13 +941,8 @@
               "showOnTable": true,
               "component": {
                 "name": "EntityModal",
-                "disabled": [
-                  "Level",
-                  "Area"
-                ],
-                "disabledInMulti": [
-                  "Number"
-                ],
+                "disabled": ["Level", "Area"],
+                "disabledInMulti": ["Number"],
                 "propertyUiTypes": {
                   "Type": {
                     "query": "<<CREATABLE_SCRIPTED_SELECTS>>",
@@ -1080,12 +952,7 @@
                 },
                 "showGroupNames": true,
                 "groups": {
-                  "Space Properties": [
-                    "Floor",
-                    "Number",
-                    "Type",
-                    "Area"
-                  ]
+                  "Space Properties": ["Floor", "Number", "Type", "Area"]
                 },
                 "okButtonText": "Save"
               }
@@ -1098,13 +965,8 @@
               "showOnTable": true,
               "component": {
                 "name": "EntityModal",
-                "disabled": [
-                  "Level",
-                  "Area"
-                ],
-                "disabledInMulti": [
-                  "Number"
-                ],
+                "disabled": ["Level", "Area"],
+                "disabledInMulti": ["Number"],
                 "propertyUiTypes": {
                   "Type": {
                     "query": "<<CREATABLE_SCRIPTED_SELECTS>>",
@@ -1114,12 +976,7 @@
                 },
                 "showGroupNames": true,
                 "groups": {
-                  "Space Properties": [
-                    "Floor",
-                    "Number",
-                    "Type",
-                    "Area"
-                  ]
+                  "Space Properties": ["Floor", "Number", "Type", "Area"]
                 },
                 "okButtonText": "Save"
               }
@@ -1189,12 +1046,12 @@
             }
           }
         },
-        "panels" : {
-          "Systems" : {
-            "scripts" : {
-              "getSystemIdsForEntity" : "getSystemIdsForEntity",
-              "getSystemsAsEntities" : "getSystemsAsEntities",
-              "getSystemAlerts" : "getSystemAlerts"
+        "panels": {
+          "Systems": {
+            "scripts": {
+              "getSystemIdsForEntity": "getSystemIdsForEntity",
+              "getSystemsAsEntities": "getSystemsAsEntities",
+              "getSystemAlerts": "getSystemAlerts"
             }
           }
         }
@@ -1207,9 +1064,7 @@
       "description": "Model Element View",
       "pageComponent": "entities/EntityView",
       "path": "/modelelems",
-      "scriptTypes": [
-        "iaf_dt_model_elems"
-      ],
+      "scriptTypes": ["iaf_dt_model_elems"],
       "config": {
         "type": {
           "singular": "Model Element",
@@ -1274,9 +1129,7 @@
         "iaf_dt_types",
         "iaf_files_allusers"
       ],
-      "onHandlerLoad": [
-        "loadFileAttributes"
-      ],
+      "onHandlerLoad": ["loadFileAttributes"],
       "config": {
         "type": {
           "singular": "Asset",
@@ -1290,11 +1143,7 @@
         "entitySelectionPanel": {
           "nonFilterableProperties": [],
           "nonGroupableProperties": [],
-          "defaultGroups": [
-            "Mark",
-            "Type Mark",
-            "Level"
-          ]
+          "defaultGroups": ["Mark", "Type Mark", "Level"]
         },
         "tableView": {
           "component": {
@@ -1400,22 +1249,10 @@
               },
               "showGroupNames": true,
               "groups": {
-                "Asset Data": [
-                  "Manufacturer"
-                ],
-                "Identification": [
-                  "Type Mark",
-                  "Mark"
-                ],
-                "Location": [
-                  "Level",
-                  "Room Name",
-                  "Room Number"
-                ],
-                "Classification": [
-                  "dtCategory",
-                  "dtType"
-                ]
+                "Asset Data": ["Manufacturer"],
+                "Identification": ["Type Mark", "Mark"],
+                "Location": ["Level", "Room Name", "Room Number"],
+                "Classification": ["dtCategory", "dtType"]
               },
               "okButtonText": "Save"
             }
@@ -1448,9 +1285,7 @@
       "description": "Sample Dashboard",
       "pageComponent": "dashboards/DashboardView",
       "path": "/dashboard",
-      "scriptTypes": [
-        "iaf_asset_allusers"
-      ],
+      "scriptTypes": ["iaf_asset_allusers"],
       "config": {
         "layout": "grid",
         "rows": 3,
@@ -1509,9 +1344,7 @@
         "iaf_space_allusers",
         "iaf_files_allusers"
       ],
-      "onHandlerLoad": [
-        "loadFileAttributes"
-      ],
+      "onHandlerLoad": ["loadFileAttributes"],
       "config": {
         "type": {
           "singular": "Space",
@@ -1525,11 +1358,7 @@
         "entitySelectionPanel": {
           "nonFilterableProperties": [],
           "nonGroupableProperties": [],
-          "defaultGroups": [
-            "Level",
-            "Name",
-            "Number"
-          ]
+          "defaultGroups": ["Level", "Name", "Number"]
         },
         "tableView": {
           "component": {
@@ -1592,30 +1421,13 @@
             "showOnTable": false,
             "component": {
               "name": "EntityModal",
-              "disabled": [
-                "revitGuid",
-                "revitId"
-              ],
-              "hidden": [
-                "Area Num"
-              ],
+              "disabled": ["revitGuid", "revitId"],
+              "hidden": ["Area Num"],
               "showGroupNames": true,
               "groups": {
-                "Space Properties": [
-                  "Level",
-                  "Name",
-                  "Number",
-                  "Area"
-                ],
-                "Sensor Properties": [
-                  "SensorIDs"
-                ],
-                "Revit Properties": [
-                  "Revit Family",
-                  "Revit Type",
-                  "revitGuid",
-                  "revitId"
-                ]
+                "Space Properties": ["Level", "Name", "Number", "Area"],
+                "Sensor Properties": ["SensorIDs"],
+                "Revit Properties": ["Revit Family", "Revit Type", "revitGuid", "revitId"]
               },
               "okButtonText": "Save"
             }
@@ -1630,12 +1442,8 @@
       "description": "Files",
       "pageComponent": "entities/EntityView",
       "path": "/files",
-      "scriptTypes": [
-        "iaf_files_allusers"
-      ],
-      "onHandlerLoad": [
-        "loadFileAttributes"
-      ],
+      "scriptTypes": ["iaf_files_allusers"],
+      "onHandlerLoad": ["loadFileAttributes"],
       "config": {
         "type": {
           "singular": "File",
@@ -1649,10 +1457,7 @@
         "entitySelectionPanel": {
           "nonFilterableProperties": [],
           "nonGroupableProperties": [],
-          "defaultGroups": [
-            "Document Type",
-            "File Type"
-          ]
+          "defaultGroups": ["Document Type", "File Type"]
         },
         "data": {
           "Properties": {
@@ -1739,9 +1544,7 @@
             "showOnTable": false,
             "component": {
               "name": "EntityModal",
-              "disabled": [
-                "Entity Name"
-              ],
+              "disabled": ["Entity Name"],
               "hierarchySelects": {
                 "id": "edithierarchyselects",
                 "query": "<<SCRIPTED_LINKED_SELECTS>>",
@@ -1876,12 +1679,8 @@
       "actionTitle": "Add Files",
       "pageComponent": "files/UploadFilesWizard",
       "path": "/fileupload",
-      "scriptTypes": [
-        "iaf_files_allusers"
-      ],
-      "onHandlerLoad": [
-        "loadFileAttributes"
-      ],
+      "scriptTypes": ["iaf_files_allusers"],
+      "onHandlerLoad": ["loadFileAttributes"],
       "config": {
         "scripts": {
           "preprocessFiles": "preprocessUploadFiles",
@@ -1891,10 +1690,7 @@
         "displayNameMap": "iaf_attributeDisplayNames",
         "columns": [
           {
-            "name": [
-              "dtCategory",
-              "dtType"
-            ],
+            "name": ["dtCategory", "dtType"],
             "query": {
               "query": "<<SCRIPTED_LINKED_SELECTS>>",
               "selects": [
@@ -1972,9 +1768,7 @@
       "shortName": "down",
       "description": "Downloads",
       "pageComponent": "DownloadsView",
-      "systems": [
-        "Autodesk Revit"
-      ],
+      "systems": ["Autodesk Revit"],
       "path": "/downloads"
     },
     "engScenario": {

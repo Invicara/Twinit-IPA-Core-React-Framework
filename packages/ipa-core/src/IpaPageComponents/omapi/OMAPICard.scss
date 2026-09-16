@@ -30,10 +30,10 @@
 
       .full-path {
         margin-left: 20px;
-        -webkit-user-select: all;  
-        -moz-user-select: all;     
-        -ms-user-select: all;      
-        user-select: all;     
+        -webkit-user-select: all;
+        -moz-user-select: all;
+        -ms-user-select: all;
+        user-select: all;
       }
     }
   }
@@ -99,7 +99,6 @@
         .config-card-val {
           display: flex;
           padding: 5px;
-
 
           .val-name {
             font-weight: bold;

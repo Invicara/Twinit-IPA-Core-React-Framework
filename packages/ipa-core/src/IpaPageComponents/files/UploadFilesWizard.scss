@@ -1,9 +1,9 @@
 $base-text-color: #666666;
 $step-color: $base-text-color;
-$disabled-color: #E6E6E6;
+$disabled-color: #e6e6e6;
 $selected-step: var(--app-accent-color);
 $step-width: 170px;
-$medium-grey: #B2B2B2;
+$medium-grey: #b2b2b2;
 $cancel-grey: $medium-grey;
 $white: white;
 $black: black;
@@ -11,7 +11,7 @@ $black: black;
 .upload-files-wizard-root {
   height: 100%;
 
-  .file-table-container{
+  .file-table-container {
     display: flex;
     width: 100%;
     overflow: auto;
@@ -21,18 +21,18 @@ $black: black;
       width: 7px;
       height: 7px;
     }
-        
+
     &::-webkit-scrollbar-track {
       background: white;
     }
-    
+
     &::-webkit-scrollbar-thumb {
-      background: #DCDCDC;
+      background: #dcdcdc;
       border-radius: 2rem;
     }
-    
+
     &::-webkit-scrollbar-thumb:hover {
-      background: #B8B8B8;
+      background: #b8b8b8;
     }
   }
 
@@ -44,54 +44,56 @@ $black: black;
   }
 
   .wizard-panel {
-    box-shadow: 0px 10px 20px #0000001A;
+    box-shadow: 0px 10px 20px #0000001a;
     background: #ffffff;
     display: flex;
     position: relative;
     flex-direction: column;
     align-items: center;
     height: 150px;
-    transition: height 1s ;
+    transition: height 1s;
   }
 
-  .wizard-panel-expanded{
+  .wizard-panel-expanded {
     height: 450px;
   }
 
-  .dropzone-anchor{
+  .dropzone-anchor {
     position: relative;
-    transition: opacity, visibility 1s ;
+    transition:
+      opacity,
+      visibility 1s;
   }
 
-  .dropzone{
+  .dropzone {
     transform: translateX(-50%);
     position: absolute;
     width: 600px;
     height: 380px;
-    background: #FFFFFF;
-    box-shadow: 0px 10px 20px #0000001A;
-    border: 3px dashed #E6E6E6;
+    background: #ffffff;
+    box-shadow: 0px 10px 20px #0000001a;
+    border: 3px dashed #e6e6e6;
     border-radius: 25px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    &.dragging{
+    &.dragging {
       border: 3px solid var(--app-accent-color);
       background: #e0e0e0;
     }
 
-    > *{
+    > * {
       margin: 13px 0;
     }
 
-    .cloud-icon{
+    .cloud-icon {
       font-size: 90px;
-      color:var(--app-accent-color);
+      color: var(--app-accent-color);
     }
 
-    .dropzone-legend{
+    .dropzone-legend {
       font-size: 22px;
       font-weight: 300;
       letter-spacing: 0;
@@ -99,71 +101,69 @@ $black: black;
     }
   }
 
-  .files-area{
+  .files-area {
     display: flex;
     align-items: center;
     margin: 40px 40px 0 40px;
     flex-direction: column;
 
-    &.extra-margin{
+    &.extra-margin {
       margin-top: 100px;
     }
-
   }
 
-  .file-table{
+  .file-table {
     margin: 0 auto;
     color: #666666;
     border-collapse: separate;
     border-spacing: 0;
 
-      th, td {
-        white-space: nowrap;
-      }
+    th,
+    td {
+      white-space: nowrap;
+    }
 
-      td:nth-child(2) {
-        position: sticky;
-        left: 0;
-        background-color: #FFFFFF;
-        z-index: 5;
-      }
-      th:nth-child(2) {
-        z-index: 10 !important;
-      }
+    td:nth-child(2) {
+      position: sticky;
+      left: 0;
+      background-color: #ffffff;
+      z-index: 5;
+    }
+    th:nth-child(2) {
+      z-index: 10 !important;
+    }
 
-
-    thead{
-
-      .file-table-header{
-        background: #F2F2F2 0% 0% no-repeat padding-box;
+    thead {
+      .file-table-header {
+        background: #f2f2f2 0% 0% no-repeat padding-box;
         > th {
           padding: 15px 20px;
-          border: 1px solid #E6E6E6;
+          border: 1px solid #e6e6e6;
           position: sticky;
           top: 0;
           left: 0;
           z-index: 1;
-          background: #F2F2F2;
-          
-          &.long{
+          background: #f2f2f2;
+
+          &.long {
             min-width: 275px;
           }
         }
       }
     }
-    tbody{
+    tbody {
       max-height: 400px;
 
-      .file-table-body{
+      .file-table-body {
         > td {
           padding: 15px 20px;
-          border-bottom: 1px solid #E6E6E6;
+          border-bottom: 1px solid #e6e6e6;
         }
       }
     }
   }
 
-  .file-wizard-actions{
+  .file-wizard-actions {
     margin: 40px 40px 100px 40px;
     display: flex;
     justify-content: flex-end;
@@ -173,18 +173,17 @@ $black: black;
     margin: 20px 40px;
     color: $base-text-color;
   }
-
 }
 
-.with-buttons{
-  .button-content{
+.with-buttons {
+  .button-content {
     > * {
       margin: 0 5px;
       padding: 0;
     }
   }
 
-  .main-button{
+  .main-button {
     font-size: 17px;
     height: 44px;
     color: white;
@@ -193,35 +192,35 @@ $black: black;
     box-shadow: none;
   }
 
-  .cancel-button{
+  .cancel-button {
     font-size: 17px;
     width: 170px;
     height: 44px;
     border-radius: 25px;
     box-shadow: none;
     color: $cancel-grey;
-    border: 2px solid ;
+    border: 2px solid;
     background: $white;
     margin-right: 24px;
   }
 }
 
-.dialog-content{
+.dialog-content {
   width: 500px;
   margin: 20px;
 
-  .dialog-title{
+  .dialog-title {
     font-size: 20px;
     color: var(--app-accent-color);
   }
 
-  .dialog-body{
+  .dialog-body {
     color: $base-text-color;
     margin: 10px 0;
     font-size: 13px;
   }
 
-  .dialog-actions{
+  .dialog-actions {
     margin-top: 20px;
     display: flex;
     width: 100%;
@@ -237,7 +236,7 @@ $black: black;
 }
 
 ul li.file-asset::before {
-  content: "\2022";
+  content: '\2022';
   color: var(--app-accent-color);
   font-weight: bold;
   display: inline-block;
@@ -245,7 +244,7 @@ ul li.file-asset::before {
   margin-left: -1em;
 }
 
-.file-asset{
+.file-asset {
   font-size: 13px;
   font-weight: bold;
   letter-spacing: 0px;
@@ -254,12 +253,10 @@ ul li.file-asset::before {
 }
 
 .wizard-timeline-root {
-
   display: flex;
   padding: 50px 0;
 
   .step {
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -317,7 +314,7 @@ ul li.file-asset::before {
         transform: translateX(calc(#{$step-width} / 4));
       }
 
-      &.selected{
+      &.selected {
         color: $selected-step;
       }
 
@@ -328,12 +325,12 @@ ul li.file-asset::before {
   }
 }
 
-.required-mark{
+.required-mark {
   color: var(--app-accent-color);
   font-weight: bold;
 }
 
-.panel-toggle{
+.panel-toggle {
   cursor: pointer;
   color: white;
   bottom: 0;
@@ -354,15 +351,14 @@ ul li.file-asset::before {
   &.disabled {
     background-color: $cancel-grey;
   }
-
 }
 
-.file-table-input{
+.file-table-input {
   padding: 4px 0;
   border: none;
   border-bottom: 1px solid $medium-grey;
 
-  &:focus{
+  &:focus {
     border-bottom: 1px solid $base-text-color;
   }
 }

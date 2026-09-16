@@ -3,7 +3,7 @@ import React from 'react';
 import IfefKeyboard from '../helpers/keyboard';
 import _ from 'lodash';
 
-export const BodyContext = React.createContext()
+export const BodyContext = React.createContext();
 
 class BodyProvider extends React.Component {
   constructor(props) {
@@ -12,9 +12,9 @@ class BodyProvider extends React.Component {
     this.state = {
       ifefNavDirection: 'forward', // can be either forward or back, only used for IfefNav* components
       ifefModal: false, // can be either false or contain the modal node
-      ifefModalOpen: false,   // split the set from the show for proper animation. jl 10/19/19
+      ifefModalOpen: false, // split the set from the show for proper animation. jl 10/19/19
       ifefPopover: {}, // can be set separate from show or contain the popover
-      ifefPopoverElem: null,  // set to control placement of popover
+      ifefPopoverElem: null, // set to control placement of popover
       ifefShowPopover: false, // set/show of Popover now separate; jl 04/15/18
       ifefActionSheet: {},
       ifefPopup: {},
@@ -44,8 +44,6 @@ class BodyProvider extends React.Component {
     this.closeForTransition = this.closeForTransition.bind(this);
   }
 
-
-
   ifefSetSnapper(snapper) {
     this.setState({ ifefSnapper: snapper });
   }
@@ -54,38 +52,38 @@ class BodyProvider extends React.Component {
     // Used for setting the transition direction of the page change animations
     // Only used for IfefNav* components, but the state needs to be kept here because the IfefNavBar is
     // only encapsulated by IfefBody
-    if(this.state.ifefNavDirection != direction) {
-      this.setState({ifefNavDirection: direction});
+    if (this.state.ifefNavDirection != direction) {
+      this.setState({ ifefNavDirection: direction });
     }
   }
 
   // Need this broken out so we can set/unset the model separate from showing it
   // so that it can properly transition on exit.  jl 10/19/19
-  ifefUpdateModal (modal) {
-    this.setState({ ifefModal: modal})
+  ifefUpdateModal(modal) {
+    this.setState({ ifefModal: modal });
   }
 
   // Delay added when setting to false, but compatible with old entry point. jl 10/19/19
   ifefShowModal(modal) {
     let that = this;
     if (typeof modal === 'boolean' && !modal) {
-      this.setState({ifefModalOpen: false});
+      this.setState({ ifefModalOpen: false });
       //setTimeout(this.ifefUpdateModal(modal), 750)
     } else {
       this.ifefUpdateModal(modal);
-      this.setState({ifefModalOpen: true});
+      this.setState({ ifefModalOpen: true });
     }
   }
 
   ifefUpdatePopover(popover) {
-    this.setState({ ifefPopover: popover})
+    this.setState({ ifefPopover: popover });
   }
 
   ifefShowPopover(show, elem) {
     if (show) {
       this.setState({ ifefShowPopover: show, ifefPopoverElem: elem });
     } else {
-      this.setState({ ifefShowPopover: false, ifefPopoverElem: null});
+      this.setState({ ifefShowPopover: false, ifefPopoverElem: null });
     }
   }
 
@@ -101,33 +99,45 @@ class BodyProvider extends React.Component {
     this.setState({ ifefBackdrop: show });
   }
 
-  ifefShowLoading(show, options={}) {
+  ifefShowLoading(show, options = {}) {
     if (show) {
       this.setState({
-        ifefLoading: options
+        ifefLoading: options,
       });
     } else {
-      if(this.state.ifefLoading !== false) {
+      if (this.state.ifefLoading !== false) {
         this.setState({
-          ifefLoading: false
+          ifefLoading: false,
         });
       }
     }
   }
 
   closeForTransition() {
-    if (this.state.ifefModal) { this.ifefShowModal(false); }
-    if (this.state.ifefShowPopover) { this.ifefShowPopover(false); }
-    if (this.state.ifefBackdrop) { this.ifefShowBackdrop(false); }
-    if (this.state.ifefLoading) { this.ifefShowLoading(false); }
-    if (!_.isEmpty(this.state.ifefActionSheet)) { this.ifefUpdateActionSheet({}); }
-    if (!_.isEmpty(this.state.ifefPopup)) { this.ifefUpdatePopup({}); }
+    if (this.state.ifefModal) {
+      this.ifefShowModal(false);
+    }
+    if (this.state.ifefShowPopover) {
+      this.ifefShowPopover(false);
+    }
+    if (this.state.ifefBackdrop) {
+      this.ifefShowBackdrop(false);
+    }
+    if (this.state.ifefLoading) {
+      this.ifefShowLoading(false);
+    }
+    if (!_.isEmpty(this.state.ifefActionSheet)) {
+      this.ifefUpdateActionSheet({});
+    }
+    if (!_.isEmpty(this.state.ifefPopup)) {
+      this.ifefUpdatePopup({});
+    }
   }
 
   handleKeyboard(e) {
-    var kbHeight = e && e.keyboardHeight;
-    this.setState({ionKeyboardHeight: kbHeight}, function() {
-      var currentModal = this.state.ifefModal;
+    let kbHeight = e && e.keyboardHeight;
+    this.setState({ ionKeyboardHeight: kbHeight }, function () {
+      let currentModal = this.state.ifefModal;
       if (currentModal) {
         // re-render modal to include new state
         this.ifefShowModal(currentModal);
@@ -139,7 +149,7 @@ class BodyProvider extends React.Component {
     window.addEventListener('native.keyboardshow', this.handleKeyboard);
     window.addEventListener('native.keyboardhide', this.handleKeyboard);
     if (this.props.platform.isCordova && !_.isEmpty(this.state.ifefKeyboard)) {
-      var keyboard = IfefKeyboard(this.props.platform);
+      let keyboard = IfefKeyboard(this.props.platform);
       keyboard.disableScroll();
       this.setState({ ifefKeyboard: keyboard });
     }
@@ -172,20 +182,16 @@ class BodyProvider extends React.Component {
       ifefUpdatePopover: this.ifefUpdatePopover,
       ifefShowPopover: this.ifefShowPopover,
 
-      ifefCloseForTransition: this.closeForTransition
-    }
-   
-    return (
-      <BodyContext.Provider value={values}>
-          { this.props.children } 
-      </BodyContext.Provider>
-    );
+      ifefCloseForTransition: this.closeForTransition,
+    };
+
+    return <BodyContext.Provider value={values}>{this.props.children}</BodyContext.Provider>;
   }
 }
 
 BodyProvider.propTypes = {
   platform: PropTypes.object,
-  location: PropTypes.object.isRequired
+  location: PropTypes.object.isRequired,
 };
 
 BodyProvider.defaultProps = {
@@ -194,8 +200,8 @@ BodyProvider.defaultProps = {
     isAndroid: false,
     isCordova: false,
     transitionTimeOut: 450,
-    name: 'Web'
-  }
+    name: 'Web',
+  },
 };
 
 export default BodyProvider;

@@ -3,36 +3,31 @@ import React from 'react';
 import classnames from 'classnames';
 
 class IfefSubHeaderBar extends React.Component {
-
   componentDidMount() {
     this.context.ifefUpdateHasX('ifefHasSubheader', true);
   }
 
   render() {
-    var classes = classnames(
-      {'bar': true, 'bar-subheader': true},
+    let classes = classnames(
+      { bar: true, 'bar-subheader': true },
       this.props.customClasses || 'bar-stable', // default class
-      {'has-tabs-top': this.context.ifefHasTabsTop}
+      { 'has-tabs-top': this.context.ifefHasTabsTop }
     );
-    return (
-      <div className={ classes } >
-        { this.props.children }
-      </div>
-    );
+    return <div className={classes}>{this.props.children}</div>;
   }
 }
 
 IfefSubHeaderBar.propTypes = {
-  customClasses: PropTypes.string
+  customClasses: PropTypes.string,
 };
 
 IfefSubHeaderBar.defaultProps = {
-  customClasses: ''
+  customClasses: '',
 };
 
 IfefSubHeaderBar.contextTypes = {
   ifefUpdateHasX: PropTypes.func,
-  ifefHasTabsTop: PropTypes.bool
+  ifefHasTabsTop: PropTypes.bool,
 };
 
 export default IfefSubHeaderBar;

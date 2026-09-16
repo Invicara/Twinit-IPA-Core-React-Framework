@@ -3,13 +3,14 @@ title: ScriptHelper
 sidebar_position: 1600
 ---
 
-`ScriptHelper` is a helper function that allows a user to load and execute scripts from the client. 
+`ScriptHelper` is a helper function that allows a user to load and execute scripts from the client.
 
 To import the `ScriptHelper` to your component, use the following import:
 
 ```jsx
-import {ScriptHelper} from "@invicara/ipa-core/modules/IpaUtils";
+import { ScriptHelper } from '@invicara/ipa-core/modules/IpaUtils';
 ```
+
 ---
 
 ## `Supported functions`

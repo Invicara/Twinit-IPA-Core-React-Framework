@@ -1,20 +1,20 @@
-import { PinkCheckbox } from "../../IpaControls/Checkboxes"; // Adjust the path accordingly
-import { useArgs } from "@storybook/client-api";
+import { PinkCheckbox } from '../../IpaControls/Checkboxes'; // Adjust the path accordingly
+import { useArgs } from '@storybook/client-api';
 
 export default {
-  title: "Controls/Checkbox",
+  title: 'Controls/Checkbox',
   component: PinkCheckbox,
   argTypes: {
     checked: {
-      control: "boolean",
+      control: 'boolean',
     },
     onChange: {
-      action: "changed",
+      action: 'changed',
     },
   },
 };
 
-const Template = (args) => {
+const Template = args => {
   const [_, updateArgs] = useArgs();
 
   const handleClick = (e, f) => {

@@ -3,8 +3,6 @@ import React from 'react';
 import classnames from 'classnames';
 
 class IfefTabs extends React.Component {
-  
-
   componentDidMount() {
     if (this.props.tabsTop) {
       this.context.ifefUpdateHasX('ifefHasTabsTop', true);
@@ -22,15 +20,10 @@ class IfefTabs extends React.Component {
   }
 
   render() {
-    var classes = classnames(
-      {'tabs-top' : this.props.tabsTop},
-      this.props.customClasses
-    );
+    let classes = classnames({ 'tabs-top': this.props.tabsTop }, this.props.customClasses);
     return (
-      <div className={ classes } >
-        <div className="tabs">
-          { this.props.children }
-        </div>
+      <div className={classes}>
+        <div className="tabs">{this.props.children}</div>
       </div>
     );
   }
@@ -38,15 +31,15 @@ class IfefTabs extends React.Component {
 
 IfefTabs.propTypes = {
   customClasses: PropTypes.string,
-  tabsTop: PropTypes.bool
+  tabsTop: PropTypes.bool,
 };
 
 IfefTabs.defaultProps = {
-  customClasses: ''
+  customClasses: '',
 };
 
 IfefTabs.contextTypes = {
-  ifefUpdateHasX: PropTypes.func
+  ifefUpdateHasX: PropTypes.func,
 };
 
 export default IfefTabs;

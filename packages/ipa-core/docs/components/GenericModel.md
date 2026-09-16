@@ -5,8 +5,8 @@ sidebar_position: 2100
 
 import { ImportModulesCodeBlock } from '../docComponents/ImportModulesCodeBlock'
 
-A generic modal dialog with a title bar and a close button. All other content is supplied via a “modal body” component. GenericModal is often wrapped by a HOC to create a specific template.  
-  
+A generic modal dialog with a title bar and a close button. All other content is supplied via a “modal body” component. GenericModal is often wrapped by a HOC to create a specific template.
+
 Dialogs are displayed using: `props.actions.showModal(<SomeDialogComponent />)`
 
 Dialogs can be hidden programmatically by using: `props.actions.showModal(false)`
@@ -26,21 +26,20 @@ Dialogs can be hidden programmatically by using: `props.actions.showModal(false)
 - `noBackground`: if present dialog background is `transparent` otherwise background is `white`|
 - `customTemplate`: if present then no template (no title bar, no x, no content) is displayed and the children of the GenericTemplate tag are considered to be the template for the dialog box.|
 
-
 ### Example
 
 <ImportModulesCodeBlock modules={['IpaDialogs', 'IpaControls']} />
 
 ```jsx
-const {GenericModal} = IpaDialogs
-const {IpaButton} = IpaControls
+const { GenericModal } = IpaDialogs;
+const { IpaButton } = IpaControls;
 
-const TestPage = (props) => {
-  useEffect(() => props.onLoadComplete(), [])
+const TestPage = props => {
+  useEffect(() => props.onLoadComplete(), []);
 
   const clickHandler = () => {
-    props.actions.showModal(<MyModal />)
-  }
+    props.actions.showModal(<MyModal />);
+  };
 
   return (
     <div>
@@ -48,21 +47,12 @@ const TestPage = (props) => {
       <h2>You can put test stuff here</h2>
       <IpaButton onClick={clickHandler}>Click Me For A Sample Dialog</IpaButton>
     </div>
-  )
-}
+  );
+};
 
-const MyModal = (props) => {
-  return (
-    <GenericModal
-      title="Test Modal"
-      modalBody={
-        <div>
-          This is the modal body
-        </div>
-      }
-    />
-  )
-}
+const MyModal = props => {
+  return <GenericModal title="Test Modal" modalBody={<div>This is the modal body</div>} />;
+};
 
 export default TestPage;
 ```

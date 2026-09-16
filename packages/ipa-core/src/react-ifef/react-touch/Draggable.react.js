@@ -6,13 +6,10 @@ import TouchHandler from './TouchHandler';
 import computePositionStyle from './computePositionStyle';
 import computeDeltas from './computeDeltas';
 
-
 const ZERO_DELTAS = { dx: 0, dy: 0 };
 const DEFAULT_TOUCH = { initial: null, current: null, deltas: ZERO_DELTAS };
 
-
 class Draggable extends React.Component {
-
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
     position: T.objectOf(T.oneOfType([T.number, T.object])).isRequired,
@@ -29,7 +26,7 @@ class Draggable extends React.Component {
     this._touchHandler = new TouchHandler(
       this.handleTouchStart.bind(this),
       this.handleTouchMove.bind(this),
-      this.handleTouchEnd.bind(this),
+      this.handleTouchEnd.bind(this)
     );
   }
 
@@ -50,7 +47,7 @@ class Draggable extends React.Component {
     const componentPosition = computePositionStyle(this.props.position, touchDeltas);
     this.props.onDrag && this.props.onDrag(componentPosition);
 
-    const latest = {dx: deltas.dx + touchDeltas.dx, dy: deltas.dy + touchDeltas.dy};
+    const latest = { dx: deltas.dx + touchDeltas.dx, dy: deltas.dy + touchDeltas.dy };
     this.setState({ deltas: latest, current: touchPosition });
   }
 

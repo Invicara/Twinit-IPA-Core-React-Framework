@@ -1,67 +1,69 @@
-import React, { useState } from 'react'
-import FileHelpers from '../../IpaUtils/FileHelpers'
-import withPageNavigation from '../withPageNavigation'
-import DocumentTable from './DocumentTable'
-import { useEffect } from 'react'
-import _ from 'lodash'
+import React, { useState } from 'react';
+import FileHelpers from '../../IpaUtils/FileHelpers';
+import withPageNavigation from '../withPageNavigation';
+import DocumentTable from './DocumentTable';
+import { useEffect } from 'react';
+import _ from 'lodash';
 
 let StandaloneDocumentTable = props => {
-  const [sorting, setSorting] = useState(props.config.defaultSort)
-  const [columns, setColumns] = useState(props.config.columns)
-  const [documentsData, setDocumentsData] = useState([])
+  const [sorting, setSorting] = useState(props.config.defaultSort);
+  const [columns, setColumns] = useState(props.config.columns);
+  const [documentsData, setDocumentsData] = useState([]);
 
   useEffect(() => {
-    fetchDocumentData(props.context)
-    let UserConfigColumns = JSON.parse(localStorage.getItem('DocumentViewerUserConfigColumns'))
+    fetchDocumentData(props.context);
+    let UserConfigColumns = JSON.parse(localStorage.getItem('DocumentViewerUserConfigColumns'));
     if (UserConfigColumns) {
-        setColumns(UserConfigColumns)
+      setColumns(UserConfigColumns);
     }
-  }, [])
+  }, []);
 
-  const fetchDocumentData = async (context) => {
-    let files = await FileHelpers.getDocumentsForAsset(context).then(data => data.map(f => transformFileAttributesToProperties(f)))
+  const fetchDocumentData = async context => {
+    let files = await FileHelpers.getDocumentsForAsset(context).then(data =>
+      data.map(f => transformFileAttributesToProperties(f))
+    );
     let documents = files.map(data => ({
       documentData: data,
       currentVersion: [data.versions?.[data.versions.length - 1]],
-      disableVersions: props.config.includeVersions !== true
-    }))
-    setDocumentsData(documents)
-  }
+      disableVersions: props.config.includeVersions !== true,
+    }));
+    setDocumentsData(documents);
+  };
 
   const transformFileAttributesToProperties = document => {
     if (document.properties) {
-      return document
+      return document;
     }
 
     if (!document.fileAttributes) {
-      throw new Error('NO_PROPS_OR_ATTRS')
+      throw new Error('NO_PROPS_OR_ATTRS');
     }
 
-    document.properties = {}
+    document.properties = {};
 
-    const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1)
+    const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
 
     const toEntityPropertyName = s =>
       s
         .split(/(?=[A-Z])/)
         .map(word => capitalize(word))
-        .join(' ')
+        .join(' ');
 
     _.entries(document.fileAttributes).forEach(([key, val]) => {
-      let name = key
-      let type = 'text'
+      let name = key;
+      let type = 'text';
 
       if (!['dtCategory', 'dtType'].includes(key)) {
-        name = toEntityPropertyName(name)
+        name = toEntityPropertyName(name);
       } else {
-        type = '<<HIERARCHY>>'
+        type = '<<HIERARCHY>>';
       }
 
-      document.properties[name] = { dName: name, val, type }
-    })
+      document.properties[name] = { dName: name, val, type };
+    });
 
-    return document
-  }
+    return document;
+  };
 
   let actions = [
     {
@@ -70,103 +72,102 @@ let StandaloneDocumentTable = props => {
       icon: 'fas fa-file-alt',
       onClick: documents => {
         const selectedEntities = documents.map(d => {
-          const _fileId = d.documentData._id
-          return _fileId 
-        })
+          const _fileId = d.documentData._id;
+          return _fileId;
+        });
         let query = {
           entityType: 'File',
           selectedEntities: selectedEntities,
           senderEntityType: 'Asset',
-          query: {value: selectedEntities}
-          }
-          props.onNavigate('files', query, { newTab: true })
+          query: { value: selectedEntities },
+        };
+        props.onNavigate('files', query, { newTab: true });
       },
       bulk: {
-        disabled: !props.config.canView
+        disabled: !props.config.canView,
       },
       single: {
         hidden: true,
-        disabled: !props.config.canView
-      }
+        disabled: !props.config.canView,
+      },
     },
     {
       key: 'VIEW',
       name: 'View',
       icon: 'fas fa-eye',
       onClick: documents => {
-        let docIds = []
+        let docIds = [];
         documents.forEach(d => {
-          const _fileId = d.documentData._fileId
+          const _fileId = d.documentData._fileId;
           d.currentVersion.forEach(v => {
-            const _fileVersionId = v._fileVersionId
-            docIds.push({ _fileId, _fileVersionId })})
-        })
-          let query = {
-            entityType: 'file',
-            queryParams: { docIds }
-          }
-          props.onNavigate('documentviewer', query, { newTab: true })
+            const _fileVersionId = v._fileVersionId;
+            docIds.push({ _fileId, _fileVersionId });
+          });
+        });
+        let query = {
+          entityType: 'file',
+          queryParams: { docIds },
+        };
+        props.onNavigate('documentviewer', query, { newTab: true });
       },
       bulk: {
-        disabled: !props.config.canView
+        disabled: !props.config.canView,
       },
       single: {
-        disabled: !props.config.canView
-      }
+        disabled: !props.config.canView,
+      },
     },
     {
       key: 'DOWNLOAD',
       name: 'Download',
       icon: 'fas fa-download',
       onClick: documents => {
-        let documentVersionsIds = []
-         documents.forEach(d => {
-          documentVersionsIds.push(...d.currentVersion.map(v=>{return {...v, ...d.documentData}}))
-        })
-        FileHelpers.downloadDocumentsVersions(documentVersionsIds)
+        let documentVersionsIds = [];
+        documents.forEach(d => {
+          documentVersionsIds.push(
+            ...d.currentVersion.map(v => {
+              return { ...v, ...d.documentData };
+            })
+          );
+        });
+        FileHelpers.downloadDocumentsVersions(documentVersionsIds);
       },
       bulk: {
-        disabled: !props.config.canDownload
+        disabled: !props.config.canDownload,
       },
       single: {
-        disabled: !props.config.canDownload
-      }
-    }
-  ]
+        disabled: !props.config.canDownload,
+      },
+    },
+  ];
 
   let tableConfig = {
     columns, //determines which columns should be displayed (order sensitive), defaults to ["version", "name"]
     lockedColumns: props?.config?.lockedColumns, //order insensitive
-    onColumnsChange: (newColumns) => {
-      setColumns(newColumns)
+    onColumnsChange: newColumns => {
+      setColumns(newColumns);
     }, //callback triggered when user confirmed order change in presentational component
-    sort: {                                          
+    sort: {
       //If not defined, the presentational component handles the sorting logic
       currentColumn: sorting?.column, //The currently sorted column, if null, no sorting is allowed
       onSort: setSorting, //(optional) Called by the presentational component to defined additional instructions on sort,
-      isDescending: !sorting?.descending //defaults to false
+      isDescending: !sorting?.descending, //defaults to false
     },
     dateField: props?.config?.dateField,
     supportedTypes: props?.config?.supportedTypes,
     includeVersions: props?.config?.includeVersions,
-  }
+  };
 
-  return (
-    <DocumentTable
-      documents={documentsData}
-      actions={actions}
-      tableConfig={tableConfig}
-    />
-  )
-}
+  return <DocumentTable documents={documentsData} actions={actions} tableConfig={tableConfig} />;
+};
 
-StandaloneDocumentTable = withPageNavigation(StandaloneDocumentTable)
+StandaloneDocumentTable = withPageNavigation(StandaloneDocumentTable);
 
 export const StandaloneDocumentTableFactory = {
   create: (...args) => {
-    const { config, data, context } = args[0]
-    return <StandaloneDocumentTable config={config} data={data} context={context} />
-  }
-}
+    const { config, data, context } = args[0];
+    return <StandaloneDocumentTable config={config} data={data} context={context} />;
+  },
+};
 
-export default StandaloneDocumentTable
+export default StandaloneDocumentTable;

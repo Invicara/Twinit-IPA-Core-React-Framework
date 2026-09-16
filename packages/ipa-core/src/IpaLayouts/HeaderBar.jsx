@@ -3,7 +3,6 @@ import React from 'react';
 import classnames from 'classnames';
 import { BodyContext } from '../react-ifef/components/bodyProvider';
 
-
 class HeaderBar extends React.Component {
   constructor(props) {
     super(props);
@@ -20,11 +19,7 @@ class HeaderBar extends React.Component {
 
   render() {
     let classes = classnames(this.props.customClasses);
-    return (
-      <header className={ classes }>
-        {this.props.children}
-      </header>
-    );
+    return <header className={classes}>{this.props.children}</header>;
   }
 }
 
@@ -33,8 +28,7 @@ HeaderBar.propTypes = {
 };
 
 HeaderBar.defaultProps = {
-  customClasses: ''
+  customClasses: '',
 };
-
 
 export default HeaderBar;

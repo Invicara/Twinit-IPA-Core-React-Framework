@@ -10,9 +10,8 @@ import gestureLevenshtein from './gestureLevenshtein';
 import convertToDefaultsObject from './convertToDefaultsObject';
 import { createSectors, computeSectorIdx } from './circleMath';
 
-
 const INITIAL_STATE = { current: null, moves: [] };
-const DEFAULT_CONFIG = { fudgeFactor: 5, minMoves: 8, gesture: "" };
+const DEFAULT_CONFIG = { fudgeFactor: 5, minMoves: 8, gesture: '' };
 
 class CustomGesture extends React.Component {
   static propTypes = {
@@ -34,12 +33,12 @@ class CustomGesture extends React.Component {
   constructor(props) {
     super(props);
     this._state = INITIAL_STATE;
-    this._sectors = createSectors();    // create a resolution map of sectors
+    this._sectors = createSectors(); // create a resolution map of sectors
 
     this._touchHandler = new TouchHandler(
       this.handleTouchStart.bind(this),
       this.handleTouchMove.bind(this),
-      this.handleTouchEnd.bind(this),
+      this.handleTouchEnd.bind(this)
     );
   }
 
@@ -50,7 +49,7 @@ class CustomGesture extends React.Component {
 
   handleTouchStart(touchPosition) {
     // set initial conditions for the touch event
-    this._state = merge({}, this._state, {current: touchPosition});
+    this._state = merge({}, this._state, { current: touchPosition });
   }
 
   handleTouchMove(touchPosition) {
@@ -60,7 +59,7 @@ class CustomGesture extends React.Component {
 
     this._state = {
       current: { x: current.x + dx, y: current.y + dy },
-      moves: [ ...moves, this._sectors[sectorIdx] ],
+      moves: [...moves, this._sectors[sectorIdx]],
     };
   }
 
@@ -73,8 +72,8 @@ class CustomGesture extends React.Component {
       return;
     }
 
-    const gesture = isArray(config.gesture) ? config.gesture.join("") : config.gesture;
-    const distance = gestureLevenshtein(this._state.moves.join(""), gesture);
+    const gesture = isArray(config.gesture) ? config.gesture.join('') : config.gesture;
+    const distance = gestureLevenshtein(this._state.moves.join(''), gesture);
 
     if (distance < config.fudgeFactor) {
       this.props.onGesture();

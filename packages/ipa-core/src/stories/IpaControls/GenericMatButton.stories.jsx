@@ -1,12 +1,12 @@
-import GenericMatButton from "../../IpaControls/GenericMatButton";
+import GenericMatButton from '../../IpaControls/GenericMatButton';
 
 export default {
-  title: "Controls/GenericMatButton",
+  title: 'Controls/GenericMatButton',
   component: GenericMatButton,
-  argTypes: { onClick: { action: "onClick" } },
+  argTypes: { onClick: { action: 'onClick' } },
 };
 
-const Template = (args) => {
+const Template = args => {
   return <GenericMatButton {...args} />;
 };
 
@@ -17,26 +17,26 @@ export const Large = Template.bind({});
 export const Disabled = Template.bind({});
 
 Default.args = {
-  children: "Submit",
+  children: 'Submit',
 };
 
 Small.args = {
-  children: "Small",
-  size: "small",
+  children: 'Small',
+  size: 'small',
 };
 
 Medium.args = {
-  children: "Medium",
-  size: "medium",
+  children: 'Medium',
+  size: 'medium',
 };
 
 Large.args = {
-  children: "Large",
-  size: "large",
+  children: 'Large',
+  size: 'large',
 };
 
 Disabled.args = {
-  children: "Disabled",
-  size: "medium",
-  disabled: "true",
+  children: 'Disabled',
+  size: 'medium',
+  disabled: 'true',
 };

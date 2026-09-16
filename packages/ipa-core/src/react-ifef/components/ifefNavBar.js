@@ -10,19 +10,17 @@ class IfefNavBar extends React.Component {
     super(props, context);
 
     this.state = {
-      marginCompensation: 0
+      marginCompensation: 0,
     };
 
     this.setMarginCompensation = this.setMarginCompensation.bind(this);
-
   }
-
 
   setMarginCompensation(width) {
     if (this.context.ifefPlatform.isAndroid) {
-      this.setState({'marginCompensation': Math.ceil(width) + 10 });
+      this.setState({ marginCompensation: Math.ceil(width) + 10 });
     }
-  };
+  }
 
   componentDidMount() {
     this.context.ifefUpdateHasX('ifefHasHeader', true);
@@ -36,34 +34,29 @@ class IfefNavBar extends React.Component {
   }
 
   render() {
-    var platform = this.context.ifefPlatform;
-    var leftButton = this.props.leftButton;
-    var classes = classnames(
-      {'bar': true, 'bar-header': true},
+    let platform = this.context.ifefPlatform;
+    let leftButton = this.props.leftButton;
+    let classes = classnames(
+      { bar: true, 'bar-header': true },
       this.props.customClasses || 'bar-stable', // default class
       'nav-bar-block',
-      {'nav-bar-transition-android': platform.isAndroid,
-       'nav-bar-transition-ios': !platform.isAndroid
+      {
+        'nav-bar-transition-android': platform.isAndroid,
+        'nav-bar-transition-ios': !platform.isAndroid,
       },
       'nav-bar-direction-' + this.context.ifefNavDirection
     );
     return (
-
       <div className={classes}>
-
-
         <LeftButtonContainer setMarginCompensation={this.setMarginCompensation}>
-          {leftButton ? leftButton : <div/>}
+          {leftButton ? leftButton : <div />}
         </LeftButtonContainer>
 
         <IfefTitle marginCompensation={this.state.marginCompensation} customClasses="title-stage">
-            { this.props.title ? this.props.title : ""}
+          {this.props.title ? this.props.title : ''}
         </IfefTitle>
 
-
-        {this.props.rightButton ? this.props.rightButton : <div/>}
-
-
+        {this.props.rightButton ? this.props.rightButton : <div />}
       </div>
     );
   }
@@ -71,28 +64,24 @@ class IfefNavBar extends React.Component {
 
 IfefNavBar.propTypes = {
   customClasses: PropTypes.string,
-  title: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.element
-  ]),
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   leftButton: PropTypes.element,
   leftButtonColor: PropTypes.string,
-  rightButton: PropTypes.element
+  rightButton: PropTypes.element,
 };
 
 IfefNavBar.defaultProps = {
   customClasses: '',
   title: '',
   leftButton: null,
-  rightButton: null
+  rightButton: null,
 };
 
 IfefNavBar.contextTypes = {
   ifefPlatform: PropTypes.object,
   ifefUpdateHasX: PropTypes.func,
   ifefSetTransitionDirection: PropTypes.func,
-  ifefNavDirection: PropTypes.string
+  ifefNavDirection: PropTypes.string,
 };
-
 
 export default IfefNavBar;

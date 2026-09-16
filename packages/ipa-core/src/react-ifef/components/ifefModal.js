@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import {CSSTransition} from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import { BodyContext } from './bodyProvider';
 
 class IfefModalContainer extends React.Component {
@@ -11,33 +11,30 @@ class IfefModalContainer extends React.Component {
   static contextType = BodyContext;
 
   render() {
-    let classes = classnames('asf-modal-container', this.props.animation,this.context.ifefModalOpen?'modal-opened':'' );
+    let classes = classnames(
+      'asf-modal-container',
+      this.props.animation,
+      this.context.ifefModalOpen ? 'modal-opened' : ''
+    );
     return (
-
-        <CSSTransition
-                timeout={500}
-                in={this.context.ifefModalOpen ? true : false}
-                classNames={this.props.animation}
-
-        >
-          <div className={classes}>
-                {(this.context.ifefModal) ? this.context.ifefModal : <div/>}
-          </div>
-        </CSSTransition>
-
+      <CSSTransition
+        timeout={500}
+        in={this.context.ifefModalOpen ? true : false}
+        classNames={this.props.animation}
+      >
+        <div className={classes}>{this.context.ifefModal ? this.context.ifefModal : <div />}</div>
+      </CSSTransition>
     );
   }
 }
 
-
 IfefModalContainer.propTypes = {
-  animation: PropTypes.string
+  animation: PropTypes.string,
 };
 
 IfefModalContainer.defaultProps = {
-  animation: 'slide-in-up'
+  animation: 'slide-in-up',
 };
-
 
 class IfefModal extends React.Component {
   constructor(props, context) {
@@ -49,81 +46,89 @@ class IfefModal extends React.Component {
   static contextType = BodyContext;
 
   backdropClicked(e) {
-      let targetClassName = e.target.className;
-      if (targetClassName && typeof targetClassName === 'string' && targetClassName.indexOf("asf-modal-backdrop") >= 0) {
+    let targetClassName = e.target.className;
+    if (
+      targetClassName &&
+      typeof targetClassName === 'string' &&
+      targetClassName.indexOf('asf-modal-backdrop') >= 0
+    ) {
       // if clicked on backdrop outside of the modal, close modal
       e.preventDefault();
       this.context.ifefShowModal(false);
     }
-  };
+  }
 
   componentDidMount() {
-    if(this.props.focusFirstInput) {
-      var input = document.querySelector("input"); // select first input
+    if (this.props.focusFirstInput) {
+      let input = document.querySelector('input'); // select first input
       input && input.focus();
     }
   }
 
   componentWillUnmount() {
     // Catch the end of the transition
-
   }
 
   render() {
-    var classes = classnames(
-      {'asf-modal': true},
-      this.props.customClasses
-    );
-    var backdropClasses = classnames(
-      {'asf-modal-backdrop': true,
-       'active': this.props.children}
-    );
-    var barClasses = classnames(
-      'bar bar-header',
-      this.props.barClasses
-    );
-    var titleClasses = classnames(
-      {'title': true,
-       'title-left': this.context.ifefPlatform.isAndroid}
-    );
-    var closeButton;
+    let classes = classnames({ 'asf-modal': true }, this.props.customClasses);
+    let backdropClasses = classnames({ 'asf-modal-backdrop': true, active: this.props.children });
+    let barClasses = classnames('bar bar-header', this.props.barClasses);
+    let titleClasses = classnames({
+      title: true,
+      'title-left': this.context.ifefPlatform.isAndroid,
+    });
+    let closeButton;
     if (this.props.closeText) {
-      closeButton = <button onClick={ () => this.props.closeButtonHandler ? this.props.closeButtonHandler() : this.context.ifefShowModal(false) } className="button button-positive button-clear">{this.props.closeText}</button>;
-    } else {
-      closeButton = <button onClick={ () => this.props.closeButtonHandler ? this.props.closeButtonHandler() : this.context.ifefShowModal(false) } className="button button-icon"><i className="icon ion-ios-close-empty"></i></button>;
-    }
-    var contents;
-    if (this.props.customTemplate) {
-      contents = (
-        <div className={classes}>
-          {this.props.children}
-        </div>
+      closeButton = (
+        <button
+          onClick={() =>
+            this.props.closeButtonHandler
+              ? this.props.closeButtonHandler()
+              : this.context.ifefShowModal(false)
+          }
+          className="button button-positive button-clear"
+        >
+          {this.props.closeText}
+        </button>
       );
+    } else {
+      closeButton = (
+        <button
+          onClick={() =>
+            this.props.closeButtonHandler
+              ? this.props.closeButtonHandler()
+              : this.context.ifefShowModal(false)
+          }
+          className="button button-icon"
+        >
+          <i className="icon ion-ios-close-empty"></i>
+        </button>
+      );
+    }
+    let contents;
+    if (this.props.customTemplate) {
+      contents = <div className={classes}>{this.props.children}</div>;
     } else {
       contents = (
         <div className={classes}>
           <div className={barClasses}>
-            <h2 className={titleClasses}>{this.props.title}</h2>{closeButton}
+            <h2 className={titleClasses}>{this.props.title}</h2>
+            {closeButton}
           </div>
           <div className="content has-header overflow-scroll">
-            {this.props.padding
-              ? <div className="padding">
-                {this.props.children}
-              </div>
-              : this.props.children
-            }
+            {this.props.padding ? (
+              <div className="padding">{this.props.children}</div>
+            ) : (
+              this.props.children
+            )}
           </div>
         </div>
       );
     }
     return (
-        <div className={backdropClasses} onClick={this.backdropClicked}>
-          <div className="asf-modal-wrapper">
-            {contents}
-          </div>
-        </div>
-
-
+      <div className={backdropClasses} onClick={this.backdropClicked}>
+        <div className="asf-modal-wrapper">{contents}</div>
+      </div>
     );
   }
 }
@@ -131,10 +136,7 @@ class IfefModal extends React.Component {
 IfefModal.propTypes = {
   customClasses: PropTypes.string,
   customTemplate: PropTypes.bool,
-  title: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.element
-  ]),
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   closeText: PropTypes.string,
   focusFirstInput: PropTypes.bool,
   barClasses: PropTypes.string,
@@ -150,7 +152,6 @@ IfefModal.defaultProps = {
   barClasses: 'bar-stable',
   padding: true,
 };
-
 
 export default IfefModal;
 export { IfefModalContainer };

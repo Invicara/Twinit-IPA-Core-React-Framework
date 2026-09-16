@@ -2,12 +2,14 @@
 
 // React doesn't like custom properties in JSX, see [JSX Gotchas](https://facebook.github.io/react/docs/jsx-gotchas.html), so we overwrite the transitions with an older class based version
 
-@use "../scss/_ifef.scss" with ($ionicons-font-path: "fonts");
-@use "slick-theme";
-@use "slick";
-@use "snap";
-@use "animations-overwrite";
-@use "transitions-overwrite";
-@use "styles";
-@use "newStyles";
-@use "icofont.min";
+@use '../scss/_ifef.scss' with (
+  $ionicons-font-path: 'fonts'
+);
+@use 'slick-theme';
+@use 'slick';
+@use 'snap';
+@use 'animations-overwrite';
+@use 'transitions-overwrite';
+@use 'styles';
+@use 'newStyles';
+@use 'icofont.min';
