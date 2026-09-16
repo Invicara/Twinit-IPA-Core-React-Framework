@@ -371,7 +371,7 @@ class ScriptRunnerView extends React.Component {
 
         let { results } = this.state;
 
-        if (!!index)
+        if (index)
             results.splice(index, 1);
         else
             results = [];
@@ -519,14 +519,14 @@ class ScriptRunnerView extends React.Component {
     }
 
     makeValidBreakMark() {
-      var marker = document.createElement("div");
+      let marker = document.createElement("div");
       marker.style.color = "#cc3333";
       marker.innerHTML = "●";
       return marker;
     }
 
     makeInvalidBreakMark() {
-      var marker = document.createElement("div");
+      let marker = document.createElement("div");
       marker.style.color = "#3399ff";
       marker.innerHTML = "●";
       return marker;
@@ -583,11 +583,11 @@ class ScriptRunnerView extends React.Component {
 
     getOperatorHints(editor, option) {
       return new Promise((resolve) => {
-        var cursor = editor.getCursor(), line = editor.getLine(cursor.line)
-        var start = cursor.ch, end = cursor.ch
+        let cursor = editor.getCursor(), line = editor.getLine(cursor.line)
+        let start = cursor.ch, end = cursor.ch
         while (start && /\w|\$/.test(line.charAt(start - 1))) --start
         while (end < line.length && /\w/.test(line.charAt(end))) ++end
-        var word = line.slice(start, end).toLowerCase()
+        let word = line.slice(start, end).toLowerCase()
 
         let completions = this.state.operators.filter(o => o.toLowerCase().startsWith(word.toLowerCase()))
 
@@ -718,7 +718,7 @@ class ScriptRunnerView extends React.Component {
                 <div style={{fontWeight: 'bold', marginTop: '20px', marginLeft: '60px'}}>Help Topics</div>
                 <div style={{marginTop: '40px', marginLeft: '60px'}}>
                   {this.state.helpLinks.map((link, index) => (<div style={{marginBottom: '10px'}} key={index}>
-                    <a href={link.url} target='_blank'>{link.name}</a>
+                    <a href={link.url} target='_blank' rel="noreferrer">{link.name}</a>
                   </div>))}
                 </div>
           </StackableDrawer>}

@@ -41,7 +41,7 @@ const InviteTable = ({
         ? ['', 'Expired Invites', 'Role', '']
         : ['', 'Project', 'Role', '']
     }
-    rows={invites.map(inv => {
+    rows={invites.map((inv, i) => {
       let status = inviteStatus[inv._id]
       let statusOrButtons = status ? (
         <span className={'invite-state-' + status.toLowerCase()}>{status}</span>
@@ -62,7 +62,7 @@ const InviteTable = ({
         </div>
       )
       return [
-        <span>&bull;</span>,
+        <span key={i}>&bull;</span>,
         inv._params.name,
         inv._usergroup._name,
         statusOrButtons

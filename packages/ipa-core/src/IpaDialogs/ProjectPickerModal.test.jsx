@@ -11,7 +11,7 @@ it('change la classe lorsqu\'on le survole', () => {
     const IfefProvider = createLegacyContextSupport({ ifefPlatform: PropTypes.object })
     const context = {ifefPlatform:{isAndroid:false}};
     const modal =  <IfefProvider context={context}>
-        <ProjectPickerModal appContextProps={context}/>}
+        <ProjectPickerModal appContextProps={context}/>
     </IfefProvider>;
 
     const component = renderer.create(modal);

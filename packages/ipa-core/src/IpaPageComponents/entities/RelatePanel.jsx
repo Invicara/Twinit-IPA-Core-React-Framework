@@ -2,6 +2,7 @@ import React from "react";
 import GenericMatButton from "../../IpaControls/GenericMatButton";
 import EntitySelectionPanel, {TreeSelectMode} from "./EntitySelectionPanel"
 import {branchNodeRenderer, leafNodeRenderer} from "../../IpaUtils/TreeRendererHelper"
+import _ from "lodash"
 
 export const RelatePanel = ({selectedEntityType, selectedEntities, checkedEntities, appliedFilters, fetching, entityPlural,
                          searchedEntities, parentEntities, relate, setSelectedSearchedEntities, resetForRelatedFilteringAndGrouping, groups

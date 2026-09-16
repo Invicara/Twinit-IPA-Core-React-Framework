@@ -45,7 +45,7 @@ const EntityActionsPanel = ({actions, entity, type, context, getEntityActionComp
       let result = await action.onClick(entity);
       if (result.success) {
         if (action.onSuccess) {
-          action.onSuccess(action.type, newEntity, result)
+          action.onSuccess(action.type, entity, result)
         }
       }
       else {

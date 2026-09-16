@@ -1,6 +1,7 @@
 import ScriptCache from "../../IpaUtils/script-cache";
 import { loadPlainInitialValueWithScriptedSelectFormat } from "../../IpaUtils/ScriptedSelectsHelpers";
 import {flattenIfNotMulti} from '../../IpaControls/EnhancedScriptedLinkedSelects'
+import _ from 'lodash'
 
 
 export const fetchLinkedSelectValues = async (onChange) => {

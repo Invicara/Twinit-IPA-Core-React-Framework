@@ -147,9 +147,9 @@ const DocumentTable = props => {
             onClick: () => action.onClick(getSelectedDocuments(selectedDocumentsIds))
           }
           if (action.bulk.component) {
-            return <action.bulk.component {...defaultProps} {...action.bulk.props} />;
+            return <action.bulk.component key={action.name} {...defaultProps} {...action.bulk.props} />;
           }
-          return <div className={`document-table__action document-table__action${selectedDocumentsIds.length > 0 ? '_enabled' : '_disabled'}`} >
+          return <div key={action.name} className={`document-table__action document-table__action${selectedDocumentsIds.length > 0 ? '_enabled' : '_disabled'}`} >
             <a onClick={defaultProps.onClick}>
               <i className={defaultProps.icon} />
               <span>{defaultProps.title}</span>
@@ -199,7 +199,7 @@ const DocumentTable = props => {
           </th>
           {props.tableConfig.columns.filter(col => col.active)
             .map((column, index, array) => {
-              return <th className="document-table__col document-table__col--header"><div>
+              return <th key={column.accessor} className="document-table__col document-table__col--header"><div>
                 {column.name}
                 <span className={`document-table_lock`}>
                   <i className={`fas ${_.includes(props?.tableConfig?.lockedColumns, column.name) ? 'fa-lock' : ''}`}></i>
@@ -221,7 +221,7 @@ const DocumentTable = props => {
           let checked = selectedDocIndex != -1 && (doc.documentData.versions.length > 1 ? doc.currentVersion.length === doc.documentData.versions.length : true)
           let partialChecked = doc.currentVersion.length < doc.documentData.versions.length && doc.currentVersion.length != 0
           let versions = _.intersection(doc.documentData.versions, doc.currentVersion)
-          return <tr className="document-table__row">
+          return <tr key={doc.documentData.fileId} className="document-table__row">
             <td className="document-table__col document-table__col--select">
               <PinkCheckbox
                 onChange={() => {
@@ -254,9 +254,9 @@ const DocumentTable = props => {
                   }
                   const disabled = defaultProps.disabled && isDisabled(doc, action)
                   if (action.component) {
-                    return <action.component {...defaultProps} {...action.props} />;
+                    return <action.component key={action.name} {...defaultProps} {...action.props} />;
                   }
-                  return <span className={`document-table__action-button`}>
+                  return <span key={action.name} className={`document-table__action-button`}>
                     <Tooltip title={defaultProps.title}>
                       <i className={`${defaultProps.icon} ${disabled.toString()}`} onClick={defaultProps.onClick} />
                     </Tooltip>
@@ -277,7 +277,7 @@ const DocumentTable = props => {
                     let vdate
                     if(v.hasOwnProperty('metadata')){
                     vdate = moment(v.metadata[props.tableConfig.dateField])}
-                    return <div><PinkCheckbox onChange={() => setSelectedVersion(v, doc)}
+                    return <div key={v.versionNumber}><PinkCheckbox onChange={() => setSelectedVersion(v, doc)}
                       checked={doc.currentVersion?.includes(v)} />
                       {v.versionNumber} {vdate ? vdate.format('DD/MM/YYYY kk:mm:ss a') : date.format('DD/MM/YYYY kk:mm:ss a')}</div>
                   })
@@ -297,7 +297,7 @@ const DocumentTable = props => {
                 if (_.isObject(value)) {
                   value = value.val
                 }
-                return <td className="document-table__col">{value}</td>
+                return <td key={column.accessor} className="document-table__col">{value}</td>
               }
             })}
           </tr>

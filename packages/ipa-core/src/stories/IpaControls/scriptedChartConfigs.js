@@ -3,6 +3,7 @@ import {
   scriptedData2,
   scriptedData3,
 } from "./scriptedChartData";
+import _ from 'lodash'
 
 export const configLine = {
   chart: "Line",

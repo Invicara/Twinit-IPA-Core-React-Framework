@@ -119,10 +119,10 @@ const ReactiveTreeControl = ({nodeIndex, onNodeIndexChange, renderBranchNode = d
         </li>
 
 
-    const renderNodes = (treeNodes) => treeNodes.map(node => {
+    const renderNodes = (treeNodes) => treeNodes.map((node, i) => {
 
         if(!node) {
-            return <p>No node to render</p>
+            return <p key={i}>No node to render</p>
         }
 
         return node.isLeaf ? renderLeaf(node) : renderBranch(node)

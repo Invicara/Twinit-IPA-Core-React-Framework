@@ -5,6 +5,7 @@ import "./AlertTable.scss";
 import { Tooltip } from "@mui/material";
 import { withGenericPageContext } from "../../IpaPageComponents/genericPageContext";
 import ScriptHelper from "../../IpaUtils/ScriptHelper";
+import _ from "lodash";
 
 const getHeaders = (columns) => {
   let headers = columns.filter((c) => c.active === true).map((c) => c.name);

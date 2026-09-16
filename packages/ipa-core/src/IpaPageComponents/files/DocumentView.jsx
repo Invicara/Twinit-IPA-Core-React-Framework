@@ -6,8 +6,6 @@ import "./DocumentView.scss";
 import { LinearProgress } from "@mui/material";
 
 const DocumentView = (props) => {
-  if (props.isPageLoading) return null;
-
   const [loading, setLoading] = useState(false);
 
   // This should be a temporary solution, to be replaced when the IafDocViewer can provide an 'isReady' callback function
@@ -32,6 +30,10 @@ const DocumentView = (props) => {
       observer.disconnect()
     }
   }, [])
+
+  // Guard after the hooks, not before: returning early above them changed
+  // the hook order whenever isPageLoading flipped, which React rejects.
+  if (props.isPageLoading) return null;
 
   let docIds = props.docIds || props.queryParams.docIds || [];
 

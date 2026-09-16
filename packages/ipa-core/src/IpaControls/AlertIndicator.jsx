@@ -8,8 +8,8 @@ const AlertIndicator = ({ className, descriptions }) => {
     <Tooltip
       title={
         <div>
-          {descriptions.map((a) => (
-            <p>{a}</p>
+          {descriptions.map((a, i) => (
+            <p key={i}>{a}</p>
           ))}
         </div>
       }

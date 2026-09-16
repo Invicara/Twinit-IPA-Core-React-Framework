@@ -1,9 +1,27 @@
+/* eslint-disable no-undef --
+ * `expression`, `_expressionExecCtx` and `sift` are not defined anywhere in
+ * this file or imported into it. They are leftovers from 872f8ab2 "Removed
+ * expression script related code" (April 2024), which removed the wiring from
+ * AppProvider and IpaMainLayout but left the functions that depended on it.
+ *
+ * Every function below that touches them throws ReferenceError if called:
+ * evalExpressions, getFilterFunction, getFilterQuery and getScriptOperators,
+ * all of which are exported on ScriptHelper. getFilterFunction and
+ * getFilterQuery have no callers anywhere; evalExpressions is called from
+ * AppProvider behind !isProjectNextGenJs() and from ScriptRunnerView.
+ *
+ * TODO: decide whether legacy non-nextgen projects are still supported. If
+ * they are, restore the binding; if not, delete these functions and their
+ * entries in the ScriptHelper export. Disabled rather than silently left
+ * failing so the lint gate stays usable meanwhile.
+ */
 import { IafProj, IafSession } from '@dtplatform/platform-api';
 
 import * as PlatformApi from '@dtplatform/platform-api';
 import { IafScriptEngine } from '@dtplatform/iaf-script-engine';
 import * as UiUtils from '@dtplatform/ui-utils';
 import { exportWorkbook } from './helpers';
+import _ from 'lodash';
 
 async function loadScript(query, ctx) {
   console.log('ScriptHelper loadScript query', query);

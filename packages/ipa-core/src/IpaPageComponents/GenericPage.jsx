@@ -211,10 +211,6 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
       this.setState({ isPageLoading: false });
     }
 
-    onLoadComplete() {
-      this.setState({ isPageLoading: false });
-    }
-
     isSelectionInfoValid(selectionInfo) {
 
       if (selectionInfo && !selectionInfo.entityType) {
@@ -397,13 +393,13 @@ const withGenericPage = (PageComponent, optionalProps = {}) => {
           {/*breadcrumbs to the left*/}
           <Box sx={{ flexGrow: 1 }}>
             {this.state.handler.toolbar.breadcrumbButtons && (this.state.handler.toolbar.breadcrumbButtons.map((b) => (
-              <GenericMatButton {...b.props}>{b.text}</GenericMatButton>
+              <GenericMatButton key={b.text} {...b.props}>{b.text}</GenericMatButton>
             )))}
           </Box>
           {/*actions to the right to the left*/}
           <Box sx={{ flexGrow: 0 }}>
             {this.state.handler.toolbar.actionButtons && (this.state.handler.toolbar.actionButtons.map((b) => (
-              <GenericMatButton {...b.props}>{b.text}</GenericMatButton>
+              <GenericMatButton key={b.text} {...b.props}>{b.text}</GenericMatButton>
             )))}
             {this.state.handler.toolbar.pagination && this.state.handler.pagination.toolbar.hasPrevious && <GenericMatButton>Prev</GenericMatButton>}
             {this.state.handler.toolbar.pagination && this.state.handler.pagination.toolbar.hasNext && <GenericMatButton>Next</GenericMatButton>}

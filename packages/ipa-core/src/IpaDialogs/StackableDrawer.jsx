@@ -3,6 +3,7 @@ import clsx from "clsx";
 import interact from "interactjs";
 
 import './StackableDrawer.scss'
+import _ from 'lodash'
 
 const toggleHeight = 50;
 export const DEFAULT_DRAWER_WIDTH = 360;

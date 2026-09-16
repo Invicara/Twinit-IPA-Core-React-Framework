@@ -322,7 +322,7 @@ class FilterDropDownPanel extends React.Component {
 
   dateChanged = (input) => {
     this.setState({
-      selectedValue: !!input ? input.getTime() : null,
+      selectedValue: input ? input.getTime() : null,
       isReady: !!input
     })
   }
@@ -330,10 +330,10 @@ class FilterDropDownPanel extends React.Component {
   dateRangeChanged = (input, field) => {
     let selectedValue = _.cloneDeep(this.state.selectedValue)
     if (_.isObject(selectedValue))
-      selectedValue[field] = !!input ? input.getTime() : null
+      selectedValue[field] = input ? input.getTime() : null
     else {
       selectedValue = {}
-      selectedValue[field] = !!input ? input.getTime() : null
+      selectedValue[field] = input ? input.getTime() : null
     }
     
     let ready = false;
@@ -494,7 +494,6 @@ class FilterDropDownPanel extends React.Component {
           menuPlacement="auto"
           menuPosition="fixed"
           isSearchable isClearable/> : noValueControl)
-        break;
       case 'multi-pick':
         return (hasValues ? <Select
           onChange={this.multiListValueChanged}
@@ -506,10 +505,8 @@ class FilterDropDownPanel extends React.Component {
           menuPlacement="auto"
           menuPosition="fixed"
           isMulti isSearchable isClearable/> : noValueControl)
-        break;
       case 'text':
         return textControl
-        break;
       case 'single':
         if (type=="date" || type=="datetime") {
           return this.getDateControl(type, false)
@@ -517,7 +514,6 @@ class FilterDropDownPanel extends React.Component {
         else {
           return numberControl
         }
-        break;
       case 'range':
         if (type=="date" || type=="datetime") {
           return this.getDateControl(type, true)
@@ -542,7 +538,6 @@ class FilterDropDownPanel extends React.Component {
             </span>
           )
         }
-        break;
       default:
         console.error("Unknown input for ", func)
         return <div>Unknown data type! ({func.input})</div>

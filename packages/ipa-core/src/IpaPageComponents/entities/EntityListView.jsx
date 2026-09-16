@@ -37,6 +37,9 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
 
 
     //If the selectedEntities props is used, we assume a controlled behaviour, uncontrolled otherwise
+    // Called unconditionally: this used to sit in the else branch below,
+    // which changed hook order whenever selectedEntities changed.
+    const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
     let allChecked, handleCheck, handleAllCheck, entityInstances;
     if(selectedEntities) {
         allChecked = isAllChecked;
@@ -44,7 +47,6 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
         handleAllCheck = allCheckCallback;
         entityInstances = checkableEntities;
     } else {
-        const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
         allChecked = checkedObject.allChecked;
         handleCheck = checkedObject.handleCheck;
         handleAllCheck = checkedObject.handleAllCheck;
@@ -98,7 +100,7 @@ export const EntityListView = ({config, entities, onDetail, actions, context, on
     const buildCell = useCallback((instance) => (col, i) => {
         const value = _.get(instance, col.accessor);
         let dispValue = value && typeof value === 'string' ? value : value ? value.val : null
-        dispValue = isValidUrl(dispValue) ? <a href={dispValue} target="_blank">{dispValue}</a> : dispValue
+        dispValue = isValidUrl(dispValue) ? <a href={dispValue} target="_blank" rel="noreferrer">{dispValue}</a> : dispValue
 
         const first = i === 0;
         return <div key={i} className={clsx({

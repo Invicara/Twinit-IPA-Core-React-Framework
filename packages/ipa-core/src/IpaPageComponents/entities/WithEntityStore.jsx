@@ -52,11 +52,7 @@ const withEntityStore = (WrappedComponent) => {
         }
 
         UNSAFE_componentWillMount(){
-            this.alignEntityStoreToHandlerEntity();
-        }
-
-        componentWillMount(){
-             // Temporarily adding this in to reset any selected Entities when a user moves away from the navigator until we have clearer requirements on how the navigator should operate.
+            // Temporarily adding this in to reset any selected Entities when a user moves away from the navigator until we have clearer requirements on how the navigator should operate.
             storeCacheMap['/navigator'] = {}
             this.alignEntityStoreToHandlerEntity();
         }

@@ -3,6 +3,7 @@ import FileHelpers from '../../IpaUtils/FileHelpers'
 import withPageNavigation from '../withPageNavigation'
 import DocumentTable from './DocumentTable'
 import { useEffect } from 'react'
+import _ from 'lodash'
 
 let ScriptedDocumentTable = props => {
   const [sorting, setSorting] = useState(props.config.defaultSort)
@@ -142,7 +143,6 @@ let ScriptedDocumentTable = props => {
       isDescending: !sorting?.descending //defaults to false
     },
     dateField: props?.config?.dateField,
-    lockedColumns: props?.config?.lockedColumns, 
     supportedTypes: props?.config?.supportedTypes
   }
 

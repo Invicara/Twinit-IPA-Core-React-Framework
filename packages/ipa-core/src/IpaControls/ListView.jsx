@@ -6,7 +6,7 @@ import _ from "lodash";
 import { RoundCheckbox, useChecked } from "./Checkboxes";
 import { isValidUrl } from "../IpaUtils/helpers";
 
-export const sortEntities = (entitySingular, onSortChange) => {
+export const useSortEntities = (entitySingular, onSortChange) => {
   const ASCENDING_ORDER = "asc";
   const DESCENDING_ORDER = "desc";
   const ENTITY_LIST_SORT_PREFERENCE = "entityListSortPreference";
@@ -86,6 +86,9 @@ export const EntityListView = ({
   };
 
   //If the selectedEntities props is used, we assume a controlled behaviour, uncontrolled otherwise
+  // Called unconditionally: this used to sit in the else branch below,
+  // which changed hook order whenever selectedEntities changed.
+  const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
   let allChecked, handleCheck, handleAllCheck, entityInstances;
   if (selectedEntities) {
     allChecked = isAllChecked;
@@ -93,13 +96,12 @@ export const EntityListView = ({
     handleAllCheck = allCheckCallback;
     entityInstances = checkableEntities;
   } else {
-    const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
     allChecked = checkedObject.allChecked;
     handleCheck = checkedObject.handleCheck;
     handleAllCheck = checkedObject.handleAllCheck;
     entityInstances = checkedObject.items;
   }
-  const { sortEntitiesBy, currentSort: currentSort } = sortEntities(
+  const { sortEntitiesBy, currentSort: currentSort } = useSortEntities(
     entitySingular,
     onSortChange,
   );
@@ -109,7 +111,7 @@ export const EntityListView = ({
     let dispValue =
       value && typeof value === "string" ? value : value ? value.val : null;
     dispValue = isValidUrl(dispValue) ? (
-      <a href={dispValue} target="_blank">
+      <a href={dispValue} target="_blank" rel="noreferrer">
         {dispValue}
       </a>
     ) : (

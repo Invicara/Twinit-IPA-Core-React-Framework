@@ -68,7 +68,6 @@ const IpaUtils = {
     branchNodeRendererOld: branchNodeRenderer,
     usePrevious,
     getFilteredEntitiesBy,
-    applyFilters : applyFilters,
     getEntityFromModel,
     TreeNodeStatus, TreeNodeActionName,
     AppContext

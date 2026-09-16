@@ -13,6 +13,7 @@ export default {
 };
 
 const Template = (args) => {
+  const [, updateArgs] = useArgs();
   const handleChange = (e) => {
     updateArgs({
       ...args,

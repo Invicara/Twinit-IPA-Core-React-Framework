@@ -45,7 +45,7 @@ const SimpleTable = ({header, rows, objects, columns, className}) => {
           {
             rows.map(r => <tr key={key()}>{
               _.isArray(r) ?
-              r.map(c => <td key={key()}>{isValidUrl(c) ? <a href={c} target="_blank">{c}</a> : c}</td>) :
+              r.map(c => <td key={key()}>{isValidUrl(c) ? <a href={c} target="_blank" rel="noreferrer">{c}</a> : c}</td>) :
               <td>Wrong data shape</td>
             }</tr>)
           }
@@ -63,7 +63,7 @@ const _downloadDocument = async (e, fid) => {
 
 const objectsToTable = (objects, columns) => {
   console.warn("Warning: objectsToTable has been renamed to objectsToHeaderAndRows");
-  return objectsToHeaderAndRows(object, columns)
+  return objectsToHeaderAndRows(objects, columns)
 }
 
 const objectToRows = (object, columns) => {

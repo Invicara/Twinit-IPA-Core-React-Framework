@@ -7,7 +7,6 @@ import "./EntityTable.scss";
 import { RoundCheckbox, useChecked } from "../../IpaControls/Checkboxes";
 import { isValidUrl } from "../../IpaUtils/helpers";
 import {
-  InputLabel,
   Table,
   TableBody,
   TableCell,
@@ -80,53 +79,6 @@ const EntityTableActionsCell = (props) => {
   );
 };
 
-const EntityTableVersionsCell = ({
-  actions,
-  entity,
-  versions,
-  accessors,
-  entityType,
-  context,
-  onSelectedVersionChanged,
-}) => {
-  const { currentVersionAccessor = "_tipVersion" } = accessors || {};
-
-  const rowCellActions = useMemo(
-    () =>
-      Object.entries(actions)
-        .filter(([key, a]) => a.showOnRowCell)
-        .reduce(function (acc, [key, val], i) {
-          acc[key] = val;
-          return acc;
-        }, {}),
-    [actions],
-  );
-
-  const handleChange = (event) => {
-    onSelectedVersionChanged(event.target.value, entity, versions);
-  };
-
-  return (
-    <>
-      <InputLabel id="demo-simple-select-standard-label">Version</InputLabel>
-      <Select
-        labelId="demo-simple-select-standard-label"
-        id="demo-simple-select-standard"
-        value={age}
-        onChange={handleChange}
-        label="Age"
-      >
-        <MenuItem value="">
-          <em>None</em>
-        </MenuItem>
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
-      </Select>
-    </>
-  );
-};
-
 export const EntityTableContainer = ({
   config,
   actions,
@@ -177,6 +129,9 @@ export const EntityTableContainer = ({
   }, [entities, selectedEntities]);
 
   //If the selectedEntities props is used, we assume a controlled behaviour, uncontrolled otherwise
+  // Called unconditionally: this used to sit in the else branch below,
+  // which changed hook order whenever selectedEntities changed.
+  const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
   let allChecked, handleCheck, handleAllCheck, entityInstances;
   if (selectedEntities) {
     allChecked = isAllChecked;
@@ -184,7 +139,6 @@ export const EntityTableContainer = ({
     handleAllCheck = allCheckCallback;
     entityInstances = checkableEntities;
   } else {
-    const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
     allChecked = checkedObject.allChecked;
     handleCheck = checkedObject.handleCheck;
     handleAllCheck = checkedObject.handleAllCheck;
@@ -243,7 +197,7 @@ export const EntityTableContainer = ({
       let dispValue =
         value && typeof value === "string" ? value : value ? value.val : null;
       dispValue = isValidUrl(dispValue) ? (
-        <a href={dispValue} target="_blank">
+        <a href={dispValue} target="_blank" rel="noreferrer">
           {dispValue}
         </a>
       ) : (

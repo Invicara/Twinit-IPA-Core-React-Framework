@@ -52,9 +52,9 @@ const ChartTestPage = ({charts,scripts}) => {
         <br />
         See the following links for available chart configuration:
         <br />
-          <a href="https://nivo.rocks/components?filter=SVG" target="_blank">Nivo Chart Documentation</a>
+          <a href="https://nivo.rocks/components?filter=SVG" target="_blank" rel="noreferrer">Nivo Chart Documentation</a>
             <br />
-          <a href="https://nivo.rocks/components?filter=SVG" target="_blank">Inivcara Chart Extensions</a>
+          <a href="https://nivo.rocks/components?filter=SVG" target="_blank" rel="noreferrer">Inivcara Chart Extensions</a>
 
       </div>
 

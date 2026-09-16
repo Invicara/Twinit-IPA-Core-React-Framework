@@ -25,8 +25,8 @@ const ReorderColumnsModal = (props) => {
     const onDragOver = (index) => {
         const draggedOverItem = columns[index]
         // if the item is dragged over itself, ignore
-        if (draggedItem === draggedOverItem || draggedItem === (null || undefined)) {
-            return; 0
+        if (draggedItem === draggedOverItem || draggedItem == null) {
+            return;
         }
         // filter out the currently dragged item
         let items = columns.filter((item) => item !== draggedItem)   

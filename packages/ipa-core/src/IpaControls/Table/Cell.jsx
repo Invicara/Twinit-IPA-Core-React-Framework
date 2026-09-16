@@ -4,7 +4,7 @@ import {isValidUrl} from '../../IpaUtils/helpers'
 import './Cell.scss';
 
 const parseTextCell = (val) => {
-    return isValidUrl(val) ? <a href={val} target="_blank">{val}</a> : val
+    return isValidUrl(val) ? <a href={val} target="_blank" rel="noreferrer">{val}</a> : val
 }
 
 const parseDateCell = (val) => {

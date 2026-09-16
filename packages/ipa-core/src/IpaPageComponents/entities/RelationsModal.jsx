@@ -66,7 +66,7 @@ const RawRelationsModal = ({
   )
   const [overlay, setOverlay] = useState({ show: false })
 
-  close = () => {
+  const close = () => {
     destroyModal()
   }
 

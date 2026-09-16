@@ -70,7 +70,7 @@ export const UploadFilesWizardSteps = ({steps, selectedStep, addFiles, startUplo
         {!_.isEmpty(rejectedFiles) && 
         <div className={'rejected-files'}>
             {!hideDefaultError && `*The following files were rejected and will not be uploaded: ${rejectedFiles.map(f => f.name).join(' ,')}`}
-            {rejectedFiles.map(f =>  f.errorMessage ? <p>{f.errorMessage}</p> : null)}
+            {rejectedFiles.map(f =>  f.errorMessage ? <p key={f.name}>{f.errorMessage}</p> : null)}
         </div>}
         {Buttons && <Buttons optionsOverride={selectedStep === 2 && hasEntities ? {onPrimaryClick: () => setDialogOpen(true)} : {}}/>}
         <Dialog onClose={closeDialog}  open={dialogOpen}>

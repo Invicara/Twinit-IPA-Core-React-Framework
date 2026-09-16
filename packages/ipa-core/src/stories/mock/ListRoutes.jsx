@@ -8,8 +8,8 @@ const ListRoutes = ({routeKey}) => {
       (contextProps) => {
         const {pageList, pageRoutes, pageGroups} = contextProps.router;
         return <React.Fragment>
-          <ol>{pageList.map(page=><li>{page.title}</li>)}</ol>
-          <ol>{pageRoutes.map(route=><li>{route.key}</li>)}</ol>
+          <ol>{pageList.map(page=><li key={page.title}>{page.title}</li>)}</ol>
+          <ol>{pageRoutes.map(route=><li key={route.key}>{route.key}</li>)}</ol>
           {pageRoutes.map(route=>{
             const match = route.key==routeKey;
             return match ? route : null})}

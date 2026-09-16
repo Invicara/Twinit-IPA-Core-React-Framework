@@ -48,9 +48,10 @@ export function convertPageToOfset (page, rowsPerPage, pageOneBased = false) {
 
 const paginateEntitiesReducer = (state, action) => {
     switch (action.type) {
-        case 'paginate':
+        case 'paginate': {
             const {page, rowsPerPage, count} = action;
             return {...state, page, rowsPerPage, count};
+        }
         default:
             return {...state};
     }

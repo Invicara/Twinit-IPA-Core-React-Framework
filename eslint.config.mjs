@@ -25,6 +25,11 @@ export default [
       '**/*.min.js',
       // Vendored Ionicons, carried verbatim from upstream.
       'packages/*/src/react-ifef/scss/**',
+      // Vendored Snap.js (one a local fork for the side panel). Third-party
+      // UMD source; its own `module` shim collides with ours and nobody is
+      // going to restyle upstream code.
+      'packages/*/src/react-ifef/helpers/snap.js',
+      'packages/*/src/lib/snap-invicara.js',
     ],
   },
 
@@ -41,8 +46,21 @@ export default [
         ...globals.browser,
         // config.js is written at deploy time and read as a global.
         endPointConfig: 'readonly',
+        // version.js is written by build.sh at deploy time and loaded as a
+        // plain script, same arrangement as endPointConfig above.
+        version: 'readonly',
         // react-ifef carries its Ionic heritage and feature-detects cordova.
         cordova: 'readonly',
+        // Supplied by the bundler, not by the browser. require() is used for
+        // webpack asset imports (Logo.jsx) and for the dynamic plugin loading
+        // in AppProvider that reaches into the consuming app; process and
+        // module come from the same shim layer. Declared so genuine typos are
+        // still caught while these legitimate uses are not.
+        require: 'readonly',
+        module: 'readonly',
+        process: 'readonly',
+        // Optional host global, only ever read behind a typeof guard.
+        Meteor: 'readonly',
       },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
@@ -59,6 +77,11 @@ export default [
       'react/jsx-key': 'error',
       'react/jsx-no-undef': 'error',
       'react/jsx-no-target-blank': 'error',
+      // item_id is a deliberate DOM attribute, documented in Item.jsx as "our
+      // universal identifier" and nothing in the codebase reads it, so it is
+      // most likely a hook for external tooling. Allowed by name so that real
+      // typos like class-instead-of-className still fail.
+      'react/no-unknown-property': ['error', { ignore: ['item_id'] }],
 
       // --- signal, but too noisy to block on today --------------------------
       // The counts below are from the first run over 326 files. They are warnings
@@ -73,6 +96,12 @@ export default [
       'no-prototype-builtins': 'warn', // 18
       'no-useless-assignment': 'warn', // 14
       'react/no-unescaped-entities': 'warn', // 8
+      // Both are about expression rather than correctness: children-as-prop
+      // renders identically to nesting, and a redundant escape inside a
+      // character class matches the same thing. Not worth touching a validated
+      // email regex or restructuring working JSX to satisfy.
+      'react/no-children-prop': 'warn', // 2
+      'no-useless-escape': 'warn', // 2
 
       // eslint-plugin-react-hooks 7 ships the React Compiler rules in its
       // recommended set. They are good guidance, but they describe compiler
@@ -82,6 +111,9 @@ export default [
       'react-hooks/set-state-in-effect': 'warn', // 24
       'react-hooks/immutability': 'warn', // 14
       'react-hooks/refs': 'warn', // 7
+      'react-hooks/use-memo': 'warn',
+      'react-hooks/static-components': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
 
       // --- off, with reasons ------------------------------------------------
       // This is a JS codebase with no propTypes discipline; enabling it reports

@@ -20,7 +20,6 @@ const CollapsibleTextInput = (props) => {
           props.inputProps?.value,
         onFocusChange: (isFocused) => {
           props.inputProps.onFocusChange?.(isFocused);
-          setIsFocused(isFocused);
         },
       }}
       labelProps={{

@@ -85,7 +85,7 @@ export const fetchAllNamedUserItems = createAsyncThunk(
       
       if(!scriptName) { 
         const criteria = {query : {"_itemClass": {"$in": ["NamedUserCollection","NamedFileCollection"]}}};
-        const ctx = {...args.ctx} || {};
+        const ctx = {...args.ctx};
         const options = args.options;
         return IafItemSvc.getAllNamedUserItems(criteria, ctx, options);
       } else {

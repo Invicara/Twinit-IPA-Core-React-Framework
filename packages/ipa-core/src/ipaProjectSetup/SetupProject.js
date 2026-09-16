@@ -299,7 +299,7 @@ export default class SetUpProject extends React.Component {
             document.getElementById("donebtn").style.display = "block";
             break;
 
-          case "RUNNING":
+          case "RUNNING": {
             let endTime = Date.now();
             let diffInSeconds = (endTime - startTime) / 1000;
             console.log(
@@ -322,6 +322,7 @@ export default class SetUpProject extends React.Component {
               div.innerHTML += `<div style="display:flex; flex-direction:row; justify-content: space-between;"><p style="font-size: 15px; margin:1px; padding-left:5px">${name}</p><p style="font-size: 15px; margin:1px; padding-right:5px">${status}</p></div>`;
             });
             break;
+          }
 
           case "ERROR":
             console.error("Error message", status.orchrunsteps[0]._statusmsg);
