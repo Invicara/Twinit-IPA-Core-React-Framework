@@ -32,6 +32,7 @@
     "packages/*"
   ],
   "overrides": {
+    "globby": "^11.1.0",
     "axios": "^1.18.1",
     "decode-uri-component": "^0.5.0",
     "nx": {
