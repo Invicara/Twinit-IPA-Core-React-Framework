@@ -74,7 +74,6 @@
     "react-date-picker": "^7.10.0",
     "react-datetime-picker": "^2.9.0",
     "react-dom": "^18.2.0",
-    "react-dropzone": "^7.0.1",
     "react-inspector": "^6.0.2",
     "react-redux": "^7.2.0",
     "react-router": "^4.3.1",
