@@ -10,61 +10,82 @@ import image from '@rollup/plugin-image';
 import fs from 'fs';
 import path from 'path';
 
-// Custom plugin to create symlinks for large folders to avoid duplication.
-//
-// Runs on closeBundle, not writeBundle. writeBundle fires once per output, so
-// the esm_modules pass used to race rollup-plugin-copy's population of
-// modules/: the target often did not exist yet, which is where the repeated
-// "Target ... does not exist, skipping symlink creation" warnings came from.
-// closeBundle fires once, after every output has been written. (copy's own
-// duplicate-pass race is fixed separately, on the copy plugin below.)
-const createSymlinksPlugin = () => ({
-    name: 'create-symlinks',
-    closeBundle() {
-        const symlinks = [
-            { target: 'modules/IpaIcons', link: 'esm_modules/IpaIcons' },
-            { target: 'modules/IpaFonts', link: 'esm_modules/IpaFonts' }
-        ];
+// Symlink the large icon/font folders instead of shipping a second copy.
+// Plain function, not a plugin: it is sequenced by copyAndSymlink below.
+const createSymlinks = () => {
+    const symlinks = [
+        { target: 'modules/IpaIcons', link: 'esm_modules/IpaIcons' },
+        { target: 'modules/IpaFonts', link: 'esm_modules/IpaFonts' }
+    ];
+    
+    symlinks.forEach(({ target, link }) => {
+        const targetPath = path.resolve(target);
+        const linkPath = path.resolve(link);
         
-        symlinks.forEach(({ target, link }) => {
-            const targetPath = path.resolve(target);
-            const linkPath = path.resolve(link);
-            
-            // Check if target exists
-            if (!fs.existsSync(targetPath)) {
-                console.warn(`Warning: Target ${targetPath} does not exist, skipping symlink creation`);
-                return;
-            }
-            
-            // Remove existing symlink or directory if it exists
-            try {
-                if (fs.existsSync(linkPath)) {
-                    const stats = fs.lstatSync(linkPath);
-                    if (stats.isSymbolicLink()) {
-                        fs.unlinkSync(linkPath);
-                    } else if (stats.isDirectory()) {
-                        fs.rmSync(linkPath, { recursive: true, force: true });
-                    } else {
-                        fs.unlinkSync(linkPath);
-                    }
+        // Check if target exists
+        if (!fs.existsSync(targetPath)) {
+            console.warn(`Warning: Target ${targetPath} does not exist, skipping symlink creation`);
+            return;
+        }
+        
+        // Remove existing symlink or directory if it exists
+        try {
+            if (fs.existsSync(linkPath)) {
+                const stats = fs.lstatSync(linkPath);
+                if (stats.isSymbolicLink()) {
+                    fs.unlinkSync(linkPath);
+                } else if (stats.isDirectory()) {
+                    fs.rmSync(linkPath, { recursive: true, force: true });
+                } else {
+                    fs.unlinkSync(linkPath);
                 }
-            } catch (err) {
-                // Ignore errors if file doesn't exist
             }
-            
-            // Create the directory structure if needed
-            const linkDir = path.dirname(linkPath);
-            if (!fs.existsSync(linkDir)) {
-                fs.mkdirSync(linkDir, { recursive: true });
-            }
-            
-            // Create symlink using relative path to ensure portability
-            const relativeTarget = path.relative(linkDir, targetPath);
-            fs.symlinkSync(relativeTarget, linkPath, 'dir');
-            console.log(`Created symlink: ${link} -> ${relativeTarget}`);
-        });
-    }
-});
+        } catch (err) {
+            // Ignore errors if file doesn't exist
+        }
+        
+        // Create the directory structure if needed
+        const linkDir = path.dirname(linkPath);
+        if (!fs.existsSync(linkDir)) {
+            fs.mkdirSync(linkDir, { recursive: true });
+        }
+        
+        // Create symlink using relative path to ensure portability
+        const relativeTarget = path.relative(linkDir, targetPath);
+        fs.symlinkSync(relativeTarget, linkPath, 'dir');
+        console.log(`Created symlink: ${link} -> ${relativeTarget}`);
+    });
+};
+
+// Copy assets, then symlink -- in one plugin, on purpose.
+//
+// Both operations previously raced, from two directions. rollup writes the
+// `modules` and `esm_modules` outputs concurrently
+// (`await Promise.all(outputOptions.map(bundle.write))`), and writeBundle fires
+// once per output, so rollup-plugin-copy ran twice at the same time over the
+// same destinations; fs-extra's copy unlinks the destination before writing, so
+// one pass would unlink a path the other was mid-copy on, giving intermittent
+// ENOENT on unlink or chmod. Separately, writeBundle and closeBundle are both
+// PARALLEL hooks across plugins, so a symlink step in either one raced copy and
+// skipped silently, leaving esm_modules/IpaIcons and IpaFonts uncreated.
+//
+// Sequencing them inside a single plugin removes both races: within one hook
+// this is ordinary control flow that rollup cannot interleave. copyOnce does
+// not help, because rollup-plugin-copy sets its `copied` flag only after its
+// awaits, so two concurrent invocations both get past the check.
+const copyAndSymlink = (targets) => {
+    // rollup-plugin-copy's hook body is a standalone async function that never
+    // touches `this`, so we can hold the instance and invoke it ourselves. The
+    // hook name is deliberately one rollup never calls.
+    const copier = copy({targets, hook: 'runManually'});
+    return {
+        name: 'copy-and-symlink',
+        async closeBundle() {
+            await copier.runManually();
+            createSymlinks();
+        }
+    };
+};
 
 //We use a function and not a variable bc multi-module bundle can have trouble with shared plugin instances as per https://github.com/rollup/rollupjs.org/issues/69#issuecomment-306062235
 const getPlugins = () => [
@@ -113,30 +134,16 @@ const getPlugins = () => [
         ]
     }),
     commonjs(),
-    copy({
-        targets: [
-            {src: 'src/img/**/*', dest: 'modules/img'},
-            {src: 'src/img/twinit.svg', dest: 'modules/IpaIcons'},
-            {src: 'src/**/*.scss', dest: 'modules/styles'},
-            {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'},
-            {src: 'src/IpaFonts/**/*', dest: 'modules/IpaFonts'},
-            {src: 'src/react-ifef/img/**/*', dest: 'modules/react-ifef/img'},
-            {src: 'src/img/**/*', dest: 'esm_modules/img'},
-            {src: 'src/*/*.scss', dest: 'esm_modules/styles'},
-        ],
-        // Stays on writeBundle. Moving it to closeBundle would make it run
-        // once instead of once per output, but closeBundle is a PARALLEL hook
-        // in rollup, so copy would then race the symlink plugin below and the
-        // symlinks would silently not be created. Running copy here keeps its
-        // output in place before closeBundle starts. The cost is that copy runs
-        // twice over the same destinations, which is the known source of
-        // intermittent ENOENT from its own unlink/chmod; that is unfixed.
-        hook: 'writeBundle'
-    }),
-    // Create symlinks after copying to avoid duplicating large folders.
-    // Runs on closeBundle, which is after every writeBundle, so copy's output
-    // is guaranteed to be in place.
-    createSymlinksPlugin()]
+    copyAndSymlink([
+        {src: 'src/img/**/*', dest: 'modules/img'},
+        {src: 'src/img/twinit.svg', dest: 'modules/IpaIcons'},
+        {src: 'src/**/*.scss', dest: 'modules/styles'},
+        {src: 'src/IpaIcons/**/*', dest: 'modules/IpaIcons'},
+        {src: 'src/IpaFonts/**/*', dest: 'modules/IpaFonts'},
+        {src: 'src/react-ifef/img/**/*', dest: 'modules/react-ifef/img'},
+        {src: 'src/img/**/*', dest: 'esm_modules/img'},
+        {src: 'src/*/*.scss', dest: 'esm_modules/styles'},
+    ])]
 
 //const external = [...Object.keys(pkg.dependencies), /^node:/];
 let pkg = JSON.parse(fs.readFileSync('./package.json')),
