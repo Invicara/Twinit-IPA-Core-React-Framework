@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 
 /**
  * Badges
@@ -5,18 +8,18 @@
  */
 
 .badge {
-  @include badge-style($badge-default-bg, $badge-default-text);
-  z-index: $z-index-badge;
+  @include mixins.badge-style(variables.$badge-default-bg, variables.$badge-default-text);
+  z-index: variables.$z-index-badge;
   display: inline-block;
   padding: 3px 8px;
   min-width: 10px;
-  border-radius: $badge-border-radius;
+  border-radius: variables.$badge-border-radius;
   vertical-align: baseline;
   text-align: center;
   white-space: nowrap;
-  font-weight: $badge-font-weight;
-  font-size: $badge-font-size;
-  line-height: $badge-line-height;
+  font-weight: variables.$badge-font-weight;
+  font-size: variables.$badge-font-size;
+  line-height: variables.$badge-line-height;
 
   &:empty {
     display: none;
@@ -27,31 +30,31 @@
 .tabs .tab-item .badge,
 .badge {
   &.badge-light {
-    @include badge-style($badge-light-bg, $badge-light-text);
+    @include mixins.badge-style(variables.$badge-light-bg, variables.$badge-light-text);
   }
   &.badge-stable {
-    @include badge-style($badge-stable-bg, $badge-stable-text);
+    @include mixins.badge-style(variables.$badge-stable-bg, variables.$badge-stable-text);
   }
   &.badge-positive {
-    @include badge-style($badge-positive-bg, $badge-positive-text);
+    @include mixins.badge-style(variables.$badge-positive-bg, variables.$badge-positive-text);
   }
   &.badge-calm {
-    @include badge-style($badge-calm-bg, $badge-calm-text);
+    @include mixins.badge-style(variables.$badge-calm-bg, variables.$badge-calm-text);
   }
   &.badge-assertive {
-    @include badge-style($badge-assertive-bg, $badge-assertive-text);
+    @include mixins.badge-style(variables.$badge-assertive-bg, variables.$badge-assertive-text);
   }
   &.badge-balanced {
-    @include badge-style($badge-balanced-bg, $badge-balanced-text);
+    @include mixins.badge-style(variables.$badge-balanced-bg, variables.$badge-balanced-text);
   }
   &.badge-energized {
-    @include badge-style($badge-energized-bg, $badge-energized-text);
+    @include mixins.badge-style(variables.$badge-energized-bg, variables.$badge-energized-text);
   }
   &.badge-royal {
-    @include badge-style($badge-royal-bg, $badge-royal-text);
+    @include mixins.badge-style(variables.$badge-royal-bg, variables.$badge-royal-text);
   }
   &.badge-dark {
-    @include badge-style($badge-dark-bg, $badge-dark-text);
+    @include mixins.badge-style(variables.$badge-dark-bg, variables.$badge-dark-text);
   }
 }
 

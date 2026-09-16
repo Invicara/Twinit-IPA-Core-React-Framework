@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 
 /**
  * Popups
@@ -12,11 +15,11 @@
   right: 0;
   background: rgba(0,0,0,0);
 
-  @include display-flex();
-  @include justify-content(center);
-  @include align-items(center);
+  @include mixins.display-flex();
+  @include mixins.justify-content(center);
+  @include mixins.align-items(center);
 
-  z-index: $z-index-popup;
+  z-index: variables.$z-index-popup;
 
   // Start hidden
   visibility: hidden;
@@ -25,29 +28,29 @@
   }
 
   &.asf-popup-hidden .asf-popup {
-    @include animation-name(scaleOut);
-    @include animation-duration($popup-leave-animation-duration);
-    @include animation-timing-function(ease-in-out);
-    @include animation-fill-mode(both);
+    @include mixins.animation-name(scaleOut);
+    @include mixins.animation-duration(variables.$popup-leave-animation-duration);
+    @include mixins.animation-timing-function(ease-in-out);
+    @include mixins.animation-fill-mode(both);
   }
 
   &.active .asf-popup {
-    @include animation-name(superScaleIn);
-    @include animation-duration($popup-enter-animation-duration);
-    @include animation-timing-function(ease-in-out);
-    @include animation-fill-mode(both);
+    @include mixins.animation-name(superScaleIn);
+    @include mixins.animation-duration(variables.$popup-enter-animation-duration);
+    @include mixins.animation-timing-function(ease-in-out);
+    @include mixins.animation-fill-mode(both);
   }
 
   .asf-popup {
-    width: $popup-width;
+    width: variables.$popup-width;
     max-width: 100%;
     max-height: 90%;
 
-    border-radius: $popup-border-radius;
-    background-color: $popup-background-color;
+    border-radius: variables.$popup-border-radius;
+    background-color: variables.$popup-background-color;
 
-    @include display-flex();
-    @include flex-direction(column);
+    @include mixins.display-flex();
+    @include mixins.flex-direction(column);
   }
 
   input,
@@ -78,17 +81,17 @@
 }
 
 .asf-popup-buttons {
-  @include display-flex();
-  @include flex-direction(row);
+  @include mixins.display-flex();
+  @include mixins.flex-direction(row);
   padding: 10px;
-  min-height: $popup-button-min-height + 20;
+  min-height: variables.$popup-button-min-height + 20;
 
   .button {
-    @include flex(1);
+    @include mixins.flex(1);
     display: block;
-    min-height: $popup-button-min-height;
-    border-radius: $popup-button-border-radius;
-    line-height: $popup-button-line-height;
+    min-height: variables.$popup-button-min-height;
+    border-radius: variables.$popup-button-border-radius;
+    line-height: variables.$popup-button-line-height;
 
     margin-right: 5px;
     &:last-child {

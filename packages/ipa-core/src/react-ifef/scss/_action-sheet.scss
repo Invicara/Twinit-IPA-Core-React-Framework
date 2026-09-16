@@ -1,14 +1,17 @@
+@use "mixins";
+@use "variables";
+
 /**
  * Action Sheets
  * --------------------------------------------------
  */
 
 .action-sheet-backdrop {
-  @include transition(background-color 150ms ease-in-out);
+  @include mixins.transition(background-color 150ms ease-in-out);
   position: fixed;
   top: 0;
   left: 0;
-  z-index: $z-index-action-sheet;
+  z-index: variables.$z-index-action-sheet;
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0);
@@ -19,8 +22,8 @@
 }
 
 .action-sheet-wrapper {
-  @include translate3d(0, 100%, 0);
-  @include transition(all cubic-bezier(.36, .66, .04, 1) 500ms);
+  @include mixins.translate3d(0, 100%, 0);
+  @include mixins.transition(all cubic-bezier(.36, .66, .04, 1) 500ms);
   position: absolute;
   bottom: 0;
   left: 0;
@@ -31,14 +34,14 @@
 }
 
 .action-sheet-up {
-  @include translate3d(0, 0, 0);
+  @include mixins.translate3d(0, 0, 0);
 }
 
 .action-sheet {
-  margin-left: $sheet-margin;
-  margin-right: $sheet-margin;
+  margin-left: variables.$sheet-margin;
+  margin-right: variables.$sheet-margin;
   width: auto;
-  z-index: $z-index-action-sheet;
+  z-index: variables.$z-index-action-sheet;
   overflow: hidden;
 
   .button {
@@ -46,14 +49,14 @@
     padding: 1px;
     width: 100%;
     border-radius: 0;
-    border-color: $sheet-options-border-color;
+    border-color: variables.$sheet-options-border-color;
     background-color: transparent;
 
-    color: $sheet-options-text-color;
+    color: variables.$sheet-options-text-color;
     font-size: 21px;
 
     &:hover {
-      color: $sheet-options-text-color;
+      color: variables.$sheet-options-text-color;
     }
     &.destructive {
       color: #ff3b30;
@@ -65,9 +68,9 @@
 
   .button.active, .button.activated {
     box-shadow: none;
-    border-color: $sheet-options-border-color;
-    color: $sheet-options-text-color;
-    background: $sheet-options-bg-active-color;
+    border-color: variables.$sheet-options-border-color;
+    color: variables.$sheet-options-text-color;
+    background: variables.$sheet-options-bg-active-color;
   }
 }
 
@@ -77,15 +80,15 @@
 }
 
 .action-sheet-title {
-  padding: $sheet-margin * 2;
+  padding: variables.$sheet-margin * 2;
   color: #8f8f8f;
   text-align: center;
   font-size: 13px;
 }
 
 .action-sheet-group {
-  margin-bottom: $sheet-margin;
-  border-radius: $sheet-border-radius;
+  margin-bottom: variables.$sheet-margin;
+  border-radius: variables.$sheet-border-radius;
   background-color: #fff;
   overflow: hidden;
 
@@ -98,7 +101,7 @@
 }
 
 .action-sheet-options {
-  background: $sheet-options-bg-color;
+  background: variables.$sheet-options-bg-color;
 }
 
 .action-sheet-cancel {

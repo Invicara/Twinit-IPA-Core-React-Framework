@@ -1,3 +1,4 @@
+@use "sass:meta";
 .entity-list-view-root {
 
   .entity-list-view-count{
@@ -13,6 +14,6 @@
     }
   }
 
-  @import "EntityTable";
+  @include meta.load-css("EntityTable");
 
 }

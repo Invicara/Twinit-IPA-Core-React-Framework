@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 
 /**
  * Scaffolding
@@ -7,7 +10,7 @@
 *,
 *:before,
 *:after {
-  @include box-sizing(border-box);
+  @include mixins.box-sizing(border-box);
 }
 
 html {
@@ -18,11 +21,11 @@ html {
 
 body,
 .asf-body {
-  @include touch-callout(none);
+  @include mixins.touch-callout(none);
   //@include font-smoothing(antialiased);
-  @include text-size-adjust(none);
-  @include tap-highlight-transparent();
-  @include user-select(none);
+  @include mixins.text-size-adjust(none);
+  @include mixins.tap-highlight-transparent();
+  @include mixins.user-select(none);
 
   top: 0;
   right: 0;
@@ -33,12 +36,12 @@ body,
   margin: 0;
   padding: 0;
 
-  color: $base-color;
+  color: variables.$base-color;
   word-wrap: break-word;
-  font-size: $font-size-base;
+  font-size: variables.$font-size-base;
   font-family: -apple-system;
-  font-family: $font-family-base;
-  line-height: $line-height-computed;
+  font-family: variables.$font-family-base;
+  line-height: variables.$line-height-computed;
   text-rendering: optimizeLegibility;
   -webkit-backface-visibility: hidden;
   -webkit-user-drag: none;
@@ -80,14 +83,14 @@ body.grade-c {
     // As far as I can tell, the height: 100% and background color should fix
     // that while preserving our flipping behavior.
     // jl 08/05/2015
-    background-color: $base-background-color;  // stops some transition bleed jl 02/25/2015
+    background-color: variables.$base-background-color;  // stops some transition bleed jl 02/25/2015
   }
 
 }
 
 .scroll-content-false,
 .asf-panel .scroll-content.scroll-content-false{
-  z-index: $z-index-scroll-content-false;
+  z-index: variables.$z-index-scroll-content-false;
 }
 
 .scroll-view {
@@ -117,10 +120,10 @@ body:not(.platform-webview) .scroll-content::-webkit-scrollbar{
  * scroll view functionality.
  */
 .scroll {
-  @include user-select(none);
-  @include touch-callout(none);
-  @include text-size-adjust(none);
-  @include transform-origin(left, top);
+  @include mixins.user-select(none);
+  @include mixins.touch-callout(none);
+  @include mixins.text-size-adjust(none);
+  @include mixins.transform-origin(left, top);
 }
 /**
  * Set ms-viewport to prevent MS "page squish" and allow fluid scrolling
@@ -131,7 +134,7 @@ body:not(.platform-webview) .scroll-content::-webkit-scrollbar{
 // Scroll bar styles
 .scroll-bar {
   position: absolute;
-  z-index: $z-index-scroll-bar;
+  z-index: variables.$z-index-scroll-bar;
 }
 // hide the scroll-bar during animations
 .ng-animate .scroll-bar {
@@ -163,7 +166,7 @@ body:not(.platform-webview) .scroll-content::-webkit-scrollbar{
   border-radius: 4px;
   background: rgba(0,0,0,0.3);
   opacity: 1;
-  @include transition(opacity .3s linear);
+  @include mixins.transition(opacity .3s linear);
 
   &.scroll-bar-fade-out {
     opacity: 0;
@@ -179,7 +182,7 @@ body:not(.platform-webview) .scroll-content::-webkit-scrollbar{
   background: #aaa;
 
   &.scroll-bar-fade-out {
-    @include transition(none);
+    @include mixins.transition(none);
   }
 }
 
@@ -188,15 +191,15 @@ ion-infinite-scroll {
   width: 100%;
   display: block;
 
-  @include display-flex();
-  @include flex-direction(row);
-  @include justify-content(center);
-  @include align-items(center);
+  @include mixins.display-flex();
+  @include mixins.flex-direction(row);
+  @include mixins.justify-content(center);
+  @include mixins.align-items(center);
 
   .icon {
     color: #666666;
     font-size: 30px;
-    color: $scroll-refresh-icon-color;
+    color: variables.$scroll-refresh-icon-color;
   }
   &:not(.active){
     .spinner,
@@ -223,7 +226,7 @@ ion-infinite-scroll {
   .scroll {
     position: static;
     height: 100%;
-    background-color: $base-background-color;  // stops some transition bleed jl 02/25/2015
+    background-color: variables.$base-background-color;  // stops some transition bleed jl 02/25/2015
     -webkit-transform: translate3d(0, 0, 0);   // fix iOS bug where relative children of scroller disapear while scrolling.  see: http://stackoverflow.com/questions/9807620/ipad-safari-scrolling-causes-html-elements-to-disappear-and-reappear-with-a-dela
   }
 }
@@ -242,12 +245,12 @@ ion-infinite-scroll {
 // Need to use these with map and pdf views, which also need has-header, has-footer
 // jl 05/29/2015
 .pane {
-  @include translate3d(0,0,0);
-  @include transition-duration(0);
-  z-index: $z-index-pane;
+  @include mixins.translate3d(0,0,0);
+  @include mixins.transition-duration(0);
+  z-index: variables.$z-index-pane;
 }
 .view {
-  z-index: $z-index-view;
+  z-index: variables.$z-index-view;
   overflow: overlay;
 }
 .pane,
@@ -275,7 +278,7 @@ ion-infinite-scroll {
 }
 
 .overlay-container {
-  z-index: $z-index-overlay-container;
+  z-index: variables.$z-index-overlay-container;
 }
 
 /* This is used with AS AppViews embedded in other applications (like Pipt) */
@@ -296,7 +299,7 @@ ion-infinite-scroll {
 // Note: For these to work, content must come after both bars in the markup
 /* If you change these, change platform.scss as well */
 .has-header {
-  top: $bar-height;
+  top: variables.$bar-height;
 }
 // Force no header
 .no-header {
@@ -304,37 +307,37 @@ ion-infinite-scroll {
 }
 
 .has-subheader {
-  top: $bar-height + $bar-subheader-height;
+  top: variables.$bar-height + variables.$bar-subheader-height;
 }
 .has-tabs-top {
-  top: $bar-height + $tabs-height;
+  top: variables.$bar-height + variables.$tabs-height;
 }
 .has-header.has-subheader.has-tabs-top {
-  top: $bar-height + $bar-subheader-height + $tabs-height;
+  top: variables.$bar-height + variables.$bar-subheader-height + variables.$tabs-height;
 }
 
 .has-footer {
-  bottom: $bar-footer-height;
+  bottom: variables.$bar-footer-height;
 }
 .has-subfooter {
-  bottom: $bar-footer-height + $bar-subfooter-height;
+  bottom: variables.$bar-footer-height + variables.$bar-subfooter-height;
 }
 
 .has-tabs,
 .bar-footer.has-tabs {
-  bottom: $tabs-height;
+  bottom: variables.$tabs-height;
   &.pane{
-    bottom: $tabs-height;
+    bottom: variables.$tabs-height;
     height:auto;
   }
 }
 
 .bar-subfooter.has-tabs {
-  bottom: $tabs-height + $bar-footer-height;
+  bottom: variables.$tabs-height + variables.$bar-footer-height;
 }
 
 .has-footer.has-tabs {
-  bottom: $tabs-height + $bar-footer-height;
+  bottom: variables.$tabs-height + variables.$bar-footer-height;
 }
 
 

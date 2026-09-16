@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 /**
  * Tabs
  * --------------------------------------------------
@@ -5,27 +8,27 @@
  */
 
 .tabs {
-  @include display-flex();
-  @include flex-direction(horizontal);
-  @include justify-content(center);
-  @include translate3d(0,0,0);
+  @include mixins.display-flex();
+  @include mixins.flex-direction(horizontal);
+  @include mixins.justify-content(center);
+  @include mixins.translate3d(0,0,0);
 
-  @include tab-style($tabs-default-bg, $tabs-default-border, $tabs-default-text);
-  @include tab-badge-style($tabs-default-text, $tabs-default-bg);
+  @include mixins.tab-style(variables.$tabs-default-bg, variables.$tabs-default-border, variables.$tabs-default-text);
+  @include mixins.tab-badge-style(variables.$tabs-default-text, variables.$tabs-default-bg);
 
   position: absolute;
   bottom: 0;
 
-  z-index: $z-index-tabs;
+  z-index: variables.$z-index-tabs;
 
   width: 100%;
-  height: $tabs-height;
+  height: variables.$tabs-height;
 
   border-style: solid;
   border-top-width: 1px;
 
   background-size: 0;
-  line-height: $tabs-height;
+  line-height: variables.$tabs-height;
 
   @media (min--moz-device-pixel-ratio: 1.5),
          (-webkit-min-device-pixel-ratio: 1.5),
@@ -44,48 +47,48 @@
 /* Allow parent element of tabs to define color, or just the tab itself */
 .tabs-light > .tabs,
 .tabs.tabs-light {
-  @include tab-style($tabs-light-bg, $tabs-light-border, $tabs-light-text);
-  @include tab-badge-style($tabs-light-text, $tabs-light-bg);
+  @include mixins.tab-style(variables.$tabs-light-bg, variables.$tabs-light-border, variables.$tabs-light-text);
+  @include mixins.tab-badge-style(variables.$tabs-light-text, variables.$tabs-light-bg);
 }
 .tabs-stable > .tabs,
 .tabs.tabs-stable {
-  @include tab-style($tabs-stable-bg, $tabs-stable-border, $tabs-stable-text);
-  @include tab-badge-style($tabs-stable-text, $tabs-stable-bg);
+  @include mixins.tab-style(variables.$tabs-stable-bg, variables.$tabs-stable-border, variables.$tabs-stable-text);
+  @include mixins.tab-badge-style(variables.$tabs-stable-text, variables.$tabs-stable-bg);
 }
 .tabs-positive > .tabs,
 .tabs.tabs-positive {
-  @include tab-style($tabs-positive-bg, $tabs-positive-border, $tabs-positive-text);
-  @include tab-badge-style($tabs-positive-text, $tabs-positive-bg);
+  @include mixins.tab-style(variables.$tabs-positive-bg, variables.$tabs-positive-border, variables.$tabs-positive-text);
+  @include mixins.tab-badge-style(variables.$tabs-positive-text, variables.$tabs-positive-bg);
 }
 .tabs-calm > .tabs,
 .tabs.tabs-calm {
-  @include tab-style($tabs-calm-bg, $tabs-calm-border, $tabs-calm-text);
-  @include tab-badge-style($tabs-calm-text, $tabs-calm-bg);
+  @include mixins.tab-style(variables.$tabs-calm-bg, variables.$tabs-calm-border, variables.$tabs-calm-text);
+  @include mixins.tab-badge-style(variables.$tabs-calm-text, variables.$tabs-calm-bg);
 }
 .tabs-assertive > .tabs,
 .tabs.tabs-assertive {
-  @include tab-style($tabs-assertive-bg, $tabs-assertive-border, $tabs-assertive-text);
-  @include tab-badge-style($tabs-assertive-text, $tabs-assertive-bg);
+  @include mixins.tab-style(variables.$tabs-assertive-bg, variables.$tabs-assertive-border, variables.$tabs-assertive-text);
+  @include mixins.tab-badge-style(variables.$tabs-assertive-text, variables.$tabs-assertive-bg);
 }
 .tabs-balanced > .tabs,
 .tabs.tabs-balanced {
-  @include tab-style($tabs-balanced-bg, $tabs-balanced-border, $tabs-balanced-text);
-  @include tab-badge-style($tabs-balanced-text, $tabs-balanced-bg);
+  @include mixins.tab-style(variables.$tabs-balanced-bg, variables.$tabs-balanced-border, variables.$tabs-balanced-text);
+  @include mixins.tab-badge-style(variables.$tabs-balanced-text, variables.$tabs-balanced-bg);
 }
 .tabs-energized > .tabs,
 .tabs.tabs-energized {
-  @include tab-style($tabs-energized-bg, $tabs-energized-border, $tabs-energized-text);
-  @include tab-badge-style($tabs-energized-text, $tabs-energized-bg);
+  @include mixins.tab-style(variables.$tabs-energized-bg, variables.$tabs-energized-border, variables.$tabs-energized-text);
+  @include mixins.tab-badge-style(variables.$tabs-energized-text, variables.$tabs-energized-bg);
 }
 .tabs-royal > .tabs,
 .tabs.tabs-royal {
-  @include tab-style($tabs-royal-bg, $tabs-royal-border, $tabs-royal-text);
-  @include tab-badge-style($tabs-royal-text, $tabs-royal-bg);
+  @include mixins.tab-style(variables.$tabs-royal-bg, variables.$tabs-royal-border, variables.$tabs-royal-text);
+  @include mixins.tab-badge-style(variables.$tabs-royal-text, variables.$tabs-royal-bg);
 }
 .tabs-dark > .tabs,
 .tabs.tabs-dark {
-  @include tab-style($tabs-dark-bg, $tabs-dark-border, $tabs-dark-text);
-  @include tab-badge-style($tabs-dark-text, $tabs-dark-bg);
+  @include mixins.tab-style(variables.$tabs-dark-bg, variables.$tabs-dark-border, variables.$tabs-dark-text);
+  @include mixins.tab-badge-style(variables.$tabs-dark-text, variables.$tabs-dark-bg);
 }
 
 @mixin tabs-striped($style, $color, $background) {
@@ -94,18 +97,18 @@
       background-color: $background;
     }
     .tab-item {
-      color: rgba($color, $tabs-striped-off-opacity);
+      color: rgba($color, variables.$tabs-striped-off-opacity);
       opacity: 1;
       .badge{
-        opacity:$tabs-striped-off-opacity;
+        opacity:variables.$tabs-striped-off-opacity;
       }
       &.tab-item-active,
       &.active,
       &.activated {
-        margin-top: -$tabs-striped-border-width;
+        margin-top: -(variables.$tabs-striped-border-width);
         color: $color;
         border-style: solid;
-        border-width: $tabs-striped-border-width 0 0 0;
+        border-width: variables.$tabs-striped-border-width 0 0 0;
         border-color: $color;
       }
     }
@@ -146,10 +149,10 @@
 @mixin tabs-color($style, $color) {
   .#{$style} {
     .tab-item {
-      color: rgba($color, $tabs-off-opacity);
+      color: rgba($color, variables.$tabs-off-opacity);
       opacity: 1;
       .badge{
-        opacity:$tabs-off-opacity;
+        opacity:variables.$tabs-off-opacity;
       }
       &.tab-item-active,
       &.active,
@@ -167,20 +170,20 @@
 @mixin tabs-striped-color($style, $color) {
   &.#{$style} {
     .tab-item {
-      color: rgba($color, $tabs-striped-off-opacity);
+      color: rgba($color, variables.$tabs-striped-off-opacity);
       opacity: 1;
       .badge{
-        opacity:$tabs-striped-off-opacity;
+        opacity:variables.$tabs-striped-off-opacity;
       }
       &.tab-item-active,
       &.active,
       &.activated {
-        margin-top: -$tabs-striped-border-width;
+        margin-top: -(variables.$tabs-striped-border-width);
         color: $color;
         border: 0 solid $color;
-        border-top-width: $tabs-striped-border-width;
+        border-top-width: variables.$tabs-striped-border-width;
         .badge{
-          top:$tabs-striped-border-width;
+          top:variables.$tabs-striped-border-width;
           opacity: 1;
         }
       }
@@ -194,77 +197,77 @@
     background-image: none;
     border: none;
     border-bottom: 1px solid #ddd;
-    padding-top: $tabs-striped-border-width;
+    padding-top: variables.$tabs-striped-border-width;
   }
   .tab-item {
     // default android tab style
     &.tab-item-active,
     &.active,
     &.activated {
-      margin-top: -$tabs-striped-border-width;
+      margin-top: -(variables.$tabs-striped-border-width);
       border-style: solid;
-      border-width: $tabs-striped-border-width 0 0 0;
-      border-color: $dark;
+      border-width: variables.$tabs-striped-border-width 0 0 0;
+      border-color: variables.$dark;
       .badge{
-        top:$tabs-striped-border-width;
+        top:variables.$tabs-striped-border-width;
         opacity: 1;
       }
     }
   }
-  @include tabs-striped('tabs-light', $dark, $light);
-  @include tabs-striped('tabs-stable', $dark, $stable);
-  @include tabs-striped('tabs-positive', $light, $positive);
-  @include tabs-striped('tabs-calm', $light, $calm);
-  @include tabs-striped('tabs-assertive', $light, $assertive);
-  @include tabs-striped('tabs-balanced', $light, $balanced);
-  @include tabs-striped('tabs-energized', $light, $energized);
-  @include tabs-striped('tabs-royal', $light, $royal);
-  @include tabs-striped('tabs-dark', $light, $dark);
+  @include tabs-striped('tabs-light', variables.$dark, variables.$light);
+  @include tabs-striped('tabs-stable', variables.$dark, variables.$stable);
+  @include tabs-striped('tabs-positive', variables.$light, variables.$positive);
+  @include tabs-striped('tabs-calm', variables.$light, variables.$calm);
+  @include tabs-striped('tabs-assertive', variables.$light, variables.$assertive);
+  @include tabs-striped('tabs-balanced', variables.$light, variables.$balanced);
+  @include tabs-striped('tabs-energized', variables.$light, variables.$energized);
+  @include tabs-striped('tabs-royal', variables.$light, variables.$royal);
+  @include tabs-striped('tabs-dark', variables.$light, variables.$dark);
 
   // doing this twice so striped tabs styles don't override specific bg and color vals
-  @include tabs-striped-background('tabs-background-light', $light);
-  @include tabs-striped-background('tabs-background-stable', $stable);
-  @include tabs-striped-background('tabs-background-positive', $positive);
-  @include tabs-striped-background('tabs-background-calm', $calm);
-  @include tabs-striped-background('tabs-background-assertive', $assertive);
-  @include tabs-striped-background('tabs-background-balanced', $balanced);
-  @include tabs-striped-background('tabs-background-energized',$energized);
-  @include tabs-striped-background('tabs-background-royal', $royal);
-  @include tabs-striped-background('tabs-background-dark', $dark);
+  @include tabs-striped-background('tabs-background-light', variables.$light);
+  @include tabs-striped-background('tabs-background-stable', variables.$stable);
+  @include tabs-striped-background('tabs-background-positive', variables.$positive);
+  @include tabs-striped-background('tabs-background-calm', variables.$calm);
+  @include tabs-striped-background('tabs-background-assertive', variables.$assertive);
+  @include tabs-striped-background('tabs-background-balanced', variables.$balanced);
+  @include tabs-striped-background('tabs-background-energized',variables.$energized);
+  @include tabs-striped-background('tabs-background-royal', variables.$royal);
+  @include tabs-striped-background('tabs-background-dark', variables.$dark);
 
-  @include tabs-striped-color('tabs-color-light', $light);
-  @include tabs-striped-color('tabs-color-stable', $stable);
-  @include tabs-striped-color('tabs-color-positive', $positive);
-  @include tabs-striped-color('tabs-color-calm', $calm);
-  @include tabs-striped-color('tabs-color-assertive', $assertive);
-  @include tabs-striped-color('tabs-color-balanced', $balanced);
-  @include tabs-striped-color('tabs-color-energized',$energized);
-  @include tabs-striped-color('tabs-color-royal', $royal);
-  @include tabs-striped-color('tabs-color-dark', $dark);
+  @include tabs-striped-color('tabs-color-light', variables.$light);
+  @include tabs-striped-color('tabs-color-stable', variables.$stable);
+  @include tabs-striped-color('tabs-color-positive', variables.$positive);
+  @include tabs-striped-color('tabs-color-calm', variables.$calm);
+  @include tabs-striped-color('tabs-color-assertive', variables.$assertive);
+  @include tabs-striped-color('tabs-color-balanced', variables.$balanced);
+  @include tabs-striped-color('tabs-color-energized',variables.$energized);
+  @include tabs-striped-color('tabs-color-royal', variables.$royal);
+  @include tabs-striped-color('tabs-color-dark', variables.$dark);
 
 }
 
-@include tabs-background('tabs-background-light', $light, $bar-light-border);
-@include tabs-background('tabs-background-stable', $stable, $bar-stable-border);
-@include tabs-background('tabs-background-positive', $positive, $bar-positive-border);
-@include tabs-background('tabs-background-calm', $calm, $bar-calm-border);
-@include tabs-background('tabs-background-assertive', $assertive, $bar-assertive-border);
-@include tabs-background('tabs-background-balanced', $balanced, $bar-balanced-border);
-@include tabs-background('tabs-background-energized',$energized, $bar-energized-border);
-@include tabs-background('tabs-background-royal', $royal, $bar-royal-border);
-@include tabs-background('tabs-background-dark', $dark, $bar-dark-border);
+@include tabs-background('tabs-background-light', variables.$light, variables.$bar-light-border);
+@include tabs-background('tabs-background-stable', variables.$stable, variables.$bar-stable-border);
+@include tabs-background('tabs-background-positive', variables.$positive, variables.$bar-positive-border);
+@include tabs-background('tabs-background-calm', variables.$calm, variables.$bar-calm-border);
+@include tabs-background('tabs-background-assertive', variables.$assertive, variables.$bar-assertive-border);
+@include tabs-background('tabs-background-balanced', variables.$balanced, variables.$bar-balanced-border);
+@include tabs-background('tabs-background-energized',variables.$energized, variables.$bar-energized-border);
+@include tabs-background('tabs-background-royal', variables.$royal, variables.$bar-royal-border);
+@include tabs-background('tabs-background-dark', variables.$dark, variables.$bar-dark-border);
 
-@include tabs-color('tabs-color-light', $light);
-@include tabs-color('tabs-color-stable', $stable);
-@include tabs-color('tabs-color-positive', $positive);
-@include tabs-color('tabs-color-calm', $calm);
-@include tabs-color('tabs-color-assertive', $assertive);
-@include tabs-color('tabs-color-balanced', $balanced);
-@include tabs-color('tabs-color-energized',$energized);
-@include tabs-color('tabs-color-royal', $royal);
-@include tabs-color('tabs-color-dark', $dark);
+@include tabs-color('tabs-color-light', variables.$light);
+@include tabs-color('tabs-color-stable', variables.$stable);
+@include tabs-color('tabs-color-positive', variables.$positive);
+@include tabs-color('tabs-color-calm', variables.$calm);
+@include tabs-color('tabs-color-assertive', variables.$assertive);
+@include tabs-color('tabs-color-balanced', variables.$balanced);
+@include tabs-color('tabs-color-energized',variables.$energized);
+@include tabs-color('tabs-color-royal', variables.$royal);
+@include tabs-color('tabs-color-dark', variables.$dark);
 
-@mixin tabs-standard-color($style, $color, $off-color:$dark) {
+@mixin tabs-standard-color($style, $color, $off-color:variables.$dark) {
   &.#{$style} {
     .tab-item {
       color: $off-color;
@@ -278,15 +281,15 @@
 }
 
 ion-tabs {
-  @include tabs-standard-color('tabs-color-active-light', $light, $dark);
-  @include tabs-standard-color('tabs-color-active-stable', $stable, $dark);
-  @include tabs-standard-color('tabs-color-active-positive', $positive, $dark);
-  @include tabs-standard-color('tabs-color-active-calm', $calm, $dark);
-  @include tabs-standard-color('tabs-color-active-assertive', $assertive, $dark);
-  @include tabs-standard-color('tabs-color-active-balanced', $balanced, $dark);
-  @include tabs-standard-color('tabs-color-active-energized',$energized, $dark);
-  @include tabs-standard-color('tabs-color-active-royal', $royal, $dark);
-  @include tabs-standard-color('tabs-color-active-dark', $dark, $light);
+  @include tabs-standard-color('tabs-color-active-light', variables.$light, variables.$dark);
+  @include tabs-standard-color('tabs-color-active-stable', variables.$stable, variables.$dark);
+  @include tabs-standard-color('tabs-color-active-positive', variables.$positive, variables.$dark);
+  @include tabs-standard-color('tabs-color-active-calm', variables.$calm, variables.$dark);
+  @include tabs-standard-color('tabs-color-active-assertive', variables.$assertive, variables.$dark);
+  @include tabs-standard-color('tabs-color-active-balanced', variables.$balanced, variables.$dark);
+  @include tabs-standard-color('tabs-color-active-energized',variables.$energized, variables.$dark);
+  @include tabs-standard-color('tabs-color-active-royal', variables.$royal, variables.$dark);
+  @include tabs-standard-color('tabs-color-active-dark', variables.$dark, variables.$light);
 }
 
 .tabs-top {
@@ -303,11 +306,11 @@ ion-tabs {
       &.tab-item-active,
       &.active,
       &.activated {
-        margin-top: $tabs-striped-border-width - 1px;
-        border-width: 0px 0px $tabs-striped-border-width 0px !important;
+        margin-top: variables.$tabs-striped-border-width - 1px;
+        border-width: 0px 0px variables.$tabs-striped-border-width 0px !important;
         border-style: solid;
         > .badge, > i{
-          margin-top: -$tabs-striped-border-width + 1px;
+          margin-top: -(variables.$tabs-striped-border-width) + 1px;
         }
       }
       .badge{
@@ -325,7 +328,7 @@ ion-tabs {
           &.activated {
              .tab-title, i{
             display:block;
-            margin-top: -$tabs-striped-border-width + 1px;
+            margin-top: -(variables.$tabs-striped-border-width) + 1px;
           }
         }
       }
@@ -349,7 +352,7 @@ ion-tabs {
 /* If you change this, change platform.scss as well */
 .tabs-top > .tabs,
 .tabs.tabs-top {
-  top: $bar-height;
+  top: variables.$bar-height;
   padding-top: 0;
   background-position: bottom;
   border-top-width: 0;
@@ -369,11 +372,11 @@ ion-tabs {
 }
 
 .tab-item {
-  @include flex(1);
+  @include mixins.flex(1);
   display: block;
   overflow: hidden;
 
-  max-width: $tab-item-max-width;
+  max-width: variables.$tab-item-max-width;
   height: 100%;
 
   color: inherit;
@@ -383,8 +386,8 @@ ion-tabs {
   white-space: nowrap;
 
   font-weight: 400;
-  font-size: $tabs-text-font-size;
-  font-family: $font-family-sans-serif;
+  font-size: variables.$tabs-text-font-size;
+  font-family: variables.$font-family-sans-serif;
 
   opacity: 0.7;
 
@@ -405,22 +408,22 @@ ion-tabs {
 .tabs-icon-top.tabs .tab-item,
 .tabs-icon-bottom > .tabs .tab-item,
 .tabs-icon-bottom.tabs .tab-item {
-  font-size: $tabs-text-font-size-side-icon;
-  line-height: $tabs-text-font-size;
+  font-size: variables.$tabs-text-font-size-side-icon;
+  line-height: variables.$tabs-text-font-size;
 }
 
 .tab-item .icon {
   display: block;
   margin: 0 auto;
-  height: $tabs-icon-size;
-  font-size: $tabs-icon-size;
+  height: variables.$tabs-icon-size;
+  font-size: variables.$tabs-icon-size;
 }
 
 .tabs-icon-left.tabs .tab-item,
 .tabs-icon-left > .tabs .tab-item,
 .tabs-icon-right.tabs .tab-item,
 .tabs-icon-right > .tabs .tab-item {
-  font-size: $tabs-text-font-size-side-icon;
+  font-size: variables.$tabs-text-font-size-side-icon;
 
   .icon, .tab-title {
     display: inline-block;
@@ -428,8 +431,8 @@ ion-tabs {
     margin-top: -.1em;
 
     &:before {
-    font-size: $tabs-icon-size - 8;
-    line-height: $tabs-height;
+    font-size: variables.$tabs-icon-size - 8;
+    line-height: variables.$tabs-height;
     }
   }
 }
@@ -459,10 +462,10 @@ ion-tabs {
   top: 4%;
   right: 33%; // fallback
   right: calc(50% - 26px);
-  padding: $tabs-badge-padding;
+  padding: variables.$tabs-badge-padding;
   height: auto;
-  font-size: $tabs-badge-font-size;
-  line-height: $tabs-badge-font-size + 4;
+  font-size: variables.$tabs-badge-font-size;
+  line-height: variables.$tabs-badge-font-size + 4;
 }
 
 
@@ -475,36 +478,36 @@ ion-tabs {
   opacity: 1;
 
   &.tab-item-light {
-    color: $light;
+    color: variables.$light;
   }
   &.tab-item-stable {
-    color: $stable;
+    color: variables.$stable;
   }
   &.tab-item-positive {
-    color: $positive;
+    color: variables.$positive;
   }
   &.tab-item-calm {
-    color: $calm;
+    color: variables.$calm;
   }
   &.tab-item-assertive {
-    color: $assertive;
+    color: variables.$assertive;
   }
   &.tab-item-balanced {
-    color: $balanced;
+    color: variables.$balanced;
   }
   &.tab-item-energized {
-    color: $energized;
+    color: variables.$energized;
   }
   &.tab-item-royal {
-    color: $royal;
+    color: variables.$royal;
   }
   &.tab-item-dark {
-    color: $dark;
+    color: variables.$dark;
   }
 }
 
 .item.tabs {
-  @include display-flex();
+  @include mixins.display-flex();
   padding: 0;
 
   .icon:before {
@@ -523,6 +526,6 @@ ion-tabs {
   top: 0
 }
 .pane[hide-nav-bar="true"] .has-tabs-top{
-  top:$tabs-height
+  top:variables.$tabs-height
 }
 

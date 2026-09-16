@@ -1,3 +1,4 @@
+@use "sass:meta";
 @font-face {
     font-family: 'Inter';
     src: url('fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
@@ -72,4 +73,4 @@ nav {
     background-size: cover;
 }
 
-@import "../react-ifef/styles/react_ifef"
+@include meta.load-css("../react-ifef/styles/react_ifef")

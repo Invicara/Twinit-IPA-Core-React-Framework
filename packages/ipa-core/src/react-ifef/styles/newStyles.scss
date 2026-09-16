@@ -1,3 +1,5 @@
+@use "../scss/variables";
+
 /* -------------------------------------------------------------------------------------
 // Date        Author     Referene    Comments
 // 28-06-23    HSK        PLAT-2728   Coloring Mechanism - Derive from var(--app-accent-color)
@@ -22,7 +24,7 @@ header {
     background-color: #333333;
     color: white;
     width: 100%;
-    height: $bar-header-height;
+    height: variables.$bar-header-height;
     box-shadow: 0 10px 10px 0 #00000033;
     display: flex;
     align-items: center;
@@ -69,14 +71,14 @@ header {
 
 nav {
     background-color: #666666;
-    width: $left-panel-width;
+    width: variables.$left-panel-width;
     height: calc(100% - 80px);
     display: flex;
     flex-direction: column;
     transition: all 0.5s;
     box-shadow: 10px 0 10px 0 #00000033;
     position: absolute;
-    z-index: $z-index-left-nav;
+    z-index: variables.$z-index-left-nav;
 }
 
 nav:hover {
@@ -202,7 +204,7 @@ i {
 }
 
 .has-left-nav{
-    margin-left: $left-panel-width
+    margin-left: variables.$left-panel-width
 }
 
 .navExpanded {
@@ -220,5 +222,5 @@ i {
 }
 
 .navCollapsed {
-    width: $left-panel-width !important;
+    width: variables.$left-panel-width !important;
 }

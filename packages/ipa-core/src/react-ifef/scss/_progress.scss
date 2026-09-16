@@ -1,3 +1,5 @@
+@use "variables";
+
 
 /**
  * Progress
@@ -6,6 +8,6 @@
 
 progress {
   display: block;
-  margin: $progress-margin;
-  width: $progress-width;
+  margin: variables.$progress-margin;
+  width: variables.$progress-width;
 }

@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 
 /**
  * Loading
@@ -11,13 +14,13 @@
   right: 0;
   bottom: 0;
 
-  z-index: $z-index-loading;
+  z-index: variables.$z-index-loading;
 
-  @include display-flex();
-  @include justify-content(center);
-  @include align-items(center);
+  @include mixins.display-flex();
+  @include mixins.justify-content(center);
+  @include mixins.align-items(center);
 
-  @include transition(0.2s opacity linear);
+  @include mixins.transition(0.2s opacity linear);
   visibility: hidden;
   opacity: 0;
 
@@ -33,19 +36,19 @@
   }
 
   .loading {
-    padding: $loading-padding;
+    padding: variables.$loading-padding;
 
-    border-radius: $loading-border-radius;
-    background-color: $loading-bg-color;
+    border-radius: variables.$loading-border-radius;
+    background-color: variables.$loading-bg-color;
 
-    color: $loading-text-color;
+    color: variables.$loading-text-color;
 
     text-align: center;
     text-overflow: ellipsis;
-    font-size: $loading-font-size;
+    font-size: variables.$loading-font-size;
 
     h1, h2, h3, h4, h5, h6 {
-      color: $loading-text-color;
+      color: variables.$loading-text-color;
     }
   }
 }

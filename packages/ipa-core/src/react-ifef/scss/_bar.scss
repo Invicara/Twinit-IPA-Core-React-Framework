@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 
 /**
  * Bar (Headers and Footers)
@@ -5,25 +8,25 @@
  */
 
 .bar {
-  @include display-flex();
-  @include translate3d(0,0,0);
-  @include user-select(none);
+  @include mixins.display-flex();
+  @include mixins.translate3d(0,0,0);
+  @include mixins.user-select(none);
   position: absolute;
   right: 0;
   left: 0;
-  z-index: $z-index-bar;
+  z-index: variables.$z-index-bar;
 
-  @include box-sizing(border-box);
-  padding: $bar-padding-portrait;
+  @include mixins.box-sizing(border-box);
+  padding: variables.$bar-padding-portrait;
 
   width: 100%;
-  height: $bar-height;
+  height: variables.$bar-height;
   border-width: 0;
   border-style: solid;
   border-top: 1px solid transparent;
-  border-bottom: 1px solid $bar-default-border;
+  border-bottom: 1px solid variables.$bar-default-border;
 
-  background-color: $bar-default-bg;
+  background-color: variables.$bar-default-bg;
 
   /* border-width: 1px will actually create 2 device pixels on retina */
   /* this nifty trick sets an actual 1px border on hi-res displays */
@@ -34,7 +37,7 @@
          (min-resolution: 144dpi),
          (min-resolution: 1.5dppx) {
     border: none;
-    background-image: linear-gradient(0deg, $bar-default-border, $bar-default-border 50%, transparent 50%);
+    background-image: linear-gradient(0deg, variables.$bar-default-border, variables.$bar-default-border 50%, transparent 50%);
     background-position: bottom;
     background-size: 100% 1px;
     background-repeat: no-repeat;
@@ -67,57 +70,57 @@
   }
 
   &.bar-light {
-    @include bar-style($bar-light-bg, $bar-light-border, $bar-light-text);
+    @include mixins.bar-style(variables.$bar-light-bg, variables.$bar-light-border, variables.$bar-light-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-light-border, $bar-light-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-light-border, variables.$bar-light-border 50%, transparent 50%);
     }
   }
   &.bar-stable {
-    @include bar-style($bar-stable-bg, $bar-stable-border, $bar-stable-text);
+    @include mixins.bar-style(variables.$bar-stable-bg, variables.$bar-stable-border, variables.$bar-stable-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-stable-border, $bar-stable-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-stable-border, variables.$bar-stable-border 50%, transparent 50%);
     }
   }
   &.bar-positive {
-    @include bar-style($bar-positive-bg, $bar-positive-border, $bar-positive-text);
+    @include mixins.bar-style(variables.$bar-positive-bg, variables.$bar-positive-border, variables.$bar-positive-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-positive-border, $bar-positive-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-positive-border, variables.$bar-positive-border 50%, transparent 50%);
     }
   }
   &.bar-calm {
-    @include bar-style($bar-calm-bg, $bar-calm-border, $bar-calm-text);
+    @include mixins.bar-style(variables.$bar-calm-bg, variables.$bar-calm-border, variables.$bar-calm-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-calm-border, $bar-calm-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-calm-border, variables.$bar-calm-border 50%, transparent 50%);
     }
   }
   &.bar-assertive {
-    @include bar-style($bar-assertive-bg, $bar-assertive-border, $bar-assertive-text);
+    @include mixins.bar-style(variables.$bar-assertive-bg, variables.$bar-assertive-border, variables.$bar-assertive-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-assertive-border, $bar-assertive-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-assertive-border, variables.$bar-assertive-border 50%, transparent 50%);
     }
   }
   &.bar-balanced {
-    @include bar-style($bar-balanced-bg, $bar-balanced-border, $bar-balanced-text);
+    @include mixins.bar-style(variables.$bar-balanced-bg, variables.$bar-balanced-border, variables.$bar-balanced-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-balanced-border, $bar-positive-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-balanced-border, variables.$bar-positive-border 50%, transparent 50%);
     }
   }
   &.bar-energized {
-    @include bar-style($bar-energized-bg, $bar-energized-border, $bar-energized-text);
+    @include mixins.bar-style(variables.$bar-energized-bg, variables.$bar-energized-border, variables.$bar-energized-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-energized-border, $bar-energized-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-energized-border, variables.$bar-energized-border 50%, transparent 50%);
     }
   }
   &.bar-royal {
-    @include bar-style($bar-royal-bg, $bar-royal-border, $bar-royal-text);
+    @include mixins.bar-style(variables.$bar-royal-bg, variables.$bar-royal-border, variables.$bar-royal-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-royal-border, $bar-royal-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-royal-border, variables.$bar-royal-border 50%, transparent 50%);
     }
   }
   &.bar-dark {
-    @include bar-style($bar-dark-bg, $bar-dark-border, $bar-dark-text);
+    @include mixins.bar-style(variables.$bar-dark-bg, variables.$bar-dark-border, variables.$bar-dark-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-dark-border, $bar-dark-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, variables.$bar-dark-border, variables.$bar-dark-border 50%, transparent 50%);
     }
   }
 
@@ -129,13 +132,13 @@
     top: 0;
     right: 0;
     left: 0;
-    z-index: $z-index-bar-title;
+    z-index: variables.$z-index-bar-title;
     overflow: hidden;
 
     margin: 0 10px;
 
     min-width: 30px;
-    height: $bar-height - 1;
+    height: variables.$bar-height - 1;
 
     text-align: center;
 
@@ -143,10 +146,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    font-size: $bar-title-font-size;
-    font-weight: $headings-font-weight;
+    font-size: variables.$bar-title-font-size;
+    font-weight: variables.$headings-font-weight;
 
-    line-height: $bar-height;
+    line-height: variables.$bar-height;
 
     &.title-left {
       text-align: left;
@@ -161,13 +164,13 @@
   }
 
   .button, button {
-    z-index: $z-index-bar-button;
-    padding: 0 $button-bar-button-padding;
+    z-index: variables.$z-index-bar-button;
+    padding: 0 variables.$button-bar-button-padding;
     min-width: initial;
-    min-height: $button-bar-button-height - 1;
+    min-height: variables.$button-bar-button-height - 1;
     font-weight: 400;
-    font-size: $button-bar-button-font-size;
-    line-height: $button-bar-button-height;
+    font-size: variables.$button-bar-button-font-size;
+    line-height: variables.$button-bar-button-height;
 
     &.button-icon:before,
     .icon:before,
@@ -176,33 +179,33 @@
     &.icon-right:before {
       padding-right: 2px;
       padding-left: 2px;
-      font-size: $button-bar-button-icon-size;
-      line-height: $button-bar-button-height;
+      font-size: variables.$button-bar-button-icon-size;
+      line-height: variables.$button-bar-button-height;
     }
 
     &.button-icon {
-      font-size: $bar-title-font-size;
+      font-size: variables.$bar-title-font-size;
       .icon:before,
       &:before,
       &.icon-left:before,
       &.icon-right:before {
         vertical-align: top;
-        font-size: $button-large-icon-size;
-        line-height: $button-bar-button-height;
+        font-size: variables.$button-large-icon-size;
+        line-height: variables.$button-bar-button-height;
       }
     }
     &.button-clear {
       padding-right: 2px;
       padding-left: 2px;
       font-weight: 300;
-      font-size: $bar-title-font-size;
+      font-size: variables.$bar-title-font-size;
 
       .icon:before,
       &.icon:before,
       &.icon-left:before,
       &.icon-right:before {
-        font-size: $button-large-icon-size;
-        line-height: $button-bar-button-height;
+        font-size: variables.$button-large-icon-size;
+        line-height: variables.$button-bar-button-height;
       }
     }
 
@@ -222,8 +225,8 @@
 
   .button-bar > .button,
   .buttons > .button {
-    min-height: $button-bar-button-height - 1;
-    line-height: $button-bar-button-height;
+    min-height: variables.$button-bar-button-height - 1;
+    line-height: variables.$button-bar-button-height;
   }
 
   .button-bar + .button,
@@ -283,7 +286,7 @@
 
     .title {
       font-size: 19px;
-      line-height: $bar-height;
+      line-height: variables.$bar-height;
     }
   }
 
@@ -292,56 +295,56 @@
 // Default styles for buttons inside of styled bars
 .bar-light {
   .button {
-    @include button-style($bar-light-bg, $bar-light-border, $bar-light-active-bg, $bar-light-active-border, $bar-light-text);
-    @include button-clear($bar-light-text, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-light-bg, variables.$bar-light-border, variables.$bar-light-active-bg, variables.$bar-light-active-border, variables.$bar-light-text);
+    @include mixins.button-clear(variables.$bar-light-text, variables.$bar-title-font-size);
   }
 }
 .bar-stable {
   .button {
-    @include button-style($bar-stable-bg, $bar-stable-border, $bar-stable-active-bg, $bar-stable-active-border, $bar-stable-text);
-    @include button-clear($bar-stable-text, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-stable-bg, variables.$bar-stable-border, variables.$bar-stable-active-bg, variables.$bar-stable-active-border, variables.$bar-stable-text);
+    @include mixins.button-clear(variables.$bar-stable-text, variables.$bar-title-font-size);
   }
 }
 .bar-positive {
   .button {
-    @include button-style($bar-positive-bg, $bar-positive-border, $bar-positive-active-bg, $bar-positive-active-border, $bar-positive-text);
-    @include button-clear(#fff, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-positive-bg, variables.$bar-positive-border, variables.$bar-positive-active-bg, variables.$bar-positive-active-border, variables.$bar-positive-text);
+    @include mixins.button-clear(#fff, variables.$bar-title-font-size);
   }
 }
 .bar-calm {
   .button {
-    @include button-style($bar-calm-bg, $bar-calm-border, $bar-calm-active-bg, $bar-calm-active-border, $bar-calm-text);
-    @include button-clear(#fff, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-calm-bg, variables.$bar-calm-border, variables.$bar-calm-active-bg, variables.$bar-calm-active-border, variables.$bar-calm-text);
+    @include mixins.button-clear(#fff, variables.$bar-title-font-size);
   }
 }
 .bar-assertive {
   .button {
-    @include button-style($bar-assertive-bg, $bar-assertive-border, $bar-assertive-active-bg, $bar-assertive-active-border, $bar-assertive-text);
-    @include button-clear(#fff, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-assertive-bg, variables.$bar-assertive-border, variables.$bar-assertive-active-bg, variables.$bar-assertive-active-border, variables.$bar-assertive-text);
+    @include mixins.button-clear(#fff, variables.$bar-title-font-size);
   }
 }
 .bar-balanced {
   .button {
-    @include button-style($bar-balanced-bg, $bar-balanced-border, $bar-balanced-active-bg, $bar-balanced-active-border, $bar-balanced-text);
-    @include button-clear(#fff, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-balanced-bg, variables.$bar-balanced-border, variables.$bar-balanced-active-bg, variables.$bar-balanced-active-border, variables.$bar-balanced-text);
+    @include mixins.button-clear(#fff, variables.$bar-title-font-size);
   }
 }
 .bar-energized {
   .button {
-    @include button-style($bar-energized-bg, $bar-energized-border, $bar-energized-active-bg, $bar-energized-active-border, $bar-energized-text);
-    @include button-clear(#fff, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-energized-bg, variables.$bar-energized-border, variables.$bar-energized-active-bg, variables.$bar-energized-active-border, variables.$bar-energized-text);
+    @include mixins.button-clear(#fff, variables.$bar-title-font-size);
   }
 }
 .bar-royal {
   .button {
-    @include button-style($bar-royal-bg, $bar-royal-border, $bar-royal-active-bg, $bar-royal-active-border, $bar-royal-text);
-    @include button-clear(#fff, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-royal-bg, variables.$bar-royal-border, variables.$bar-royal-active-bg, variables.$bar-royal-active-border, variables.$bar-royal-text);
+    @include mixins.button-clear(#fff, variables.$bar-title-font-size);
   }
 }
 .bar-dark {
   .button {
-    @include button-style($bar-dark-bg, $bar-dark-border, $bar-dark-active-bg, $bar-dark-active-border, $bar-dark-text);
-    @include button-clear(#fff, $bar-title-font-size);
+    @include mixins.button-style(variables.$bar-dark-bg, variables.$bar-dark-border, variables.$bar-dark-active-bg, variables.$bar-dark-active-border, variables.$bar-dark-text);
+    @include mixins.button-clear(#fff, variables.$bar-title-font-size);
   }
 }
 
@@ -367,7 +370,7 @@
   border-bottom-width: 0;
   background-position: top;
 
-  height: $bar-footer-height;
+  height: variables.$bar-footer-height;
 
   &.item-input-inset {
     position: absolute;
@@ -380,16 +383,16 @@
 }
 
 .bar-subheader {
-  top: $bar-height;
+  top: variables.$bar-height;
   display: block;
 
-  height: $bar-subheader-height;
+  height: variables.$bar-subheader-height;
 }
 .bar-subfooter {
-  bottom: $bar-footer-height;
+  bottom: variables.$bar-footer-height;
   display: block;
 
-  height: $bar-subfooter-height;
+  height: variables.$bar-subfooter-height;
 }
 
 .nav-bar-block {
@@ -397,7 +400,7 @@
   top: 0;
   right: 0;
   left: 0;
-  z-index: $z-index-bar;
+  z-index: variables.$z-index-bar;
 }
 
 .bar .back-button.hide,

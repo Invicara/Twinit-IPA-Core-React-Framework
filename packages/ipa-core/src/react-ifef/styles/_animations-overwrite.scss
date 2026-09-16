@@ -1,3 +1,6 @@
+@use "../scss/mixins";
+@use "../scss/variables";
+
 // Slide up from the bottom, used for modals
 .modal-slide-in-up {
   position: absolute;
@@ -9,30 +12,30 @@
 
 .modal-slide-in-up.modal-enter,
 .modal-slide-in-up > .modal-enter {
-	@include translate3d(0, 100%, 0);
+	@include mixins.translate3d(0, 100%, 0);
 }
 .modal-slide-in-up.modal-enter.modal-enter-active,
 .modal-slide-in-up > .modal-enter-active {
-  z-index: $z-index-modal;
-	@include translate3d(0, 0, 0);
-	@include transition(all cubic-bezier(.1, .7, .1, 1) 400ms);
+  z-index: variables.$z-index-modal;
+	@include mixins.translate3d(0, 0, 0);
+	@include mixins.transition(all cubic-bezier(.1, .7, .1, 1) 400ms);
 }
 
 .modal-slide-in-up.modal-exit,
 .modal-slide-in-up > .modal-exit {
-  z-index: $z-index-modal;
-	@include translate3d(0, 0, 0);
+  z-index: variables.$z-index-modal;
+	@include mixins.translate3d(0, 0, 0);
 }
 
 .modal-slide-in-up.modal-exit.modal-exit-active,
 .modal-slide-in-up > .modal-exit-active {
-  z-index: $z-index-modal;
-	@include translate3d(0, 100%, 0);
-	@include transition(all ease-in-out 400ms);
+  z-index: variables.$z-index-modal;
+	@include mixins.translate3d(0, 100%, 0);
+	@include mixins.transition(all ease-in-out 400ms);
 }
 
 .modal-slide-in-up.modal-exit-done {
-  @include translate3d(0, 100%, 0);
+  @include mixins.translate3d(0, 100%, 0);
 }
 
 

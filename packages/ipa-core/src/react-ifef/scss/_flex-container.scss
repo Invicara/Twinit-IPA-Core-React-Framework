@@ -1,10 +1,12 @@
+@use "variables";
+
 .flex-container{
   display: flex;
   flex-direction: row;
   height: calc(100% - 80px);
   position: fixed;
   width: 100%;
-  top: $bar-header-height;
+  top: variables.$bar-header-height;
 }
 
 .flex-content{

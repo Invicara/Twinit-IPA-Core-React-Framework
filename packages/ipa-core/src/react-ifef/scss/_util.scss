@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 
 /**
  * Utility Classes
@@ -60,9 +63,9 @@
   // used to prevent the browser from doing its native behavior. this doesnt
   // prevent the scrolling, but cancels the contextmenu, tap highlighting, etc
 
-  @include user-select(none);
-  @include touch-callout(none);
-  @include tap-highlight-transparent();
+  @include mixins.user-select(none);
+  @include mixins.touch-callout(none);
+  @include mixins.tap-highlight-transparent();
 
   -webkit-user-drag: none;
 
@@ -79,12 +82,12 @@
   bottom: 0;
   left: 0;
   opacity: 0;
-  z-index: $z-index-click-block;
-  @include translate3d(0, 0, 0);
+  z-index: variables.$z-index-click-block;
+  @include mixins.translate3d(0, 0, 0);
   overflow: hidden;
 }
 .click-block-hide {
-  @include translate3d(-9999px, 0, 0);
+  @include mixins.translate3d(-9999px, 0, 0);
 }
 
 .no-resize {
@@ -128,27 +131,27 @@
  */
 
 .padding {
-  padding: $content-padding;
+  padding: variables.$content-padding;
 }
 
 .padding-top,
 .padding-vertical {
-  padding-top: $content-padding;
+  padding-top: variables.$content-padding;
 }
 
 .padding-right,
 .padding-horizontal {
-  padding-right: $content-padding;
+  padding-right: variables.$content-padding;
 }
 
 .padding-bottom,
 .padding-vertical {
-  padding-bottom: $content-padding;
+  padding-bottom: variables.$content-padding;
 }
 
 .padding-left,
 .padding-horizontal {
-  padding-left: $content-padding;
+  padding-left: variables.$content-padding;
 }
 
 
@@ -175,7 +178,7 @@
  */
 
 .rounded {
-  border-radius: $border-radius-base;
+  border-radius: variables.$border-radius-base;
 }
 
 
@@ -188,93 +191,93 @@
  */
 
 .light, a.light {
-  color: $light;
+  color: variables.$light;
 }
 .light-bg {
-  background-color: $light;
+  background-color: variables.$light;
 }
 .light-border {
-  border-color: $button-light-border;
+  border-color: variables.$button-light-border;
 }
 
 .stable, a.stable {
-  color: $stable;
+  color: variables.$stable;
 }
 .stable-bg {
-  background-color: $stable;
+  background-color: variables.$stable;
 }
 .stable-border {
-  border-color: $button-stable-border;
+  border-color: variables.$button-stable-border;
 }
 
 .positive, a.positive {
-  color: $positive;
+  color: variables.$positive;
 }
 .positive-bg {
-  background-color: $positive;
+  background-color: variables.$positive;
 }
 .positive-border {
-  border-color: $button-positive-border;
+  border-color: variables.$button-positive-border;
 }
 
 .calm, a.calm {
-  color: $calm;
+  color: variables.$calm;
 }
 .calm-bg {
-  background-color: $calm;
+  background-color: variables.$calm;
 }
 .calm-border {
-  border-color: $button-calm-border;
+  border-color: variables.$button-calm-border;
 }
 
 .assertive, a.assertive {
-  color: $assertive;
+  color: variables.$assertive;
 }
 .assertive-bg {
-  background-color: $assertive;
+  background-color: variables.$assertive;
 }
 .assertive-border {
-  border-color: $button-assertive-border;
+  border-color: variables.$button-assertive-border;
 }
 
 .balanced, a.balanced {
-  color: $balanced;
+  color: variables.$balanced;
 }
 .balanced-bg {
-  background-color: $balanced;
+  background-color: variables.$balanced;
 }
 .balanced-border {
-  border-color: $button-balanced-border;
+  border-color: variables.$button-balanced-border;
 }
 
 .energized, a.energized {
-  color: $energized;
+  color: variables.$energized;
 }
 .energized-bg {
-  background-color: $energized;
+  background-color: variables.$energized;
 }
 .energized-border {
-  border-color: $button-energized-border;
+  border-color: variables.$button-energized-border;
 }
 
 .royal, a.royal {
-  color: $royal;
+  color: variables.$royal;
 }
 .royal-bg {
-  background-color: $royal;
+  background-color: variables.$royal;
 }
 .royal-border {
-  border-color: $button-royal-border;
+  border-color: variables.$button-royal-border;
 }
 
 .dark, a.dark {
-  color: $dark;
+  color: variables.$dark;
 }
 .dark-bg {
-  background-color: $dark;
+  background-color: variables.$dark;
 }
 .dark-border {
-  border-color: $button-dark-border;
+  border-color: variables.$button-dark-border;
 }
 
 [collection-repeat] {
@@ -296,5 +299,5 @@
 // Probably as good a place as any to put this.  contenteditable needs user-select
 // jl 03/16/2016
 *[contenteditable] {
-  @include user-select(text);
+  @include mixins.user-select(text);
 }

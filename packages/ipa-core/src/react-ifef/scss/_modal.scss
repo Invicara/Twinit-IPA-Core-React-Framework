@@ -1,3 +1,5 @@
+@use "variables";
+
 
 /**
  * Modals
@@ -11,7 +13,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   width: 100%;
   height: 100%;
 }
@@ -29,33 +31,33 @@
   height: 100%;
 }
 .modal-opened{
-  z-index: $z-index-modal !important;
+  z-index: variables.$z-index-modal !important;
 }
 
 .asf-modal {
   display: block;
   position: absolute;
   top: 0;
-  z-index: $z-index-modal;
+  z-index: variables.$z-index-modal;
   overflow: hidden;
   min-height: 100%;
   width: 100%;
-  background-color: $modal-bg-color;
+  background-color: variables.$modal-bg-color;
 }
 
-@media (min-width: $modal-inset-mode-break-point) {
+@media (min-width: variables.$modal-inset-mode-break-point) {
   // inset mode is when the modal doesn't fill the entire
   // display but instead is centered within a large display
   .asf-modal {
-    top: $modal-inset-mode-top;
-    right: $modal-inset-mode-right;
+    top: variables.$modal-inset-mode-top;
+    right: variables.$modal-inset-mode-right;
     // Don't let bottom imply a min height here.  jl 07/19/2015
     // Decided this really is better than min. jl 08/02/2015
-    bottom: $modal-inset-mode-bottom;
-    left: $modal-inset-mode-left;
+    bottom: variables.$modal-inset-mode-bottom;
+    left: variables.$modal-inset-mode-left;
     overflow: visible;
-    min-height: $modal-inset-mode-min-height;
-    width: (100% - $modal-inset-mode-left - $modal-inset-mode-right);
+    min-height: variables.$modal-inset-mode-min-height;
+    width: (100% - variables.$modal-inset-mode-left - variables.$modal-inset-mode-right);
   }
 
   .asf-modal.ng-leave-active {
@@ -65,33 +67,33 @@
   // remove ios header padding from inset header
   .platform-ios.platform-cordova .asf-modal-wrapper .asf-modal{
     .bar-header:not(.bar-subheader) {
-      height: $bar-height;
+      height: variables.$bar-height;
       > * {
         margin-top: 0;
       }
     }
     .tabs-top > .tabs,
     .tabs.tabs-top {
-      top: $bar-height;
+      top: variables.$bar-height;
     }
     .has-header,
     .bar-subheader {
-      top: $bar-height;
+      top: variables.$bar-height;
     }
     .has-subheader {
-      top: $bar-height + $bar-subheader-height;
+      top: variables.$bar-height + variables.$bar-subheader-height;
     }
     .has-header.has-tabs-top {
-      top: $bar-height + $tabs-height;
+      top: variables.$bar-height + variables.$tabs-height;
     }
     .has-header.has-subheader.has-tabs-top {
-      top: $bar-height + $bar-subheader-height + $tabs-height;
+      top: variables.$bar-height + variables.$bar-subheader-height + variables.$tabs-height;
     }
   }
 
   .asf-modal-backdrop-bg {
 
-    background-color: $modal-backdrop-bg-active;
+    background-color: variables.$modal-backdrop-bg-active;
     opacity: 0;
   }
 
