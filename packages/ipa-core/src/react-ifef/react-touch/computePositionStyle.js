@@ -11,7 +11,6 @@ const computePositionStyle = (currentStyle, deltas) => {
   return DIRECTIVES.reduce((style, directive) => {
     const [name, deltaType, operation] = directive;
     if (currentStyle[name] !== undefined) {
-       
       style[name] = operation(currentStyle[name], deltas[deltaType]);
     }
     return style;

@@ -29,8 +29,12 @@
     "prettier": "^3.9.7"
   },
   "lint-staged": {
-    "**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
+    "**/*.{js,jsx,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{scss,css,md,yml,yaml,json}": [
+      "prettier --write"
     ]
   },
   "workspaces": [
