@@ -37,6 +37,12 @@ export default [
   react.configs.flat.recommended,
   react.configs.flat['jsx-runtime'],
 
+  // Applies to every file rather than only to the JS/JSX block below, because
+  // the react configs above are unscoped: without this, linting a file they
+  // cover but that block does not (eslint.config.mjs itself, anything under
+  // scripts/) prints "React version not specified" on every run.
+  { settings: { react: { version: '18.2' } } },
+
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -149,6 +155,16 @@ export default [
   // their import/export parses; node globals cover the require() calls.
   {
     files: ['packages/*/rollup*.js', '**/.storybook/**', '**/docs/**'],
+    languageOptions: {
+      sourceType: 'module',
+      globals: { ...globals.node },
+    },
+    rules: { 'no-console': 'off' },
+  },
+
+  // Repo tooling: ESM, runs in node, and legitimately writes to stdout.
+  {
+    files: ['scripts/**/*.mjs', 'eslint.config.mjs'],
     languageOptions: {
       sourceType: 'module',
       globals: { ...globals.node },
