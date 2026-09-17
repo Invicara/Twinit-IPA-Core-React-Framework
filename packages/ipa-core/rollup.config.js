@@ -207,6 +207,14 @@ export default {
       // (src/main.js and src/react-ifef/main.js) from `module.exports = X`
       // to `exports.default = X`, breaking every CommonJS consumer.
       exports: 'auto',
+      // Keep import() as import() in the CommonJS build rather than rewriting
+      // it to Promise.resolve().then(() => require(t)) inside an IIFE, which
+      // hides the request behind an opaque parameter. A consumer bundling us
+      // with webpack then builds no context for it at all and the dynamic
+      // import resolves nothing. This is rollup's default from v3 onward and
+      // is stated explicitly because the page component loader depends on it;
+      // rollup 2 had no such option, which is why that upgrade came with this.
+      dynamicImportInCjs: true,
       entryFileNames: chunkInfo => {
         // Output index.js at root, others in subdirectories
         return chunkInfo.name === 'index' ? 'index.js' : '[name]/index.js';

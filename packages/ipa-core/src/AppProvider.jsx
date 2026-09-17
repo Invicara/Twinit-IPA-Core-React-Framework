@@ -811,19 +811,30 @@ async function calculateRoutes(config, ipaConfig, pageComponentLoader) {
       return asIpaPage(LazyComponent, pageComponentProps);
     }
 
-    // Legacy fallback: synchronous require (original behavior, zero breaking changes
-    // for consumers that do not pass pageComponentLoader).
-    try {
-      const component = require(
-        '../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx'
-      ).default;
-      if (component) return asIpaPage(component, pageComponentProps);
-    } catch (e) {
-      const internalComponent = InternalPages[pageComponent];
-      if (internalComponent) return asIpaPage(internalComponent, pageComponentProps);
-    }
-    console.error("can't find page component: ", pageComponent);
-    return asIpaPage(() => null, pageComponentProps);
+    // Legacy path, for consumers that do not pass pageComponentLoader.
+    //
+    // This uses import() rather than a synchronous require() on purpose. A
+    // require() built from a variable makes webpack create an EAGER context
+    // module: every .jsx under the app's pageComponents/ folder is pulled into
+    // the initial bundle, whether or not it is ever routed to. That happens at
+    // build time, so it defeats pageComponentLoader too: a consumer that opts
+    // into lazy loading still pays for the eager context this branch creates,
+    // because webpack cannot know which branch runs. Measured in ipa-dt: 155
+    // page components, including three copies of the 3D viewer, in the initial
+    // chunk for every user.
+    //
+    // import() with the same expression produces a LAZY context instead, so
+    // each page component becomes its own async chunk and consumers get code
+    // splitting with no change on their side.
+    const LazyComponent = React.lazy(() =>
+      import('../../../../app/ipaCore/pageComponents/' + pageComponent + '.jsx').catch(() => {
+        const internalComponent = InternalPages[pageComponent];
+        if (internalComponent) return { default: internalComponent };
+        console.error("can't find page component: ", pageComponent);
+        return { default: () => null };
+      })
+    );
+    return asIpaPage(LazyComponent, pageComponentProps);
   }
 
   function addRoute(handlerName, handler, addPage, pathPrefix, pageGroup) {
