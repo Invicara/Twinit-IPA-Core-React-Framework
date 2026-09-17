@@ -1,0 +1,71 @@
+name: Checks
+
+# Runs on pull requests and on pushes to the release branches. Pushes are
+# covered because direct pushes to NEXT-RELEASE do happen, and a red badge
+# after the fact is still worth having when a pre-merge gate is not available.
+#
+# Nothing here is a required status check yet: making it one is a branch
+# protection change on NEXT-RELEASE, which is an organisational decision. Until
+# then this reports, and .husky/pre-push is what actually stops a bad push.
+on:
+  push:
+    branches: [master, STAGING, NEXT-RELEASE]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  checks:
+    runs-on:
+      - codebuild-ops1-general-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      # Same hand-written npmrc as build.yml: setup-node's registry-url would
+      # set the default registry, and GitHub Packages does not proxy npmjs.
+      - name: Configure GitHub Packages auth
+        env:
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: |
+          if [ -z "$GH_PACKAGES_TOKEN" ]; then
+            echo "::error::GH_PACKAGES_TOKEN is empty; cannot read @dtplatform packages"
+            exit 1
+          fi
+          {
+            echo "@dtplatform:registry=https://npm.pkg.github.com/"
+            echo "@invicara:registry=https://npm.pkg.github.com/"
+            echo "//npm.pkg.github.com/:_authToken=$GH_PACKAGES_TOKEN"
+          } > "$HOME/.npmrc"
+
+      # Deliberately the same flag build.yml uses. `npm ci` is the obvious
+      # choice and is not safe here: this repo's overrides have broken it
+      # before. check:deps reads the committed package-lock.json directly
+      # rather than the installed tree, so it is unaffected by this flag.
+      - name: Install
+        run: npm install --no-package-lock
+
+      # Steps are separate so a failure names itself in the job summary rather
+      # than surfacing as one opaque "verify" failure.
+      - name: ESLint errors and warning ratchet
+        run: npm run lint:ratchet
+
+      - name: Prettier formatting
+        run: npm run check:format
+
+      - name: Deprecated dependencies
+        run: npm run check:deps
+
+      - name: Build warnings
+        run: npm run check:build

@@ -16,7 +16,11 @@
     "lint:fix": "eslint . --fix",
     "prepare": "husky install",
     "lint:ratchet": "node scripts/lint-ratchet.mjs",
-    "lint:baseline": "node scripts/lint-ratchet.mjs --update"
+    "lint:baseline": "node scripts/lint-ratchet.mjs --update",
+    "check:format": "prettier --check .",
+    "check:deps": "node scripts/check-deprecations.mjs",
+    "check:build": "node scripts/check-build.mjs",
+    "verify": "npm run lint:ratchet && npm run check:format && npm run check:deps && npm run check:build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -38,6 +42,9 @@
     ],
     "**/*.{scss,css,md,yml,yaml,json}": [
       "prettier --write"
+    ],
+    "package-lock.json": [
+      "node scripts/check-deprecations.mjs"
     ]
   },
   "workspaces": [

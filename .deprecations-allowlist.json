@@ -1,0 +1,13 @@
+{
+  "_README": "Deprecated packages currently tolerated in the tree. Each entry names what pins it, so a stale entry is obvious once that blocker moves. Adding a name here is a deliberate decision: prefer upgrading the blocker. Regenerate the shape with `npm run check:deps -- --update`, but write the reason by hand.",
+
+  "bootstrap": "Bootstrap 4 is EOL. Declared by us (devDependency, Storybook only) and by ipa-dt. Moving to 5 is a UI migration, not a dependency bump.",
+  "core-js": "core-js@2 via attr-accept@1 via react-dropzone@7, pinned by @dtplatform/platform-ui-components. Gone once that package drops react-dropzone.",
+  "glob": "glob@7 via @babel/cli, @jest/reporters, @npmcli/*, rimraf@3. All upstream; nothing we declare asks for glob directly.",
+  "inflight": "Transitive dependency of glob@7 only. Disappears with glob.",
+  "json-schema-ref-parser": "Via json-schema-faker, a test-data dependency. Upstream has not moved to @apidevtools/json-schema-ref-parser.",
+  "popper.js": "Popper v1 via @dtplatform/platform-ui-components and bootstrap@4. Tied to the Bootstrap 4 migration.",
+  "rimraf": "rimraf@3 via flat-cache and rollup-plugin-cleaner. Both upstream.",
+  "stable": "Via svgo@2, which rollup-plugin-postcss pins. See the sass/postcss notes: replacing that plugin was investigated and rejected.",
+  "whatwg-encoding": "Via jsdom@26, which jest 30 pins. Nothing to do until jest moves."
+}
