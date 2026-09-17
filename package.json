@@ -20,7 +20,8 @@
     "check:format": "prettier --check .",
     "check:deps": "node scripts/check-deprecations.mjs",
     "check:build": "node scripts/check-build.mjs",
-    "verify": "npm run lint:ratchet && npm run check:format && npm run check:deps && npm run check:build"
+    "verify": "npm run lint:ratchet && npm run check:format && npm run check:deps && npm run check:resolve && npm run check:build",
+    "check:resolve": "node scripts/check-resolve.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

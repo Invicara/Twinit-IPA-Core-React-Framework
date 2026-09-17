@@ -55,6 +55,10 @@ jobs:
       # rather than the installed tree, so it is unaffected by this flag.
       - name: Install
         run: npm install --no-package-lock
+        # This step is also the peer-conflict check. `npm run check:resolve`
+        # exists for local use and runs the same resolve via --dry-run, so a
+        # conflict is caught before a push rather than here; repeating it as a
+        # step would always pass, since the install above already resolved.
 
       # Steps are separate so a failure names itself in the job summary rather
       # than surfacing as one opaque "verify" failure.
