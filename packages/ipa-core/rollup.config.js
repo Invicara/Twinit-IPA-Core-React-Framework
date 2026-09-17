@@ -215,6 +215,23 @@ export default {
       // is stated explicitly because the page component loader depends on it;
       // rollup 2 had no such option, which is why that upgrade came with this.
       dynamicImportInCjs: true,
+      // Restores the interop helpers rollup 2 emitted. Rollup 3 changed the
+      // default of this option from "auto" to "default", which assumes every
+      // CommonJS dependency has a real ESM default export and therefore drops
+      // the _interopDefaultLegacy wrappers. That is wrong for the many CJS
+      // packages that compile to `exports.default = x`: the import then
+      // resolves to the module namespace instead of the function.
+      //
+      // It broke ipa-dt in 3.0.88-alpha.1 with "TypeError: vn is not a
+      // function", thrown while the vendor chunk initialised, before React
+      // mounted, so the page rendered blank. The call site was
+      // `withStyles({...})(Component)` against
+      // @mui/styles/withStyles/withStyles.js, which is exactly that shape.
+      //
+      // "compat" is the setting that matches rollup 2's behaviour: use the
+      // default export when the module looks like ESM, fall back to the
+      // namespace otherwise.
+      interop: 'compat',
       entryFileNames: chunkInfo => {
         // Output index.js at root, others in subdirectories
         return chunkInfo.name === 'index' ? 'index.js' : '[name]/index.js';
