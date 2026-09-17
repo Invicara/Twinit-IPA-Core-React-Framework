@@ -8,8 +8,8 @@
     "bootstrap": "npm install",
     "build": "lerna run build",
     "build-dev": "lerna run build-dev",
-    "release": "npm run build && lerna version --exact",
-    "quickrelease": "lerna version --exact",
+    "release": "npm run build && lerna version",
+    "quickrelease": "lerna version",
     "changed": "lerna changed",
     "publish-all": "lerna run build && lerna publish from-package --yes",
     "lint": "eslint .",
@@ -24,7 +24,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^16.5.0",
     "husky": "^8.0.0",
-    "lerna": "^9.0.7",
+    "lerna": "^10.0.1",
     "lint-staged": "^15.2.2",
     "prettier": "^3.9.7"
   },
@@ -44,7 +44,7 @@
     "axios": "^1.18.1",
     "decode-uri-component": "^0.5.0",
     "nx": {
-      ".": "^22.7.12",
+      ".": "^23.2.1",
       "brace-expansion": "^5.0.9",
       "smol-toml": "^1.7.1"
     },
