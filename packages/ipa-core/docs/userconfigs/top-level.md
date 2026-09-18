@@ -493,7 +493,9 @@ settings: {
         filename: "name fo a file uploaded to project"
     },
     noSideBar: true,
-    noTitleBar: true
+    noTitleBar: true,
+    headerComponent: "components/AppHeader",
+    sidebarComponent: "components/AppSidebar"
 }
 ```
 
@@ -503,6 +505,8 @@ settings: {
 - `appImage` (optional): changes the logo in the top-left corner of the client. This configuration provides a URL or the name of an image file uploaded to the project.
 - `noSideBar` (optional): Hides the side navigation bar if true. Dfeault: false. Your pages will need to provide their own navigation components.
 - `noTitleBar` (optional): Hides the top title bar if true. Dfeault: false. Your pages will need to provide their own components to switch projects and user configs, and sign out.
+- `headerComponent` (optional): The header bar to render, named as a path under `app/ipaCore` with `.jsx` appended. Use it to take the header the framework ships, to extend it, or to render your own. See [Custom side Navigation and Header Bars](./custom-bar.md).
+- `sidebarComponent` (optional): The side navigation to render, named the same way. It is chosen independently of `headerComponent`, so an application can replace one and keep the other. See [Custom side Navigation and Header Bars](./custom-bar.md).
 
 ## `entityDataConfig`
 
