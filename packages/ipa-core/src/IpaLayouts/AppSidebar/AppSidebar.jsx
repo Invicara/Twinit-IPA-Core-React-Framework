@@ -172,7 +172,7 @@ const AppSidebar = ({ router, userConfig }) => {
     <nav
       className={clsx('ipa-sidebar', expanded && 'ipa-sidebar--expanded')}
       aria-label="Main navigation"
-      data-testid="dt-sidebar"
+      data-testid="ipa-sidebar"
     >
       {/* The panel is what actually paints and animates; .ipa-sidebar stays a fixed
           48px slot in flow so expanding overlays the content instead of
