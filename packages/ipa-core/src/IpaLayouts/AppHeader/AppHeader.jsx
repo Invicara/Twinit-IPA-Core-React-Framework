@@ -38,10 +38,12 @@ import './AppHeader.scss';
  *   export default props => (
  *     <AppHeader
  *       {...props}
- *       actions={<NotificationTray />}
- *       menuItems={[
- *         { key: 'workspace', caption: 'Workspace', label: name, onSelect: pick },
- *       ]}
+ *       slots={{
+ *         actions: <NotificationTray />,
+ *         menuItems: [
+ *           { key: 'workspace', caption: 'Workspace', label: name, onSelect: pick },
+ *         ],
+ *       }}
  *     />
  *   );
  *
@@ -49,6 +51,8 @@ import './AppHeader.scss';
  * app can take one of them without the other.
  *
  * ── What a host can add ───────────────────────────────────────────────────
+ *
+ * All of it hangs off one `slots` prop:
  *
  *   actions     a node placed in the toolbar, before the account cluster. The
  *               notification tray goes here.
@@ -59,7 +63,15 @@ import './AppHeader.scss';
  *   logo        a node replacing the logo entirely, for a host whose branding
  *               does not come from userConfig `settings.appImage`.
  *
- * Anything beyond that is a sign the host wants its own header, which the
+ * They are namespaced rather than taken as plain props because TitleBar spreads
+ * contextProps into this component flat, and contextProps is {...AppProvider
+ * .state} — a namespace this component does not own and cannot predict. It
+ * already carries `actions`, an object of a dozen bound action creators, so an
+ * `actions` prop here silently captured it and threw on the first render. Any
+ * other flat name is free only by luck, and only until AppProvider gains a
+ * state key with that name.
+ *
+ * Anything beyond these is a sign the host wants its own header, which the
  * userConfig indirection already allows: write the component and name it.
  *
  * ── What ipa-core passes in ───────────────────────────────────────────────
@@ -123,10 +135,11 @@ const AppHeader = ({
   userConfig,
   selectedItems,
   user,
-  actions,
-  menuItems,
-  logo,
+  slots,
 }) => {
+  // Not destructured in the signature: see the note above on why these are
+  // namespaced rather than read straight off props.
+  const { actions, menuItems, logo } = slots || {};
   const [menuOpen, setMenuOpen] = useState(false);
 
   const projectName = titleInfo?.projectName || '';
