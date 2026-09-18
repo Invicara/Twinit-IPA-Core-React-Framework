@@ -9,6 +9,7 @@ import BottomPanel from './BottomPanel';
 import Item from '../IpaControls/Item';
 
 import TitleBar from './TitleBar';
+import getInternalChrome, { internalChromeNames } from './InternalChrome';
 
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -128,9 +129,19 @@ class Layout extends React.Component {
     try {
       component = require('../../../../app/ipaCore/' + name + '.jsx').default;
     } catch (e) {
-      console.error(e);
-      console.error("can't find page component: ", name);
-      component = null;
+      // Not a file in the application, so try what this framework ships. That
+      // is what lets a userConfig name AppSidebar without the application
+      // declaring a component for it. The application is tried first, so it can
+      // shadow the name with a file of its own.
+      component = getInternalChrome(name);
+      if (!component) {
+        console.error(e);
+        console.error(
+          `can't find component ${name} in app/ipaCore, and it is not one of ` +
+            `the components ipa-core ships (${internalChromeNames.join(', ')})`
+        );
+        component = null;
+      }
     }
 
     return component;
@@ -199,7 +210,12 @@ class Layout extends React.Component {
         <SidePanelContainer settings={sidePanelSettings} {...this.props}>
           <FlexContainer {...this.props}>
             {customSidebar?.component ? (
-              <customSidebar.component {...this.props.contextProps} />
+              /* The framework's own navigation arrives through React.lazy, so
+                 it needs a boundary. One from the application is not lazy and
+                 passes straight through. */
+              <React.Suspense fallback={null}>
+                <customSidebar.component {...this.props.contextProps} />
+              </React.Suspense>
             ) : (
               showSidebar && (
                 <FlexLeftNavs
