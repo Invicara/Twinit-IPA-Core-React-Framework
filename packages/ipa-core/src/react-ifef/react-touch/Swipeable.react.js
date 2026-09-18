@@ -11,7 +11,6 @@ const ZERO_DELTAS = { dx: 0, dy: 0 };
 const DEFAULT_STATE = { initial: null, current: null, deltas: ZERO_DELTAS };
 
 class Swipeable extends React.Component {
-
   static propTypes = {
     children: T.oneOfType([T.func, T.element]).isRequired,
     config: T.object,
@@ -32,7 +31,7 @@ class Swipeable extends React.Component {
     this._touchHandler = new TouchHandler(
       this.handleTouchStart.bind(this),
       this.handleTouchMove.bind(this),
-      this.handleTouchEnd.bind(this),
+      this.handleTouchEnd.bind(this)
     );
   }
 
@@ -46,10 +45,12 @@ class Swipeable extends React.Component {
   }
 
   handleTouchStart(touchPosition) {
-    this.setState(merge({}, this.state, {
-      initial: touchPosition,
-      current: touchPosition,
-    }));
+    this.setState(
+      merge({}, this.state, {
+        initial: touchPosition,
+        current: touchPosition,
+      })
+    );
   }
 
   handleTouchMove(touchPosition) {

@@ -1,13 +1,10 @@
-import GenericMatButton from "./GenericMatButton";
-import React from "react";
-import PropTypes from "prop-types";
-import "./FetchButton.scss";
+import GenericMatButton from './GenericMatButton';
+import React from 'react';
+import PropTypes from 'prop-types';
+import './FetchButton.scss';
 
 export const FetchButton = ({ customClasses, ...props }) => (
-  <GenericMatButton
-    {...props}
-    customClasses={"fetch-button " + (customClasses || "")}
-  />
+  <GenericMatButton {...props} customClasses={'fetch-button ' + (customClasses || '')} />
 );
 
 FetchButton.propTypes = {
@@ -16,9 +13,6 @@ FetchButton.propTypes = {
   styles: PropTypes.object,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
-  customClasses: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool
-  ]),
+  customClasses: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   children: PropTypes.string,
 };

@@ -1,13 +1,13 @@
 import React from 'react';
-import {IafAuth} from '@dtplatform/platform-ui-components';
+import { IafAuth } from '@dtplatform/platform-ui-components';
 
-const {useAuth} = IafAuth;
+const { useAuth } = IafAuth;
 
-const withAuthHoc = (WrapperComponent) => {
-    return (props) => {
-        const {authService, authTokens} = useAuth();
-        return <WrapperComponent {...props} authService={authService} authTokens={authTokens}/>
-    }
-}
+const withAuthHoc = WrapperComponent => {
+  return props => {
+    const { authService, authTokens } = useAuth();
+    return <WrapperComponent {...props} authService={authService} authTokens={authTokens} />;
+  };
+};
 
 export default withAuthHoc;

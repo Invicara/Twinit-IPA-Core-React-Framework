@@ -1,9 +1,21 @@
 .main-nav {
+  /* react-ifef/styles/newStyles.scss has a global `ul { list-style-type: none }`,
+     which drops the bullets but leaves the browser's own
+     padding-inline-start of 40px in place. That indents the whole list and
+     pushes the icons off the rail's column.
+
+     Scoped to the direct child: the group flyout renders its own <ul> deeper in
+     (Layout.jsx getGroupedNavItem), and its indentation is not this rule's to
+     decide. */
+  > ul {
+    padding-left: 0;
+  }
+
   .icofont-2x {
     margin-right: 15px;
   }
 
-  .inv-icon-svg{
+  .inv-icon-svg {
     margin-right: 15px;
   }
 
@@ -11,8 +23,7 @@
     margin-right: 15px;
   }
 
-  .nav-li{
+  .nav-li {
     position: relative;
   }
 }
-

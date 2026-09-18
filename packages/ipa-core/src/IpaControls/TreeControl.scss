@@ -1,6 +1,6 @@
-  .fancy-tree {
-    height: 50vh;
-    overflow: scroll;
+.fancy-tree {
+  height: 50vh;
+  overflow: scroll;
 
   --invisible-ink: rgba(0, 0, 0, 0);
 
@@ -41,7 +41,6 @@
       --stroke-color: var(--fancytree-two-color);
       --channel-color: var(--fancytree-two-channel-color);
 
-
       ul {
         // Level 3 color
         --stroke-color: var(--fancytree-three-color);
@@ -69,22 +68,22 @@
   }
 
   .ReactVirtualized__Grid {
-      &::-webkit-scrollbar {
-          width: 7px;
-        }
-          
-        &::-webkit-scrollbar-track {
-            background: white;
-        }
-          
-        &::-webkit-scrollbar-thumb {
-        background: #DCDCDC;
-                border-radius: 2rem;
-        }
-          
-        &::-webkit-scrollbar-thumb:hover {
-            background: #B8B8B8;
-        }
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: white;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #dcdcdc;
+      border-radius: 2rem;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #b8b8b8;
+    }
   }
 
   ul {
@@ -106,7 +105,7 @@
   li > a > span {
     margin-left: 1em;
     color: black;
-  } 
+  }
 
   li > a > span > div {
     overflow: hidden;
@@ -116,7 +115,7 @@
 
   /* Channel */
   li:before {
-    content: ".";
+    content: '.';
     color: var(--invisible-ink);
     position: absolute;
     width: var(--channel-width);
@@ -139,7 +138,7 @@
 
   /* Channel Connector */
   li.expanded:after {
-    content: ".";
+    content: '.';
     color: var(--invisible-ink);
     position: absolute;
     border-left: solid var(--stroke-color) var(--stroke-width);
@@ -153,7 +152,7 @@
 
   /* Bullet */
   li > a > span:before {
-    content: "";
+    content: '';
     position: absolute;
     width: var(--bullet-size);
     height: var(--bullet-size);
@@ -176,7 +175,8 @@
     background-color: var(--stroke-color);
   }
 
-  li.branch.partial > a > span:before, li.expanded.partial > a > span:before {
+  li.branch.partial > a > span:before,
+  li.expanded.partial > a > span:before {
     background-color: var(--channel-color);
   }
 
@@ -204,7 +204,7 @@
   }
 
   a:before {
-    content: "";
+    content: '';
     position: absolute;
     height: var(--connector-height);
     top: var(--connector-top-before);
@@ -213,7 +213,7 @@
   }
 
   a:after {
-    content: "";
+    content: '';
     position: absolute;
     height: 100%;
     top: var(--connector-top-after);
@@ -238,36 +238,33 @@
     // font-size: 0.8em;
   }
 
-  .tooltip-wrapper{
+  .tooltip-wrapper {
     position: absolute;
     margin-left: 0.3em;
     display: inline-block;
     padding-top: 0.5em;
 
-    .dbm-tooltip .dbm-tooltiptext {      
+    .dbm-tooltip .dbm-tooltiptext {
       width: 200px;
-      margin-left: -150px;   
+      margin-left: -150px;
       white-space: normal;
     }
   }
 
+  .fancy-tree__count {
+    display: flex;
+    align-items: end;
+    justify-content: start;
+    padding-bottom: 10px;
 
-
-    .fancy-tree__count {
-      display: flex;
-      align-items: end;
-      justify-content: start;
-      padding-bottom: 10px;
-
-      span:not(:first-child) {
-        padding-inline-start: 1em;/*length relative to font-size*/
-      }
-
-      &--action {
-        color: var(--app-accent-color);
-        cursor: pointer;
-        text-decoration: underline;
-      }
-
+    span:not(:first-child) {
+      padding-inline-start: 1em; /*length relative to font-size*/
     }
+
+    &--action {
+      color: var(--app-accent-color);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
 }

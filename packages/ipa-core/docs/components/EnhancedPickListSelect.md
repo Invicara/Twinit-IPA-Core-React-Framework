@@ -42,12 +42,12 @@ In this example, when selecting option ‘Mechanical' on the first select, the s
 ## Configuration Example
 
 ```json
-"picklistSelectsConfig": {  
-  "canCreateItems": true,  
-  "pickListScript": "getPickList",  
-  "createPickListScript": "updatePickList",  
-  "initialPickListType": "SystemsCategories",  
-  "selects": [  
+"picklistSelectsConfig": {
+  "canCreateItems": true,
+  "pickListScript": "getPickList",
+  "createPickListScript": "updatePickList",
+  "initialPickListType": "SystemsCategories",
+  "selects": [
     {
       "display": "System Category",
       "createPickListOnUpdate": true

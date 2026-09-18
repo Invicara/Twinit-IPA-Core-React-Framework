@@ -5,11 +5,9 @@ table.entity-table {
   tr {
     position: relative; /*required to calculate offset*/
   }
-
 }
 
 @mixin checkbox-styles {
-
   &.checkbox {
     //padding: 0;
     max-width: 48px;
@@ -18,19 +16,18 @@ table.entity-table {
 }
 
 @mixin div-checkbox-styles {
-
   &.checkbox {
     display: flex;
     justify-content: center;
   }
 }
 
-.actions-panel{
+.actions-panel {
   display: flex;
   justify-content: flex-end;
 }
 
-.entity-list-view-count{
+.entity-list-view-count {
   margin: 10px 0;
 }
 
@@ -41,7 +38,7 @@ div.header-row {
 }
 
 .header-row {
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   border-bottom: 3px solid #eaeaea;
   user-select: text;
 
@@ -56,7 +53,6 @@ div.header-row {
   }
 
   .header-column {
-
     &:not(.checkbox) {
       padding: 10px;
       color: #666666;
@@ -64,7 +60,7 @@ div.header-row {
       letter-spacing: 1;
       border-left: 1px solid #eaeaea;
       border-right: 1px solid #eaeaea;
-      cursor:pointer;
+      cursor: pointer;
 
       i {
         margin-left: 20px;
@@ -80,51 +76,48 @@ div.header-row {
     &.sticky {
       position: sticky;
       left: 0;
-      background-color: #F2F2F2;
+      background-color: #f2f2f2;
       z-index: 1;
 
       &.first {
         border-right: 1px solid #ddd;
       }
-
     }
 
     &.sticky-end {
       right: 0px;
       border-left: 1px solid #ddd;
     }
-
   }
 
-  :first-child{
+  :first-child {
     border-left: none;
   }
 
-  :last-child{
+  :last-child {
     border-right: none;
   }
-
 }
 
-.virtualized-table > div{
+.virtualized-table > div {
   width: 100% !important;
   height: 100% !important;
 }
-.virtualized-table{
+.virtualized-table {
   height: 70vh;
   width: 100%;
   .ReactVirtualized__Grid.ReactVirtualized__List {
-      overflow-x: visible !important;
-      overflow-y: auto !important;
-  
-      .ReactVirtualized__Grid__innerScrollContainer {
-        overflow: visible !important;
-        min-width: 800px !important;
-      }
+    overflow-x: visible !important;
+    overflow-y: auto !important;
+
+    .ReactVirtualized__Grid__innerScrollContainer {
+      overflow: visible !important;
+      min-width: 800px !important;
     }
+  }
 }
 
-.virtualized-table{
+.virtualized-table {
   height: 70vh;
   width: 100%;
 }
@@ -133,20 +126,18 @@ div.header-row {
   width: 7px;
   height: 7px;
 }
-  
+
 .ReactVirtualized__Grid::-webkit-scrollbar-track {
-    background: white;
+  background: white;
 }
 
-  
 .ReactVirtualized__Grid::-webkit-scrollbar-thumb {
-background: #DCDCDC;
-        border-radius: 2rem;
+  background: #dcdcdc;
+  border-radius: 2rem;
 }
 
-  
 .ReactVirtualized__Grid::-webkit-scrollbar-thumb:hover {
-    background: #B8B8B8;
+  background: #b8b8b8;
 }
 
 div.content-row {
@@ -166,11 +157,9 @@ div.content-row {
   }
 
   .content-column {
-
     background-color: white;
 
     &:not(.checkbox) {
-
       padding: 10px;
       color: #666666;
       letter-spacing: 1;
@@ -181,11 +170,9 @@ div.content-row {
         cursor: pointer;
         font-weight: 500;
 
-
         min-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
-
       }
     }
 
@@ -214,8 +201,5 @@ div.content-row {
         flex-wrap: nowrap;
       }
     }
-
-
-
   }
 }

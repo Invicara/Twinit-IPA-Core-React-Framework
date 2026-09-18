@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 
 /**
  * Popovers
@@ -10,13 +13,13 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: $z-index-popover;
+  z-index: variables.$z-index-popover;
   width: 100%;
   height: 100%;
-  background-color: $popover-backdrop-bg-inactive;
+  background-color: variables.$popover-backdrop-bg-inactive;
 
   &.active {
-    background-color: $popover-backdrop-bg-active;
+    background-color: variables.$popover-backdrop-bg-active;
   }
 }
 
@@ -24,15 +27,15 @@
   position: absolute;
   top: 25%;
   left: 50%;
-  z-index: $z-index-popover;
+  z-index: variables.$z-index-popover;
   display: block;
   margin-top: 12px;
-  margin-left: calc(($popover-width / 2) * -1);
+  margin-left: calc((variables.$popover-width / 2) * -1);
   //height: $popover-height;
   //width: $popover-width;
-  max-height: $popover-height;
-  background-color: $popover-bg-color;
-  box-shadow: $popover-box-shadow;
+  max-height: variables.$popover-height;
+  background-color: variables.$popover-bg-color;
+  box-shadow: variables.$popover-box-shadow;
   opacity: 0;
 
   .item:first-child {
@@ -52,7 +55,7 @@
 // Set popover border-radius
 .asf-popover,
 .asf-popover .bar-header {
-  border-radius: $popover-border-radius;
+  border-radius: variables.$popover-border-radius;
 }
 .asf-popover .scroll-content {
   z-index: 1;
@@ -75,17 +78,17 @@
 .platform-ios {
 
   .asf-popover {
-    box-shadow: $popover-box-shadow-ios;
-    border-radius: $popover-border-radius-ios;
+    box-shadow: variables.$popover-box-shadow-ios;
+    border-radius: variables.$popover-border-radius-ios;
   }
 
   .asf-popover,
   .asf-popover .bar-header {
-    border-radius: $popover-border-radius-ios;
+    border-radius: variables.$popover-border-radius-ios;
   }
   .asf-popover .scroll-content {
     margin: 8px 0;
-    border-radius: $popover-border-radius-ios;
+    border-radius: variables.$popover-border-radius-ios;
   }
   .asf-popover .scroll-content.has-header {
     margin-top: 0;
@@ -104,10 +107,10 @@
       left: 5px;
       width: 20px;
       height: 20px;
-      background-color: $popover-bg-color;
+      background-color: variables.$popover-bg-color;
       border-radius: 3px;
       content: '';
-      @include rotate(-45deg);
+      @include mixins.rotate(-45deg);
     }
   }
   .asf-popover-bottom .asf-popover-arrow {
@@ -125,12 +128,12 @@
 
   .asf-popover {
     margin-top: -32px;
-    background-color: $popover-bg-color-android;
-    box-shadow: $popover-box-shadow-android;
+    background-color: variables.$popover-bg-color-android;
+    box-shadow: variables.$popover-box-shadow-android;
 
     .item {
-      border-color: $popover-bg-color-android;
-      background-color: $popover-bg-color-android;
+      border-color: variables.$popover-bg-color-android;
+      background-color: variables.$popover-bg-color-android;
       color: #4d4d4d;
     }
     &.asf-popover-bottom {
@@ -300,7 +303,7 @@
   background-color: #fff;
 }
 
-@media (min-width: $popover-large-break-point) {
+@media (min-width: variables.$popover-large-break-point) {
   .asf-popover {
     max-height: 375px;
 
@@ -311,7 +314,7 @@
 }
 
 
-@media (max-height: $popover-short-break-point) {
+@media (max-height: variables.$popover-short-break-point) {
   .asf-popover {
     max-height: 268px;
 
@@ -322,5 +325,5 @@
 }
 
 .platform-ios .asf-popover-container {
-  border-radius: $popover-border-radius-ios; }
+  border-radius: variables.$popover-border-radius-ios; }
 

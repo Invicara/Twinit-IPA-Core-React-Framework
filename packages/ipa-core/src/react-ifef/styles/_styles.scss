@@ -1,47 +1,49 @@
 .card {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-.slick-slider, .slick-list, .slick-track {
-    height: 100%;
+.slick-slider,
+.slick-list,
+.slick-track {
+  height: 100%;
 }
 
 .slider-pager {
-    bottom: 20px;
+  bottom: 20px;
 }
 
 // use this class instead of overflow-scroll
 .slider-content-fix {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
 }
 
 // Hack to use ReactCSSTransitionGroup for backdrop
 .backdrop.backdrop-invisible {
-    visibility: hidden;
-    opacity: 0;
+  visibility: hidden;
+  opacity: 0;
 }
 .backdrop.backdrop-visible {
-    visibility: visible;
-    opacity: 1;
+  visibility: visible;
+  opacity: 1;
 }
 
 .inloader.spinner {
-    padding-right: 0px;
-    svg {
-        margin-bottom: -4px;
-    }
+  padding-right: 0px;
+  svg {
+    margin-bottom: -4px;
+  }
 }
 
 // Hack to use ReactCSSTransitionGroup for loading
 .loading-container.loading-invisible {
-    visibility: hidden;
-    opacity: 0;
+  visibility: hidden;
+  opacity: 0;
 }
 .loading-container.loading-visible {
-    visibility: visible;
-    opacity: 1;
+  visibility: visible;
+  opacity: 1;
 }
 
 .popover {

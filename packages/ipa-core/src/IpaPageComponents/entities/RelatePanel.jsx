@@ -1,52 +1,81 @@
-import React from "react";
-import GenericMatButton from "../../IpaControls/GenericMatButton";
-import EntitySelectionPanel, {TreeSelectMode} from "./EntitySelectionPanel"
-import {branchNodeRenderer, leafNodeRenderer} from "../../IpaUtils/TreeRendererHelper"
+import React from 'react';
+import GenericMatButton from '../../IpaControls/GenericMatButton';
+import EntitySelectionPanel, { TreeSelectMode } from './EntitySelectionPanel';
+import { branchNodeRenderer, leafNodeRenderer } from '../../IpaUtils/TreeRendererHelper';
+import _ from 'lodash';
 
-export const RelatePanel = ({selectedEntityType, selectedEntities, checkedEntities, appliedFilters, fetching, entityPlural,
-                         searchedEntities, parentEntities, relate, setSelectedSearchedEntities, resetForRelatedFilteringAndGrouping, groups
+export const RelatePanel = ({
+  selectedEntityType,
+  selectedEntities,
+  checkedEntities,
+  appliedFilters,
+  fetching,
+  entityPlural,
+  searchedEntities,
+  parentEntities,
+  relate,
+  setSelectedSearchedEntities,
+  resetForRelatedFilteringAndGrouping,
+  groups,
 }) => {
-    const RELATIONS_WARNING_MESSAGE = "This entity is related to: ";
+  const RELATIONS_WARNING_MESSAGE = 'This entity is related to: ';
 
-    const getWarningMessage = (shouldDisplayWarning, entity) => {
+  const getWarningMessage = (shouldDisplayWarning, entity) => {
+    return shouldDisplayWarning
+      ? RELATIONS_WARNING_MESSAGE +
+          parentEntities
+            .filter(p => p.related.some(r => r._id === entity._id))
+            .map(x => x.entityName)
+            .join()
+      : '';
+  };
 
-        return shouldDisplayWarning ? RELATIONS_WARNING_MESSAGE + parentEntities.filter(p => p.related.some(r=> r._id === entity._id)).map((x) => x.entityName).join() : ""
-    }
+  const getEntitiesWithRelationsWarnings = () => {
+    return searchedEntities.map(e => ({
+      ...e,
+      EntityWarningMessage: getWarningMessage(
+        parentEntities.some(p => p.related.some(r => r._id === e._id)),
+        e
+      ),
+    }));
+  };
 
-    const getEntitiesWithRelationsWarnings = () => {
-        return searchedEntities.map((e) => ({...e, EntityWarningMessage: getWarningMessage(parentEntities.some(p => p.related.some(r=> r._id === e._id)), e)}))
-    }
-
-
-    return <>
-        <div className={'panel-title'}>Relate</div>
-        <div className='tree-container'>
-            {selectedEntityType && <EntitySelectionPanel
-                selectedGroups={groups}
-                selectedFilters={appliedFilters}
-                selectedEntities={selectedEntities}
-                fetching={fetching}
-                entities={getEntitiesWithRelationsWarnings()}
-                onSelect={(entities) => setSelectedSearchedEntities(entities)}
-                treeSelectMode={TreeSelectMode.NONE_MEANS_NONE}
-                onGroupOrFilterChange={(changes) => {
-                    resetForRelatedFilteringAndGrouping({
-                        filters: changes.filters,
-                        groups: changes.groups
-                    })
-                }}
-                leafNodeRenderer={leafNodeRenderer}
-                branchNodeRenderer={branchNodeRenderer}
-                name={selectedEntityType + "_selection_panel"}
-                entitySingular={selectedEntityType}
-                entityPlural={entityPlural}
-            />}
-        </div>
-        <div className={'add-button-container'}>
-            <GenericMatButton
-                disabled={checkedEntities.every(e => !e.checked) || _.isEmpty(selectedEntities)}
-                customClasses="add-button" onClick={() => relate(selectedEntities)}>
-                    Add
-            </GenericMatButton>
-        </div></>
-}
+  return (
+    <>
+      <div className={'panel-title'}>Relate</div>
+      <div className="tree-container">
+        {selectedEntityType && (
+          <EntitySelectionPanel
+            selectedGroups={groups}
+            selectedFilters={appliedFilters}
+            selectedEntities={selectedEntities}
+            fetching={fetching}
+            entities={getEntitiesWithRelationsWarnings()}
+            onSelect={entities => setSelectedSearchedEntities(entities)}
+            treeSelectMode={TreeSelectMode.NONE_MEANS_NONE}
+            onGroupOrFilterChange={changes => {
+              resetForRelatedFilteringAndGrouping({
+                filters: changes.filters,
+                groups: changes.groups,
+              });
+            }}
+            leafNodeRenderer={leafNodeRenderer}
+            branchNodeRenderer={branchNodeRenderer}
+            name={selectedEntityType + '_selection_panel'}
+            entitySingular={selectedEntityType}
+            entityPlural={entityPlural}
+          />
+        )}
+      </div>
+      <div className={'add-button-container'}>
+        <GenericMatButton
+          disabled={checkedEntities.every(e => !e.checked) || _.isEmpty(selectedEntities)}
+          customClasses="add-button"
+          onClick={() => relate(selectedEntities)}
+        >
+          Add
+        </GenericMatButton>
+      </div>
+    </>
+  );
+};

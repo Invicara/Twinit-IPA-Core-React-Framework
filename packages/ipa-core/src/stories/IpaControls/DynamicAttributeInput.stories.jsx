@@ -1,13 +1,13 @@
-import { DynamicAttributeInput } from "../../IpaControls/DynamicAttributeInput";
-import { useArgs } from "@storybook/client-api";
+import { DynamicAttributeInput } from '../../IpaControls/DynamicAttributeInput';
+import { useArgs } from '@storybook/client-api';
 
 export default {
-  title: "Controls/DynamicAttributeInput",
+  title: 'Controls/DynamicAttributeInput',
   component: DynamicAttributeInput,
-  argTypes: { onChange: { action: "onClick" } },
+  argTypes: { onChange: { action: 'onClick' } },
 };
 
-const Template = (args) => {
+const Template = args => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = (e, f) => {
@@ -36,21 +36,21 @@ const Template = (args) => {
 export const Default = Template.bind({});
 
 const mockDynamicValues = [
-  "Apple",
-  "Banana",
-  "Orange",
-  "Mango",
-  "Pineapple",
-  "Grapes",
-  "Strawberry",
-  "Blueberry",
-  "Watermelon",
-  "Kiwi",
+  'Apple',
+  'Banana',
+  'Orange',
+  'Mango',
+  'Pineapple',
+  'Grapes',
+  'Strawberry',
+  'Blueberry',
+  'Watermelon',
+  'Kiwi',
 ];
 
 const fetchValuesOnFocusMock = async () => {
   // Simulating an asynchronous API call
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(() => {
       // Returning mock dynamic values
       resolve(mockDynamicValues);
@@ -59,8 +59,8 @@ const fetchValuesOnFocusMock = async () => {
 };
 
 Default.args = {
-  attribute: "attribute_name", // Define the attribute name
-  value: "", // Define the input value
+  attribute: 'attribute_name', // Define the attribute name
+  value: '', // Define the input value
   fetchValuesOnFocus: fetchValuesOnFocusMock,
   isDisabled: false, // Define whether the input is disabled or not
   onBlur: () => {},

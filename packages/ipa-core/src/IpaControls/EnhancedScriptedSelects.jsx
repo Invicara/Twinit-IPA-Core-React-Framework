@@ -1,14 +1,14 @@
-import React, { Fragment, useEffect, useState } from "react";
-import Select, { highlightOptions } from "./Select";
-import { FetchButton } from "./FetchButton";
-import clsx from "clsx";
-import _ from "lodash";
-import { loadPlainInitialValueWithScriptedSelectFormat } from "../IpaUtils/ScriptedSelectsHelpers";
-import { asSelectOptions } from "../IpaUtils/controls";
+import React, { Fragment, useEffect, useState } from 'react';
+import Select, { highlightOptions } from './Select';
+import { FetchButton } from './FetchButton';
+import clsx from 'clsx';
+import _ from 'lodash';
+import { loadPlainInitialValueWithScriptedSelectFormat } from '../IpaUtils/ScriptedSelectsHelpers';
+import { asSelectOptions } from '../IpaUtils/controls';
 
-import ScriptCache from "../IpaUtils/script-cache";
+import ScriptCache from '../IpaUtils/script-cache';
 
-import "./EnhancedScriptedSelects.scss";
+import './EnhancedScriptedSelects.scss';
 
 export const ScriptedSelects = ({
   currentValue,
@@ -29,8 +29,7 @@ export const ScriptedSelects = ({
 }) => {
   const [selects, setSelects] = useState({});
 
-  const fetchdisabled =
-    !currentValue || _.isEmpty(_.values(currentValue).flatMap(_.identity));
+  const fetchdisabled = !currentValue || _.isEmpty(_.values(currentValue).flatMap(_.identity));
   useEffect(() => {
     const value = currentValue || {};
     if (!isTest) {
@@ -38,30 +37,20 @@ export const ScriptedSelects = ({
         setSelects({});
         const selectOptions = !isTest
           ? await ScriptCache.runScript(script)
-          : [{ One: "One" }, { Two: "Two" }, { Three: "Three" }];
+          : [{ One: 'One' }, { Two: 'Two' }, { Three: 'Three' }];
         setSelects(
-          _.mapValues(selectOptions, (options) =>
-            options?.sort((a, b) => a.localeCompare(b)),
-          ),
+          _.mapValues(selectOptions, options => options?.sort((a, b) => a.localeCompare(b)))
         );
-        loadPlainInitialValueWithScriptedSelectFormat(
-          onChange,
-          value,
-          selectOptions,
-        );
+        loadPlainInitialValueWithScriptedSelectFormat(onChange, value, selectOptions);
       };
       fetchOptions();
     } else {
       const testSelects = {
-        OptionSet1: ["Option A", "Option B", "Option C"],
-        OptionSet2: ["Option X", "Option Y", "Option Z"],
+        OptionSet1: ['Option A', 'Option B', 'Option C'],
+        OptionSet2: ['Option X', 'Option Y', 'Option Z'],
       };
       setSelects(testSelects);
-      loadPlainInitialValueWithScriptedSelectFormat(
-        onChange,
-        value,
-        testSelects,
-      );
+      loadPlainInitialValueWithScriptedSelectFormat(onChange, value, testSelects);
     }
   }, [script, currentValue]);
 
@@ -72,22 +61,16 @@ export const ScriptedSelects = ({
       let newValue = { ...value, [selectId]: [] };
       onChange(newValue);
     } else {
-      selectedValues = selected
-        ? (multi ? selected : [selected]).map((opt) => opt.value)
-        : [];
+      selectedValues = selected ? (multi ? selected : [selected]).map(opt => opt.value) : [];
       onChange({ ...value, [selectId]: selectedValues });
     }
   };
 
   return _.isEmpty(selects) ? (
-    "Loading controls...\n"
+    'Loading controls...\n'
   ) : (
     <div
-      className={clsx(
-        "scripted-selects-control",
-        compact && "compact",
-        horizontal && "horizontal",
-      )}
+      className={clsx('scripted-selects-control', compact && 'compact', horizontal && 'horizontal')}
     >
       {_.values(
         _.mapValues(selects, (options, selectId) => {
@@ -100,7 +83,7 @@ export const ScriptedSelects = ({
                 labelProps={compact ? undefined : { text: selectId }}
                 isMulti={multi}
                 value={asSelectOptions(selectValue)}
-                onChange={(selected) => handleChange(selectId, selected)}
+                onChange={selected => handleChange(selectId, selected)}
                 options={selectOptions}
                 closeMenuOnSelect={!multi}
                 styles={selectOverrideStyles}
@@ -113,13 +96,13 @@ export const ScriptedSelects = ({
               />
             </Fragment>
           );
-        }),
+        })
       )}
       {!noFetch && (
         <FetchButton
           disabled={fetchdisabled}
           onClick={onFetch}
-          customClasses={touched && !fetchdisabled && "attention"}
+          customClasses={touched && !fetchdisabled && 'attention'}
         >
           Fetch
         </FetchButton>

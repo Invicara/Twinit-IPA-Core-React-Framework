@@ -1,20 +1,20 @@
-import React from "react";
-import { StackableDrawer } from "../../IpaDialogs/StackableDrawer";
-import StackableDrawerContainer from "../../IpaDialogs/StackableDrawerContainer";
-import "./StackableDrawer.stories.scss";
-import { Typography } from "@mui/material";
+import React from 'react';
+import { StackableDrawer } from '../../IpaDialogs/StackableDrawer';
+import StackableDrawerContainer from '../../IpaDialogs/StackableDrawerContainer';
+import './StackableDrawer.stories.scss';
+import { Typography } from '@mui/material';
 import { Skeleton } from '@mui/material';
 
 export default {
-  title: "Controls/StackableDrawer",
+  title: 'Controls/StackableDrawer',
   component: StackableDrawer,
   parameters: {
     // More on Story layout: https://storybook.js.org/docs/react/configure/story-layout
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 };
 
-const Template = (args) => {
+const Template = args => {
   return (
     <>
       <div>
@@ -25,12 +25,12 @@ const Template = (args) => {
       <StackableDrawerContainer anchor="left">
         {args.drawersLeft &&
           args.drawersLeft.length > 0 &&
-          generateDrawers(args, args.drawersLeft, "left")}
+          generateDrawers(args, args.drawersLeft, 'left')}
       </StackableDrawerContainer>
       <StackableDrawerContainer anchor="right">
         {args.drawersRight &&
           args.drawersRight.length > 0 &&
-          generateDrawers(args, args.drawersRight, "right")}
+          generateDrawers(args, args.drawersRight, 'right')}
       </StackableDrawerContainer>
     </>
   );
@@ -40,11 +40,11 @@ export const Left = Template.bind({});
 Left.args = {
   drawersLeft: [
     {
-      iconKey: "fa-search",
+      iconKey: 'fa-search',
       minWidth: 200,
     },
     {
-      iconKey: "fa-filter",
+      iconKey: 'fa-filter',
       minWidth: 200,
     },
   ],
@@ -56,11 +56,11 @@ Right.args = {
   //drawersLeft:[],
   drawersRight: [
     {
-      iconKey: "fa-search",
+      iconKey: 'fa-search',
       minWidth: 200,
     },
     {
-      iconKey: "fa-filter",
+      iconKey: 'fa-filter',
       minWidth: 200,
     },
   ],
@@ -71,22 +71,20 @@ Both.args = {
   //drawersLeft:[],
   drawersRight: [
     {
-      iconKey: "fa-search",
+      iconKey: 'fa-search',
       minWidth: 200,
     },
   ],
   drawersLeft: [
     {
-      iconKey: "fa-filter",
+      iconKey: 'fa-filter',
       minWidth: 200,
     },
   ],
 };
 
 const generateDrawers = (args, drawers, anchor) =>
-  drawers.map((d, index) =>
-    generateDrawer({ ...d, anchor: anchor }, index + 1, d.iconKey),
-  );
+  drawers.map((d, index) => generateDrawer({ ...d, anchor: anchor }, index + 1, d.iconKey));
 
 const generateDrawer = (args, level, iconKey) => {
   return (
@@ -96,10 +94,10 @@ const generateDrawer = (args, level, iconKey) => {
       iconKey={iconKey}
       defaultOpen={true}
       isDrawerOpen={true}
-      tooltip={"Hide elements by file"}
+      tooltip={'Hide elements by file'}
     >
       <Typography>
-        <div style={{ padding: 20, marginTop: 100, color: "white" }}>
+        <div style={{ padding: 20, marginTop: 100, color: 'white' }}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         </div>
       </Typography>

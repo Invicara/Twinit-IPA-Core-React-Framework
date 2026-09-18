@@ -1,20 +1,17 @@
 .homepage {
-
-    h1 {
-      font-family: "Inter", sans-serif;
-      font-size: 200%;
-      font-weight: bold;
-      color: var(--app-accent-color);
-    }
-    h2 {
-      font-family: "Inter", sans-serif;
-      font-size: 150%;
-      font-weight: normal;
-      margin-bottom: 38px;
-    }
-  
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 200%;
+    font-weight: bold;
+    color: var(--app-accent-color);
   }
-
+  h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 150%;
+    font-weight: normal;
+    margin-bottom: 38px;
+  }
+}
 
 .dashboard {
   padding: 20px;
@@ -48,32 +45,34 @@
   align-items: center;
   border-bottom: lightgrey 1px solid;
   padding-bottom: 10px;
-  
+
   .title {
     margin-left: 50px;
     font-size: 28px;
     font-weight: bold;
     color: var(--app-accent-color);
   }
-  
+
   .nav-button {
     margin-right: 5%;
-    
-    .main-button{
+
+    .main-button {
       font-size: 13px;
       min-width: 150px;
       height: 45px;
       border-radius: 5px;
       color: white;
-      background: var(--app-accent-color);      
+      background: var(--app-accent-color);
       box-shadow: none;
     }
   }
-  
-  
 }
 
 .mobile-sample-dash {
-  h1 { font-size: 20px !important; }
-  img { max-height: 100px !important }
+  h1 {
+    font-size: 20px !important;
+  }
+  img {
+    max-height: 100px !important;
+  }
 }

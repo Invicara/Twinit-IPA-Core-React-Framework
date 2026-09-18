@@ -1,17 +1,15 @@
-
-
 .entity-modal-body {
   .scripted-selects-control {
     width: 100%;
     margin-bottom: 0px;
     margin-top: 10px;
-    
+
     .select-title {
       font-size: 16px !important;
     }
-    
+
     .select-title.required:after {
-      content: " * ";
+      content: ' * ';
       color: var(--app-accent-color);
     }
 
@@ -21,25 +19,23 @@
     }
   }
 
-  
   .required {
     .select-title:after {
-      content: " * ";
+      content: ' * ';
       color: var(--app-accent-color);
     }
-    
+
     label:after {
-      content: " * ";
+      content: ' * ';
       color: var(--app-accent-color);
     }
   }
-  
+
   .entity-property-control-row {
     display: flex;
     margin: auto;
 
     .react-date-picker {
-
       .react-date-picker__wrapper {
         border: none;
       }
@@ -52,12 +48,10 @@
     }
 
     .react-time-picker {
-
       .react-time-picker__wrapper {
         border: none;
       }
     }
-
   }
 
   .group-name {
@@ -66,12 +60,13 @@
     font-style: italic;
     font-weight: bold;
     color: #666666;
-    &:before, &:after{
+    &:before,
+    &:after {
       display: flex;
-      content: "";
+      content: '';
       flex-grow: 1;
       margin: 8px;
-      border-bottom: 1px solid #B2B2B2;
+      border-bottom: 1px solid #b2b2b2;
     }
   }
 
@@ -80,7 +75,6 @@
     border-color: var(--app-accent-color);
     background-color: var(--app-accent-color);
   }
-  
 }
 
 .property-uom {
@@ -105,4 +99,3 @@
   margin: 10px 5px;
   text-align: right;
 }
-

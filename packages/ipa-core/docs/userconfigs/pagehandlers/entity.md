@@ -54,7 +54,9 @@ The property name must match `type.singular`. The script must also return Entiti
   ]
 }
 ```
+
 ---
+
 ## `selectBy`
 
 **Optional (if using `entitySelectByConfig`)** Specify the ways in which the user can find entities. This controls which options appear in and are used by the Fetch button. If using `entitySelectByConfig`, providing selectBy configuration here will override the top level config in `entitySelectByConfig`.
@@ -78,15 +80,16 @@ selectBy: [
   }
 ],
 ```
+
 #### Configuration
 
 An array of control configurations. Each control configuration can vary based on the type of control being used. Controls are displayed in the order they are configured. All control configurations will include at a minimum:
 
-|Name|Description|
-|---|---|
-|`query`|The name of the control to display.|
-|`display`|The label to display with the control in the UI.|
-|`id`|A unique identifier for the control which will be the same across all pages in the DBM for that control.|
+| Name      | Description                                                                                              |
+| --------- | -------------------------------------------------------------------------------------------------------- |
+| `query`   | The name of the control to display.                                                                      |
+| `display` | The label to display with the control in the UI.                                                         |
+| `id`      | A unique identifier for the control which will be the same across all pages in the DBM for that control. |
 
 Many control configurations will require additional configuration information. See below for configurations for specific controls.
 
@@ -102,11 +105,11 @@ Many control configurations will require additional configuration information. S
     "multiselect": true,
     "columns": [
       {
-        "name": "Name", 
+        "name": "Name",
         "accessor": "Entity Name"
       },
       {
-        "name": "Floor", 
+        "name": "Floor",
         "accessor": "properties.Floor"
       },
       {
@@ -120,15 +123,15 @@ Many control configurations will require additional configuration information. S
 
 #### Configuration
 
-|Name|Description|
-|---|---|
-|`component`| Configuration for the component to use when display the tableView|
-|`name`| Name of the code level component|
-|`className`| The className to apply to the top level DOM node of the component|
-|`multiselect`| Whether to allow multiselect check boxes in the table|
-|`columns`| An array of column definitions|
-|`name`| The name of the column to appear in the table header|
-|`accessor`| How to access the value of the on the Entity to display in the cell|
+| Name          | Description                                                         |
+| ------------- | ------------------------------------------------------------------- |
+| `component`   | Configuration for the component to use when display the tableView   |
+| `name`        | Name of the code level component                                    |
+| `className`   | The className to apply to the top level DOM node of the component   |
+| `multiselect` | Whether to allow multiselect check boxes in the table               |
+| `columns`     | An array of column definitions                                      |
+| `name`        | The name of the column to appear in the table header                |
+| `accessor`    | How to access the value of the on the Entity to display in the cell |
 
 ---
 
@@ -139,6 +142,7 @@ Many control configurations will require additional configuration information. S
 **Required** The actions option defines for the page how to perform actions on entities. This will include required actions like how to fetch Entities from the server and also custom actions like how to delete, edit, or copy an entity (or other actions that one can think up). Example actions will be in rows below. The examples are all usable examples, but also illustrate how new actions can be configured to support things like Copy, Export, etc...
 
 #### Example
+
 ```jsx
 "actions": {
   "actionName": {
@@ -153,14 +157,14 @@ Many control configurations will require additional configuration information. S
 
 #### Configuration
 
-|Name|Description|
-|---|---|
-|`key`| The name of an action and it's configuration|
-|`allow`| Whether to allow the user to do the action or not. Boolean|
-|`type`| The type of the action, so the UI knows how to update the asset after the action has taken place. Valid values: read, create, edit, delete|
-|`icon`| The icon to use if the action will show up in a button on the entity. Any free font awesome icon can be used|
-|`showOnTable`| Whether the action should be shown on the summary Table view of entities. These actions must be configured with a script which takes an array of entities in the originalEntities paramater|
-|`script`| The name of the script to be run to accomplish the action. The script will be passed the entity on which the the action was invoked|
+| Name          | Description                                                                                                                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`         | The name of an action and it's configuration                                                                                                                                                |
+| `allow`       | Whether to allow the user to do the action or not. Boolean                                                                                                                                  |
+| `type`        | The type of the action, so the UI knows how to update the asset after the action has taken place. Valid values: read, create, edit, delete                                                  |
+| `icon`        | The icon to use if the action will show up in a button on the entity. Any free font awesome icon can be used                                                                                |
+| `showOnTable` | Whether the action should be shown on the summary Table view of entities. These actions must be configured with a script which takes an array of entities in the originalEntities paramater |
+| `script`      | The name of the script to be run to accomplish the action. The script will be passed the entity on which the the action was invoked                                                         |
 
 :::note
 The above is the basic config for any action. Some actions may require more configuration.
@@ -192,21 +196,21 @@ When determining which actions should appear on an entity, the entire list of ac
 
 ### Configuration
 
-|Name|Description|
-|---|---|
-|`type`| 'Edit' is needed to let the UI know how to handle the result of the action|
-|`script`| The script name that knows how to edit the entity. This includes how to update extended data which are not directly linked to the asset itself|
-|`component`| The component to use to accomplish the edit (or action). In this case using the `AssetModal`.
-|`component.name`| The name of the component to use for the action|
-|`component.disabled`| A list of properties to disable editing of in the dialog|
-|`component.disabledInMulti`| A list of properties to disable editing of in the dialog while editing multiple entities at once|
-|`component.disableAll`| (not shown) A shortcut to disable all properties in the dialog. Used in Delete below|
-|`component.okButtonText`| The text to show on the "OK" button in the modal|
+| Name                        | Description                                                                                                                                    |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                      | 'Edit' is needed to let the UI know how to handle the result of the action                                                                     |
+| `script`                    | The script name that knows how to edit the entity. This includes how to update extended data which are not directly linked to the asset itself |
+| `component`                 | The component to use to accomplish the edit (or action). In this case using the `AssetModal`.                                                  |
+| `component.name`            | The name of the component to use for the action                                                                                                |
+| `component.disabled`        | A list of properties to disable editing of in the dialog                                                                                       |
+| `component.disabledInMulti` | A list of properties to disable editing of in the dialog while editing multiple entities at once                                               |
+| `component.disableAll`      | (not shown) A shortcut to disable all properties in the dialog. Used in Delete below                                                           |
+| `component.okButtonText`    | The text to show on the "OK" button in the modal                                                                                               |
 
 ### Use Case
 
 When the user clicks the edit icon on the asset, the AssetModal is presented to the user. The Asset Tag property is not able to be edited however all other properties are.
-When the user clicks the edit icon while multiple assets are selected, the user is presented with the  Asset Modal. The Asset Tag and the Unique Asset Prop fields will be disabled.
+When the user clicks the edit icon while multiple assets are selected, the user is presented with the Asset Modal. The Asset Tag and the Unique Asset Prop fields will be disabled.
 
 ## `Delete`
 
@@ -227,15 +231,16 @@ When the user clicks the edit icon while multiple assets are selected, the user 
   }
 }
 ```
+
 ### Configuration
 
-|Name|Description|
-|---|---|
-|`type`| 'Delete' is needed to let the UI know how to handle the result of the action|
-|`script`| The script name that will be executed once the action has ran|
-|`component`| The component to use to accomplish the deletion (or action). In this case using the `deleteAsset`
-|`component.name`| The name of the component to use for the action|
-|`component.disableAll`| A shortcut to disable all properties in the dialog.|
+| Name                   | Description                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| `type`                 | 'Delete' is needed to let the UI know how to handle the result of the action                      |
+| `script`               | The script name that will be executed once the action has ran                                     |
+| `component`            | The component to use to accomplish the deletion (or action). In this case using the `deleteAsset` |
+| `component.name`       | The name of the component to use for the action                                                   |
+| `component.disableAll` | A shortcut to disable all properties in the dialog.                                               |
 
 ---
 
@@ -267,16 +272,16 @@ This only example data though, and we are not limited to only the types of data 
 
 ### Configuration
 
-|Name|Description|
-|---|---|
-|`key`| The name of the type of extended data. This name will show up as the tab name displaying the extended data|
-|`script`| The name of the script which will fetch the extended data. The script will be given for the entity to use to find the data. This script is called when the tab for the extended data is clicked. The script must return the data in a form the following component can use|
-|`scriptExpiration`| The amount of minutes you want the script result to be cached. If this field is not present, the default expiration will be 10 minutes. If the value is 0, the script will not be cached|
-|`refreshInterval`| If you wish for the data to auto refresh, set refreshInterval to the time in minutes in which you would like the data to continually refresh. Note that this time must be longer than 10 minutes or the configured scritpExpiration|
-|`isProperties`| If this data configuration represents properties directly on the Entity`selected`: if the Properties should be displayed by default when the asset is viewed|
-|`component`| The component to use to display the data. The options will vary based on the component|
-|`component.name`| Name of the component|
-|`component.className`| Any additional classNames to use with the component|
+| Name                  | Description                                                                                                                                                                                                                                                                |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`                 | The name of the type of extended data. This name will show up as the tab name displaying the extended data                                                                                                                                                                 |
+| `script`              | The name of the script which will fetch the extended data. The script will be given for the entity to use to find the data. This script is called when the tab for the extended data is clicked. The script must return the data in a form the following component can use |
+| `scriptExpiration`    | The amount of minutes you want the script result to be cached. If this field is not present, the default expiration will be 10 minutes. If the value is 0, the script will not be cached                                                                                   |
+| `refreshInterval`     | If you wish for the data to auto refresh, set refreshInterval to the time in minutes in which you would like the data to continually refresh. Note that this time must be longer than 10 minutes or the configured scritpExpiration                                        |
+| `isProperties`        | If this data configuration represents properties directly on the Entity`selected`: if the Properties should be displayed by default when the asset is viewed                                                                                                               |
+| `component`           | The component to use to display the data. The options will vary based on the component                                                                                                                                                                                     |
+| `component.name`      | Name of the component                                                                                                                                                                                                                                                      |
+| `component.className` | Any additional classNames to use with the component                                                                                                                                                                                                                        |
 
 ## `Properties`
 
@@ -285,7 +290,7 @@ This only example data though, and we are not limited to only the types of data 
 ```jsx
 "data": {
   "Properties": {
-    "selected": true, 
+    "selected": true,
     "isProperties": true,
     "component": {
       "name": "SimpleTableGroup",
@@ -309,14 +314,13 @@ This only example data though, and we are not limited to only the types of data 
 
 ### Configuration
 
-|Name|Description|
-|---|---|
-|`isProperties`| If this data configuration represents properties directly on the Entity `selected`: if the Properties should be displayed by default when the asset is viewed|
-|`component`| The component and component options to use to display the properties
-|`groups`| Used with SimpleTableGroup to specify the grouping. Remaining data is placed in a group called Other|
-|`tableClassName`| The styling for the tables|
-|`groupClassName`| The styling for labeling the group|
-
+| Name             | Description                                                                                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isProperties`   | If this data configuration represents properties directly on the Entity `selected`: if the Properties should be displayed by default when the asset is viewed |
+| `component`      | The component and component options to use to display the properties                                                                                          |
+| `groups`         | Used with SimpleTableGroup to specify the grouping. Remaining data is placed in a group called Other                                                          |
+| `tableClassName` | The styling for the tables                                                                                                                                    |
+| `groupClassName` | The styling for labeling the group                                                                                                                            |
 
 ## `Specifications`
 
@@ -360,12 +364,12 @@ This configuration displays the files which are linked to the entity and fetched
 
 ### Configuration
 
-|Name|Description|
-|---|---|
-|`columns`| An array of column objects|
-|`name`| The name to display at the top of the column in the header|
-|`accessor`| How to find the value to display in the cell on the objects in the array|
-|`download`| Whether to use this cell as a download cell for the document|
+| Name       | Description                                                              |
+| ---------- | ------------------------------------------------------------------------ |
+| `columns`  | An array of column objects                                               |
+| `name`     | The name to display at the top of the column in the header               |
+| `accessor` | How to find the value to display in the cell on the objects in the array |
+| `download` | Whether to use this cell as a download cell for the document             |
 
 ## `entitySelectionPanel`
 
@@ -386,11 +390,11 @@ This configuration allows to specify certain desired configurations of the entit
 
 ### Configuration
 
-|Name|Description|
-|---|---|
-|`nonFilterableProperties`| Array that specifies which properties a user will not be able to filter by (they won’t be displayed)|
-|`nonGroupableProperties`| Array that specifies which properties a user will not be able to group by (they won’t be displayed)|
-|`defaultGroups`| Array that will specify which groups a user will see selected by default, inside the group dropdown|
+| Name                      | Description                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `nonFilterableProperties` | Array that specifies which properties a user will not be able to filter by (they won’t be displayed) |
+| `nonGroupableProperties`  | Array that specifies which properties a user will not be able to group by (they won’t be displayed)  |
+| `defaultGroups`           | Array that will specify which groups a user will see selected by default, inside the group dropdown  |
 
 :::note
 If the user has changed groups, the last used group per entity type will be used by default. If there was no previous selected group, or all the groups were removed, the default group will be used
@@ -401,15 +405,18 @@ If the user has changed groups, the last used group per entity type will be used
 ### Supported Components
 
 #### SimpleTable
+
 Table layout for displaying data
 
 ##### Configuration
-|Name|Description|
-|---|---|
-|className (optional)| CSS class name that will be applied to the table. Use one of the following values: `Fixed-header` keeps the header sticky and the table body scrolls, `Simple-doc-table` is designed for an array of objects, and `Simple-property-grid` is designed for listing the properties of a single object|
-|columns (optional)|When passing in an array of objects use the columns array to identify what object properties to include in the table.  Each entry in the columns array is an object that specifies the name for the column, how to access the data and whether or not the column contains a download link.|
+
+| Name                 | Description                                                                                                                                                                                                                                                                                        |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className (optional) | CSS class name that will be applied to the table. Use one of the following values: `Fixed-header` keeps the header sticky and the table body scrolls, `Simple-doc-table` is designed for an array of objects, and `Simple-property-grid` is designed for listing the properties of a single object |
+| columns (optional)   | When passing in an array of objects use the columns array to identify what object properties to include in the table. Each entry in the columns array is an object that specifies the name for the column, how to access the data and whether or not the column contains a download link.          |
 
 ##### Examples:
+
 ```jsx
 "component": {
   "name": "SimpleTable",
@@ -427,17 +434,21 @@ Table layout for displaying data
   ]
 }
 ```
+
 #### SimpleTableGroup
+
 A group of tables
 
 ##### Configuration
-|Name|Description|
-|---|---|
-|tableClassName(optional)|CSS class for the table (see SimpleTable for details)|
-|groupClassName(optional)|CSS for group headers|
-|groups|An object containing arrays of properties for each group. Any properties that are not listed will be included in a group called “Other”.  The “Other” group will be sorted alphabetically, the other groups will present the properties in the order listed.|
+
+| Name                     | Description                                                                                                                                                                                                                                                 |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tableClassName(optional) | CSS class for the table (see SimpleTable for details)                                                                                                                                                                                                       |
+| groupClassName(optional) | CSS for group headers                                                                                                                                                                                                                                       |
+| groups                   | An object containing arrays of properties for each group. Any properties that are not listed will be included in a group called “Other”. The “Other” group will be sorted alphabetically, the other groups will present the properties in the order listed. |
 
 ##### Example:
+
 ```jsx
 "component": {
   "name": "SimpleTableGroup",
@@ -458,16 +469,18 @@ A group of tables
 ```
 
 #### SimpleTabbedTable
+
 A simple table that includes tabs.
 
-|Name|Description|
-|---|---|
-|isProperties|If this data configuration represents properties directly on the Entity`selected`: if the Properties should be displayed by default when the asset is viewed.|
-|groupClassName(optional)|CSS for group headers.|
-|hidden|An array of items we do not want to display in the "Other" tab.|
-|groups|An object containing arrays of properties for each group. Each key in this object represents a tab. Any properties that are not listed will be included in a group called “Other”.  The “Other” group will be sorted alphabetically, the other groups will present the properties in the order listed.|
+| Name                     | Description                                                                                                                                                                                                                                                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| isProperties             | If this data configuration represents properties directly on the Entity`selected`: if the Properties should be displayed by default when the asset is viewed.                                                                                                                                         |
+| groupClassName(optional) | CSS for group headers.                                                                                                                                                                                                                                                                                |
+| hidden                   | An array of items we do not want to display in the "Other" tab.                                                                                                                                                                                                                                       |
+| groups                   | An object containing arrays of properties for each group. Each key in this object represents a tab. Any properties that are not listed will be included in a group called “Other”. The “Other” group will be sorted alphabetically, the other groups will present the properties in the order listed. |
 
 ##### Example:
+
 ```jsx
 "Asset": {
   "Asset Properties": {
@@ -524,18 +537,21 @@ A simple table that includes tabs.
 ```
 
 #### Image
+
 A simple image component.
 
 ##### Configuration
-|Name|Description|
-|---|---|
-|script (optional if providing url or filename)|A script which returns a url or filename of the image.|
-|filename (optional)|The filename of the image file.|
-|url (optional)|A url to an image.|
-|styles (optional)|Additional styles to apply to the image (will need all three in the example below for the image to display correctly).|
-|navigateTo (optional)|The name of handler to navigate to when the image is clicked.|
+
+| Name                                           | Description                                                                                                            |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| script (optional if providing url or filename) | A script which returns a url or filename of the image.                                                                 |
+| filename (optional)                            | The filename of the image file.                                                                                        |
+| url (optional)                                 | A url to an image.                                                                                                     |
+| styles (optional)                              | Additional styles to apply to the image (will need all three in the example below for the image to display correctly). |
+| navigateTo (optional)                          | The name of handler to navigate to when the image is clicked.                                                          |
 
 ##### Example:
+
 ```jsx
 "Image": {
    "selected": true,
@@ -550,16 +566,19 @@ A simple image component.
   }
 },
 ```
+
 #### ScriptedChart
 
 A chart component allowing for chart display based on configuration and scripted data.
-|Name|Description|
-|---|---|
-|script (required)|Script used to return the data needed for the chart to display|
-|chart|Type of chart to be rendered|
-|chartConfig|Config specific to the chart we want to display|
+
+| Name              | Description                                                    |
+| ----------------- | -------------------------------------------------------------- |
+| script (required) | Script used to return the data needed for the chart to display |
+| chart             | Type of chart to be rendered                                   |
+| chartConfig       | Config specific to the chart we want to display                |
 
 ##### Example:
+
 ```jsx
 "Chart": {
   "script": "getCapExForecast",
@@ -592,10 +611,9 @@ A chart component allowing for chart display based on configuration and scripted
 
 #### ScriptedDocumentTable
 
-
 ##### Example
 
-```jsx 
+```jsx
 "Files": {
   "script": "getDocumentsForAsset",
   "scriptExpiration": 0,
@@ -650,26 +668,27 @@ A chart component allowing for chart display based on configuration and scripted
 ```
 
 ##### Configuration
-|Name|Description|
-|---|---|
-|`script`|`getDocumentsForAsset`|
-|`name`| Name of the code level component|
-|`className`| The className to apply to the top level DOM node of the component|
-|`canDownload`|Option to allow a user to download the file. Boolean|
-|`canView`|Option to allow a user to view the file via `Document Viewer`. Boolean|
-|`includeVersions`|Option to allow a user to access older versions of a file. Boolean|
-|`columns`| An array of column definitions|
-|`name`| The name of the column to appear in the table header|
-|`accessor`| How to access the value of the on the Entity to display in the cell|
-|`defaultSort.column`|Select the file attribute in which we want to sort by|
-|`lockedColumns`|Option to lock a column so a user cannot hide them|
-|`dateField`|Provide the file attribute to be used to display when the version of the file was uploaded|
-|`supportedTypes`|An array of supported file types|
 
+| Name                 | Description                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| `script`             | `getDocumentsForAsset`                                                                     |
+| `name`               | Name of the code level component                                                           |
+| `className`          | The className to apply to the top level DOM node of the component                          |
+| `canDownload`        | Option to allow a user to download the file. Boolean                                       |
+| `canView`            | Option to allow a user to view the file via `Document Viewer`. Boolean                     |
+| `includeVersions`    | Option to allow a user to access older versions of a file. Boolean                         |
+| `columns`            | An array of column definitions                                                             |
+| `name`               | The name of the column to appear in the table header                                       |
+| `accessor`           | How to access the value of the on the Entity to display in the cell                        |
+| `defaultSort.column` | Select the file attribute in which we want to sort by                                      |
+| `lockedColumns`      | Option to lock a column so a user cannot hide them                                         |
+| `dateField`          | Provide the file attribute to be used to display when the version of the file was uploaded |
+| `supportedTypes`     | An array of supported file types                                                           |
 
 #### StandaloneDocumentTable
 
 ##### Example
+
 ```jsx
  "FilesStandalone": {
         "script": "getDocumentsForAsset",
@@ -723,24 +742,27 @@ A chart component allowing for chart display based on configuration and scripted
         }
       }
 ```
+
 ##### Configuration
-|Name|Description|
-|---|---|
-|`script`|`getDocumentsForAsset`|
-|`name`| Name of the code level component|
-|`className`| The className to apply to the top level DOM node of the component|
-|`canDownload`|Option to allow a user to download the file. Boolean|
-|`canView`|Option to allow a user to view the file via `Document Viewer`. Boolean|
-|`includeVersions`|Option to allow a user to access older versions of a file. Boolean|
-|`columns`| An array of column definitions|
-|`name`| The name of the column to appear in the table header|
-|`accessor`| How to access the value of the on the Entity to display in the cell|
-|`defaultSort.column`|Select the file attribute in which we want to sort by|
-|`lockedColumns`|Option to lock a column so a user cannot hide them|
-|`dateField`|Provide the file attribute to be used to display when the version of the file was uploaded|
-|`supportedTypes`|An array of supported file types|
+
+| Name                 | Description                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| `script`             | `getDocumentsForAsset`                                                                     |
+| `name`               | Name of the code level component                                                           |
+| `className`          | The className to apply to the top level DOM node of the component                          |
+| `canDownload`        | Option to allow a user to download the file. Boolean                                       |
+| `canView`            | Option to allow a user to view the file via `Document Viewer`. Boolean                     |
+| `includeVersions`    | Option to allow a user to access older versions of a file. Boolean                         |
+| `columns`            | An array of column definitions                                                             |
+| `name`               | The name of the column to appear in the table header                                       |
+| `accessor`           | How to access the value of the on the Entity to display in the cell                        |
+| `defaultSort.column` | Select the file attribute in which we want to sort by                                      |
+| `lockedColumns`      | Option to lock a column so a user cannot hide them                                         |
+| `dateField`          | Provide the file attribute to be used to display when the version of the file was uploaded |
+| `supportedTypes`     | An array of supported file types                                                           |
 
 ---
+
 ## How to load your own component
 
 Your own custom Entity Data component can be added to your project. Firstly, The custom component can be created and saved in ipaControls and then imported into the 'entityUI.js' file. The custom Entity Data component you want to create must be added to the ENTITY_DATA_COMPONENTS object in the 'entityUI.js' file as shown below.
@@ -751,6 +773,7 @@ const ENTITY_DATA_COMPONENTS = {
   "SimpleCustomTable": SimpleCustomTableFactory,
 }
 ```
+
 From here, we can use the component by adding it to the appropriate location in the userConfig JSON file. For example, if we wanted to use this custom table component to view all documents that related to a collection.
 
 ```jsx

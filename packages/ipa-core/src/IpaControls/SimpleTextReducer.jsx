@@ -1,18 +1,18 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Tooltip } from "@mui/material";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Tooltip } from '@mui/material';
 
 const SimpleTextReducer = ({ text, limit }) => {
   let newText;
   if (text.length > limit) {
-    newText = text.substring(0, limit) + "...";
+    newText = text.substring(0, limit) + '...';
   }
 
   return (
     <div>
       {newText ? (
         <Tooltip title={text}>
-          <i style={{ cursor: "pointer" }}>{newText}</i>
+          <i style={{ cursor: 'pointer' }}>{newText}</i>
         </Tooltip>
       ) : (
         <i>{text}</i>

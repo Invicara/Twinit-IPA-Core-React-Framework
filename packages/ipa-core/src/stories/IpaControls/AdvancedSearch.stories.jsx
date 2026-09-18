@@ -1,15 +1,15 @@
-import { AdvancedSearch } from "../../IpaControls/AdvancedSearch";
+import { AdvancedSearch } from '../../IpaControls/AdvancedSearch';
 
 export default {
-  title: "Controls/AdvancedSearch",
+  title: 'Controls/AdvancedSearch',
   component: AdvancedSearch,
   argTypes: {
-    onChange: { action: "onChange" },
-    onFetch: { action: "onFetch" },
+    onChange: { action: 'onChange' },
+    onFetch: { action: 'onFetch' },
   },
 };
 
-const Template = (args) => {
+const Template = args => {
   return <AdvancedSearch {...args} />;
 };
 
@@ -17,9 +17,9 @@ export const Default = Template.bind({});
 
 Default.args = {
   currentValue: { filters: {} },
-  display: "Search",
+  display: 'Search',
   searchable: {
-    name: "name",
-    age: "age",
+    name: 'name',
+    age: 'age',
   },
 };

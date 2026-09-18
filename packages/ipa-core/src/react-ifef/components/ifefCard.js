@@ -3,18 +3,12 @@ import React from 'react';
 import classnames from 'classnames';
 
 class IfefCard extends React.Component {
-
-
   render() {
     // extract props used here, pass on the rest
-    var { list, customClasses, ...other } = this.props;
-    var classes = classnames(
-      {'card': true,
-       'list' : list},
-      customClasses
-    );
+    let { list, customClasses, ...other } = this.props;
+    let classes = classnames({ card: true, list: list }, customClasses);
     return (
-        <div className={classes} {...other}>
+      <div className={classes} {...other}>
         {this.props.children}
       </div>
     );
@@ -23,12 +17,12 @@ class IfefCard extends React.Component {
 
 IfefCard.propTypes = {
   customClasses: PropTypes.string,
-  list: PropTypes.bool
+  list: PropTypes.bool,
 };
 
 IfefCard.defaultProps = {
   customClasses: '',
-  list: false
+  list: false,
 };
 
 export default IfefCard;

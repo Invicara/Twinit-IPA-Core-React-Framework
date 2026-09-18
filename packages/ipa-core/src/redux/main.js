@@ -1,139 +1,70 @@
 import {
-    clearEntities,
-    getAllCurrentEntities,
-    getAppliedFilters,
-    getCurrentEntityType,
-    getFetchingCurrent,
-    getIsolatedEntities,
-    getSelectedEntities,
-    isSelectingEntities,
-    isViewerSyncOn,
-    selectEntitiesFromModels,
-    setEntities,
-    setIsolatedEntities,
-    setSelectedEntities,
-    setViewerSyncOn,
-    getSnapshot,
-    getFilteredEntities,
-    getAppliedGroups,
-    getAppliedRelatedGroups,
-    fetchEntities,
-    resetEntities,
-    setCurrentEntityType,
-    resetForFilteringAndGrouping,
-    resetForRelatedFilteringAndGrouping,
-    applyFiltering,
-    applyGrouping,
-    resetFiltering,
-    setSelecting,
-    setFilteredBySearchEntities,
-    getFilteredBySearchEntityIds
-} from "./slices/entities";
+  clearEntities,
+  getAllCurrentEntities,
+  getAppliedFilters,
+  getCurrentEntityType,
+  getFetchingCurrent,
+  getIsolatedEntities,
+  getSelectedEntities,
+  isSelectingEntities,
+  isViewerSyncOn,
+  selectEntitiesFromModels,
+  setEntities,
+  setIsolatedEntities,
+  setSelectedEntities,
+  setViewerSyncOn,
+  getSnapshot,
+  getFilteredEntities,
+  getAppliedGroups,
+  getAppliedRelatedGroups,
+  fetchEntities,
+  resetEntities,
+  setCurrentEntityType,
+  resetForFilteringAndGrouping,
+  resetForRelatedFilteringAndGrouping,
+  applyFiltering,
+  applyGrouping,
+  resetFiltering,
+  setSelecting,
+  setFilteredBySearchEntities,
+  getFilteredBySearchEntityIds,
+} from './slices/entities';
 
-import * as modal from './slices/modal'
+import * as modal from './slices/modal';
 
-
-import {getUser, setUser} from './slices/user'
+import { getUser, setUser } from './slices/user';
 import {
-    applySearchFiltering,
-    clearSearchedEntities,
-    getAllCurrentSearchedEntities,
-    getAppliedSearchFilters,
-    getCurrentSearchEntityType,
-    getSearchingCurrent,
-    getSelectedSearchedEntities,
-    resetSearchedEntities,
-    searchEntities,
-    setSelectedSearchedEntities
-} from "./slices/entities-pluggable-search";
-import {getEntitySelectConfig, setUserConfig} from "./slices/user-config";
+  applySearchFiltering,
+  clearSearchedEntities,
+  getAllCurrentSearchedEntities,
+  getAppliedSearchFilters,
+  getCurrentSearchEntityType,
+  getSearchingCurrent,
+  getSelectedSearchedEntities,
+  resetSearchedEntities,
+  searchEntities,
+  setSelectedSearchedEntities,
+} from './slices/entities-pluggable-search';
+import { getEntitySelectConfig, setUserConfig } from './slices/user-config';
 import {
-    fetchAssocitedFileSvcData,
-    fetchAllNamedUserItems, fetchNamedUserItemItems,
-    namedUserItemActions, selectNamedUserItemById,
-    selectNamedUserItemEntities, selectNamedUserItemsLoadingStatus,
-    fetchNamedUserTotalAmountOfItems, importDataValidation,
-    SelectNamedUserItemsErrorStatus, fileImport, SelectNamedUserItemsImportStatus
-} from "./slices/named-user-item.slice";
-import { addEntityComponents, getEntityDataComponent } from "./slices/entityUI"
-import store, {frameworkReducers}  from '../redux/store'
+  fetchAssocitedFileSvcData,
+  fetchAllNamedUserItems,
+  fetchNamedUserItemItems,
+  namedUserItemActions,
+  selectNamedUserItemById,
+  selectNamedUserItemEntities,
+  selectNamedUserItemsLoadingStatus,
+  fetchNamedUserTotalAmountOfItems,
+  importDataValidation,
+  SelectNamedUserItemsErrorStatus,
+  fileImport,
+  SelectNamedUserItemsImportStatus,
+} from './slices/named-user-item.slice';
+import { addEntityComponents, getEntityDataComponent } from './slices/entityUI';
+import store, { frameworkReducers } from '../redux/store';
 
 const redux = {
-    Entities: {
-        getFilteredEntities,
-        getAppliedGroups,
-        getAppliedRelatedGroups,
-        fetchEntities,
-        resetEntities,
-        setCurrentEntityType,
-        getCurrentEntityType,
-        getIsolatedEntities,
-        getSelectedEntities,
-        isViewerSyncOn,
-        selectEntitiesFromModels,
-        clearEntities,
-        getAllCurrentEntities,
-        getAppliedFilters,
-        getFetchingCurrent,
-        isSelectingEntities,
-        setEntities,
-        setIsolatedEntities,
-        setSelectedEntities,
-        setViewerSyncOn,
-        getSnapshot,
-        resetForFilteringAndGrouping,
-        resetForRelatedFilteringAndGrouping,
-        applyFiltering,
-        applyGrouping,
-        resetFiltering,
-        setSelecting,
-        setFilteredBySearchEntities
-    },
-    EntitiesPluggableSearch: {
-        getAllCurrentSearchedEntities,
-        getSelectedSearchedEntities,
-        getSearchingCurrent,
-        getCurrentSearchEntityType,
-        getAppliedSearchFilters,
-        resetSearchedEntities,
-        clearSearchedEntities,
-        applySearchFiltering,
-        setSelectedSearchedEntities,
-        searchEntities
-    },
-    User: {
-        getUser,
-        setUser,
-        setUserConfig,
-        getEntitySelectConfig
-    },
-    Modals: {
-        ...modal.actions
-    },
-    NamedUserItems: {
-        fetchAssocitedFileSvcData,
-        fetchAllNamedUserItems,
-        fetchNamedUserItemItems,
-        selectNamedUserItemEntities,
-        selectNamedUserItemsLoadingStatus,
-        selectNamedUserItemById,
-        SelectNamedUserItemsErrorStatus,
-        SelectNamedUserItemsImportStatus,
-        ...namedUserItemActions,
-        fetchNamedUserTotalAmountOfItems,
-        importDataValidation,
-        fileImport
-    },
-    EntityUi: {
-        addEntityComponents,
-        getEntityDataComponent
-    },
-    store: store,
-    frameworkReducers
-}
-
-export default redux
-export const Entities = {
+  Entities: {
     getFilteredEntities,
     getAppliedGroups,
     getAppliedRelatedGroups,
@@ -162,9 +93,8 @@ export const Entities = {
     resetFiltering,
     setSelecting,
     setFilteredBySearchEntities,
-    getFilteredBySearchEntityIds
-}
-export const EntitiesPluggableSearch = {
+  },
+  EntitiesPluggableSearch: {
     getAllCurrentSearchedEntities,
     getSelectedSearchedEntities,
     getSearchingCurrent,
@@ -174,18 +104,18 @@ export const EntitiesPluggableSearch = {
     clearSearchedEntities,
     applySearchFiltering,
     setSelectedSearchedEntities,
-    searchEntities
-}
-export const User = {
+    searchEntities,
+  },
+  User: {
     getUser,
     setUser,
     setUserConfig,
-    getEntitySelectConfig
-}
-export const Modals = {
-    ...modal.actions
-}
-export const NamedUserItems = {
+    getEntitySelectConfig,
+  },
+  Modals: {
+    ...modal.actions,
+  },
+  NamedUserItems: {
     fetchAssocitedFileSvcData,
     fetchAllNamedUserItems,
     fetchNamedUserItemItems,
@@ -197,10 +127,85 @@ export const NamedUserItems = {
     ...namedUserItemActions,
     fetchNamedUserTotalAmountOfItems,
     importDataValidation,
-    fileImport
-}
-export const EntityUi = {
+    fileImport,
+  },
+  EntityUi: {
     addEntityComponents,
-    getEntityDataComponent
-}
-export {store}
+    getEntityDataComponent,
+  },
+  store: store,
+  frameworkReducers,
+};
+
+export default redux;
+export const Entities = {
+  getFilteredEntities,
+  getAppliedGroups,
+  getAppliedRelatedGroups,
+  fetchEntities,
+  resetEntities,
+  setCurrentEntityType,
+  getCurrentEntityType,
+  getIsolatedEntities,
+  getSelectedEntities,
+  isViewerSyncOn,
+  selectEntitiesFromModels,
+  clearEntities,
+  getAllCurrentEntities,
+  getAppliedFilters,
+  getFetchingCurrent,
+  isSelectingEntities,
+  setEntities,
+  setIsolatedEntities,
+  setSelectedEntities,
+  setViewerSyncOn,
+  getSnapshot,
+  resetForFilteringAndGrouping,
+  resetForRelatedFilteringAndGrouping,
+  applyFiltering,
+  applyGrouping,
+  resetFiltering,
+  setSelecting,
+  setFilteredBySearchEntities,
+  getFilteredBySearchEntityIds,
+};
+export const EntitiesPluggableSearch = {
+  getAllCurrentSearchedEntities,
+  getSelectedSearchedEntities,
+  getSearchingCurrent,
+  getCurrentSearchEntityType,
+  getAppliedSearchFilters,
+  resetSearchedEntities,
+  clearSearchedEntities,
+  applySearchFiltering,
+  setSelectedSearchedEntities,
+  searchEntities,
+};
+export const User = {
+  getUser,
+  setUser,
+  setUserConfig,
+  getEntitySelectConfig,
+};
+export const Modals = {
+  ...modal.actions,
+};
+export const NamedUserItems = {
+  fetchAssocitedFileSvcData,
+  fetchAllNamedUserItems,
+  fetchNamedUserItemItems,
+  selectNamedUserItemEntities,
+  selectNamedUserItemsLoadingStatus,
+  selectNamedUserItemById,
+  SelectNamedUserItemsErrorStatus,
+  SelectNamedUserItemsImportStatus,
+  ...namedUserItemActions,
+  fetchNamedUserTotalAmountOfItems,
+  importDataValidation,
+  fileImport,
+};
+export const EntityUi = {
+  addEntityComponents,
+  getEntityDataComponent,
+};
+export { store };

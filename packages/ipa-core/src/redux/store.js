@@ -1,44 +1,49 @@
-import entitiesGeneral from './slices/entities'
-import entitiesPluggableSearch from './slices/entities-pluggable-search'
-import entityRelations from './slices/entity-relations'
-import userConfig from './slices/user-config'
-import user from './slices/user'
-import files from './slices/files'
-import dashboardUI from './slices/dashboardUI'
-import entityUI from './slices/entityUI'
-import modal from './slices/modal'
-import {
-    NAMED_USER_ITEM_FEATURE_KEY, namedUserItemReducer
-} from './slices/named-user-item.slice'
+import entitiesGeneral from './slices/entities';
+import entitiesPluggableSearch from './slices/entities-pluggable-search';
+import entityRelations from './slices/entity-relations';
+import userConfig from './slices/user-config';
+import user from './slices/user';
+import files from './slices/files';
+import dashboardUI from './slices/dashboardUI';
+import entityUI from './slices/entityUI';
+import modal from './slices/modal';
+import { NAMED_USER_ITEM_FEATURE_KEY, namedUserItemReducer } from './slices/named-user-item.slice';
 
-import {combineReducers} from "redux"
+import { combineReducers } from 'redux';
 
-import {configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 
 export const frameworkReducers = {
-  entitiesGeneral, entitiesPluggableSearch, entityRelations, entityUI, userConfig, user, files, dashboardUI, modal, [NAMED_USER_ITEM_FEATURE_KEY] : namedUserItemReducer
-}
+  entitiesGeneral,
+  entitiesPluggableSearch,
+  entityRelations,
+  entityUI,
+  userConfig,
+  user,
+  files,
+  dashboardUI,
+  modal,
+  [NAMED_USER_ITEM_FEATURE_KEY]: namedUserItemReducer,
+};
 
-let appReducers = {}
+let appReducers = {};
 
-const combinedReducers = combineReducers({...frameworkReducers, ...appReducers})
+const combinedReducers = combineReducers({ ...frameworkReducers, ...appReducers });
 
-export const addReducerSlice = (addSlice) => {
-
-  appReducers[addSlice.name] = addSlice.slice
+export const addReducerSlice = addSlice => {
+  appReducers[addSlice.name] = addSlice.slice;
 
   return combineReducers({
     ...frameworkReducers,
-    ...appReducers
-  })
-}
+    ...appReducers,
+  });
+};
 
 const rootReducer = (state, action) => {
-  if (action.type === "Project_SWITCHED")
-    state = undefined
+  if (action.type === 'Project_SWITCHED') state = undefined;
 
-  return combinedReducers(state, action)
-}
+  return combinedReducers(state, action);
+};
 
 // Configure default middleware to ignore known non-serializable modal.component
 const middleware = getDefaultMiddleware({
@@ -46,12 +51,10 @@ const middleware = getDefaultMiddleware({
     ignoredPaths: ['modal.component'],
     ignoredActions: ['modal/setModal'],
   },
-})
+});
 
 export default configureStore({
-    reducer: rootReducer,
-    middleware,
-    devTools: process.env.NODE_ENV !== 'production',
-})
-
-
+  reducer: rootReducer,
+  middleware,
+  devTools: process.env.NODE_ENV !== 'production',
+});

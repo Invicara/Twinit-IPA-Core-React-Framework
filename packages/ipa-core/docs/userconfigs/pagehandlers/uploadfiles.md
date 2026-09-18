@@ -2,18 +2,19 @@
 title: Upload Files Wizard
 sidebar_position: 1400
 ---
-|Name|Description|
-|---|---|
-|[`pageComponent`](#pageComponent)|Use `'pageComponent: ‘files/UploadFilesWizard’` in a handler to activate the Dashboard View.|
-|[`displayNameMap`](#displayNameMap-(required))|A map between the `fileAttribute` camelCase property name (on the `fileAttributes` object) and the display name for the attributes.|
-|[`columns`](#columns-(required))|Defines the file attribute columns the user should see in the upload table.|
-|[`scripts`](#scripts-(required---but-can-be-an-empty-object))|Provides hooks to customize the user’s upload experience, modify the files before upload, and to post-process the results of the upload to do things, such as relating files to entities.|
-|[`seedAttributes`](#)|A script that seeds information about the files before they are selected.|
-|[`preprocessFiles`](#preprocessFiles%3A-(optional))|A script that lets you post-process the results of the upload. It can be used to do things, such as relating the uploaded files to other entities, such as assets.|
-|[`processUploadFile`](#processUploadFile%3A-(optional))|A script that allows you to modify the file’s name after the user has selected attributes in the upload table but before the file is uploaded.|
-|[`postProcessFiles`](#postProcessFiles%3A-(optional))|A script that runs after the user has selected files from disk but before the file appears in the upload table.|
-|[`downloadReport`](#downloadReport%3A-(optional))|A script that inv-icon-svgdownloads an XLSX report of the uploaded files and their attributes if the user clicks the **Report** button.|
-|[`uploadContainer`](#uploadContainer%3A-(optional))|Provides the ability to set a file container to which to upload files.|
+
+| Name                                                            | Description                                                                                                                                                                               |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`pageComponent`](#pageComponent)                               | Use `'pageComponent: ‘files/UploadFilesWizard’` in a handler to activate the Dashboard View.                                                                                              |
+| [`displayNameMap`](<#displayNameMap-(required)>)                | A map between the `fileAttribute` camelCase property name (on the `fileAttributes` object) and the display name for the attributes.                                                       |
+| [`columns`](<#columns-(required)>)                              | Defines the file attribute columns the user should see in the upload table.                                                                                                               |
+| [`scripts`](<#scripts-(required---but-can-be-an-empty-object)>) | Provides hooks to customize the user’s upload experience, modify the files before upload, and to post-process the results of the upload to do things, such as relating files to entities. |
+| [`seedAttributes`](#)                                           | A script that seeds information about the files before they are selected.                                                                                                                 |
+| [`preprocessFiles`](<#preprocessFiles%3A-(optional)>)           | A script that lets you post-process the results of the upload. It can be used to do things, such as relating the uploaded files to other entities, such as assets.                        |
+| [`processUploadFile`](<#processUploadFile%3A-(optional)>)       | A script that allows you to modify the file’s name after the user has selected attributes in the upload table but before the file is uploaded.                                            |
+| [`postProcessFiles`](<#postProcessFiles%3A-(optional)>)         | A script that runs after the user has selected files from disk but before the file appears in the upload table.                                                                           |
+| [`downloadReport`](<#downloadReport%3A-(optional)>)             | A script that inv-icon-svgdownloads an XLSX report of the uploaded files and their attributes if the user clicks the **Report** button.                                                   |
+| [`uploadContainer`](<#uploadContainer%3A-(optional)>)           | Provides the ability to set a file container to which to upload files.                                                                                                                    |
 
 ---
 
@@ -39,26 +40,27 @@ The display name map is a map between the `fileAttribute` camelCase property nam
 
 ```jsx
 columns: [
- {
+  {
     name: ['dtCategory', 'dtType'],
     query: {
-      query: "<<SCRIPTED_LINKED_SELECTS>>",
+      query: '<<SCRIPTED_LINKED_SELECTS>>',
       selects: [
-        {display: "dtCategory", script:"getDtCategories"},
-        {display: "dtType", script:"getDtTypes"}
-     ]}
- },
- {name: 'building', query: "<<SIMPLE_SELECT>>", script: 'getBuildings'},
- {name: 'contributor', query: "<<SIMPLE_SELECT>>", script: 'getContributors', required: true},
- {name: 'documentType', query: "<<SIMPLE_SELECT>>", script: 'getDocTypes', required: true},
- {name: 'fileDiscipline', query: "<<SIMPLE_SELECT>>", script: 'getFileDiscs', required: true},
- {name: 'fileType', query: "<<SIMPLE_SELECT>>", script: 'getFileTypes'},
- {name: 'levelsAndLocations', query: "<<SIMPLE_SELECT>>", script: 'getLevsAndLocs'},
- {name: 'manufacturer', query: "<<CREATABLE_SCRIPTED_SELECTS>>", script: 'getFileManufacturers'},
- {name: 'originator', query: "<<SIMPLE_SELECT>>", script: 'getOriginators', required: true},
- {name: 'revision', query: "<<CREATABLE_SCRIPTED_SELECTS>>", script: 'getRevisions'},
- {name: 'stageDescription', query: "<<SIMPLE_SELECT>>", script: 'getStageDescs'}
-]
+        { display: 'dtCategory', script: 'getDtCategories' },
+        { display: 'dtType', script: 'getDtTypes' },
+      ],
+    },
+  },
+  { name: 'building', query: '<<SIMPLE_SELECT>>', script: 'getBuildings' },
+  { name: 'contributor', query: '<<SIMPLE_SELECT>>', script: 'getContributors', required: true },
+  { name: 'documentType', query: '<<SIMPLE_SELECT>>', script: 'getDocTypes', required: true },
+  { name: 'fileDiscipline', query: '<<SIMPLE_SELECT>>', script: 'getFileDiscs', required: true },
+  { name: 'fileType', query: '<<SIMPLE_SELECT>>', script: 'getFileTypes' },
+  { name: 'levelsAndLocations', query: '<<SIMPLE_SELECT>>', script: 'getLevsAndLocs' },
+  { name: 'manufacturer', query: '<<CREATABLE_SCRIPTED_SELECTS>>', script: 'getFileManufacturers' },
+  { name: 'originator', query: '<<SIMPLE_SELECT>>', script: 'getOriginators', required: true },
+  { name: 'revision', query: '<<CREATABLE_SCRIPTED_SELECTS>>', script: 'getRevisions' },
+  { name: 'stageDescription', query: '<<SIMPLE_SELECT>>', script: 'getStageDescs' },
+];
 ```
 
 `columns` defines the file attribute columns the user should see in the upload table. These will be the attributes for which the user can provide values.
@@ -147,6 +149,7 @@ If provided, this script downloads an XLSX report of the uploaded files and thei
 The script receives an array of arrays in `input.tableRows`, which represent the rows and cells for an XLSX export.
 
 ### `uploadContainer`: (optional)
+
 If provided allows for files to be uploaded into an alternate file container.
 
 ```jsx

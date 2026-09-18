@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
-import clsx from "clsx";
-import "./Overlay.scss";
+import React, { useEffect, useState } from 'react';
+import clsx from 'clsx';
+import './Overlay.scss';
 
-export const Overlay = ({
-  children,
-  config: { show, duration, onFadeOut, content, noFade },
-}) => {
+export const Overlay = ({ children, config: { show, duration, onFadeOut, content, noFade } }) => {
   const [durationElapsed, setDurationElapsed] = useState(false);
 
   useEffect(() => {
@@ -19,13 +16,7 @@ export const Overlay = ({
   }, [show, duration, onFadeOut]);
 
   return (
-    <div
-      className={clsx(
-        "overlay",
-        !noFade && "fade",
-        show && !durationElapsed && "shown",
-      )}
-    >
+    <div className={clsx('overlay', !noFade && 'fade', show && !durationElapsed && 'shown')}>
       {content || children}
     </div>
   );

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import "ionicons-variables";
+@forward "ionicons-variables" show $ionicons-font-path;
 /*!
   Ionicons, v2.0.1
   Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
@@ -12,5 +12,5 @@
   Modified icons to fit Ionicon’s grid from original.
 */
 
-@import "ionicons-font";
-@import "ionicons-icons";
+@use "ionicons-font";
+@use "ionicons-icons";

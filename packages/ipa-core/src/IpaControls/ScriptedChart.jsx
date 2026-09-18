@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import _ from "lodash";
-import { Pie } from "@nivo/pie";
-import { Bar } from "@nivo/bar";
-import { Line } from "@nivo/line";
-import TwoAxisLineChart from "./TwoAxisLineChart";
+import React, { useEffect, useRef, useState } from 'react';
+import _ from 'lodash';
+import { Pie } from '@nivo/pie';
+import { Bar } from '@nivo/bar';
+import { Line } from '@nivo/line';
+import TwoAxisLineChart from './TwoAxisLineChart';
 
-import { getChartExtensions } from "./ChartExtensions";
+import { getChartExtensions } from './ChartExtensions';
 
-import ScriptHelper from "../IpaUtils/ScriptHelper";
+import ScriptHelper from '../IpaUtils/ScriptHelper';
 
-const standard = (dataIn) => {
+const standard = dataIn => {
   return _.entries(dataIn).map(([k, v]) => {
     return {
       id: k,
@@ -19,7 +19,7 @@ const standard = (dataIn) => {
   });
 };
 
-const line = (dataIn) => {
+const line = dataIn => {
   return _.entries(dataIn).map(([k, v]) => {
     return {
       id: k,
@@ -35,7 +35,7 @@ const line = (dataIn) => {
 
 const CHART_GLOBALS = {
   margin: { top: 40, right: 40, bottom: 40, left: 40 },
-  colors: ["#C71784", "#00A693", "#FF99F1", "#58f5e3", "#83004B"],
+  colors: ['#C71784', '#00A693', '#FF99F1', '#58f5e3', '#83004B'],
 };
 
 // Use non-Responsive variants — ResponsivePie/Bar/Line wrap nivo's ResponsiveWrapper
@@ -62,7 +62,7 @@ const ScriptedChart = ({
   scriptedData,
   style,
 }) => {
-  const [chartData, setChartData] = useState("fetching");
+  const [chartData, setChartData] = useState('fetching');
   const containerRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
@@ -80,23 +80,20 @@ const ScriptedChart = ({
   useEffect(() => {
     if ((!script && !scriptedData) || !chart) return;
     const loadData = async () => {
-      setChartData("fetching");
-      setChartData(
-        (await ScriptHelper.executeScript(script, scriptArgs)) || scriptedData,
-      );
+      setChartData('fetching');
+      setChartData((await ScriptHelper.executeScript(script, scriptArgs)) || scriptedData);
     };
     loadData();
   }, [script, chart]);
 
-  if ((!script && !scriptedData) || !chart)
-    return <div>Select data and chart type...</div>;
+  if ((!script && !scriptedData) || !chart) return <div>Select data and chart type...</div>;
 
   let component = <div>Loading</div>;
   let extensions = null;
 
   const { width, height } = containerSize;
 
-  if (chartData !== "fetching") {
+  if (chartData !== 'fetching') {
     const ci = CHARTS[chart];
     if (!ci) {
       component = <div>Unknown chart type: {chart}</div>;
@@ -113,9 +110,9 @@ const ScriptedChart = ({
           : chartData?.data
             ? chartData.data
             : chartData;
-      let otherData = chartData?.data ? _.omit(chartData, ["data"]) : {};
+      let otherData = chartData?.data ? _.omit(chartData, ['data']) : {};
       // strip ice* extension keys so they don't get passed to nivo as props
-      const nivoConfig = _.omitBy(safeChartConfig, (v, k) => k.startsWith("ice"));
+      const nivoConfig = _.omitBy(safeChartConfig, (v, k) => k.startsWith('ice'));
       if (width > 0 && height > 0) {
         component = (
           <Chart
@@ -134,9 +131,9 @@ const ScriptedChart = ({
   }
 
   return (
-    <div className="scripted-chart" style={{ position: "relative", height: "100%", ...style }}>
+    <div className="scripted-chart" style={{ position: 'relative', height: '100%', ...style }}>
       {extensions}
-      <div ref={containerRef} style={{ width: "100%", height: "100%" }}>
+      <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
         {component}
       </div>
     </div>

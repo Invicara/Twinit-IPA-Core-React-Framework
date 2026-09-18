@@ -1,3 +1,5 @@
+@use "variables";
+
 
 /**
  * Platform
@@ -11,38 +13,38 @@
   // if its in Cordova, and set to fullscreen, then disregard the bump.
   &:not(.fullscreen) {
     .bar-header:not(.bar-subheader) {
-      height: $bar-height + $ios-statusbar-height;
+      height: variables.$bar-height + variables.$ios-statusbar-height;
 
       &.item-input-inset .item-input-wrapper {
         margin-top: 19px !important;
       }
 
       > * {
-        margin-top: $ios-statusbar-height;
+        margin-top: variables.$ios-statusbar-height;
       }
     }
     .tabs-top > .tabs,
     .tabs.tabs-top {
-      top: $bar-height + $ios-statusbar-height;
+      top: variables.$bar-height + variables.$ios-statusbar-height;
     }
 
     .has-header,
     .bar-subheader {
-      top: $bar-height + $ios-statusbar-height;
+      top: variables.$bar-height + variables.$ios-statusbar-height;
     }
     .has-subheader {
-      top: $bar-height + $bar-subheader-height + $ios-statusbar-height;
+      top: variables.$bar-height + variables.$bar-subheader-height + variables.$ios-statusbar-height;
     }
     .has-header.has-tabs-top {
-      top: $bar-height + $tabs-height + $ios-statusbar-height;
+      top: variables.$bar-height + variables.$tabs-height + variables.$ios-statusbar-height;
     }
     .has-header.has-subheader.has-tabs-top {
-      top: $bar-height + $bar-subheader-height + $tabs-height + $ios-statusbar-height;
+      top: variables.$bar-height + variables.$bar-subheader-height + variables.$tabs-height + variables.$ios-statusbar-height;
     }
   }
   .asf-popover{
     .bar-header:not(.bar-subheader) {
-      height: $bar-height;
+      height: variables.$bar-height;
       &.item-input-inset .item-input-wrapper {
         margin-top: -1px;
       }
@@ -52,10 +54,10 @@
     }
     .has-header,
     .bar-subheader {
-      top: $bar-height;
+      top: variables.$bar-height;
     }
     .has-subheader {
-      top: $bar-height + $bar-subheader-height;
+      top: variables.$bar-height + variables.$bar-subheader-height;
     }
   }
   &.status-bar-hide {

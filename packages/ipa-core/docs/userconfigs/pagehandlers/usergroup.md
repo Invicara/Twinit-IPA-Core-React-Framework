@@ -3,14 +3,14 @@ title: User Groups View
 sidebar_position: 1500
 ---
 
-|**Name**|**Description**|
-|---|---|
-|[`pageComponent`](#pageComponent)|Use `pageComponent: 'users/UserGroupView'` in a handler to activate the User Management View.|
-|`appUrl`|(required) The url path from the basepath for any invite links.|
-|`allowUserGroupEdit`|Whether the user should be able to edit a User Group’s name.|
-|`allowUserGroupInvite`|Whether the user should be able to invites new and existing user’s the User Groups of which the user is a member.|
-|`allowManageInvites`|Whether the user should be able to perform actions on existing invites like deleting and resending.|
-|`allowManageUser`|Whether the user should be able to remove user’s from UserGroups.|
+| **Name**                          | **Description**                                                                                                   |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [`pageComponent`](#pageComponent) | Use `pageComponent: 'users/UserGroupView'` in a handler to activate the User Management View.                     |
+| `appUrl`                          | (required) The url path from the basepath for any invite links.                                                   |
+| `allowUserGroupEdit`              | Whether the user should be able to edit a User Group’s name.                                                      |
+| `allowUserGroupInvite`            | Whether the user should be able to invites new and existing user’s the User Groups of which the user is a member. |
+| `allowManageInvites`              | Whether the user should be able to perform actions on existing invites like deleting and resending.               |
+| `allowManageUser`                 | Whether the user should be able to remove user’s from UserGroups.                                                 |
 
 ---
 
@@ -38,7 +38,7 @@ Note: currently all invites are sent back to platform instance with the appUrl a
 
 ### `allowUserGroupEdit`
 
-(optional, default = false) 
+(optional, default = false)
 
 ```jsx
 allowUserGroupEdit: false,
@@ -48,7 +48,7 @@ Whether the user should be able to edit a User Group’s name.
 
 ### `allowUserGroupInvite`
 
-(optional, default = false) 
+(optional, default = false)
 
 ```jsx
 allowUserGroupInvite: false,
@@ -58,7 +58,7 @@ Whether the user should be able to invites new and existing user’s the User Gr
 
 ### `allowManageInvites`
 
-(optional, default = false) 
+(optional, default = false)
 
 ```
 allowManageInvites: false,
@@ -68,14 +68,13 @@ Whether the user should be able to perform actions on existing invites like dele
 
 ### `allowManageUsers`
 
-(optional, default = false) 
+(optional, default = false)
 
 ```jsx
 allowManageUsers: false,
 ```
 
 Whether the user should be able to remove user’s from UserGroups.
-
 
 ## Example
 

@@ -1,57 +1,32 @@
 @charset "UTF-8";
 
-@import
-  // Ionicons
-  "ionicons/ionicons",
-  
-  // Variables
-  "mixins",
-  "variables",
-
-  // Base
-  "reset",
-  "scaffolding",
-  "type",
-  "overlay",
-
-  // Components
-  "action-sheet",
-  "backdrop",
-  "bar",
-  "tabs",
-  "panel",
-  "modal",
-  "popover",
-  "popup",
-  "loading",
-  "items",
-  //"list",
-  "badge",
-  "slide-box",
-  //"refresher",
-  "spinner",
-
-  // Forms
-  //"form",
-  "checkbox",
-  //"toggle",
-  //"radio",
-  //"range",
-  //"select",
-  "progress",
-
-  // Buttons
-  "button",
-  "button-bar",
-
-  // Util
-  "grid",
-  "util",
-  "platform",
-
-  // Animations
-  "animations",
-  "transitions",
-
-  //flex
-  "flex-container";
+@forward "ionicons/ionicons" show $ionicons-font-path;
+@use "mixins";
+@use "variables";
+@use "reset";
+@use "scaffolding";
+@use "type";
+@use "overlay";
+@use "action-sheet";
+@use "backdrop";
+@use "bar";
+@use "tabs";
+@use "panel";
+@use "modal";
+@use "popover";
+@use "popup";
+@use "loading";
+@use "items";
+@use "badge";
+@use "slide-box";
+@use "spinner";
+@use "checkbox";
+@use "progress";
+@use "button";
+@use "button-bar";
+@use "grid";
+@use "util";
+@use "platform";
+@use "animations";
+@use "transitions";
+@use "flex-container";

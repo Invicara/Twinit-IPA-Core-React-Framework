@@ -2,13 +2,14 @@
 title: Custom Logo, App Name, and Colors
 sidebar_position: 400
 ---
+
 ## Application Logo
 
 You can provide your own logo to appear in the top left corner of the application by providing either a url to an image or the file name of a file which has been uploaded to the project.
 
 ```jsx
 settings: {
-    appImage: { 
+    appImage: {
         url: "url to an image online",
         filename: "name of a file uploaded to project"
     }
@@ -23,8 +24,8 @@ The Application Name can be provided by configuring it in the `IpaConfig.js`.
 
 ```jsx
 const ipaConfig = {
-  appName: "My Application"
-}
+  appName: 'My Application',
+};
 ```
 
 ## Application Logo
@@ -34,8 +35,8 @@ If not provided, the header of these pages will be hidden.
 
 ```jsx
 const ipaConfig = {
-  appImage: "logo.png"
-}
+  appImage: 'logo.png',
+};
 ```
 
 ## Application Colors
@@ -44,9 +45,9 @@ Your own css files can be provided in ipaCore/css to modify the default theme.
 
 ```jsx
 const ipaConfig = {
-  appName: "My Application",
-  css: ['myCustomTheme.css']
-}
+  appName: 'My Application',
+  css: ['myCustomTheme.css'],
+};
 ```
 
 ### myCustomTheme.css

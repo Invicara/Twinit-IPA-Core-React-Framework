@@ -3,23 +3,18 @@ import React from 'react';
 import classnames from 'classnames';
 
 class FlexLeftNav extends React.Component {
-
   render() {
     let classes = classnames(this.props.customClasses);
-    return (
-      <div className={ classes }>
-          {this.props.children}
-      </div>
-    );
+    return <div className={classes}>{this.props.children}</div>;
   }
 }
 
 FlexLeftNav.propTypes = {
-    customClasses: PropTypes.string
+  customClasses: PropTypes.string,
 };
 
 FlexLeftNav.defaultProps = {
-    customClasses: ''
+  customClasses: '',
 };
 
 export default FlexLeftNav;

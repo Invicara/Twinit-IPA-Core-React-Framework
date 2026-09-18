@@ -1,70 +1,95 @@
-import json from '@rollup/plugin-json'
-import resolve from 'rollup-plugin-node-resolve'
+import json from '@rollup/plugin-json';
+import { nodeResolve as resolve } from '@rollup/plugin-node-resolve';
 // Convert CJS modules to ES6 so they can be included in bundle
-import commonjs from 'rollup-plugin-commonjs'
+import commonjs from '@rollup/plugin-commonjs';
 import babel from '@rollup/plugin-babel';
 import postcss from 'rollup-plugin-postcss';
-import copy from "rollup-plugin-copy";
+import copy from 'rollup-plugin-copy';
 import cleaner from 'rollup-plugin-cleaner';
 import image from '@rollup/plugin-image';
-import pkg from './package.json'
+import pkg from './package.json';
 
-const externals =  [...Object.keys(pkg.dependencies || {}),"clsx","@dtplatform/ui-utils","uid", "query-string", "redux"];
+const externals = [
+  ...Object.keys(pkg.dependencies || {}),
+  'clsx',
+  '@dtplatform/ui-utils',
+  'uid',
+  'query-string',
+  'redux',
+];
 
 export default {
+  // ScriptHelper.evalExpressions() evaluates caller-supplied expression
+  // strings; that eval is the scripting feature, not an oversight. Scoped to
+  // that one module and that one warning code, so an accidental eval
+  // anywhere else still shows up.
+  onwarn(warning, warn) {
+    if (warning.code === 'EVAL' && warning.id && warning.id.includes('IpaUtils/ScriptHelper'))
+      return;
+    if (warning.code === 'MIXED_EXPORTS') return;
+    warn(warning);
+  },
   input: 'src/main.js',
   output: {
     file: 'dist/ipa-core.js',
     format: 'cjs',
     name: 'DTFFCore',
-    sourcemap: false
+    exports: 'auto',
+    sourcemap: false,
   },
 
   plugins: [
-    cleaner({targets: ['./dist']}),
+    cleaner({ targets: ['./dist'] }),
     json(),
     resolve({
       mainFields: ['main'],
-      extensions: ['.js', '.jsx', '.css', '.scss', '.svg']
+      extensions: ['.js', '.jsx', '.css', '.scss', '.svg'],
     }),
-    postcss(),
-    image({include:['src/IpaIcons/**/*']}),
+    postcss({
+      // rollup-plugin-postcss 4.x calls Dart Sass's legacy render() API, which
+      // warns once per stylesheet (75 times in a full build). The deprecation is
+      // the plugin's to fix, not ours, and the plugin is unmaintained. Loader
+      // options are spread straight into sass.render, so this silences that one
+      // deprecation without hiding any coming from our own stylesheets.
+      use: { sass: { silenceDeprecations: ['legacy-js-api'] } },
+    }),
+    image({ include: ['src/IpaIcons/**/*'] }),
     babel({
       exclude: 'node_modules/**',
+      // Explicit rather than inherited: this is the value the plugin already
+      // defaults to, stated so it stops warning on every build.
+      babelHelpers: 'bundled',
       sourceMaps: false,
-      presets: [
-        "@babel/preset-env",
-        "@babel/preset-react"
-      ],
+      presets: ['@babel/preset-env', '@babel/preset-react'],
       plugins: [
-        require("@babel/plugin-proposal-object-rest-spread"),
-        require("fast-async"),
-        ["@babel/plugin-proposal-class-properties", { "loose": true }],
-        ["@babel/plugin-transform-private-methods", { "loose": true }],
-        ["@babel/plugin-transform-private-property-in-object", { "loose": true }],
-      ]
+        require('@babel/plugin-transform-object-rest-spread'),
+        require('fast-async'),
+        ['@babel/plugin-transform-class-properties', { loose: true }],
+        ['@babel/plugin-transform-private-methods', { loose: true }],
+        ['@babel/plugin-transform-private-property-in-object', { loose: true }],
+      ],
     }),
     commonjs(),
     copy({
       targets: [
-        {src: 'src/img/**/*', dest: 'dist/img'},
-        {src: 'src/*/*.scss', dest: 'dist/styles'}
-      ]
-    })
+        { src: 'src/img/**/*', dest: 'dist/img' },
+        { src: 'src/*/*.scss', dest: 'dist/styles' },
+      ],
+    }),
   ],
   //https://gist.github.com/developit/41f088b6294e2591f53b
   //The external key accepts either an array of module names,
   // or a function which takes the module name and returns true if it should be treated as external.
   // For example: external: id => /lodash/.test(id)
-  external: (id) => {
-    const declared = externals.find(function(pattern) {
-      return new RegExp("^"+pattern).test(id);
-    })
-    if(!declared && id.indexOf('/') !== 0 && id.indexOf('.') !== 0 && id.indexOf('src') !==0){
-      console.log("not declared dep:",id)
+  external: id => {
+    const declared = externals.find(function (pattern) {
+      return new RegExp('^' + pattern).test(id);
+    });
+    if (!declared && id.indexOf('/') !== 0 && id.indexOf('.') !== 0 && id.indexOf('src') !== 0) {
+      console.log('not declared dep:', id);
     }
     return declared;
-  }
+  },
   /*
   external: [
     'lodash', 'bootstrap', 'classnames',

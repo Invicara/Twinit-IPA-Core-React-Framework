@@ -1,0 +1,412 @@
+/* The application header. Built from the Design System file's
+   "Global Header & Navigation" page.
+
+     header  1392x56 at x=48 in a 1440 frame, so it starts beside the rail
+   The header is LIGHT. Colours are sampled from the exported frames (header,
+   info-dropDown-block, info-dropDown-cell), and each is an ipa-ui token:
+
+     #FFFFFF  --neutral-0        the header ground, and the panel
+     #EBEBEB  --neutral-2        the header's bottom rule, and the panel's
+     #000000  --neutral-10       the app name and the user name
+     #DCDCDC  --neutral-3        the rule between the logo and the app name
+     #5D5D5D  --neutral-7        chevrons and secondary text
+     #1D1D1D  --neutral-9        a panel row's title
+     #F3F3F3  --neutral-1        a panel row on hover
+     #F9F9F9  --neutral-05       the version footer
+     #D32F2F  --alert-7          log out
+     #DF158C  --digital-twin-8   the avatar's initials
+     #F9D0E8  --digital-twin-3   the avatar fill
+
+   Spacing, measured off the exports, which are 1:1 (the header bar is exactly
+   1392x56 and the panel exactly 254 wide):
+
+     header      56px tall, 24px left and right, 16px between items, a 24px
+                 logo and a 24px avatar centred by 16px of padding
+     panel rows  48px for one line, 62px for a two-line row, 55px for log out,
+                 all with 16px of horizontal padding
+     panel head  8px above and below its lines
+     footer      32px
+
+   ipa-core's --head-* names are not consumed, for the reason given at the top
+   of SidebarNav.scss: the deployment sets them for ipa-core's own chrome
+   (#333333), which is not this design's ground. Type is Inter 14/700 and
+   14/500.
+
+   The account panel follows info-dropDown-block (4359:22192), 254px wide:
+   centred name / email / role, divided rows with a trailing chevron, a
+   two-line row for the current project, a pink log out with a leading icon,
+   and the version on a tinted footer. */
+
+$height: 56px;
+$rail: 48px;
+$ease: cubic-bezier(0.4, 0, 0.2, 1);
+$hover: 120ms;
+
+.ipa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: $height;
+  box-sizing: border-box;
+  /* The design frames the header at x=48 with width 1392, i.e. beside the
+     rail rather than behind it, which leaves the rail's toggle visible in the
+     top-left corner. A margin does that; padding would still paint the header
+     background over the toggle. */
+  margin-left: $rail;
+  /* The parent still sizes it to the full width, so the margin alone pushes
+     the right edge off screen and clips the account name. */
+  width: calc(100% - #{$rail});
+  padding-left: 24px;
+  padding-right: 24px;
+  /* Above the rail, so an expanded rail passes beneath it. ipa-core's popovers
+     sit at 1000 (react-ifef/scss/_popover.scss), which tied with the rail and
+     let the Asset page's search and filter panels paint over it, so both are
+     lifted clear of that layer. */
+  position: relative;
+  z-index: 1110;
+  /* !important because ipa-core's theme.scss has `header { background-color:
+     var(--head-bkg-color) !important }`, which lands on this element and
+     repaints it in the deployment's #333333. Same arrangement as the nav a
+     rule noted in SidebarNav.scss. */
+  background: var(--neutral-0, #ffffff) !important;
+  color: var(--neutral-10, #000000);
+  border-bottom: 1px solid var(--neutral-2, #ebebeb);
+  font-family: var(--font-sans, Inter, system-ui, sans-serif);
+}
+
+.ipa-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ipa-header__logo {
+  display: flex;
+  align-items: center;
+
+  /* ipa-core's Logo emits an SVG with a 5:1 viewBox and no intrinsic width
+     inside an inline-flex wrapper, so a height alone collapses it. */
+  #logo img,
+  img {
+    height: 24px;
+    width: auto;
+    min-width: 104px;
+    max-width: 150px;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* We render the app name ourselves at the design's weight, so ipa-core's
+     own 25px appName span is suppressed rather than shown twice. */
+  .appName {
+    display: none;
+  }
+}
+
+/* The vertical rule between the logo and the app name. */
+.ipa-header__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--neutral-3, #dcdcdc);
+  flex-shrink: 0;
+}
+
+.ipa-header__app-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+  white-space: nowrap;
+}
+
+.ipa-header__project {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--neutral-7, #5d5d5d);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ipa-header__toolbar {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 16px;
+
+  /* ipa-ui's Button carries padding: 0 8px, which pushed the chevron 8px
+     further in than the design's 24px. The design draws no button chrome
+     around the account cluster at all, so the trigger is just its contents.
+     The attribute selectors are there to clear ipa-ui's own
+     .button_x[data-variant="tertiary"][data-size="sm"], which a plain
+     descendant selector loses to. */
+  button[data-variant][data-size] {
+    padding: 0;
+  }
+}
+
+/* Whatever the host puts in `actions`, sat on the header's own baseline so a
+   tray or a button lines up with the account cluster without the host having
+   to know the bar's height. */
+.ipa-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--neutral-10, #000000);
+}
+
+.ipa-header__account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-10, #000000);
+  transition: color $hover $ease;
+}
+
+.ipa-header__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  flex-shrink: 0;
+  color: var(--app-accent-color, var(--digital-twin-8, #df158c));
+  background: var(--digital-twin-3, #f9d0e8);
+}
+
+.ipa-header__account-name {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The rotation is on the base class, not only on --open, so the chevron turns
+   back when the menu closes instead of snapping. */
+.ipa-header__chevron {
+  display: flex;
+  align-items: center;
+  transform: rotate(0deg);
+  transition: transform 250ms $ease;
+}
+
+.ipa-header__chevron--open {
+  transform: rotate(180deg);
+}
+
+/* ipa-core fixes .flex-container at top: 80px with height: calc(100% - 80px),
+   the height of its own TitleBar. This header is 56px, so a 24px strip of page
+   background showed between the header and the content. Scoped with :has, so it
+   only applies where this header is actually mounted. */
+body:has(.ipa-header) .flex-container {
+  top: $height;
+  height: calc(100% - #{$height});
+}
+
+/* The same 80px assumption, this time inside the pages. ipa-core sizes its
+   page boxes with calc(100vh - 80px), which against a 56px header leaves every
+   page 24px short of its container: on Navigator that floated the bottom bar
+   above the fold. Restated against this header's height. It stays a viewport
+   calc rather than becoming 100%, because every ancestor between .flex-content
+   and these boxes is auto-height, so a percentage resolves to nothing.
+
+     .generic-page-body   IpaPageComponents/GenericPage.scss
+     .dashboard           IpaPageComponents/dashboards/DashboardView.scss
+     .user-group-view     IpaPageComponents/users/UserGroupView.scss
+     .usergroup-mode-view          "
+     .user-mode-view               "                                       */
+body:has(.ipa-header) {
+  .generic-page-body {
+    min-height: calc(100vh - #{$height});
+  }
+
+  .dashboard,
+  .user-group-view,
+  .usergroup-mode-view,
+  .user-mode-view {
+    height: calc(100vh - #{$height});
+  }
+}
+
+/* ── account panel ────────────────────────────────────────────────────── */
+
+.ipa-header__menu {
+  width: 254px;
+  min-width: 254px;
+  padding: 0;
+  color: var(--neutral-9, #1d1d1d);
+}
+
+.ipa-header__menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  text-align: center;
+  cursor: default;
+  user-select: text;
+}
+
+.ipa-header__menu-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+.ipa-header__menu-email,
+.ipa-header__menu-role {
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--neutral-7, #5d5d5d);
+  word-break: break-all;
+}
+
+/* Rows are separated by rules in the design rather than sitting flush. */
+.ipa-header__menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  /* 12px of padding either side of a 20px line makes 44, which the item's
+     48px band (rule included) then centres. A two-line row grows to
+     12 + 16 + 2 + 20 + 12 = 62, the design's figure exactly. */
+  padding: 12px 16px;
+  box-sizing: border-box;
+  font-size: 14px;
+  /* Regular, as in the design. 500 read as semibold against the 12px caption
+     and made every row look like a heading. */
+  font-weight: 400;
+}
+
+.ipa-header__menu-row-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* The design gives log out more room than the other rows: 55px against 48. */
+.ipa-header__menu-row--danger {
+  min-height: 54px;
+}
+
+/* The small caption above a value, as on "Switch project". */
+.ipa-header__menu-row-caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--neutral-7, #5d5d5d);
+}
+
+.ipa-header__menu-row-value {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ipa-header__menu-row-chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--neutral-7, #5d5d5d);
+  transition:
+    color $hover $ease,
+    transform $hover $ease;
+}
+
+/* A small lead on hover, so the row reads as somewhere it takes you. Log out
+   is excluded: its icon leads the label rather than trailing it, so nudging it
+   would push it away from its own text. */
+.ipa-header__menu
+  [role='menuitem']:hover
+  .ipa-header__menu-row:not(.ipa-header__menu-row--danger)
+  .ipa-header__menu-row-chevron,
+.ipa-header__menu
+  [role='menuitem'][data-highlighted]
+  .ipa-header__menu-row:not(.ipa-header__menu-row--danger)
+  .ipa-header__menu-row-chevron {
+  transform: translateX(2px);
+}
+
+.ipa-header__menu-row--danger {
+  gap: 8px;
+  justify-content: flex-start;
+  /* ipa-ui's destructive colour is --alert-7, which is what --destructive
+     resolves to in its own theme. The brand accent read as an ordinary action
+     rather than a warning. */
+  color: var(--alert-7, #d32f2f);
+}
+
+.ipa-header__menu-version {
+  padding: 6px 16px;
+  border-top: 1px solid var(--neutral-2, #ebebeb);
+  background: var(--neutral-05, #f9f9f9);
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--neutral-7, #5d5d5d);
+  cursor: default;
+  user-select: text;
+}
+
+/* ipa-ui's DropdownMenuItem pads each row 8px 10px and rounds it 4px. The
+   design draws the rows flush to the panel edges, separated by a hairline, so
+   the item is reduced to a bare container and .ipa-header__menu-row supplies
+   the padding. Measured live: rows sat at 232px inside a 254px panel, and the
+   dividers stopped 10px short at each end. */
+.ipa-header__menu [role='menuitem'] {
+  padding: 0;
+  border-radius: 0;
+  /* The design's row band is 48px with the rule counted inside it. */
+  box-sizing: border-box;
+  min-height: 48px;
+  /* The rule belongs to the boundary between rows, so it goes on the item
+     rather than on .ipa-header__menu-row inside it: within the row the hover
+     background painted across it and the highlight sat a pixel low. */
+  border-top: 1px solid var(--neutral-2, #ebebeb);
+
+  /* The design hovers a row to --neutral-1; ipa-ui's own item hover is the
+     lighter --neutral-05, which it keeps for the version footer here. */
+  transition: background-color $hover $ease;
+
+  &:hover,
+  &[data-highlighted] {
+    background: var(--neutral-1, #f3f3f3);
+  }
+}
+
+/* ipa-ui's DropdownMenuItem paints every svg inside it --neutral-6, so the log
+   out icon stayed grey while its label went red. Two classes deep to clear
+   that rule's `.item_x svg`. */
+.ipa-header__menu .ipa-header__menu-row-chevron svg {
+  color: inherit;
+}
+
+/* The design's chevrons are --neutral-7, one step darker than the --neutral-6
+   ipa-ui gives them. The log out row keeps its own colour: this selector is one
+   class deeper, so it has to be restated rather than left to the rule above. */
+.ipa-header__menu .ipa-header__menu-row-chevron {
+  color: var(--neutral-7, #5d5d5d);
+}
+
+.ipa-header__menu .ipa-header__menu-row--danger .ipa-header__menu-row-chevron {
+  color: inherit;
+}
+
+/* Anyone who has asked for less movement gets the states, not the journey. */
+@media (prefers-reduced-motion: reduce) {
+  .ipa-header *,
+  .ipa-header__menu * {
+    transition: none !important;
+  }
+}

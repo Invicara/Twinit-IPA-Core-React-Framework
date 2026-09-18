@@ -1,6 +1,6 @@
+@use 'sass:meta';
 .entity-list-view-root {
-
-  .entity-list-view-count{
+  .entity-list-view-count {
     margin: 10px 0;
   }
 
@@ -13,6 +13,5 @@
     }
   }
 
-  @import "EntityTable";
-
+  @include meta.load-css('EntityTable');
 }

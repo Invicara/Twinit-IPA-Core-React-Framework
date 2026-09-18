@@ -1,11 +1,11 @@
-import { string } from "prop-types";
-import React, { useState } from "react";
-import BaseTextInput from "./BaseTextInput";
-import GenericMatButton from "./GenericMatButton";
-import "./CollapsibleTextInput.scss";
-import { TextareaAutosize } from "@mui/material";
+import { string } from 'prop-types';
+import React, { useState } from 'react';
+import BaseTextInput from './BaseTextInput';
+import GenericMatButton from './GenericMatButton';
+import './CollapsibleTextInput.scss';
+import { TextareaAutosize } from '@mui/material';
 
-const CollapsibleTextInput = (props) => {
+const CollapsibleTextInput = props => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
@@ -15,12 +15,9 @@ const CollapsibleTextInput = (props) => {
       className={`collapsible-text-input`}
       inputProps={{
         ...props.inputProps,
-        value:
-          (isCollapsed && props.inputProps?.collapsedText) ||
-          props.inputProps?.value,
-        onFocusChange: (isFocused) => {
+        value: (isCollapsed && props.inputProps?.collapsedText) || props.inputProps?.value,
+        onFocusChange: isFocused => {
           props.inputProps.onFocusChange?.(isFocused);
-          setIsFocused(isFocused);
         },
       }}
       labelProps={{
@@ -30,9 +27,7 @@ const CollapsibleTextInput = (props) => {
       }}
       component={
         !isCollapsed
-          ? (props) => (
-              <TextareaAutosize {...props} style={{ paddingBottom: "2em" }} />
-            )
+          ? props => <TextareaAutosize {...props} style={{ paddingBottom: '2em' }} />
           : undefined
       }
     >
@@ -43,9 +38,9 @@ const CollapsibleTextInput = (props) => {
         onClick={toggleCollapse}
       >
         {isCollapsed ? (
-          <div style={{ color: "black" }}>Show all</div>
+          <div style={{ color: 'black' }}>Show all</div>
         ) : (
-          <div style={{ color: "black" }}>Hide all</div>
+          <div style={{ color: 'black' }}>Hide all</div>
         )}
       </GenericMatButton>
     </BaseTextInput>

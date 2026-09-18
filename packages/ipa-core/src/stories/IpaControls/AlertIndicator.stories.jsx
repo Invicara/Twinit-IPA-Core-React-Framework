@@ -1,17 +1,17 @@
-import AlertIndicator from "../../IpaControls/AlertIndicator";
+import AlertIndicator from '../../IpaControls/AlertIndicator';
 
 export default {
-  title: "Controls/AlertIndicator",
+  title: 'Controls/AlertIndicator',
   component: AlertIndicator,
 };
 
-const Template = (args) => {
+const Template = args => {
   return <AlertIndicator {...args} />;
 };
 
 export const Default = Template.bind({});
 
 Default.args = {
-  className: "",
-  descriptions: ["Warning", "Something's wrong"],
+  className: '',
+  descriptions: ['Warning', "Something's wrong"],
 };

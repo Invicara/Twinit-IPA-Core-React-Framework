@@ -1,0 +1,9 @@
+node_modules
+packages/*/modules
+packages/*/esm_modules
+packages/*/dist
+packages/*/src/react-ifef/scss
+package-lock.json
+
+# Not valid JSON: a comment plus two concatenated objects, kept as a test fixture.
+packages/ipa-core/src/test/mock-data/EntityCollectionModal_results2.json

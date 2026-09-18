@@ -3,37 +3,32 @@ import React from 'react';
 import classnames from 'classnames';
 
 class IfefFooterBar extends React.Component {
-
   componentDidMount() {
     this.context.ifefUpdateHasX('ifefHasFooter', true);
   }
 
   render() {
-    var classes = classnames(
-      {'bar': true, 'bar-footer': true},
+    let classes = classnames(
+      { bar: true, 'bar-footer': true },
       this.props.customClasses || 'bar-stable', // default class
-      {'has-tabs': this.context.ifefHasTabs}
+      { 'has-tabs': this.context.ifefHasTabs }
     );
-    return (
-      <div className={ classes } >
-        { this.props.children }
-      </div>
-    );
+    return <div className={classes}>{this.props.children}</div>;
   }
 }
 
 IfefFooterBar.propTypes = {
-  customClasses: PropTypes.string
+  customClasses: PropTypes.string,
 };
 
 IfefFooterBar.defaultProps = {
   customClasses: '',
-  ifefHasTabs: false
+  ifefHasTabs: false,
 };
 
 IfefFooterBar.contextTypes = {
   ifefUpdateHasX: PropTypes.func.isRequired,
-  ifefHasTabs: PropTypes.bool
+  ifefHasTabs: PropTypes.bool,
 };
 
 export default IfefFooterBar;

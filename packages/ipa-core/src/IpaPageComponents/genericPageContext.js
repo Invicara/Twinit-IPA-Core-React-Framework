@@ -1,7 +1,9 @@
-import React from "react";
+import React from 'react';
 
 export const GenericPageContext = React.createContext();
 
-export const withGenericPageContext = (Component) => (props) => (<GenericPageContext.Consumer>
-    {(genericPageContext) => <Component {...props} {...genericPageContext}/>}
-</GenericPageContext.Consumer>);
+export const withGenericPageContext = Component => props => (
+  <GenericPageContext.Consumer>
+    {genericPageContext => <Component {...props} {...genericPageContext} />}
+  </GenericPageContext.Consumer>
+);

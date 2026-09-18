@@ -1,30 +1,30 @@
-import React from "react";
-import { StackableDrawer } from "../../IpaDialogs/StackableDrawer";
-import StackableDrawerContainer from "../../IpaDialogs/StackableDrawerContainer";
-import "./StackableDrawer.stories.scss";
-import { Typography } from "@mui/material";
+import React from 'react';
+import { StackableDrawer } from '../../IpaDialogs/StackableDrawer';
+import StackableDrawerContainer from '../../IpaDialogs/StackableDrawerContainer';
+import './StackableDrawer.stories.scss';
+import { Typography } from '@mui/material';
 import { Skeleton } from '@mui/material';
-import { StackableContentDrawer } from "../../IpaDialogs/StackableContentDrawer";
+import { StackableContentDrawer } from '../../IpaDialogs/StackableContentDrawer';
 
 export default {
-  title: "Controls/StackableContentDrawer",
+  title: 'Controls/StackableContentDrawer',
   component: StackableContentDrawer,
   parameters: {
     // More on Story layout: https://storybook.js.org/docs/react/configure/story-layout
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 };
 
-const Template = (args) => {
+const Template = args => {
   return (
     <>
       {args.drawersLeft &&
         args.drawersLeft.length > 0 &&
-        generateDrawersInContainer(args, args.drawersLeft, "left", true)}
+        generateDrawersInContainer(args, args.drawersLeft, 'left', true)}
 
       {args.drawersRight &&
         args.drawersRight.length > 0 &&
-        generateDrawersInContainer(args, args.drawersRight, "right", true)}
+        generateDrawersInContainer(args, args.drawersRight, 'right', true)}
     </>
   );
 };
@@ -33,11 +33,11 @@ export const Left = Template.bind({});
 Left.args = {
   drawersLeft: [
     {
-      iconKey: "fa-search",
+      iconKey: 'fa-search',
       minWidth: 200,
     },
     {
-      iconKey: "fa-filter",
+      iconKey: 'fa-filter',
       minWidth: 200,
     },
     {
@@ -54,14 +54,14 @@ Right.args = {
   drawersRight: [
     {
       content: 1,
-      minWidth: "100%",
+      minWidth: '100%',
     },
     {
-      iconKey: "fa-search",
+      iconKey: 'fa-search',
       minWidth: 200,
     },
     {
-      iconKey: "fa-filter",
+      iconKey: 'fa-filter',
       minWidth: 200,
     },
   ],
@@ -72,18 +72,18 @@ Both.args = {
   //drawersLeft:[],
   drawersRight: [
     {
-      iconKey: "fa-search",
+      iconKey: 'fa-search',
       minWidth: 200,
     },
   ],
   drawersLeft: [
     {
-      iconKey: "fa-filter",
+      iconKey: 'fa-filter',
       minWidth: 200,
     },
     {
       content: 1,
-      minWidth: "100%",
+      minWidth: '100%',
     },
   ],
 };
@@ -92,34 +92,30 @@ export const Middle = Template.bind({});
 Middle.args = {
   drawersLeft: [
     {
-      iconKey: "fa-filter",
+      iconKey: 'fa-filter',
       minWidth: 200,
     },
     {
       content: 1,
-      minWidth: "100%",
+      minWidth: '100%',
     },
     {
-      iconKey: "fa-search",
+      iconKey: 'fa-search',
       minWidth: 200,
-      anchor: "right",
+      anchor: 'right',
       level: 1,
     },
   ],
 };
 
-const generateContentDrawer = (d) => (
+const generateContentDrawer = d => (
   <StackableContentDrawer {...d}>{generateContent(d)}</StackableContentDrawer>
 );
 
 const generateDrawersInContainer = (args, drawers, anchor, fullWidth) => (
   <StackableDrawerContainer anchor={anchor} fullWidth={fullWidth}>
     {drawers.map((d, index) =>
-      generateDrawer(
-        { ...d, anchor: d.anchor || anchor },
-        d.level || index + 1,
-        d.iconKey,
-      ),
+      generateDrawer({ ...d, anchor: d.anchor || anchor }, d.level || index + 1, d.iconKey)
     )}
   </StackableDrawerContainer>
 );
@@ -134,20 +130,20 @@ const generateDrawer = (d, level, iconKey) => {
       iconKey={iconKey}
       defaultOpen={true}
       isDrawerOpen={true}
-      tooltip={"Hide elements by file"}
+      tooltip={'Hide elements by file'}
     >
       {generateContent(d)}
     </StackableDrawer>
   );
 };
 
-const generateContent = (d) => {
+const generateContent = d => {
   return (
     <>
       <Typography>
-        <div style={{ padding: 10, marginTop: 100, color: "white" }}>
-          {d.content && `Content min ${d.minChildrenWidth}`} Lorem ipsum dolor
-          sit amet, consectetur adipiscing elit.
+        <div style={{ padding: 10, marginTop: 100, color: 'white' }}>
+          {d.content && `Content min ${d.minChildrenWidth}`} Lorem ipsum dolor sit amet, consectetur
+          adipiscing elit.
         </div>
       </Typography>
       <Typography variant="h1">

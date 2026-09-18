@@ -1,21 +1,22 @@
 import raf from 'raf';
 
-const extractPosition = callback => (evt, ...args) => {
-  let nativeEvent = evt;
-  if (!(evt instanceof window.Event)) {
-    nativeEvent = evt.nativeEvent;
-  }
+const extractPosition =
+  callback =>
+  (evt, ...args) => {
+    let nativeEvent = evt;
+    if (!(evt instanceof window.Event)) {
+      nativeEvent = evt.nativeEvent;
+    }
 
-  let touchPosition = null;
-  if (nativeEvent.touches && nativeEvent.touches.length) {
-    const touch = nativeEvent.touches[0];
-    touchPosition = { x: touch.clientX, y: touch.clientY };
-  } else if (nativeEvent.clientX && nativeEvent.clientY) {
-    touchPosition = { x: nativeEvent.clientX, y: nativeEvent.clientY };
-  }
-  return callback(touchPosition, evt, ...args);
-};
-
+    let touchPosition = null;
+    if (nativeEvent.touches && nativeEvent.touches.length) {
+      const touch = nativeEvent.touches[0];
+      touchPosition = { x: touch.clientX, y: touch.clientY };
+    } else if (nativeEvent.clientX && nativeEvent.clientY) {
+      touchPosition = { x: nativeEvent.clientX, y: nativeEvent.clientY };
+    }
+    return callback(touchPosition, evt, ...args);
+  };
 
 class TouchHandler {
   constructor(onTouchStart, onTouchMove, onTouchEnd) {

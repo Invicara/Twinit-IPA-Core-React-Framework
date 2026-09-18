@@ -8,34 +8,58 @@
     "bootstrap": "npm install",
     "build": "lerna run build",
     "build-dev": "lerna run build-dev",
-    "release": "npm run build && lerna version --exact",
-    "quickrelease": "lerna version --exact",
+    "release": "npm run build && lerna version",
+    "quickrelease": "lerna version",
     "changed": "lerna changed",
     "publish-all": "lerna run build && lerna publish from-package --yes",
-    "prepare": "husky install"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install",
+    "lint:ratchet": "node scripts/lint-ratchet.mjs",
+    "lint:baseline": "node scripts/lint-ratchet.mjs --update",
+    "check:format": "prettier --check .",
+    "check:deps": "node scripts/check-deprecations.mjs",
+    "check:build": "node scripts/check-build.mjs",
+    "verify": "npm run lint:ratchet && npm run check:format && npm run check:deps && npm run check:resolve && npm run check:build",
+    "check:resolve": "node scripts/check-resolve.mjs"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^16.5.0",
     "husky": "^8.0.0",
-    "lerna": "^9.0.7",
-    "lint-staged": "^15.2.2"
+    "lerna": "^10.0.1",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.9.7"
   },
   "lint-staged": {
-    "**/*.{js,jsx,ts,tsx}": [
-      "npx prettier --write",
-      "npx eslint --fix"
+    "**/*.{js,jsx,mjs}": [
+      "eslint --fix",
+      "prettier --write",
+      "node scripts/lint-ratchet.mjs"
+    ],
+    "**/*.{scss,css,md,yml,yaml,json}": [
+      "prettier --write"
+    ],
+    "package-lock.json": [
+      "node scripts/check-deprecations.mjs"
     ]
   },
   "workspaces": [
     "packages/*"
   ],
   "overrides": {
+    "eslint-plugin-react": {
+      "eslint": "$eslint"
+    },
+    "globby": "^11.1.0",
     "axios": "^1.18.1",
     "decode-uri-component": "^0.5.0",
     "nx": {
-      ".": "^22.7.12",
+      ".": "^23.2.1",
       "brace-expansion": "^5.0.9",
       "smol-toml": "^1.7.1"
     },
@@ -57,5 +81,14 @@
     "d3-interpolate": "^3.0.1",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "isomorphic-fetch": "^3.0.0"
+  },
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "core-js": false,
+    "esbuild": false,
+    "fsevents": false,
+    "nodent-runtime": false,
+    "nx": false,
+    "unrs-resolver": false
   }
 }

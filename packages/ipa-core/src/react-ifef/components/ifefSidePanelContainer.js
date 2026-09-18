@@ -5,13 +5,12 @@ import Snap from '../helpers/snap';
 import { BodyContext } from './bodyProvider';
 
 class IfefSidePanelContainer extends React.Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
-      elementBottomDimension: _.get(props, 'settings.elementBottomDimension')
-    }
+      elementBottomDimension: _.get(props, 'settings.elementBottomDimension'),
+    };
   }
 
   static contextType = BodyContext;
@@ -20,7 +19,7 @@ class IfefSidePanelContainer extends React.Component {
     let nextElementBottomDimension = _.get(nextProps, 'settings.elementBottomDimension');
     let curElementBottomDimension = prevState.elementBottomDimension;
     if (nextElementBottomDimension && nextElementBottomDimension !== curElementBottomDimension) {
-      return {elementBottomDimension: nextElementBottomDimension}
+      return { elementBottomDimension: nextElementBottomDimension };
     } else {
       return null;
     }
@@ -29,17 +28,17 @@ class IfefSidePanelContainer extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     let prevElementBottomDimension = _.get(prevProps, 'settings.elementBottomDimension');
     let curElementBottomDimension = _.get(this, 'props.settings.elementBottomDimension');
-    if(curElementBottomDimension !== prevElementBottomDimension) {
+    if (curElementBottomDimension !== prevElementBottomDimension) {
       let snapper = this.context.ifefSnapper;
-      snapper.settings({elementBottomDimension: curElementBottomDimension});
+      snapper.settings({ elementBottomDimension: curElementBottomDimension });
       snapper.open();
       document.getElementById('IfefSidePanelContent').style.bottom = curElementBottomDimension;
     }
   }
 
   componentDidMount() {
-    var sideMenuContent = document.getElementById('IfefSidePanelContent');
-    var bottomPanel = document.getElementById('IfefBottomPanel');
+    let sideMenuContent = document.getElementById('IfefSidePanelContent');
+    let bottomPanel = document.getElementById('IfefBottomPanel');
     let snapper = new Snap({
       element: sideMenuContent,
       bottomElement: bottomPanel,
@@ -47,15 +46,15 @@ class IfefSidePanelContainer extends React.Component {
     });
     if (typeof snapper.toggle === 'undefined') {
       // add a toggle method if it doesn't exist yet (in some future version)
-      snapper.toggle = function(direction) {
+      snapper.toggle = function (direction) {
         // Now needs to support bottom as a (somewhat) special case
-        if (direction === "bottom") {
-          if (this.state().state.includes("bottom")) {
+        if (direction === 'bottom') {
+          if (this.state().state.includes('bottom')) {
             this.closeBottom();
           } else {
-            this.open("bottom");
+            this.open('bottom');
           }
-        } else if( this.state().state.includes(direction)){
+        } else if (this.state().state.includes(direction)) {
           this.close();
         } else {
           this.open(direction);
@@ -70,11 +69,7 @@ class IfefSidePanelContainer extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        { this.props.children }
-      </div>
-    );
+    return <div>{this.props.children}</div>;
   }
 }
 

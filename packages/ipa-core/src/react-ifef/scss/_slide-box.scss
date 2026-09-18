@@ -1,3 +1,6 @@
+@use "mixins";
+@use "variables";
+
 
 /**
  * Slide Box
@@ -35,7 +38,7 @@
 .asf-slider-pager {
   position: absolute;
   bottom: 20px;
-  z-index: $z-index-slider-pager;
+  z-index: variables.$z-index-slider-pager;
   width: 100%;
   height: 15px;
   text-align: center;
@@ -50,7 +53,7 @@
     opacity: 0.3;
 
     &.active {
-      @include transition(opacity 0.4s ease-in);
+      @include mixins.transition(opacity 0.4s ease-in);
       opacity: 1;
     }
   }

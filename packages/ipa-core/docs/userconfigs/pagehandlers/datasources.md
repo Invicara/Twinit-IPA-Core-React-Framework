@@ -3,10 +3,10 @@ title: Datasources View
 sidebar_position: 1000
 ---
 
-|Name|Description|
-|---|---|
-|[`pageComponent`](#pageComponent)|Use `'pageComponent: ‘datasources/DatasourcesView’` in a handler to activate the User Management View.|
-|`config.allowManageDatasources`|Boolean - whether a user should be able to edit details like schedules for the Datasources and other operations|
+| Name                              | Description                                                                                                     |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [`pageComponent`](#pageComponent) | Use `'pageComponent: ‘datasources/DatasourcesView’` in a handler to activate the User Management View.          |
+| `config.allowManageDatasources`   | Boolean - whether a user should be able to edit details like schedules for the Datasources and other operations |
 
 ---
 

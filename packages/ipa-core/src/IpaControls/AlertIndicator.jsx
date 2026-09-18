@@ -1,22 +1,20 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Tooltip } from "@mui/material";
-import "./AlertIndicator.scss";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Tooltip } from '@mui/material';
+import './AlertIndicator.scss';
 
 const AlertIndicator = ({ className, descriptions }) => {
   return (
     <Tooltip
       title={
         <div>
-          {descriptions.map((a) => (
-            <p>{a}</p>
+          {descriptions.map((a, i) => (
+            <p key={i}>{a}</p>
           ))}
         </div>
       }
     >
-      <i
-        className={`alert-indicator ${className || ""} fa fa-exclamation-triangle`}
-      />
+      <i className={`alert-indicator ${className || ''} fa fa-exclamation-triangle`} />
     </Tooltip>
   );
 };

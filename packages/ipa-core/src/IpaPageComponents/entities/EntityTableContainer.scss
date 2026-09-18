@@ -1,6 +1,6 @@
+@use 'sass:meta';
 .entity-table-root {
   min-width: 280px; /*not to scroll pagination row*/
 
-  @import "EntityTable";
-
+  @include meta.load-css('EntityTable');
 }

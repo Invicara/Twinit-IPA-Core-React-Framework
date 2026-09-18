@@ -2,22 +2,23 @@
 title: Top-Level User Configuration
 sidebar_position: 700
 ---
+
 This topic describes top-level user configurations.
 
-|Configuraion|Description|
-|------------|-----------|
-|[`pages`](#pages)|Specifies which pages display in the left navigation bar.|
-|`handlers`|Specifies the configuration options needed for the application to display the page.|
-|[`onConfigLoad`](#onconfigload)|Loads and executes scripts when the User Config is loaded into the application.|
-|[`entitySelectConfig`](#entityselectconfig)|Defines the controls to be used across all pages for searching each entity type.|
-|[`selectBy`](#selectby)|Specifies a set of controls that can be used to query data on the backend.|
-|[`<<TEXT_SEARCH>>`](#text_search)|Allows quick searching of indexed fields of entity objects.|
-|[`<<ADVANCED_SEARCH>>`](#advanced_search)|Allows searching on the specified properties.|
-|[`<<SCRIPTED_SELECTS>>>`](#scripted_selects)|Displays one or more drop-down lists populated with data from a script.|
-|[`<<SCRIPTED_LINKED_SELECTS>>`](#scripted_linked_selects)|Displays a set of drop-down lists where the values of the next drop-down list |re determined based on the selection in the current or prior drop-down list(s).
-|[`<<TREE_SEARCH>>`](#tree_search)|Displays a tree with as many levels as specified, grouping and subgrouping by |ifferent entity properties.
-|[`settings`](#settings)|Controls project-wide top-level flags for features.|
-|[`entityDataConfig`](#entitydataconfig)|Defines the extended data to be used by each entity type.|
+| Configuraion                                              | Description                                                                         |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [`pages`](#pages)                                         | Specifies which pages display in the left navigation bar.                           |
+| `handlers`                                                | Specifies the configuration options needed for the application to display the page. |
+| [`onConfigLoad`](#onconfigload)                           | Loads and executes scripts when the User Config is loaded into the application.     |
+| [`entitySelectConfig`](#entityselectconfig)               | Defines the controls to be used across all pages for searching each entity type.    |
+| [`selectBy`](#selectby)                                   | Specifies a set of controls that can be used to query data on the backend.          |
+| [`<<TEXT_SEARCH>>`](#text_search)                         | Allows quick searching of indexed fields of entity objects.                         |
+| [`<<ADVANCED_SEARCH>>`](#advanced_search)                 | Allows searching on the specified properties.                                       |
+| [`<<SCRIPTED_SELECTS>>>`](#scripted_selects)              | Displays one or more drop-down lists populated with data from a script.             |
+| [`<<SCRIPTED_LINKED_SELECTS>>`](#scripted_linked_selects) | Displays a set of drop-down lists where the values of the next drop-down list       | re determined based on the selection in the current or prior drop-down list(s). |
+| [`<<TREE_SEARCH>>`](#tree_search)                         | Displays a tree with as many levels as specified, grouping and subgrouping by       | ifferent entity properties.                                                     |
+| [`settings`](#settings)                                   | Controls project-wide top-level flags for features.                                 |
+| [`entityDataConfig`](#entitydataconfig)                   | Defines the extended data to be used by each entity type.                           |
 
 ## `pages`
 
@@ -86,6 +87,7 @@ Optionally, the pages on the left navigation bar can appear grouped, using the f
   }
 },
 ```
+
 ---
 
 ## `handlers`
@@ -178,7 +180,7 @@ entitySelectConfig: {
       query: "<<TEXT_SEARCH>>",
       display: "Quick Search"},
     {
-      id: 'assetcat', 
+      id: 'assetcat',
       query: "<<SCRIPTED_LINKED_SELECTS>>",
       display: "Category",
       selects: [
@@ -199,7 +201,7 @@ entitySelectConfig: {
       id: 'spacefoorty',
       query: "<<SCRIPTED_SELECTS>>",
       display: "Floor or Type",
-      script: "getSpacePropSelects", 
+      script: "getSpacePropSelects",
       multi: true,
       op: '$or',
       default: true
@@ -351,7 +353,7 @@ You may have multiple `<<SCRIPTED_SELECTS>>` in the same array of `selectBy`s, w
     {
       display: "Document Type",
       propName:"fileAttributes.documentType"
-    }, 
+    },
   ]
 }
 ```
@@ -404,7 +406,7 @@ Since the selections are dependent on the selections in drop-down lists prior, a
     {
       display: "Manufacturer",
       script:"getManufacturers"
-    }, 
+    },
     {
       display: "Model",
       script: "getModels", isMulti: true
@@ -486,12 +488,14 @@ The script for each drop-down list must return an array of values to display. Va
 ```jsx
 settings: {
     show3dModel: false
-    appImage: { 
+    appImage: {
         url: "url to an image online",
         filename: "name fo a file uploaded to project"
     },
     noSideBar: true,
-    noTitleBar: true
+    noTitleBar: true,
+    headerComponent: "components/GlobalHeader",
+    sidebarComponent: "components/GlobalNav"
 }
 ```
 
@@ -501,6 +505,8 @@ settings: {
 - `appImage` (optional): changes the logo in the top-left corner of the client. This configuration provides a URL or the name of an image file uploaded to the project.
 - `noSideBar` (optional): Hides the side navigation bar if true. Dfeault: false. Your pages will need to provide their own navigation components.
 - `noTitleBar` (optional): Hides the top title bar if true. Dfeault: false. Your pages will need to provide their own components to switch projects and user configs, and sign out.
+- `headerComponent` (optional): The header bar to render, named as a path under `app/ipaCore` with `.jsx` appended. Use it to take the header the framework ships, to extend it, or to render your own. See [Custom side Navigation and Header Bars](./custom-bar.md).
+- `sidebarComponent` (optional): The side navigation to render, named the same way. It is chosen independently of `headerComponent`, so an application can replace one and keep the other. See [Custom side Navigation and Header Bars](./custom-bar.md).
 
 ## `entityDataConfig`
 
@@ -657,7 +663,7 @@ settings: {
         }
       }
     }
-  },          
+  },
   },
   "Space": {
     "Properties": {

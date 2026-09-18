@@ -1,13 +1,12 @@
-import React, { useMemo, useEffect, useCallback, useRef } from "react";
-import clsx from "clsx";
-import EntityActionsPanel from "./EntityActionsPanel";
-import _ from "lodash";
+import React, { useMemo, useEffect, useCallback, useRef } from 'react';
+import clsx from 'clsx';
+import EntityActionsPanel from './EntityActionsPanel';
+import _ from 'lodash';
 
-import "./EntityTable.scss";
-import { RoundCheckbox, useChecked } from "../../IpaControls/Checkboxes";
-import { isValidUrl } from "../../IpaUtils/helpers";
+import './EntityTable.scss';
+import { RoundCheckbox, useChecked } from '../../IpaControls/Checkboxes';
+import { isValidUrl } from '../../IpaUtils/helpers';
 import {
-  InputLabel,
   Table,
   TableBody,
   TableCell,
@@ -16,25 +15,25 @@ import {
   TableRow,
   Toolbar,
   Typography,
-} from "@mui/material";
-import useSortEntities, { usePaginateEntities } from "./sortEntities";
-import { EntityTableHead } from "./EntityTableHead";
-import PropTypes from "prop-types";
-import produce from "immer";
+} from '@mui/material';
+import useSortEntities, { usePaginateEntities } from './sortEntities';
+import { EntityTableHead } from './EntityTableHead';
+import PropTypes from 'prop-types';
+import produce from 'immer';
 
 const visuallyHidden = {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: '1px',
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    whiteSpace: 'nowrap',
-    width: '1px',
-}
+  border: 0,
+  clip: 'rect(0 0 0 0)',
+  height: '1px',
+  margin: -1,
+  overflow: 'hidden',
+  padding: 0,
+  position: 'absolute',
+  whiteSpace: 'nowrap',
+  width: '1px',
+};
 
-const EntityTableToolbar = (props) => {
+const EntityTableToolbar = props => {
   const { numSelected, entityPlural, entitySingular } = props;
 
   return (
@@ -56,7 +55,7 @@ EntityTableToolbar.propTypes = {
   entitySingular: PropTypes.string.isRequired,
 };
 
-const EntityTableActionsCell = (props) => {
+const EntityTableActionsCell = props => {
   const { actions, entity, entityType, context } = props;
 
   const rowCellActions = useMemo(
@@ -67,7 +66,7 @@ const EntityTableActionsCell = (props) => {
           acc[key] = val;
           return acc;
         }, {}),
-    [actions],
+    [actions]
   );
 
   return (
@@ -80,53 +79,6 @@ const EntityTableActionsCell = (props) => {
   );
 };
 
-const EntityTableVersionsCell = ({
-  actions,
-  entity,
-  versions,
-  accessors,
-  entityType,
-  context,
-  onSelectedVersionChanged,
-}) => {
-  const { currentVersionAccessor = "_tipVersion" } = accessors || {};
-
-  const rowCellActions = useMemo(
-    () =>
-      Object.entries(actions)
-        .filter(([key, a]) => a.showOnRowCell)
-        .reduce(function (acc, [key, val], i) {
-          acc[key] = val;
-          return acc;
-        }, {}),
-    [actions],
-  );
-
-  const handleChange = (event) => {
-    onSelectedVersionChanged(event.target.value, entity, versions);
-  };
-
-  return (
-    <>
-      <InputLabel id="demo-simple-select-standard-label">Version</InputLabel>
-      <Select
-        labelId="demo-simple-select-standard-label"
-        id="demo-simple-select-standard"
-        value={age}
-        onChange={handleChange}
-        label="Age"
-      >
-        <MenuItem value="">
-          <em>None</em>
-        </MenuItem>
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
-      </Select>
-    </>
-  );
-};
-
 export const EntityTableContainer = ({
   config,
   actions,
@@ -134,10 +86,10 @@ export const EntityTableContainer = ({
   context,
   entities,
   selectedEntities,
-  entityPlural = "Entities",
-  entitySingular = "Entity",
+  entityPlural = 'Entities',
+  entitySingular = 'Entity',
   initialSort,
-  dense = "false",
+  dense = 'false',
   onDetail,
   onChange,
   onSortChange,
@@ -148,35 +100,36 @@ export const EntityTableContainer = ({
 
   let checkableEntities = useMemo(
     () =>
-      entities.map((entity) => {
+      entities.map(entity => {
         let checked =
           !_.isEmpty(selectedEntities) &&
-          selectedEntities.findIndex(
-            (selectedEntity) => entity._id === selectedEntity._id,
-          ) !== -1;
+          selectedEntities.findIndex(selectedEntity => entity._id === selectedEntity._id) !== -1;
         return { ...entity, checked };
       }),
-    [entities, selectedEntities],
+    [entities, selectedEntities]
   );
 
   const checkCallback = useCallback(
-    (entity) => {
-      let newEntities = checkableEntities.map((e) => {
+    entity => {
+      let newEntities = checkableEntities.map(e => {
         return e._id === entity._id ? { ...e, checked: !entity.checked } : e;
       });
       onChange?.(newEntities);
     },
-    [entities, selectedEntities],
+    [entities, selectedEntities]
   );
 
-  const isAllChecked = checkableEntities.every((e) => e.checked);
+  const isAllChecked = checkableEntities.every(e => e.checked);
 
   const allCheckCallback = useCallback(() => {
-    let newEntities = entities.map((e) => ({ ...e, checked: !isAllChecked }));
+    let newEntities = entities.map(e => ({ ...e, checked: !isAllChecked }));
     onChange?.(newEntities);
   }, [entities, selectedEntities]);
 
   //If the selectedEntities props is used, we assume a controlled behaviour, uncontrolled otherwise
+  // Called unconditionally: this used to sit in the else branch below,
+  // which changed hook order whenever selectedEntities changed.
+  const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
   let allChecked, handleCheck, handleAllCheck, entityInstances;
   if (selectedEntities) {
     allChecked = isAllChecked;
@@ -184,7 +137,6 @@ export const EntityTableContainer = ({
     handleAllCheck = allCheckCallback;
     entityInstances = checkableEntities;
   } else {
-    const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
     allChecked = checkedObject.allChecked;
     handleCheck = checkedObject.handleCheck;
     handleAllCheck = checkedObject.handleAllCheck;
@@ -193,7 +145,7 @@ export const EntityTableContainer = ({
   const { sortEntitiesBy, currentSort: currentSort } = useSortEntities(
     entitySingular,
     onSortChange,
-    initialSort,
+    initialSort
   );
 
   const entityType = useMemo(() => {
@@ -205,19 +157,17 @@ export const EntityTableContainer = ({
 
   const columns = useMemo(
     () =>
-      produce(config.columns, (columns) => {
-        const rowCellActions = Object.entries(actions).filter(
-          ([key, a]) => a.showOnRowCell,
-        );
+      produce(config.columns, columns => {
+        const rowCellActions = Object.entries(actions).filter(([key, a]) => a.showOnRowCell);
         if (rowCellActions.length > 0) {
           columns.push({
-            name: "_row_actions",
+            name: '_row_actions',
             //"accessor" : "",
-            type: "actions",
+            type: 'actions',
           });
         }
       }),
-    [config.columns, actions],
+    [config.columns, actions]
   );
 
   const rowCellActions = useMemo(() => {
@@ -228,22 +178,21 @@ export const EntityTableContainer = ({
           ...map,
           [arrayOfKeyValue[0]]: { ...arrayOfKeyValue[1] },
         }),
-        {},
+        {}
       );
-    return produce(rowActionsMap, (map) => {
+    return produce(rowActionsMap, map => {
       Object.entries(map).forEach(([key, a]) => {
-        a.icon = a.icon + " inv-icon__masked";
+        a.icon = a.icon + ' inv-icon__masked';
       });
     });
   }, [actions]);
 
   const buildTableCell = useCallback(
-    (instance) => (col, i) => {
+    instance => (col, i) => {
       const value = _.get(instance, col.accessor);
-      let dispValue =
-        value && typeof value === "string" ? value : value ? value.val : null;
+      let dispValue = value && typeof value === 'string' ? value : value ? value.val : null;
       dispValue = isValidUrl(dispValue) ? (
-        <a href={dispValue} target="_blank">
+        <a href={dispValue} target="_blank" rel="noreferrer">
           {dispValue}
         </a>
       ) : (
@@ -256,11 +205,11 @@ export const EntityTableContainer = ({
       return (
         <TableCell
           className={clsx({
-            "content-column": true,
-            "entity-actions-cell": col.type == "actions",
-            " first": first,
-            " sticky": first,
-            " sticky sticky-end": lastColumn && config.lastColumnSticky,
+            'content-column': true,
+            'entity-actions-cell': col.type == 'actions',
+            ' first': first,
+            ' sticky': first,
+            ' sticky sticky-end': lastColumn && config.lastColumnSticky,
           })}
           {...(first && { onClick: () => onDetail?.(instance) })}
           component="td"
@@ -270,7 +219,7 @@ export const EntityTableContainer = ({
           key={i + 1}
         >
           <div className="text-nowrap text-truncate">
-            {col.type == "actions" ? (
+            {col.type == 'actions' ? (
               <EntityTableActionsCell
                 actions={rowCellActions}
                 entity={[instance]}
@@ -284,7 +233,7 @@ export const EntityTableContainer = ({
         </TableCell>
       );
     },
-    [onDetail, entityType, context, actions],
+    [onDetail, entityType, context, actions]
   );
 
   const initialPagination = {
@@ -296,11 +245,11 @@ export const EntityTableContainer = ({
   const { paginateTableBy, page, rowsPerPage, count } = usePaginateEntities(
     initialPagination,
     onPageChange,
-    onRowsPerPageChange,
+    onRowsPerPageChange
   );
 
-  const generateStickyColumnRecalculationFn = (wait) => {
-    const sumPreviousSiblingsWidth = (elem) => {
+  const generateStickyColumnRecalculationFn = wait => {
+    const sumPreviousSiblingsWidth = elem => {
       let sum = elem.getBoundingClientRect().width;
       if (elem.previousElementSibling) {
         sum += sumPreviousSiblingsWidth(elem.previousElementSibling);
@@ -311,16 +260,16 @@ export const EntityTableContainer = ({
       if (!tableRef.current) {
         return;
       }
-      console.log("recalculating left positions");
+      console.log('recalculating left positions');
       const selectedNodes = tableRef.current.querySelectorAll(
-        "thead tr th.sticky:not(.sticky-end), tbody tr td.sticky:not(.sticky-end)",
+        'thead tr th.sticky:not(.sticky-end), tbody tr td.sticky:not(.sticky-end)'
       );
-      Array.from(selectedNodes).forEach((s) => {
+      Array.from(selectedNodes).forEach(s => {
         let left = 0;
         if (s.previousElementSibling) {
           left = sumPreviousSiblingsWidth(s.previousElementSibling);
         }
-        s.style.left = left + "px";
+        s.style.left = left + 'px';
       });
     };
     return _.debounce(calculateStickyColumnPositions, wait || 100);
@@ -340,9 +289,9 @@ export const EntityTableContainer = ({
     //apply left style to sticky columns on RESIZE EVENT
     //on resize use longer debounce
     const onEachResize = generateStickyColumnRecalculationFn(1000);
-    window.addEventListener("resize", onEachResize);
+    window.addEventListener('resize', onEachResize);
     return () => {
-      window.removeEventListener("resize", onEachResize);
+      window.removeEventListener('resize', onEachResize);
       onEachResize.cancel();
     };
   }, []);
@@ -351,7 +300,7 @@ export const EntityTableContainer = ({
     paginateTableBy({ offset: newPage * rowsPerPage });
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = event => {
     paginateTableBy({ pageSize: parseInt(event.target.value, 10) });
   };
 
@@ -360,8 +309,8 @@ export const EntityTableContainer = ({
   const isLastPage = Math.ceil(count / rowsPerPage) - 1 == page;
 
   const actionableEntities = useMemo(
-    () => entityInstances.filter((inst) => inst.checked),
-    [entityInstances],
+    () => entityInstances.filter(inst => inst.checked),
+    [entityInstances]
   );
 
   return (
@@ -388,8 +337,8 @@ export const EntityTableContainer = ({
           ref={tableRef}
           sx={{ minWidth: 280 }}
           aria-labelledby="tableTitle"
-          size={dense ? "small" : "medium"}
-          className={"entity-table"}
+          size={dense ? 'small' : 'medium'}
+          className={'entity-table'}
         >
           <EntityTableHead
             allChecked={allChecked}
@@ -401,11 +350,7 @@ export const EntityTableContainer = ({
             sortEntitiesBy={sortEntitiesBy}
           />
           <TableBody>
-            {_.orderBy(
-              entityInstances,
-              currentSort.valueAccessor,
-              currentSort.order,
-            )
+            {_.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order)
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((instance, index) => {
                 const isItemSelected = instance.checked;
@@ -413,7 +358,7 @@ export const EntityTableContainer = ({
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => _.noop(event, instance)}
+                    onClick={event => _.noop(event, instance)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
@@ -422,15 +367,8 @@ export const EntityTableContainer = ({
                     className="content-row"
                   >
                     {config.multiselect && (
-                      <TableCell
-                        padding="checkbox"
-                        className="content-column checkbox"
-                        key={0}
-                      >
-                        <RoundCheckbox
-                          checked={instance.checked}
-                          onChange={handleChange}
-                        />
+                      <TableCell padding="checkbox" className="content-column checkbox" key={0}>
+                        <RoundCheckbox checked={instance.checked} onChange={handleChange} />
                       </TableCell>
                     )}
                     {columns.map(buildTableCell(instance, config))}

@@ -4,21 +4,19 @@ import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 
 class IfefTab extends React.Component {
-
-
   render() {
-    var icon = this.props.icon ? <i className={'icon ion-' + this.props.icon}>{this.props.children}</i> : null;
-    var classes = classnames(
-      {'tab-item': true,
-       'active' : this.props.active},
+    let icon = this.props.icon ? (
+      <i className={'icon ion-' + this.props.icon}>{this.props.children}</i>
+    ) : null;
+    let classes = classnames(
+      { 'tab-item': true, active: this.props.active },
       this.props.customClasses
     );
     return (
-        <Link to={this.props.to} className={ classes } activeclassname="active" >
-          { icon }
-          { this.props.label }
-        </Link>
-
+      <Link to={this.props.to} className={classes} activeclassname="active">
+        {icon}
+        {this.props.label}
+      </Link>
     );
   }
 }
@@ -28,7 +26,7 @@ IfefTab.propTypes = {
   active: PropTypes.bool,
   label: PropTypes.string,
   icon: PropTypes.string,
-  to: PropTypes.string.isRequired
+  to: PropTypes.string.isRequired,
 };
 
 IfefTab.defaultProps = {
@@ -36,7 +34,7 @@ IfefTab.defaultProps = {
   active: false,
   label: null,
   icon: null,
-  to: null
+  to: null,
 };
 
 export default IfefTab;

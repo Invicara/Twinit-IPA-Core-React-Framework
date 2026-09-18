@@ -1,6 +1,5 @@
 $light-grey: #6d6e70;
 
-
 .project-picker-modal-dialog-content {
   padding: 36px 44px;
   width: 552px;
@@ -9,7 +8,7 @@ $light-grey: #6d6e70;
     background-color: var(--neutral-0);
     padding-bottom: 8px;
   }
-  
+
   .dialog-title {
     margin-top: 32px;
     margin-bottom: 0px;
@@ -18,7 +17,7 @@ $light-grey: #6d6e70;
   .dialog-title__no-close-button {
     margin-top: 0px;
   }
-  
+
   .dialog-close-button {
     align-self: flex-start;
     svg {
@@ -36,8 +35,6 @@ $light-grey: #6d6e70;
     max-height: none;
   }
 }
-
-
 
 .project-picker-modal {
   /* ipa-ui SingleSelect defaults root + .container to width: fit-content */
@@ -177,8 +174,6 @@ $light-grey: #6d6e70;
     width: 20px;
   }
 
-
-
   .custom-single-class .select__control:hover {
     border-color: var(--app-accent-color);
     box-shadow: 0 0 0 0px var(--app-accent-color);
@@ -250,7 +245,9 @@ $light-grey: #6d6e70;
   color: #f3f3f3 !important;
   background-color: #3e3e3e !important;
   border-radius: 2px;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.16), 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 0 1px rgba(0, 0, 0, 0.16),
+    0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .project-picker-modal-field-tooltip-arrow.MuiTooltip-arrow {

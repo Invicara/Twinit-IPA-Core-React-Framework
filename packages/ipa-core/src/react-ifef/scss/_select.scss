@@ -1,3 +1,4 @@
+@use "sass:color";
 
 /**
  * Select
@@ -66,7 +67,7 @@
       color:$item-stable-text;
     }
     &:after, .input-label{
-      color:darken($item-stable-border,30%);
+      color:color.adjust($item-stable-border, $lightness: -30%);
     }
   }
   &.item-positive {

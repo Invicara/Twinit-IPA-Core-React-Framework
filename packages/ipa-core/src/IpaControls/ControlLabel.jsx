@@ -1,11 +1,11 @@
-import { bool, object, string } from "prop-types";
-import React from "react";
-import "./ControlLabel.scss";
+import { bool, object, string } from 'prop-types';
+import React from 'react';
+import './ControlLabel.scss';
 
-const ControlLabel = (props) => (
+const ControlLabel = props => (
   <label
     style={props.style}
-    className={`control-label ${props.className} ${props.required ? "required" : ""}`}
+    className={`control-label ${props.className} ${props.required ? 'required' : ''}`}
   >
     {props.text}
   </label>

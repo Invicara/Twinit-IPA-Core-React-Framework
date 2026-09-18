@@ -1,1 +1,1 @@
-export const distinct = (elements) => [...new Set(elements)]
+export const distinct = elements => [...new Set(elements)];

@@ -1,7 +1,6 @@
 const DEFAULT_SWIPE_DISTANCE = 100;
 
-
-const defineSwipe = (config={}) => {
+const defineSwipe = (config = {}) => {
   // TODO: add swipe velocity back in
   const swipeDistance = config.swipeDistance || DEFAULT_SWIPE_DISTANCE;
 
@@ -12,7 +11,7 @@ const defineSwipe = (config={}) => {
       }
     },
     onSwipeRight: (current, initial, callback) => {
-      if ((current.x - initial.x) >= swipeDistance) {
+      if (current.x - initial.x >= swipeDistance) {
         callback();
       }
     },
@@ -22,7 +21,7 @@ const defineSwipe = (config={}) => {
       }
     },
     onSwipeDown: (current, initial, callback) => {
-      if ((current.y - initial.y) >= swipeDistance) {
+      if (current.y - initial.y >= swipeDistance) {
         callback();
       }
     },

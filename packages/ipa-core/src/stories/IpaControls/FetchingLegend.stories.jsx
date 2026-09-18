@@ -1,22 +1,22 @@
-import { FetchingLegend } from "../../IpaControls/FetchingLegend";
+import { FetchingLegend } from '../../IpaControls/FetchingLegend';
 
 export default {
-  title: "Controls/FetchingLegend",
+  title: 'Controls/FetchingLegend',
   component: FetchingLegend,
 };
 
-const Template = (args) => {
+const Template = args => {
   return <FetchingLegend {...args} />;
 };
 
 export const Default = Template.bind({});
 
 Default.args = {
-  legend: "Fetching data...",
+  legend: 'Fetching data...',
 };
 
 Default.argTypes = {
   legend: {
-    description: "Text describing data being fetched",
+    description: 'Text describing data being fetched',
   },
 };

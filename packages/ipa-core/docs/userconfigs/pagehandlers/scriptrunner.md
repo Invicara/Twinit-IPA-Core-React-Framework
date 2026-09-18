@@ -15,6 +15,6 @@ This view is designed to allow the user to run pre-defined scripts, and optional
 
 ```jsx
 config: {
-  allowScriptInput: true
+  allowScriptInput: true;
 }
 ```

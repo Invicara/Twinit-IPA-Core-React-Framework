@@ -2,20 +2,24 @@
 title: Common issues with Running DT
 sidebar_position: 500
 ---
+
 ## Authentication token errors
+
 ![](./token_error.png)
-When trying to install any of the Twinit libraries, you may encounter this error or an error similar to it, in your terminal. This could be caused by a number of factors. 
+When trying to install any of the Twinit libraries, you may encounter this error or an error similar to it, in your terminal. This could be caused by a number of factors.
 
 #### Generating the Access and Secret keys
-It is important to note that it is a common mistake to use your Sandbox user account to generate your access keys. Sandbox credentials cannot be used to install Twinit npm libraries and will result in an error. The correct place to generate these keys is linked here: https://api.invicara.com/passportsvc/api/. 
+
+It is important to note that it is a common mistake to use your Sandbox user account to generate your access keys. Sandbox credentials cannot be used to install Twinit npm libraries and will result in an error. The correct place to generate these keys is linked here: https://api.invicara.com/passportsvc/api/.
 A guide on how to generate these keys can be found here: [twinit.dev](https://twinit.dev/docs/apis/rest/authentication/user-access-keys)
 
 #### Setting your .npmrc file
- The `.npmrc` file should be located in the same folder as your `package.json` file. Your `.npmrc` file should be configured as shown in the example below.
+
+The `.npmrc` file should be located in the same folder as your `package.json` file. Your `.npmrc` file should be configured as shown in the example below.
 
 ![](./npmrc_file.png)
 
-Check that your DTPLATFORM environment variables are set correctly. If your DTPLATFORM environment variables are not set correctly, you may encounter the error shown in the image below. Instructions on how to set your environment variables, which vary by operating system, can be found on [twinit.dev](https://twinit.dev/docs/apis/javascript/npm-install/). 
+Check that your DTPLATFORM environment variables are set correctly. If your DTPLATFORM environment variables are not set correctly, you may encounter the error shown in the image below. Instructions on how to set your environment variables, which vary by operating system, can be found on [twinit.dev](https://twinit.dev/docs/apis/javascript/npm-install/).
 ![](./incorrect_token.png)
 
 #### Checking Twinit package path
@@ -32,12 +36,10 @@ To check if this is the case, open your package-lock.json file. Once opened, sea
 The solutions above for authentication token errors are expanded upon in the following link: [community.digitaltwin-factory](https://community.digitaltwin-factory.com/knowledgebase-5wzpkylt/post/authentication-errors-installing-twinit-npm-libraries-ySEzOpPtA3uKVfw)
 :::
 
-
 ## Cannot GET /
 
 ![](./incorrect_url.png)
 When trying to connect to the DigitalTwin app via localhost, you may encounter into the above error. Please ensure you use the correct URL address, which is: http://localhost:8083/digitaltwin/.
-
 
 ## Invalid App ID
 
@@ -61,8 +63,8 @@ The above error can occur when a user is using a Windows-operated machine while 
 
 On newly created projects, it is common to encounter the error shown in the above image when trying to use the Quick Search text input feature while searching for Assets, Spaces , or Collections. To resolve this, you can run the following scripts found in the Project's `projectSetup.js` file, which is accessible via the Twinit VsCode extension.
 
-|Entity|Script Name|
-|---|---|
-|Assets| `createOrRecreateAssetIndex`|
-|Spaces| `createOrRecreateSpacesIndex`|
-|Collecitons| `createOrRecreateCollectionsCollection`|
+| Entity      | Script Name                             |
+| ----------- | --------------------------------------- |
+| Assets      | `createOrRecreateAssetIndex`            |
+| Spaces      | `createOrRecreateSpacesIndex`           |
+| Collecitons | `createOrRecreateCollectionsCollection` |

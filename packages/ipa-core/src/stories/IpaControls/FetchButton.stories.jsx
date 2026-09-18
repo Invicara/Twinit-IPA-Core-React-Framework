@@ -1,17 +1,17 @@
-import { FetchButton } from "../../IpaControls/FetchButton";
+import { FetchButton } from '../../IpaControls/FetchButton';
 
 export default {
-  title: "Controls/FetchButton",
+  title: 'Controls/FetchButton',
   component: FetchButton,
-  argTypes: { onClick: { action: "onClick" } },
+  argTypes: { onClick: { action: 'onClick' } },
 };
 
-const Template = (args) => {
+const Template = args => {
   return <FetchButton {...args} />;
 };
 
 export const Default = Template.bind({});
 
 Default.args = {
-  children: "Fetch",
+  children: 'Fetch',
 };

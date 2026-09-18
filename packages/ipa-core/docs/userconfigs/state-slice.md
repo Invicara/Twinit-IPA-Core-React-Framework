@@ -8,36 +8,37 @@ When loading your own state slice into ipa-core, the slice file must be added in
 We will use an example of the Modal slice to illustrate how to configure a state slice in Redux.
 
 This file was added into `packages/ipa-core/src/redux/slices`
-```jsx 
-import { createSlice } from "@reduxjs/toolkit";
+
+```jsx
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    component: undefined,
-    props: undefined,
-    open: false,
-}
+  component: undefined,
+  props: undefined,
+  open: false,
+};
 
 const slice = createSlice({
-    name: 'modal',
-    initialState,
-    reducers: {
-        setModal: (state, {payload: {component, props, open}}) => {
-            state.component = component
-            state.props = props
-            if(_.isBoolean(open)) {
-                state.open = open
-            }
-        },
-        setOpen: (state, {payload}) => {
-            state.open = payload;
-        },
-        destroy: (state) => {
-            state.component = initialState.component;
-            state.props = initialState.props;
-            state.open = initialState.open;
-        },
-    }
-})
+  name: 'modal',
+  initialState,
+  reducers: {
+    setModal: (state, { payload: { component, props, open } }) => {
+      state.component = component;
+      state.props = props;
+      if (_.isBoolean(open)) {
+        state.open = open;
+      }
+    },
+    setOpen: (state, { payload }) => {
+      state.open = payload;
+    },
+    destroy: state => {
+      state.component = initialState.component;
+      state.props = initialState.props;
+      state.open = initialState.open;
+    },
+  },
+});
 
 export default slice.reducer;
 
@@ -62,10 +63,9 @@ export default redux
 We also add to add it to our frameworkReducers object in `store.js` located at: `packages/ipa-core/src/redux`
 
 ```jsx
-import modal from './slices/modal'
+import modal from './slices/modal';
 
 const frameworkReducers = {
-    ...
-    modal
-}
+  ...modal,
+};
 ```

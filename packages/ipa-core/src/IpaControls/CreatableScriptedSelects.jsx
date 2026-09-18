@@ -1,12 +1,12 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import Select, { highlightOptions } from "./Select";
-import clsx from "clsx";
-import _ from "lodash";
-import { usePrevious } from "../IpaUtils/usePrevious";
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import Select, { highlightOptions } from './Select';
+import clsx from 'clsx';
+import _ from 'lodash';
+import { usePrevious } from '../IpaUtils/usePrevious';
 
-import ScriptCache from "../IpaUtils/script-cache";
-import { loadPlainInitialValueWithScriptedSelectFormat } from "../IpaUtils/ScriptedSelectsHelpers";
-import { asSelectOptions } from "../IpaUtils/controls";
+import ScriptCache from '../IpaUtils/script-cache';
+import { loadPlainInitialValueWithScriptedSelectFormat } from '../IpaUtils/ScriptedSelectsHelpers';
+import { asSelectOptions } from '../IpaUtils/controls';
 
 export const CreatableScriptedSelects = ({
   currentValue,
@@ -23,34 +23,31 @@ export const CreatableScriptedSelects = ({
   isClearable = true,
   reloadTrigger,
   isTest = false,
-  selectValues
+  selectValues,
 }) => {
-
   const { current: debouncedScriptExecutor } = useRef(
-    _.debounce(ScriptCache.runScript, 1000, { leading: true, trailing: true }),
+    _.debounce(ScriptCache.runScript, 1000, { leading: true, trailing: true })
   );
   const prevFilterInfo = usePrevious(filterInfo);
 
   const value = currentValue || {};
   const [selects, setSelects] = useState(selectValues);
 
-  const fetchOptions = async (filterInfo) => {
+  const fetchOptions = async filterInfo => {
     // If component is called from the FileTable, use the selectValue provided from configReader.jsx.
     if (selectValues) {
-      const resKeys = Object.keys(selectValues)
-      if(resKeys.length >= 1) {
+      const resKeys = Object.keys(selectValues);
+      if (resKeys.length >= 1) {
         loadPlainInitialValueWithScriptedSelectFormat(onChange, value, selectValues);
-      } 
+      }
     } else {
       const selectOptions = filterInfo
-      ? await debouncedScriptExecutor(script, { filterInfo: filterInfo })
-      : await ScriptCache.runScript(script);
-    setSelects(
-      _.mapValues(selectOptions, (options) =>
-        options?.sort((a, b) => a.localeCompare(b)),
-      ),
-    );
-    loadPlainInitialValueWithScriptedSelectFormat(onChange, value, selectOptions);
+        ? await debouncedScriptExecutor(script, { filterInfo: filterInfo })
+        : await ScriptCache.runScript(script);
+      setSelects(
+        _.mapValues(selectOptions, options => options?.sort((a, b) => a.localeCompare(b)))
+      );
+      loadPlainInitialValueWithScriptedSelectFormat(onChange, value, selectOptions);
     }
   };
 
@@ -63,8 +60,7 @@ export const CreatableScriptedSelects = ({
   }, [reloadTrigger]);
 
   useEffect(() => {
-    if (filterInfo && !_.isEqual(filterInfo, prevFilterInfo))
-      fetchOptions(filterInfo);
+    if (filterInfo && !_.isEqual(filterInfo, prevFilterInfo)) fetchOptions(filterInfo);
   }, [filterInfo]);
 
   const handleChange = (selectId, selected) => {
@@ -82,22 +78,16 @@ export const CreatableScriptedSelects = ({
         setSelects(tempSelects);
       }
 
-      selectedValues = selected
-        ? (multi ? selected : [selected]).map((opt) => opt.value)
-        : [];
+      selectedValues = selected ? (multi ? selected : [selected]).map(opt => opt.value) : [];
       onChange({ ...value, [selectId]: selectedValues });
     }
   };
 
   return _.isEmpty(selects) ? (
-    "Loading controls...\n"
+    'Loading controls...\n'
   ) : (
     <div
-      className={clsx(
-        "scripted-selects-control",
-        compact && "compact",
-        horizontal && "horizontal",
-      )}
+      className={clsx('scripted-selects-control', compact && 'compact', horizontal && 'horizontal')}
     >
       {_.values(
         _.mapValues(selects, (options, selectId) => {
@@ -110,7 +100,7 @@ export const CreatableScriptedSelects = ({
                 labelProps={compact ? undefined : { text: selectId }}
                 isMulti={multi}
                 value={asSelectOptions(selectValue)}
-                onChange={(selected) => handleChange(selectId, selected)}
+                onChange={selected => handleChange(selectId, selected)}
                 options={selectOptions}
                 closeMenuOnSelect={!multi}
                 styles={selectOverrideStyles}
@@ -123,7 +113,7 @@ export const CreatableScriptedSelects = ({
               />
             </Fragment>
           );
-        }),
+        })
       )}
     </div>
   );

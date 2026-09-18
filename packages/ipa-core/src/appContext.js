@@ -1,9 +1,11 @@
-import React from "react";
+import React from 'react';
 
 export const AppContext = React.createContext();
 
-export const withAppContext = (Component) => (props) => (<AppContext.Consumer>
-    {(contextProps) => {
-        return <Component {...props} {...contextProps}/>}
-    }
-</AppContext.Consumer>);
+export const withAppContext = Component => props => (
+  <AppContext.Consumer>
+    {contextProps => {
+      return <Component {...props} {...contextProps} />;
+    }}
+  </AppContext.Consumer>
+);

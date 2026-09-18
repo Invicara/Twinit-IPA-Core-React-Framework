@@ -1,324 +1,406 @@
-import { createSelector, createSlice} from '@reduxjs/toolkit'
-import {IafFile} from "@dtplatform/platform-api";
-import produce from "immer";
-import FileConfigReader from "../../IpaPageComponents/files/configReader";
-import _ from 'lodash'
+import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { IafFile } from '@dtplatform/platform-api';
+import produce from 'immer';
+import FileConfigReader from '../../IpaPageComponents/files/configReader';
+import _ from 'lodash';
 
-import ScriptHelper from "../../IpaUtils/ScriptHelper";
-
+import ScriptHelper from '../../IpaUtils/ScriptHelper';
 
 //Small ADT to keep File blob objects outside the store since they're not serializable
-let fileBlobs = {}
-const addFileBlob  = fileBlob => fileBlobs[fileBlob.name] = fileBlob;
-const clearFileBlobs  = () => fileBlobs = {};
+let fileBlobs = {};
+const addFileBlob = fileBlob => (fileBlobs[fileBlob.name] = fileBlob);
+const clearFileBlobs = () => (fileBlobs = {});
 
 let columnConfig = {};
 
 export const FileStatus = {
-    PENDING:'Pending',
-    PROGRESS: 'In progress',
-    COMPLETE: 'Complete',
-    ERROR: 'Error'
+  PENDING: 'Pending',
+  PROGRESS: 'In progress',
+  COMPLETE: 'Complete',
+  ERROR: 'Error',
 };
 
-const buildFile = (blob, overrideName, initialAttributes = {}, attributeKeys = ['manufacturer', ['dtType', 'dtCategory']]) => {
-    addFileBlob(blob)
-    const fileAttributes = _.fromPairs(attributeKeys.map(attrKey => {
-        if(typeof attrKey === 'string'){
-            return [attrKey, _.isEmpty(initialAttributes[attrKey]) ? '' : initialAttributes[attrKey]]
-        } else if(Array.isArray(attrKey)){
-            const complexValue = _.toPairs(initialAttributes)
-                .filter(([attrName, attrValue]) => _.includes(attrKey, attrName))
-                .map(([attrName, attrValue]) => attrValue)
-            return [attrKey, _.isEmpty(complexValue) ? attrKey.map(()=>'') : complexValue];
-        } else {
-            throw new Error('Invalid attribute key, must be either a string or an array of strings:', attrKey)
-        }
-    }))
-    return {
-        status: FileStatus.PENDING,
-        name: overrideName ? overrideName : blob.name,
-        originalName: blob.name,
-        version: 1, //Optimistically populate version
-        bytesUploaded: 0,
-        fileAttributes,
-    }
+const buildFile = (
+  blob,
+  overrideName,
+  initialAttributes = {},
+  attributeKeys = ['manufacturer', ['dtType', 'dtCategory']]
+) => {
+  addFileBlob(blob);
+  const fileAttributes = _.fromPairs(
+    attributeKeys.map(attrKey => {
+      if (typeof attrKey === 'string') {
+        return [attrKey, _.isEmpty(initialAttributes[attrKey]) ? '' : initialAttributes[attrKey]];
+      } else if (Array.isArray(attrKey)) {
+        const complexValue = _.toPairs(initialAttributes)
+          .filter(([attrName, attrValue]) => _.includes(attrKey, attrName))
+          .map(([attrName, attrValue]) => attrValue);
+        return [attrKey, _.isEmpty(complexValue) ? attrKey.map(() => '') : complexValue];
+      } else {
+        throw new Error(
+          'Invalid attribute key, must be either a string or an array of strings:',
+          attrKey
+        );
+      }
+    })
+  );
+  return {
+    status: FileStatus.PENDING,
+    name: overrideName ? overrideName : blob.name,
+    originalName: blob.name,
+    version: 1, //Optimistically populate version
+    bytesUploaded: 0,
+    fileAttributes,
+  };
 };
 
-export const getBlob = (file) => fileBlobs[file.originalName]
+export const getBlob = file => fileBlobs[file.originalName];
 
 let initialState = {
-    columnConfig: [],
-    toUpload: [],
-    associatedEntities: [],
-    rejected: []
+  columnConfig: [],
+  toUpload: [],
+  associatedEntities: [],
+  rejected: [],
 };
 
 const entitiesSlice = createSlice({
-    name: 'files',
-    initialState,
-    reducers: {
-        addFiles: (state, { payload: newFiles }) => {
-            state.toUpload = state.toUpload.concat(newFiles)
-        },
-        updateFile: (state, { payload: {name,...updates} }) => {
-            const toUpdate = state.toUpload.find(f => f.name === name) //TODO if this gets too slow, use direct access instead of an array
-            _.assign(toUpdate, updates)
-        },
-        updateFileName: (state, { payload: {name, newName} }) => {
-            const toUpdate = state.toUpload.find(f => f.name === name) //TODO if this gets too slow, use direct access instead of an array
-            _.assign(toUpdate, {name: newName})
-        },
-        updateFileAttribute: (state, { payload: {name,...updates}}) => {
-            const toUpdate = state.toUpload.find(f => f.name === name) //TODO if this gets too slow, use direct access instead of an array
-            toUpdate.fileAttributes = _.assign(toUpdate.fileAttributes, updates)
-        },
-        removeAllFiles: (state) => {
-            state.toUpload = []
-        },
-        setAssociatedEntities: (state, { payload: {entities, entityType} }) => {
-            state.associatedEntities = entities.map(produce(e => {e.entityType = entityType}))
-        },
-        setRejectedFiles: (state, { payload: rejectedFiles }) => {
-            state.rejected = rejectedFiles
-        },
-        setColumnConfig: (state, { payload: config }) => {
-            state.columnConfig = config
-        },
+  name: 'files',
+  initialState,
+  reducers: {
+    addFiles: (state, { payload: newFiles }) => {
+      state.toUpload = state.toUpload.concat(newFiles);
     },
+    updateFile: (state, { payload: { name, ...updates } }) => {
+      const toUpdate = state.toUpload.find(f => f.name === name); //TODO if this gets too slow, use direct access instead of an array
+      _.assign(toUpdate, updates);
+    },
+    updateFileName: (state, { payload: { name, newName } }) => {
+      const toUpdate = state.toUpload.find(f => f.name === name); //TODO if this gets too slow, use direct access instead of an array
+      _.assign(toUpdate, { name: newName });
+    },
+    updateFileAttribute: (state, { payload: { name, ...updates } }) => {
+      const toUpdate = state.toUpload.find(f => f.name === name); //TODO if this gets too slow, use direct access instead of an array
+      toUpdate.fileAttributes = _.assign(toUpdate.fileAttributes, updates);
+    },
+    removeAllFiles: state => {
+      state.toUpload = [];
+    },
+    setAssociatedEntities: (state, { payload: { entities, entityType } }) => {
+      state.associatedEntities = entities.map(
+        produce(e => {
+          e.entityType = entityType;
+        })
+      );
+    },
+    setRejectedFiles: (state, { payload: rejectedFiles }) => {
+      state.rejected = rejectedFiles;
+    },
+    setColumnConfig: (state, { payload: config }) => {
+      state.columnConfig = config;
+    },
+  },
 });
 
-const { actions, reducer } = entitiesSlice
-export default reducer
+const { actions, reducer } = entitiesSlice;
+export default reducer;
 
 //Selectors
 
-const getFilesSlice = store => store.files
+const getFilesSlice = store => store.files;
 
 export const getFilesToUpload = createSelector(getFilesSlice, filesSlice =>
-    filesSlice.toUpload.map(f => ({...f, fileBlob: getBlob(f)}))
+  filesSlice.toUpload.map(f => ({ ...f, fileBlob: getBlob(f) }))
 );
 
-export const getAssociatedEntities = createSelector(getFilesSlice, filesSlice => filesSlice.associatedEntities);
+export const getAssociatedEntities = createSelector(
+  getFilesSlice,
+  filesSlice => filesSlice.associatedEntities
+);
 
 export const getRejectedFiles = createSelector(getFilesSlice, filesSlice => filesSlice.rejected);
 
-export const getColumnConfig = createSelector(getFilesSlice, filesSlice => filesSlice.columnConfig.map(name => columnConfig[name]));
+export const getColumnConfig = createSelector(getFilesSlice, filesSlice =>
+  filesSlice.columnConfig.map(name => columnConfig[name])
+);
 
 export const getFilesMetadata = createSelector(getFilesSlice, filesSlice => filesSlice.toUpload);
 
 //Action creators
-export const { addFiles, removeAllFiles, updateFile, updateFileName, setAssociatedEntities, updateFileAttribute, setRejectedFiles, setColumnConfig } = actions;
+export const {
+  addFiles,
+  removeAllFiles,
+  updateFile,
+  updateFileName,
+  setAssociatedEntities,
+  updateFileAttribute,
+  setRejectedFiles,
+  setColumnConfig,
+} = actions;
 
 //Thunks
-export const fetchColumnConfig = (config) => async dispatch => {
-    const displayNames = await ScriptHelper.getScriptVar("iaf_attributeDisplayNames");
-    const columnValues = await Promise.all(config.columns.map(FileConfigReader.buildConfig(displayNames)))
-    columnConfig = columnValues.reduce((cols, col) => ({...cols, [col.name]: col}),{})
-    dispatch(setColumnConfig(columnValues.map(({name}) => name)))
+export const fetchColumnConfig = config => async dispatch => {
+  const displayNames = await ScriptHelper.getScriptVar('iaf_attributeDisplayNames');
+  const columnValues = await Promise.all(
+    config.columns.map(FileConfigReader.buildConfig(displayNames))
+  );
+  columnConfig = columnValues.reduce((cols, col) => ({ ...cols, [col.name]: col }), {});
+  dispatch(setColumnConfig(columnValues.map(({ name }) => name)));
 };
 
-export const addFilesToUpload = (newFileBlobs, container, preProcessScript) => async (dispatch, getState) => {
-    const uploadedFiles = getState().files.toUpload
+export const addFilesToUpload =
+  (newFileBlobs, container, preProcessScript) => async (dispatch, getState) => {
+    const uploadedFiles = getState().files.toUpload;
     const payload = {
-        uploadedFiles,
-      };
-    const {accepted, rejected} = await preProcess(newFileBlobs, preProcessScript, payload)
-    const columnNames = getColumnConfig(getState()).map(({name}) => name);
-    const files = accepted.map(acc => buildFile(newFileBlobs.find(b => b.name === acc.name), acc.overrideName, acc.fileAttributes, columnNames));
-    dispatch(setRejectedFiles(rejected.map(f => ({name: f.name, errorMessage: f?.errorMessage || ""}))));
+      uploadedFiles,
+    };
+    const { accepted, rejected } = await preProcess(newFileBlobs, preProcessScript, payload);
+    const columnNames = getColumnConfig(getState()).map(({ name }) => name);
+    const files = accepted.map(acc =>
+      buildFile(
+        newFileBlobs.find(b => b.name === acc.name),
+        acc.overrideName,
+        acc.fileAttributes,
+        columnNames
+      )
+    );
+    dispatch(
+      setRejectedFiles(rejected.map(f => ({ name: f.name, errorMessage: f?.errorMessage || '' })))
+    );
     await dispatch(addFiles(files));
-    const fileVersions = await Promise.all(files.map(withVersion(container)))
+    const fileVersions = await Promise.all(files.map(withVersion(container)));
     fileVersions.forEach(fv => dispatch(updateFile(fv)));
-};
+  };
 
 export const cleanFiles = () => async dispatch => {
-    clearFileBlobs();
-    dispatch(removeAllFiles())
+  clearFileBlobs();
+  dispatch(removeAllFiles());
 };
 
-export const updateMultipleFileAttribute = (fileUpdates) => async (dispatch) => {
-    fileUpdates.forEach(fu => dispatch(updateFileAttribute(fu)))
-}
+export const updateMultipleFileAttribute = fileUpdates => async dispatch => {
+  fileUpdates.forEach(fu => dispatch(updateFileAttribute(fu)));
+};
 
-export const updateMultipleFileAttributeAndVersion = (fileUpdates, defaultContainer, getFileContainerScript) => async (dispatch, getState) => {
+export const updateMultipleFileAttributeAndVersion =
+  (fileUpdates, defaultContainer, getFileContainerScript) => async (dispatch, getState) => {
     // Update attributes first
     fileUpdates.forEach(fu => {
-        dispatch(updateFileAttribute(fu));
+      dispatch(updateFileAttribute(fu));
     });
-    
+
     // Recompute version for each updated file based on new attributes
     const versionUpdates = await Promise.allSettled(
-        fileUpdates.map(async (fileUpdate) => {
-            const file = getState().files.toUpload.find(f => f.name === fileUpdate.name);
-            if (!file) {
-                return null;
-            }
-            
-            let fileContainer = defaultContainer;
-            
-            // Resolve container based on updated attributes
-            if (getFileContainerScript) {
-                try {
-                    fileContainer = (await ScriptHelper.executeScript(getFileContainerScript, { file })) || defaultContainer;
-                } catch (error) {
-                    console.warn(`Failed to resolve container for file ${file.name}:`, error);
-                    // Continue with default container
-                }
-            }
-            
-            // Compute version for resolved container
-            try {
-                const { version } = await withVersion(fileContainer)(file);
-                return { name: file.name, version };
-            } catch (error) {
-                console.warn(`Failed to compute version for file ${file.name}:`, error);
-                return null; // Keep existing version
-            }
-        })
+      fileUpdates.map(async fileUpdate => {
+        const file = getState().files.toUpload.find(f => f.name === fileUpdate.name);
+        if (!file) {
+          return null;
+        }
+
+        let fileContainer = defaultContainer;
+
+        // Resolve container based on updated attributes
+        if (getFileContainerScript) {
+          try {
+            fileContainer =
+              (await ScriptHelper.executeScript(getFileContainerScript, { file })) ||
+              defaultContainer;
+          } catch (error) {
+            console.warn(`Failed to resolve container for file ${file.name}:`, error);
+            // Continue with default container
+          }
+        }
+
+        // Compute version for resolved container
+        try {
+          const { version } = await withVersion(fileContainer)(file);
+          return { name: file.name, version };
+        } catch (error) {
+          console.warn(`Failed to compute version for file ${file.name}:`, error);
+          return null; // Keep existing version
+        }
+      })
     );
-    
+
     // Update versions for successful computations
     versionUpdates.forEach((result, index) => {
-        if (result.status === 'fulfilled' && result.value) {
-            dispatch(updateFile(result.value));
-        }
+      if (result.status === 'fulfilled' && result.value) {
+        dispatch(updateFile(result.value));
+      }
     });
-}
+  };
 
-export const uploadFiles = (container, processUploadScript, postProcessScript, batchSize = 5, getFileContainerScript) => async (dispatch, getState) => {
+export const uploadFiles =
+  (container, processUploadScript, postProcessScript, batchSize = 5, getFileContainerScript) =>
+  async (dispatch, getState) => {
     const batches = _.chunk(getFilesMetadata(getState()), batchSize);
     const allErrors = [];
-    for(let batch of batches){
-        const batchErrors = await dispatch(uploadFileBatch(container, batch, processUploadScript, getFileContainerScript))
-        allErrors.push(...batchErrors);
+    for (let batch of batches) {
+      const batchErrors = await dispatch(
+        uploadFileBatch(container, batch, processUploadScript, getFileContainerScript)
+      );
+      allErrors.push(...batchErrors);
     }
-    if(postProcessScript) dispatch(postProcessFiles(postProcessScript))
+    if (postProcessScript) dispatch(postProcessFiles(postProcessScript));
     return allErrors;
-}
+  };
 
-export const uploadFileBatch = (container, batch, processUploadScript, getFileContainerScript) => async dispatch => {
-    const refreshBytes = file => bytes => dispatch(updateFile({name: file.name, bytesUploaded: bytes}))
+export const uploadFileBatch =
+  (container, batch, processUploadScript, getFileContainerScript) => async dispatch => {
+    const refreshBytes = file => bytes =>
+      dispatch(updateFile({ name: file.name, bytesUploaded: bytes }));
 
-    const results = await Promise.all(batch.map(async file => {
-
-      //allow the processUploadScript one last chance to modify the file name
-      let overrideName = null;
-      if (processUploadScript) {
-        overrideName = await ScriptHelper.executeScript(processUploadScript, {file: file});
-        if (overrideName) {
-          dispatch(updateFileName({name: file.name, newName: overrideName}));
-          file = produce(file, file => {
-            file.name = overrideName;
-          });
+    const results = await Promise.all(
+      batch.map(async file => {
+        //allow the processUploadScript one last chance to modify the file name
+        let overrideName = null;
+        if (processUploadScript) {
+          overrideName = await ScriptHelper.executeScript(processUploadScript, { file: file });
+          if (overrideName) {
+            dispatch(updateFileName({ name: file.name, newName: overrideName }));
+            file = produce(file, file => {
+              file.name = overrideName;
+            });
+          }
         }
-      }
 
-      let fileContainer = container;
-      // get the file container for the file if provided
-      if(getFileContainerScript){
-        fileContainer = (await ScriptHelper.executeScript(getFileContainerScript, {file})) || container;
-        // Recompute version based on resolved container just before upload
-        const { version } = await withVersion(fileContainer)(file);
-        dispatch(updateFile({name: file.name, version}))
-      }
+        let fileContainer = container;
+        // get the file container for the file if provided
+        if (getFileContainerScript) {
+          fileContainer =
+            (await ScriptHelper.executeScript(getFileContainerScript, { file })) || container;
+          // Recompute version based on resolved container just before upload
+          const { version } = await withVersion(fileContainer)(file);
+          dispatch(updateFile({ name: file.name, version }));
+        }
 
-      dispatch(updateFile({name: file.name, status: FileStatus.PROGRESS}))
+        dispatch(updateFile({ name: file.name, status: FileStatus.PROGRESS }));
 
-      try{
-          const uploaded = await uploadFile(fileContainer, file, refreshBytes(file), processUploadScript);
-          dispatch(updateFile({name: file.name, status: FileStatus.COMPLETE, uploadResult: uploaded}))
+        try {
+          const uploaded = await uploadFile(
+            fileContainer,
+            file,
+            refreshBytes(file),
+            processUploadScript
+          );
+          dispatch(
+            updateFile({ name: file.name, status: FileStatus.COMPLETE, uploadResult: uploaded })
+          );
           return null;
-      } catch (error) {
-          dispatch(updateFile({name: file.name, status: FileStatus.ERROR}))
+        } catch (error) {
+          dispatch(updateFile({ name: file.name, status: FileStatus.ERROR }));
           return { fileName: file.name, error: error.message || 'Upload failed' };
-      }
-    }))
-    
+        }
+      })
+    );
+
     // Return only the errors (filter out nulls)
     return results.filter(result => result !== null);
-};
+  };
 
-export const loadAssociatedEntities = ({selectedEntities, script, entityType}) => async dispatch => {
+export const loadAssociatedEntities =
+  ({ selectedEntities, script, entityType }) =>
+  async dispatch => {
     if (selectedEntities) {
-        const query = {_id: {$in: selectedEntities}};
-        const entities = await ScriptHelper.executeScript(script, {entityInfo: query})
-        dispatch(setAssociatedEntities({entities, entityType}))
+      const query = { _id: { $in: selectedEntities } };
+      const entities = await ScriptHelper.executeScript(script, { entityInfo: query });
+      dispatch(setAssociatedEntities({ entities, entityType }));
     } else {
-        dispatch(setAssociatedEntities({entities:[]}))
+      dispatch(setAssociatedEntities({ entities: [] }));
     }
-};
+  };
 
-export const postProcessFiles = (postProcessScript) => async (dispatch, getState) => {
-    const entitiesByType = _.groupBy(getAssociatedEntities(getState()), ({entityType}) => entityType);
-    _.keys(entitiesByType).forEach(entityType => ScriptHelper.executeScript(postProcessScript, {
-        entityType,
-        entities: entitiesByType[entityType] || [],
-        fileItems: getFilesToUpload(getState()).map(({uploadResult}) => uploadResult)}
-    ));
-}
+export const postProcessFiles = postProcessScript => async (dispatch, getState) => {
+  const entitiesByType = _.groupBy(
+    getAssociatedEntities(getState()),
+    ({ entityType }) => entityType
+  );
+  _.keys(entitiesByType).forEach(entityType =>
+    ScriptHelper.executeScript(postProcessScript, {
+      entityType,
+      entities: entitiesByType[entityType] || [],
+      fileItems: getFilesToUpload(getState()).map(({ uploadResult }) => uploadResult),
+    })
+  );
+};
 
 //Other
 const withVersion = container => async file => {
-    try {
-        const existingCheck = await IafFile.getFileItems(container, {name: file.name}, null, null, null);
-        const hasExisting = !!existingCheck && existingCheck._list.length > 0;
-        const tip = hasExisting ? existingCheck._list[0].tipVersionNumber : 0;
-        const version = (tip || 0) + 1; // show next version to be created
-        return {name: file.name, version}
-    } catch (error) {
-        console.error('[withVersion] Error checking existing files:', error);
-        return {name: file.name, version: 1}
-    }
-}
-const uploadFile = (container, file, refreshBytes) => new Promise((resolve, reject) => {
+  try {
+    const existingCheck = await IafFile.getFileItems(
+      container,
+      { name: file.name },
+      null,
+      null,
+      null
+    );
+    const hasExisting = !!existingCheck && existingCheck._list.length > 0;
+    const tip = hasExisting ? existingCheck._list[0].tipVersionNumber : 0;
+    const version = (tip || 0) + 1; // show next version to be created
+    return { name: file.name, version };
+  } catch (error) {
+    console.error('[withVersion] Error checking existing files:', error);
+    return { name: file.name, version: 1 };
+  }
+};
+const uploadFile = (container, file, refreshBytes) =>
+  new Promise((resolve, reject) => {
     const blob = getBlob(file);
     // Zero-byte files cause TUS resumable upload to hang without calling any callbacks
     if (blob.size === 0) {
       reject(new Error('Cannot upload empty file (0 bytes)'));
       return;
     }
-    const newFile = new File([blob], file.name, {type: blob.type})
+    const newFile = new File([blob], file.name, { type: blob.type });
     newFile.fileItem = {
-      fileAttributes: _.fromPairs(_.toPairs(file.fileAttributes).flatMap(([attrName, attrValue]) =>
-        comesFromComplexSelect(attrValue) ? asValuePair(attrName, attrValue) : [[attrName, attrValue]]
-      ))
-    }
+      fileAttributes: _.fromPairs(
+        _.toPairs(file.fileAttributes).flatMap(([attrName, attrValue]) =>
+          comesFromComplexSelect(attrValue)
+            ? asValuePair(attrName, attrValue)
+            : [[attrName, attrValue]]
+        )
+      ),
+    };
     IafFile.uploadFileResumable(container, newFile, {
       filename: file.name,
       onComplete: resolve,
       onError: reject,
-      onProgress: refreshBytes
-    })
-  })
+      onProgress: refreshBytes,
+    });
+  });
 
 //We always take the first value bc we are not allowing multi-selects for file upload. See configReader for validation.
 const asValuePair = (attrName, attrValue) => {
-    const selectValues = _.values(attrValue);
-    const attrNames = attrName.split(',') //Turn to array again
-    return  _.values(attrValue).map((selectValue, i) => [(attrNames[i]), selectValue[0]])
-}
+  const selectValues = _.values(attrValue);
+  const attrNames = attrName.split(','); //Turn to array again
+  return _.values(attrValue).map((selectValue, i) => [attrNames[i], selectValue[0]]);
+};
 
 const preProcess = async (files, script, payload = {}) => {
-    if(script){
-        const result = await ScriptHelper.executeScript(script, {files: files, payload: payload})
-        return {
-            accepted: (result.accepted || []).map(file => ({..._.omit(file, 'fileItem'), fileAttributes: file.fileItem.fileAttributes})),
-            rejected: result.rejected || []
-        }
-    } else {
-        return {accepted: files}
-    }
-}
+  if (script) {
+    const result = await ScriptHelper.executeScript(script, { files: files, payload: payload });
+    return {
+      accepted: (result.accepted || []).map(file => ({
+        ..._.omit(file, 'fileItem'),
+        fileAttributes: file.fileItem.fileAttributes,
+      })),
+      rejected: result.rejected || [],
+    };
+  } else {
+    return { accepted: files };
+  }
+};
 
 export const isComplete = file => file.status === FileStatus.COMPLETE;
 export const isError = file => file.status === FileStatus.ERROR;
-export const isFinished = file => file.status === FileStatus.COMPLETE || file.status === FileStatus.ERROR;
-export const isReadyFor = columns => file => columns.filter(col => col.required).every(col => col.isCompositeAttribute ?
-        col.name.every(name => !_.isEmpty(_.get(file.fileAttributes, `${col.name}.${name}`)))
+export const isFinished = file =>
+  file.status === FileStatus.COMPLETE || file.status === FileStatus.ERROR;
+export const isReadyFor = columns => file =>
+  columns
+    .filter(col => col.required)
+    .every(col =>
+      col.isCompositeAttribute
+        ? col.name.every(name => !_.isEmpty(_.get(file.fileAttributes, `${col.name}.${name}`)))
         : !!_.get(file.fileAttributes, col.name)
-);
+    );
 export const isPending = file => file.status === FileStatus.PENDING;
 export const isInProgress = file => file.status === FileStatus.PROGRESS;
-export const comesFromComplexSelect = (attrValue) => typeof attrValue === "object";
-
+export const comesFromComplexSelect = attrValue => typeof attrValue === 'object';

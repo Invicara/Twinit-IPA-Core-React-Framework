@@ -1,18 +1,14 @@
-import {
-  RoundCheckbox,
-  TickCheckbox,
-  useChecked,
-} from '../../IpaControls/Checkboxes';
+import { RoundCheckbox, TickCheckbox, useChecked } from '../../IpaControls/Checkboxes';
 import React, { useEffect, useRef } from 'react';
 import { Star } from './misc';
 import { comesFromComplexSelect, isReadyFor } from '../../redux/slices/files';
 import _ from 'lodash';
 
-export const getValue = (value) =>
+export const getValue = value =>
   (comesFromComplexSelect(value)
     ? _.values(value)
         .map(([actualValue]) => actualValue)
-        .filter((v) => !!v)
+        .filter(v => !!v)
         .join(' - ')
     : value) || '-';
 
@@ -29,7 +25,7 @@ export const FileTable = ({
     handleCheck,
     handleAllCheck,
     items: files,
-  } = useChecked(inputFiles, (file) => file.name);
+  } = useChecked(inputFiles, file => file.name);
 
   const isReady = isReadyFor(columns);
 
@@ -37,13 +33,13 @@ export const FileTable = ({
     col.control
       ? col.control(
           file.fileAttributes[col.name], // value
-          (value) =>
+          value =>
             onFileChange(
-              file.checked ? [...files.filter((f) => f.checked), file] : [file],
+              file.checked ? [...files.filter(f => f.checked), file] : [file],
               col.name,
-              value,
+              value
             ),
-          LinkedSelectValues,
+          LinkedSelectValues
         )
       : 'loading...';
 
@@ -55,10 +51,7 @@ export const FileTable = ({
       const lastFileName = files[files.length - 1]?.name;
       if (lastFileName) finalRenderedFile = tableRef.current?.innerText;
 
-      if (
-        !_.isUndefined(finalRenderedFile) &&
-        finalRenderedFile === lastFileName
-      ) {
+      if (!_.isUndefined(finalRenderedFile) && finalRenderedFile === lastFileName) {
         setIsLoading(false);
       }
     }
@@ -75,13 +68,10 @@ export const FileTable = ({
             </th>
             <th>Name</th>
             <th>
-              <TickCheckbox
-                checked={inputFiles.every(isReady)}
-                onChange={() => {}}
-              />
+              <TickCheckbox checked={inputFiles.every(isReady)} onChange={() => {}} />
             </th>
             <th>V</th>
-            {columns.map((col) => (
+            {columns.map(col => (
               <th className={'long'} key={col.name}>
                 {col.displayAs}
                 {col.required && <Star />}
@@ -105,7 +95,7 @@ export const FileTable = ({
                     <TickCheckbox checked={isReady(file)} onChange={() => {}} />
                   </td>
                   <td>{file.fileBlob?.nextVersionNumber || file.version}</td>
-                  {columns.map((col) => (
+                  {columns.map(col => (
                     <td key={col.name}>
                       {readonly
                         ? getValue(file.fileAttributes[col.name])

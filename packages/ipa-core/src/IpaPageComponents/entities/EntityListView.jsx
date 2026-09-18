@@ -1,170 +1,245 @@
-import React, {useMemo, useCallback, useRef, useEffect} from "react";
-import clsx from "clsx";
-import EntityActionsPanel from "./EntityActionsPanel";
-import _ from 'lodash'
+import React, { useMemo, useCallback, useRef, useEffect } from 'react';
+import clsx from 'clsx';
+import EntityActionsPanel from './EntityActionsPanel';
+import _ from 'lodash';
 
-import './EntityListView.scss'
-import {RoundCheckbox, useChecked} from "../../IpaControls/Checkboxes";
-import {isValidUrl} from '../../IpaUtils/helpers'
-import useSortEntities from "./sortEntities";
-import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized"
+import './EntityListView.scss';
+import { RoundCheckbox, useChecked } from '../../IpaControls/Checkboxes';
+import { isValidUrl } from '../../IpaUtils/helpers';
+import useSortEntities from './sortEntities';
+import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 
-export const EntityListView = ({config, entities, onDetail, actions, context, onChange, onSortChange, selectedEntities, entityPlural = 'Entities', entitySingular = 'Entity', showModal}) => {
-    const reactVirtualizedCache = useRef(new CellMeasurerCache({
-        fixedWidth: true,
-        defaultHeight: 100
-      }))
+export const EntityListView = ({
+  config,
+  entities,
+  onDetail,
+  actions,
+  context,
+  onChange,
+  onSortChange,
+  selectedEntities,
+  entityPlural = 'Entities',
+  entitySingular = 'Entity',
+  showModal,
+}) => {
+  const reactVirtualizedCache = useRef(
+    new CellMeasurerCache({
+      fixedWidth: true,
+      defaultHeight: 100,
+    })
+  );
 
-    let checkableEntities = useMemo(()=>entities.map((entity) => {
-        let checked = !_.isEmpty(selectedEntities) && 
-            selectedEntities.findIndex((selectedEntity) => entity._id === selectedEntity._id) !== -1;
-        return {...entity, checked}
-    }),[entities,selectedEntities]);
+  let checkableEntities = useMemo(
+    () =>
+      entities.map(entity => {
+        let checked =
+          !_.isEmpty(selectedEntities) &&
+          selectedEntities.findIndex(selectedEntity => entity._id === selectedEntity._id) !== -1;
+        return { ...entity, checked };
+      }),
+    [entities, selectedEntities]
+  );
 
-    const checkCallback = useCallback((entity) => {
-        let newEntities = checkableEntities.map((e) => {
-            return e._id === entity._id ? {...e, checked: !entity.checked} : e;
-        })
-        onChange?.(newEntities);
-    },[entities,selectedEntities]);
+  const checkCallback = useCallback(
+    entity => {
+      let newEntities = checkableEntities.map(e => {
+        return e._id === entity._id ? { ...e, checked: !entity.checked } : e;
+      });
+      onChange?.(newEntities);
+    },
+    [entities, selectedEntities]
+  );
 
-    const isAllChecked = checkableEntities.every(e => e.checked)
+  const isAllChecked = checkableEntities.every(e => e.checked);
 
-    const allCheckCallback = useCallback(() => {
-        let newEntities = entities.map(e => ({...e, checked: !isAllChecked}));
-        onChange?.(newEntities)
-    },[entities,selectedEntities]);
+  const allCheckCallback = useCallback(() => {
+    let newEntities = entities.map(e => ({ ...e, checked: !isAllChecked }));
+    onChange?.(newEntities);
+  }, [entities, selectedEntities]);
 
+  //If the selectedEntities props is used, we assume a controlled behaviour, uncontrolled otherwise
+  // Called unconditionally: this used to sit in the else branch below,
+  // which changed hook order whenever selectedEntities changed.
+  const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
+  let allChecked, handleCheck, handleAllCheck, entityInstances;
+  if (selectedEntities) {
+    allChecked = isAllChecked;
+    handleCheck = checkCallback;
+    handleAllCheck = allCheckCallback;
+    entityInstances = checkableEntities;
+  } else {
+    allChecked = checkedObject.allChecked;
+    handleCheck = checkedObject.handleCheck;
+    handleAllCheck = checkedObject.handleAllCheck;
+    entityInstances = checkedObject.items;
+  }
 
-    //If the selectedEntities props is used, we assume a controlled behaviour, uncontrolled otherwise
-    let allChecked, handleCheck, handleAllCheck, entityInstances;
-    if(selectedEntities) {
-        allChecked = isAllChecked;
-        handleCheck = checkCallback;
-        handleAllCheck = allCheckCallback;
-        entityInstances = checkableEntities;
-    } else {
-        const checkedObject = useChecked(entities, checkCallback, allCheckCallback);
-        allChecked = checkedObject.allChecked;
-        handleCheck = checkedObject.handleCheck;
-        handleAllCheck = checkedObject.handleAllCheck;
-        entityInstances = checkedObject.items;
-    }
+  const autoSelectedRef = useRef(false);
 
-    const autoSelectedRef = useRef(false);
-
-    useEffect(() => {
+  useEffect(() => {
     // Auto-select if only one Entity has been passsed through
     if (entities.length === 1 && entityInstances.length === 1) {
-        if (!entityInstances[0].checked && !autoSelectedRef.current) {
-            autoSelectedRef.current = true;
-            handleCheck(entityInstances[0]);
-        }
-        return;
+      if (!entityInstances[0].checked && !autoSelectedRef.current) {
+        autoSelectedRef.current = true;
+        handleCheck(entityInstances[0]);
+      }
+      return;
     }
 
     // If multiple Entities have been passed, remove auto-selection
     if (entities.length > 1 && autoSelectedRef.current) {
-        autoSelectedRef.current = false;
+      autoSelectedRef.current = false;
 
-        // For controlled mode, call onChange directly with all unchecked
-        if (onChange) {
-            const uncheckedEntities = entityInstances.map(e => ({...e, checked: false}));
-            onChange(uncheckedEntities);
-        } else {
-            // For uncontrolled mode, call handleCheck for each checked entity
-            entityInstances.forEach(entity => {
-                if (entity.checked) {
-                    handleCheck(entity);
-                }
-            });
-        }
+      // For controlled mode, call onChange directly with all unchecked
+      if (onChange) {
+        const uncheckedEntities = entityInstances.map(e => ({ ...e, checked: false }));
+        onChange(uncheckedEntities);
+      } else {
+        // For uncontrolled mode, call handleCheck for each checked entity
+        entityInstances.forEach(entity => {
+          if (entity.checked) {
+            handleCheck(entity);
+          }
+        });
+      }
     }
-}, [entities.length, entityInstances, onChange, handleCheck]);
+  }, [entities.length, entityInstances, onChange, handleCheck]);
 
+  const { sortEntitiesBy, currentSort: currentSort } = useSortEntities(
+    entitySingular,
+    onSortChange
+  );
 
-    const {sortEntitiesBy, currentSort: currentSort} = useSortEntities(entitySingular, onSortChange);
+  const handleColumnClick = useCallback(
+    col => () => sortEntitiesBy(col.accessor),
+    [sortEntitiesBy]
+  );
 
-    const handleColumnClick = useCallback((col) => () => sortEntitiesBy(col.accessor),[sortEntitiesBy]);
-
-    const buildHeader = useCallback((col) => {
-        return <div key={col.name} onClick={handleColumnClick(col)} className='header-column'>
-            {col.name} {col.accessor == currentSort.property &&
-            <i className={currentSort.order == 'asc' ? "fas fa-angle-double-up" : "fas fa-angle-double-down"}></i>
-        }
+  const buildHeader = useCallback(
+    col => {
+      return (
+        <div key={col.name} onClick={handleColumnClick(col)} className="header-column">
+          {col.name}{' '}
+          {col.accessor == currentSort.property && (
+            <i
+              className={
+                currentSort.order == 'asc' ? 'fas fa-angle-double-up' : 'fas fa-angle-double-down'
+              }
+            ></i>
+          )}
         </div>
-    },[sortEntitiesBy,currentSort]);
-    
-    const buildCell = useCallback((instance) => (col, i) => {
-        const value = _.get(instance, col.accessor);
-        let dispValue = value && typeof value === 'string' ? value : value ? value.val : null
-        dispValue = isValidUrl(dispValue) ? <a href={dispValue} target="_blank">{dispValue}</a> : dispValue
+      );
+    },
+    [sortEntitiesBy, currentSort]
+  );
 
-        const first = i === 0;
-        return <div key={i} className={clsx({
+  const buildCell = useCallback(
+    instance => (col, i) => {
+      const value = _.get(instance, col.accessor);
+      let dispValue = value && typeof value === 'string' ? value : value ? value.val : null;
+      dispValue = isValidUrl(dispValue) ? (
+        <a href={dispValue} target="_blank" rel="noreferrer">
+          {dispValue}
+        </a>
+      ) : (
+        dispValue
+      );
+
+      const first = i === 0;
+      return (
+        <div
+          key={i}
+          className={clsx({
             'content-column': true,
-            ' first': first
-        })}
-                    {...(first && {onClick: () => onDetail(instance)})}>
-            {dispValue}
+            ' first': first,
+          })}
+          {...(first && { onClick: () => onDetail(instance) })}
+        >
+          {dispValue}
         </div>
-    },[onDetail]);
+      );
+    },
+    [onDetail]
+  );
 
-    const entityType = useMemo(()=> {return {
-        singular: entitySingular,
-        plural: entityPlural
-    }},[entitySingular,entityPlural]);
+  const entityType = useMemo(() => {
+    return {
+      singular: entitySingular,
+      plural: entityPlural,
+    };
+  }, [entitySingular, entityPlural]);
 
-    return <div className={`entity-list-view-root entity-table ${config?.className || ""}`}>
-        {actions && <div className='actions-panel'>
-            <EntityActionsPanel
-                actions={actions}
-                entity={entityInstances.filter(inst => inst.checked)}
-                type={entityType}
-                context={context}
-                showModal={showModal}
-            />
-        </div>}
-        <div className='entity-list-view-count'>
-            {`Showing ${entities.length} ${entities.length > 1 ? entityPlural : entitySingular}`}
+  return (
+    <div className={`entity-list-view-root entity-table ${config?.className || ''}`}>
+      {actions && (
+        <div className="actions-panel">
+          <EntityActionsPanel
+            actions={actions}
+            entity={entityInstances.filter(inst => inst.checked)}
+            type={entityType}
+            context={context}
+            showModal={showModal}
+          />
         </div>
-        <div style={{width: "100%", overflow: "auto"}}>
-        <div className='header-row'>
-            {config?.multiselect && <div className='header-column checkbox'>
-                <RoundCheckbox checked={allChecked} onChange={handleAllCheck}/>
-            </div>}
-            {config?.columns.map(col => buildHeader(col))}
+      )}
+      <div className="entity-list-view-count">
+        {`Showing ${entities.length} ${entities.length > 1 ? entityPlural : entitySingular}`}
+      </div>
+      <div style={{ width: '100%', overflow: 'auto' }}>
+        <div className="header-row">
+          {config?.multiselect && (
+            <div className="header-column checkbox">
+              <RoundCheckbox checked={allChecked} onChange={handleAllCheck} />
+            </div>
+          )}
+          {config?.columns.map(col => buildHeader(col))}
         </div>
         <div className="virtualized-table">
-            <AutoSizer>
-                {({ width, height }) => (
-                    <List
-                        width={width}
-                        height={height}
-                        rowHeight={reactVirtualizedCache.current.rowHeight}
-                        deferredMeasurementCache={reactVirtualizedCache.current}
-                        rowRenderer={(virtualizedEvent) => {
-                            const instance = _.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order)[virtualizedEvent.index]
-                            const handleChange = () => handleCheck(instance)
-                            return (
-                                <CellMeasurer key={virtualizedEvent.key} cache={reactVirtualizedCache.current} parent={virtualizedEvent.parent} columnIndex={0} rowIndex={virtualizedEvent.index}>
-                                    <div style={virtualizedEvent?.style || {}} key={instance._id} className='content-row'>
-                                        {config?.multiselect && <div className='content-column checkbox'>
-                                            <RoundCheckbox checked={instance.checked} onChange={handleChange} />
-                                        </div>}
-                                        {config?.columns.map(buildCell(instance))}
-                                    </div>
-                                </CellMeasurer>
-                            )
-                        }}
-                        rowCount={_.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order).length}
-                    />
-                )}
-            </AutoSizer>
+          <AutoSizer>
+            {({ width, height }) => (
+              <List
+                width={width}
+                height={height}
+                rowHeight={reactVirtualizedCache.current.rowHeight}
+                deferredMeasurementCache={reactVirtualizedCache.current}
+                rowRenderer={virtualizedEvent => {
+                  const instance = _.orderBy(
+                    entityInstances,
+                    currentSort.valueAccessor,
+                    currentSort.order
+                  )[virtualizedEvent.index];
+                  const handleChange = () => handleCheck(instance);
+                  return (
+                    <CellMeasurer
+                      key={virtualizedEvent.key}
+                      cache={reactVirtualizedCache.current}
+                      parent={virtualizedEvent.parent}
+                      columnIndex={0}
+                      rowIndex={virtualizedEvent.index}
+                    >
+                      <div
+                        style={virtualizedEvent?.style || {}}
+                        key={instance._id}
+                        className="content-row"
+                      >
+                        {config?.multiselect && (
+                          <div className="content-column checkbox">
+                            <RoundCheckbox checked={instance.checked} onChange={handleChange} />
+                          </div>
+                        )}
+                        {config?.columns.map(buildCell(instance))}
+                      </div>
+                    </CellMeasurer>
+                  );
+                }}
+                rowCount={
+                  _.orderBy(entityInstances, currentSort.valueAccessor, currentSort.order).length
+                }
+              />
+            )}
+          </AutoSizer>
         </div>
-        </div>
+      </div>
     </div>
-}
-
-
-
+  );
+};

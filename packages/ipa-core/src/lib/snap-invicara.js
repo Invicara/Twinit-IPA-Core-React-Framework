@@ -1,14 +1,14 @@
 /*
  * Snap.js - This version of snap has specific code for the SidePanel, it is not the original snap.js
- * 
- * 
+ *
+ *
  * Copyright 2013, Jacob Kelley - http://jakiestfu.com/
  * Released under the MIT Licence
  * http://opensource.org/licenses/MIT
  *
  * Github:  http://github.com/jakiestfu/Snap.js/
  * Version: 1.9.3
- * 
+ *
  */
 /*jslint browser: true*/
 /*global define, module, ender*/
@@ -16,10 +16,12 @@ const snapModule = {
   Snap: undefined,
 };
 
-const createSnap = function(win, doc) {
+const createSnap = function (win, doc) {
   'use strict';
-  snapModule.Snap = snapModule.Snap || function(userOpts) {
-    var settings = {
+  snapModule.Snap =
+    snapModule.Snap ||
+    function (userOpts) {
+      var settings = {
           element: null,
           bottomElement: null,
           dragger: null,
@@ -36,7 +38,7 @@ const createSnap = function(win, doc) {
           touchToDrag: true,
           slideIntent: 40, // degrees
           minDragDistance: 5,
-          adjustContentWidth: true    // adjust main content panel width when side panel is open
+          adjustContentWidth: true, // adjust main content panel width when side panel is open
         },
         cache = {
           simpleStates: {
@@ -49,65 +51,73 @@ const createSnap = function(win, doc) {
               absolute: 0,
               relative: 0,
               sinceDirectionChange: 0,
-              percentage: 0
-            }
-          }
+              percentage: 0,
+            },
+          },
         },
         eventList = {},
         utils = {
-          hasTouch: ('ontouchstart' in doc.documentElement || win.navigator.msPointerEnabled),
-          eventType: function(action) {
+          hasTouch: 'ontouchstart' in doc.documentElement || win.navigator.msPointerEnabled,
+          eventType: function (action) {
             var eventTypes = {
-              down: (utils.hasTouch ? 'touchstart' : 'mousedown'),
-              move: (utils.hasTouch ? 'touchmove' : 'mousemove'),
-              up: (utils.hasTouch ? 'touchend' : 'mouseup'),
-              out: (utils.hasTouch ? 'touchcancel' : 'mouseout')
+              down: utils.hasTouch ? 'touchstart' : 'mousedown',
+              move: utils.hasTouch ? 'touchmove' : 'mousemove',
+              up: utils.hasTouch ? 'touchend' : 'mouseup',
+              out: utils.hasTouch ? 'touchcancel' : 'mouseout',
             };
             return eventTypes[action];
           },
-          page: function(t, e){
-            return (utils.hasTouch && e.touches.length && e.touches[0]) ? e.touches[0]['page'+t] : e['page'+t];
+          page: function (t, e) {
+            return utils.hasTouch && e.touches.length && e.touches[0]
+              ? e.touches[0]['page' + t]
+              : e['page' + t];
           },
           klass: {
-            has: function(el, name){
-              return (el.className).indexOf(name) !== -1;
+            has: function (el, name) {
+              return el.className.indexOf(name) !== -1;
             },
-            add: function(el, name){
-              if(!utils.klass.has(el, name) && settings.addBodyClasses){
-                el.className += " "+name;
+            add: function (el, name) {
+              if (!utils.klass.has(el, name) && settings.addBodyClasses) {
+                el.className += ' ' + name;
               }
             },
-            remove: function(el, name){
-              if(settings.addBodyClasses){
-                el.className = (el.className).replace(name, "").replace(/^\s+|\s+$/g, '');
+            remove: function (el, name) {
+              if (settings.addBodyClasses) {
+                el.className = el.className.replace(name, '').replace(/^\s+|\s+$/g, '');
               }
-            }
+            },
           },
-          dispatchEvent: function(type) {
+          dispatchEvent: function (type) {
             if (typeof eventList[type] === 'function') {
               return eventList[type].call();
             }
           },
-          vendor: function(){
-            var tmp = doc.createElement("div"),
-                prefixes = 'webkit Moz O ms'.split(' '),
-                i;
+          vendor: function () {
+            var tmp = doc.createElement('div'),
+              prefixes = 'webkit Moz O ms'.split(' '),
+              i;
             for (i in prefixes) {
               if (typeof tmp.style[prefixes[i] + 'Transition'] !== 'undefined') {
                 return prefixes[i];
               }
             }
           },
-          transitionCallback: function(){
-            return (cache.vendor==='Moz' || cache.vendor==='ms') ? 'transitionend' : cache.vendor+'TransitionEnd';
+          transitionCallback: function () {
+            return cache.vendor === 'Moz' || cache.vendor === 'ms'
+              ? 'transitionend'
+              : cache.vendor + 'TransitionEnd';
           },
-          canTransform: function(){
-            return typeof settings.element.style[cache.vendor+'Transform'] !== 'undefined';
+          canTransform: function () {
+            return typeof settings.element.style[cache.vendor + 'Transform'] !== 'undefined';
           },
-          deepExtend: function(destination, source) {
+          deepExtend: function (destination, source) {
             var property;
             for (property in source) {
-              if (source[property] && source[property].constructor && source[property].constructor === Object) {
+              if (
+                source[property] &&
+                source[property].constructor &&
+                source[property].constructor === Object
+              ) {
                 destination[property] = destination[property] || {};
                 utils.deepExtend(destination[property], source[property]);
               } else {
@@ -116,10 +126,10 @@ const createSnap = function(win, doc) {
             }
             return destination;
           },
-          angleOfDrag: function(x, y) {
+          angleOfDrag: function (x, y) {
             var degrees, theta;
             // Calc Theta
-            theta = Math.atan2(-(cache.startDragY - y), (cache.startDragX - x));
+            theta = Math.atan2(-(cache.startDragY - y), cache.startDragX - x);
             if (theta < 0) {
               theta += 2 * Math.PI;
             }
@@ -135,116 +145,134 @@ const createSnap = function(win, doc) {
               if (element.addEventListener) {
                 return element.addEventListener(eventName, func, false);
               } else if (element.attachEvent) {
-                return element.attachEvent("on" + eventName, func);
+                return element.attachEvent('on' + eventName, func);
               }
             },
             removeEvent: function addEvent(element, eventName, func) {
               if (element.addEventListener) {
                 return element.removeEventListener(eventName, func, false);
               } else if (element.attachEvent) {
-                return element.detachEvent("on" + eventName, func);
+                return element.detachEvent('on' + eventName, func);
               }
             },
-            prevent: function(e) {
+            prevent: function (e) {
               if (e.preventDefault) {
                 e.preventDefault();
               } else {
                 e.returnValue = false;
               }
-            }
+            },
           },
-          parentUntil: function(el, attr) {
+          parentUntil: function (el, attr) {
             var isStr = typeof attr === 'string';
             while (el.parentNode) {
-              if (isStr && el.getAttribute && el.getAttribute(attr)){
+              if (isStr && el.getAttribute && el.getAttribute(attr)) {
                 return el;
-              } else if(!isStr && el === attr){
+              } else if (!isStr && el === attr) {
                 return el;
               }
               el = el.parentNode;
             }
             return null;
-          }
+          },
         },
         action = {
           translate: {
             get: {
-              matrix: function(index) {
-                if( !utils.canTransform() ){
+              matrix: function (index) {
+                if (!utils.canTransform()) {
                   return parseInt(settings.element.style.left, 10);
                 } else {
-                  var matrix = win.getComputedStyle(settings.element)[cache.vendor+'Transform'].match(/\((.*)\)/),
-                      ieOffset = 8;
+                  var matrix = win
+                      .getComputedStyle(settings.element)
+                      [cache.vendor + 'Transform'].match(/\((.*)\)/),
+                    ieOffset = 8;
                   if (matrix) {
                     matrix = matrix[1].split(',');
-                    if(matrix.length===16){
-                      index+=ieOffset;
+                    if (matrix.length === 16) {
+                      index += ieOffset;
                     }
                     return parseInt(matrix[index], 10);
                   }
                   return 0;
                 }
-              }
+              },
             },
-            easeCallback: function(){
-              settings.element.style[cache.vendor+'Transition'] = '';
+            easeCallback: function () {
+              settings.element.style[cache.vendor + 'Transition'] = '';
               if (settings.bottomElement) {
-                settings.bottomElement.style[cache.vendor+'Transition'] = '';
+                settings.bottomElement.style[cache.vendor + 'Transition'] = '';
               }
               cache.translation = action.translate.get.matrix(4);
               cache.easing = false;
               clearInterval(cache.animatingInterval);
-              if(cache.easingTo===0){
+              if (cache.easingTo === 0) {
                 utils.klass.remove(doc.body, 'snapjs-right');
                 utils.klass.remove(doc.body, 'snapjs-left');
               }
               utils.dispatchEvent('animated');
-              utils.events.removeEvent(settings.element, utils.transitionCallback(), action.translate.easeCallback);
+              utils.events.removeEvent(
+                settings.element,
+                utils.transitionCallback(),
+                action.translate.easeCallback
+              );
             },
-            easeTo: function(n) {
-              if( !utils.canTransform() ){
+            easeTo: function (n) {
+              if (!utils.canTransform()) {
                 cache.translation = n;
                 action.translate.x(n);
               } else {
                 cache.easing = true;
                 cache.easingTo = n;
 
-                settings.element.style[cache.vendor+'Transition'] = 'all ' + settings.transitionSpeed + 's ' + settings.easing;
+                settings.element.style[cache.vendor + 'Transition'] =
+                  'all ' + settings.transitionSpeed + 's ' + settings.easing;
 
                 if (settings.bottomElement) {
-                  settings.bottomElement.style[cache.vendor+'Transition'] = 'all ' + settings.transitionSpeed + 's ' + settings.easing;
+                  settings.bottomElement.style[cache.vendor + 'Transition'] =
+                    'all ' + settings.transitionSpeed + 's ' + settings.easing;
                 }
 
-                cache.animatingInterval = setInterval(function() {
+                cache.animatingInterval = setInterval(function () {
                   utils.dispatchEvent('animating');
                 }, 1);
 
-                utils.events.addEvent(settings.element, utils.transitionCallback(), action.translate.easeCallback);
+                utils.events.addEvent(
+                  settings.element,
+                  utils.transitionCallback(),
+                  action.translate.easeCallback
+                );
                 action.translate.x(n);
               }
-              if(n===0){
-                settings.element.style[cache.vendor+'Transform'] = '';
+              if (n === 0) {
+                settings.element.style[cache.vendor + 'Transform'] = '';
                 if (settings.bottomElement) {
-                  settings.bottomElement.style[cache.vendor+'Transform'] = '';
+                  settings.bottomElement.style[cache.vendor + 'Transform'] = '';
                 }
               }
               action.translate.adjustContentWidth(n);
             },
             // New BottomPanel animation support; jl 05/08/2019
-            easeUp: function(open) {
+            easeUp: function (open) {
               cache.easing = true;
               cache.easingUp = true;
 
-              settings.element.style[cache.vendor+'Transition'] = 'all ' + settings.transitionSpeed + 's ' + settings.easing;
+              settings.element.style[cache.vendor + 'Transition'] =
+                'all ' + settings.transitionSpeed + 's ' + settings.easing;
 
-              cache.animatingInterval = setInterval(function() {
+              cache.animatingInterval = setInterval(function () {
                 utils.dispatchEvent('animating');
               }, 1);
 
-              utils.events.addEvent(settings.element, utils.transitionCallback(), action.translate.easeCallback);
+              utils.events.addEvent(
+                settings.element,
+                utils.transitionCallback(),
+                action.translate.easeCallback
+              );
               if (open) {
-                const elementBottomDimension = settings.elementBottomDimension ?
-                    settings.elementBottomDimension : 350;
+                const elementBottomDimension = settings.elementBottomDimension
+                  ? settings.elementBottomDimension
+                  : 350;
                 settings.element.style.bottom = elementBottomDimension;
               } else {
                 settings.element.style.bottom = 0;
@@ -254,19 +282,20 @@ const createSnap = function(win, doc) {
               if (!settings.adjustContentWidth) {
                 return;
               } else {
-                var el = settings.element, bottomEl = settings.bottomElement;
+                var el = settings.element,
+                  bottomEl = settings.bottomElement;
                 if (n === 0) {
-                  el.style.width = win.innerWidth;  // assume content pane is full width!
+                  el.style.width = win.innerWidth; // assume content pane is full width!
                   el.style.left = 0;
                   if (bottomEl) {
-                    bottomEl.style.width = win.innerWidth;  // assume content pane is full width!
+                    bottomEl.style.width = win.innerWidth; // assume content pane is full width!
                     bottomEl.style.left = 0;
                   }
                 } else if (n > 0 && el.clientWidth > 680) {
-                  el.style.left = 0;    // In case right panel was open
+                  el.style.left = 0; // In case right panel was open
                   el.style.width = el.clientWidth - n;
                   if (bottomEl) {
-                    bottomEl.style.left = 0;    // In case right panel was open
+                    bottomEl.style.left = 0; // In case right panel was open
                     bottomEl.style.width = bottomEl.clientWidth - n;
                   }
                 } else if (n < 0 && el.clientWidth > 680) {
@@ -281,73 +310,97 @@ const createSnap = function(win, doc) {
               }
             },
 
-            x: function(n) {
-              if( (settings.disable==='left' && n>0) ||
-                  (settings.disable==='right' && n<0)
-              ){ return; }
+            x: function (n) {
+              if (
+                (settings.disable === 'left' && n > 0) ||
+                (settings.disable === 'right' && n < 0)
+              ) {
+                return;
+              }
 
-              if( !settings.hyperextensible ){
-                if( n===settings.maxPosition || n>settings.maxPosition ){
-                  n=settings.maxPosition;
-                } else if( n===settings.minPosition || n<settings.minPosition ){
-                  n=settings.minPosition;
+              if (!settings.hyperextensible) {
+                if (n === settings.maxPosition || n > settings.maxPosition) {
+                  n = settings.maxPosition;
+                } else if (n === settings.minPosition || n < settings.minPosition) {
+                  n = settings.minPosition;
                 }
               }
               n = parseInt(n, 10);
-              if(isNaN(n)){
+              if (isNaN(n)) {
                 n = 0;
               }
-              if( utils.canTransform() ){
+              if (utils.canTransform()) {
                 var theTranslate = 'translate3d(' + n + 'px, 0,0)';
-                settings.element.style[cache.vendor+'Transform'] = theTranslate;
+                settings.element.style[cache.vendor + 'Transform'] = theTranslate;
                 if (settings.bottomElement) {
-                  settings.bottomElement.style[cache.vendor+'Transform'] = theTranslate;
+                  settings.bottomElement.style[cache.vendor + 'Transform'] = theTranslate;
                 }
               } else {
-                settings.element.style.width = (win.innerWidth || doc.documentElement.clientWidth)+'px';
-                settings.element.style.left = n+'px';
+                settings.element.style.width =
+                  (win.innerWidth || doc.documentElement.clientWidth) + 'px';
+                settings.element.style.left = n + 'px';
                 settings.element.style.right = '';
               }
-            }
+            },
           },
           drag: {
-            listen: function() {
+            listen: function () {
               cache.translation = 0;
               cache.easing = false;
-              utils.events.addEvent(settings.element, utils.eventType('down'), action.drag.startDrag);
-              utils.events.addEvent(settings.element, utils.eventType('move'), action.drag.dragging);
+              utils.events.addEvent(
+                settings.element,
+                utils.eventType('down'),
+                action.drag.startDrag
+              );
+              utils.events.addEvent(
+                settings.element,
+                utils.eventType('move'),
+                action.drag.dragging
+              );
               utils.events.addEvent(settings.element, utils.eventType('up'), action.drag.endDrag);
             },
-            stopListening: function() {
-              utils.events.removeEvent(settings.element, utils.eventType('down'), action.drag.startDrag);
-              utils.events.removeEvent(settings.element, utils.eventType('move'), action.drag.dragging);
-              utils.events.removeEvent(settings.element, utils.eventType('up'), action.drag.endDrag);
+            stopListening: function () {
+              utils.events.removeEvent(
+                settings.element,
+                utils.eventType('down'),
+                action.drag.startDrag
+              );
+              utils.events.removeEvent(
+                settings.element,
+                utils.eventType('move'),
+                action.drag.dragging
+              );
+              utils.events.removeEvent(
+                settings.element,
+                utils.eventType('up'),
+                action.drag.endDrag
+              );
             },
-            startDrag: function(e) {
+            startDrag: function (e) {
               // No drag on ignored elements
               var target = e.target ? e.target : e.srcElement,
-                  ignoreParent = utils.parentUntil(target, 'data-snap-ignore');
+                ignoreParent = utils.parentUntil(target, 'data-snap-ignore');
 
               if (ignoreParent) {
                 utils.dispatchEvent('ignore');
                 return;
               }
 
-
-              if(settings.dragger){
+              if (settings.dragger) {
                 var dragParent = utils.parentUntil(target, settings.dragger);
 
                 // Only use dragger if we're in a closed state
-                if( !dragParent &&
-                    (cache.translation !== settings.minPosition &&
-                        cache.translation !== settings.maxPosition
-                    )){
+                if (
+                  !dragParent &&
+                  cache.translation !== settings.minPosition &&
+                  cache.translation !== settings.maxPosition
+                ) {
                   return;
                 }
               }
 
               utils.dispatchEvent('start');
-              settings.element.style[cache.vendor+'Transition'] = '';
+              settings.element.style[cache.vendor + 'Transition'] = '';
               cache.isDragging = true;
               cache.hasIntent = null;
               cache.intentChecked = false;
@@ -357,7 +410,7 @@ const createSnap = function(win, doc) {
                 current: 0,
                 last: 0,
                 hold: 0,
-                state: ''
+                state: '',
               };
               cache.simpleStates = {
                 opening: null,
@@ -369,31 +422,30 @@ const createSnap = function(win, doc) {
                   absolute: 0,
                   relative: 0,
                   sinceDirectionChange: 0,
-                  percentage: 0
-                }
+                  percentage: 0,
+                },
               };
             },
-            dragging: function(e) {
+            dragging: function (e) {
               if (cache.isDragging && settings.touchToDrag) {
-
                 var thePageX = utils.page('X', e),
-                    thePageY = utils.page('Y', e),
-                    translated = cache.translation,
-                    absoluteTranslation = action.translate.get.matrix(4),
-                    whileDragX = thePageX - cache.startDragX,
-                    openingLeft = absoluteTranslation > 0,
-                    translateTo = whileDragX,
-                    diff;
+                  thePageY = utils.page('Y', e),
+                  translated = cache.translation,
+                  absoluteTranslation = action.translate.get.matrix(4),
+                  whileDragX = thePageX - cache.startDragX,
+                  openingLeft = absoluteTranslation > 0,
+                  translateTo = whileDragX,
+                  diff;
 
                 // Shown no intent already
-                if((cache.intentChecked && !cache.hasIntent)){
+                if (cache.intentChecked && !cache.hasIntent) {
                   return;
                 }
-                if(settings.addBodyClasses){
-                  if((absoluteTranslation)>0){
+                if (settings.addBodyClasses) {
+                  if (absoluteTranslation > 0) {
                     utils.klass.add(doc.body, 'snapjs-left');
                     utils.klass.remove(doc.body, 'snapjs-right');
-                  } else if((absoluteTranslation)<0){
+                  } else if (absoluteTranslation < 0) {
                     utils.klass.add(doc.body, 'snapjs-right');
                     utils.klass.remove(doc.body, 'snapjs-left');
                   }
@@ -401,8 +453,12 @@ const createSnap = function(win, doc) {
 
                 if (cache.hasIntent === false || cache.hasIntent === null) {
                   var deg = utils.angleOfDrag(thePageX, thePageY),
-                      inRightRange = (deg >= 0 && deg <= settings.slideIntent) || (deg <= 360 && deg > (360 - settings.slideIntent)),
-                      inLeftRange = (deg >= 180 && deg <= (180 + settings.slideIntent)) || (deg <= 180 && deg >= (180 - settings.slideIntent));
+                    inRightRange =
+                      (deg >= 0 && deg <= settings.slideIntent) ||
+                      (deg <= 360 && deg > 360 - settings.slideIntent),
+                    inLeftRange =
+                      (deg >= 180 && deg <= 180 + settings.slideIntent) ||
+                      (deg <= 180 && deg >= 180 - settings.slideIntent);
                   if (!inLeftRange && !inRightRange) {
                     cache.hasIntent = false;
                   } else {
@@ -412,8 +468,8 @@ const createSnap = function(win, doc) {
                 }
 
                 if (
-                    (settings.minDragDistance>=Math.abs(thePageX-cache.startDragX)) || // Has user met minimum drag distance?
-                    (cache.hasIntent === false)
+                  settings.minDragDistance >= Math.abs(thePageX - cache.startDragX) || // Has user met minimum drag distance?
+                  cache.hasIntent === false
                 ) {
                   return;
                 }
@@ -446,14 +502,16 @@ const createSnap = function(win, doc) {
                     opening: 'left',
                     towards: cache.dragWatchers.state,
                     hyperExtending: settings.maxPosition < absoluteTranslation,
-                    halfway: absoluteTranslation > (settings.maxPosition / 2),
-                    flick: Math.abs(cache.dragWatchers.current - cache.dragWatchers.hold) > settings.flickThreshold,
+                    halfway: absoluteTranslation > settings.maxPosition / 2,
+                    flick:
+                      Math.abs(cache.dragWatchers.current - cache.dragWatchers.hold) >
+                      settings.flickThreshold,
                     translation: {
                       absolute: absoluteTranslation,
                       relative: whileDragX,
-                      sinceDirectionChange: (cache.dragWatchers.current - cache.dragWatchers.hold),
-                      percentage: (absoluteTranslation/settings.maxPosition)*100
-                    }
+                      sinceDirectionChange: cache.dragWatchers.current - cache.dragWatchers.hold,
+                      percentage: (absoluteTranslation / settings.maxPosition) * 100,
+                    },
                   };
                 } else {
                   // Pulling too far to the left
@@ -465,20 +523,22 @@ const createSnap = function(win, doc) {
                     opening: 'right',
                     towards: cache.dragWatchers.state,
                     hyperExtending: settings.minPosition > absoluteTranslation,
-                    halfway: absoluteTranslation < (settings.minPosition / 2),
-                    flick: Math.abs(cache.dragWatchers.current - cache.dragWatchers.hold) > settings.flickThreshold,
+                    halfway: absoluteTranslation < settings.minPosition / 2,
+                    flick:
+                      Math.abs(cache.dragWatchers.current - cache.dragWatchers.hold) >
+                      settings.flickThreshold,
                     translation: {
                       absolute: absoluteTranslation,
                       relative: whileDragX,
-                      sinceDirectionChange: (cache.dragWatchers.current - cache.dragWatchers.hold),
-                      percentage: (absoluteTranslation/settings.minPosition)*100
-                    }
+                      sinceDirectionChange: cache.dragWatchers.current - cache.dragWatchers.hold,
+                      percentage: (absoluteTranslation / settings.minPosition) * 100,
+                    },
                   };
                 }
                 action.translate.x(translateTo + translated);
               }
             },
-            endDrag: function(e) {
+            endDrag: function (e) {
               if (cache.isDragging) {
                 utils.dispatchEvent('end');
                 var translated = action.translate.get.matrix(4);
@@ -494,12 +554,18 @@ const createSnap = function(win, doc) {
                 // Revealing Left
                 if (cache.simpleStates.opening === 'left') {
                   // Halfway, Flicking, or Too Far Out
-                  if ((cache.simpleStates.halfway || cache.simpleStates.hyperExtending || cache.simpleStates.flick)) {
-                    if (cache.simpleStates.flick && cache.simpleStates.towards === 'left') { // Flicking Closed
+                  if (
+                    cache.simpleStates.halfway ||
+                    cache.simpleStates.hyperExtending ||
+                    cache.simpleStates.flick
+                  ) {
+                    if (cache.simpleStates.flick && cache.simpleStates.towards === 'left') {
+                      // Flicking Closed
                       action.translate.easeTo(0);
                     } else if (
-                        (cache.simpleStates.flick && cache.simpleStates.towards === 'right') || // Flicking Open OR
-                        (cache.simpleStates.halfway || cache.simpleStates.hyperExtending) // At least halfway open OR hyperextending
+                      (cache.simpleStates.flick && cache.simpleStates.towards === 'right') || // Flicking Open OR
+                      cache.simpleStates.halfway ||
+                      cache.simpleStates.hyperExtending // At least halfway open OR hyperextending
                     ) {
                       action.translate.easeTo(settings.maxPosition); // Open Left
                     }
@@ -509,12 +575,18 @@ const createSnap = function(win, doc) {
                   // Revealing Right
                 } else if (cache.simpleStates.opening === 'right') {
                   // Halfway, Flicking, or Too Far Out
-                  if ((cache.simpleStates.halfway || cache.simpleStates.hyperExtending || cache.simpleStates.flick)) {
-                    if (cache.simpleStates.flick && cache.simpleStates.towards === 'right') { // Flicking Closed
+                  if (
+                    cache.simpleStates.halfway ||
+                    cache.simpleStates.hyperExtending ||
+                    cache.simpleStates.flick
+                  ) {
+                    if (cache.simpleStates.flick && cache.simpleStates.towards === 'right') {
+                      // Flicking Closed
                       action.translate.easeTo(0);
                     } else if (
-                        (cache.simpleStates.flick && cache.simpleStates.towards === 'left') || // Flicking Open OR
-                        (cache.simpleStates.halfway || cache.simpleStates.hyperExtending) // At least halfway open OR hyperextending
+                      (cache.simpleStates.flick && cache.simpleStates.towards === 'left') || // Flicking Open OR
+                      cache.simpleStates.halfway ||
+                      cache.simpleStates.hyperExtending // At least halfway open OR hyperextending
                     ) {
                       action.translate.easeTo(settings.minPosition); // Open Right
                     }
@@ -525,113 +597,111 @@ const createSnap = function(win, doc) {
                 cache.isDragging = false;
                 cache.startDragX = utils.page('X', e);
               }
-            }
-          }
+            },
+          },
         },
-        init = function(opts) {
+        init = function (opts) {
           if (opts.element) {
             utils.deepExtend(settings, opts);
             cache.vendor = utils.vendor();
             action.drag.listen();
           }
         };
-    /*
-     * Public
-     */
-    this.open = function(side) {
-      utils.dispatchEvent('open');
-      utils.klass.remove(doc.body, 'snapjs-expand-left');
-      utils.klass.remove(doc.body, 'snapjs-expand-right');
-
-      if (side === 'left') {
-        cache.simpleStates.opening = 'left';
-        cache.simpleStates.towards = 'right';
-        utils.klass.add(doc.body, 'snapjs-left');
-        utils.klass.remove(doc.body, 'snapjs-right');
-        action.translate.easeTo(settings.maxPosition);
-      } else if (side === 'right') {
-        cache.simpleStates.opening = 'right';
-        cache.simpleStates.towards = 'left';
-        utils.klass.remove(doc.body, 'snapjs-left');
-        utils.klass.add(doc.body, 'snapjs-right');
-        action.translate.easeTo(settings.minPosition);
-      } else if (side === 'bottom') {
-        cache.simpleStates.opening = 'bottom';
-        utils.klass.add(doc.body, 'snapjs-bottom');
-        action.translate.easeUp(true);
-      }
-    };
-    this.close = function() {
-      utils.dispatchEvent('close');
-      action.translate.easeTo(0);
-    };
-    this.closeBottom = function() {
-      utils.dispatchEvent('close');
-      action.translate.easeUp(false);
-
-    };
-    this.expand = function(side){
-      var to = win.innerWidth || doc.documentElement.clientWidth;
-
-      if(side==='left'){
-        utils.dispatchEvent('expandLeft');
-        utils.klass.add(doc.body, 'snapjs-expand-left');
-        utils.klass.remove(doc.body, 'snapjs-expand-right');
-      } else {
-        utils.dispatchEvent('expandRight');
-        utils.klass.add(doc.body, 'snapjs-expand-right');
+      /*
+       * Public
+       */
+      this.open = function (side) {
+        utils.dispatchEvent('open');
         utils.klass.remove(doc.body, 'snapjs-expand-left');
-        to *= -1;
-      }
-      action.translate.easeTo(to);
-    };
+        utils.klass.remove(doc.body, 'snapjs-expand-right');
 
-    this.on = function(evt, fn) {
-      eventList[evt] = fn;
-      return this;
-    };
-    this.off = function(evt) {
-      if (eventList[evt]) {
-        eventList[evt] = false;
-      }
-    };
-
-    this.enable = function() {
-      utils.dispatchEvent('enable');
-      action.drag.listen();
-    };
-    this.disable = function() {
-      utils.dispatchEvent('disable');
-      action.drag.stopListening();
-    };
-
-    this.settings = function(opts){
-      utils.deepExtend(settings, opts);
-    };
-
-    this.state = function() {
-      // Now supports multiple panel and bottom open; jl 05/08/2019
-      var state,
-          fromLeft = action.translate.get.matrix(4);
-      if (fromLeft === settings.maxPosition) {
-        state = 'left';
-      } else if (fromLeft === settings.minPosition) {
-        state = 'right';
-      } else {
-        state = 'closed';
-      }
-      if (parseInt(settings.element.style.bottom)) {
-        state = state + " bottom";
-      }
-      return {
-        state: state,
-        info: cache.simpleStates
+        if (side === 'left') {
+          cache.simpleStates.opening = 'left';
+          cache.simpleStates.towards = 'right';
+          utils.klass.add(doc.body, 'snapjs-left');
+          utils.klass.remove(doc.body, 'snapjs-right');
+          action.translate.easeTo(settings.maxPosition);
+        } else if (side === 'right') {
+          cache.simpleStates.opening = 'right';
+          cache.simpleStates.towards = 'left';
+          utils.klass.remove(doc.body, 'snapjs-left');
+          utils.klass.add(doc.body, 'snapjs-right');
+          action.translate.easeTo(settings.minPosition);
+        } else if (side === 'bottom') {
+          cache.simpleStates.opening = 'bottom';
+          utils.klass.add(doc.body, 'snapjs-bottom');
+          action.translate.easeUp(true);
+        }
       };
-    };
-    init(userOpts);
-  }
+      this.close = function () {
+        utils.dispatchEvent('close');
+        action.translate.easeTo(0);
+      };
+      this.closeBottom = function () {
+        utils.dispatchEvent('close');
+        action.translate.easeUp(false);
+      };
+      this.expand = function (side) {
+        var to = win.innerWidth || doc.documentElement.clientWidth;
 
-}
+        if (side === 'left') {
+          utils.dispatchEvent('expandLeft');
+          utils.klass.add(doc.body, 'snapjs-expand-left');
+          utils.klass.remove(doc.body, 'snapjs-expand-right');
+        } else {
+          utils.dispatchEvent('expandRight');
+          utils.klass.add(doc.body, 'snapjs-expand-right');
+          utils.klass.remove(doc.body, 'snapjs-expand-left');
+          to *= -1;
+        }
+        action.translate.easeTo(to);
+      };
+
+      this.on = function (evt, fn) {
+        eventList[evt] = fn;
+        return this;
+      };
+      this.off = function (evt) {
+        if (eventList[evt]) {
+          eventList[evt] = false;
+        }
+      };
+
+      this.enable = function () {
+        utils.dispatchEvent('enable');
+        action.drag.listen();
+      };
+      this.disable = function () {
+        utils.dispatchEvent('disable');
+        action.drag.stopListening();
+      };
+
+      this.settings = function (opts) {
+        utils.deepExtend(settings, opts);
+      };
+
+      this.state = function () {
+        // Now supports multiple panel and bottom open; jl 05/08/2019
+        var state,
+          fromLeft = action.translate.get.matrix(4);
+        if (fromLeft === settings.maxPosition) {
+          state = 'left';
+        } else if (fromLeft === settings.minPosition) {
+          state = 'right';
+        } else {
+          state = 'closed';
+        }
+        if (parseInt(settings.element.style.bottom)) {
+          state = state + ' bottom';
+        }
+        return {
+          state: state,
+          info: cache.simpleStates,
+        };
+      };
+      init(userOpts);
+    };
+};
 
 createSnap(window, document);
 

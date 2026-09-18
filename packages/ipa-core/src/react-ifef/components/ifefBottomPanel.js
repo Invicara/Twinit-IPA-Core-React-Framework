@@ -11,9 +11,9 @@ class IfefBottomPanel extends React.Component {
   }
   onDrag(evt) {
     let pageY = evt.pageY;
-    if(pageY !== 0) {
-      this.bottomPanelStyle.height=this.clientHeight-pageY;
-      this.sidePanelStyle.height=pageY;
+    if (pageY !== 0) {
+      this.bottomPanelStyle.height = this.clientHeight - pageY;
+      this.sidePanelStyle.height = pageY;
     }
   }
 
@@ -23,10 +23,13 @@ class IfefBottomPanel extends React.Component {
   }
 
   render() {
-    let display = this.props.hideOnLoad?'none':'block';
+    let display = this.props.hideOnLoad ? 'none' : 'block';
     return (
-      <div className="asf-panel asf-panel-bottom snap-drawer-bottom" id="IfefBottomPanel"
-          style={{'height': this.props.height,'display':display}}>
+      <div
+        className="asf-panel asf-panel-bottom snap-drawer-bottom"
+        id="IfefBottomPanel"
+        style={{ height: this.props.height, display: display }}
+      >
         {this.props.children}
       </div>
     );

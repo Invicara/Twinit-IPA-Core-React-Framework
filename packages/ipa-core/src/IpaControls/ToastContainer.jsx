@@ -1,34 +1,32 @@
-import React, {useState} from "react"
+import React, { useState } from 'react';
 
-import './ToastNotification.scss'
+import './ToastNotification.scss';
 
-let toastCount = 0
+let toastCount = 0;
 
 export const useToast = () => {
-  const [toasts, setToasts] = useState([])
+  const [toasts, setToasts] = useState([]);
 
-  function addToast({toast, delay}) {
-    const id = toastCount++
-    const newToast = {toast, id}
-    setToasts(prev => ([...prev, newToast]))
+  function addToast({ toast, delay }) {
+    const id = toastCount++;
+    const newToast = { toast, id };
+    setToasts(prev => [...prev, newToast]);
 
     const timer = setTimeout(() => {
-      setToasts((toasts) => {
-        return toasts.filter((toast) => toast.id !== id)
-      })
-    }, delay)
+      setToasts(toasts => {
+        return toasts.filter(toast => toast.id !== id);
+      });
+    }, delay);
   }
-  return [toasts, addToast]
-}
+  return [toasts, addToast];
+};
 
-const ToastContainer = ({children, toasts}) => {
-
-  return ( 
-      <div className="toast-notification">
-        {toasts? toasts.map(({toast, id}) => <div key={id}>{toast}</div>
-        ) : {children}}
-       </div>
-  )
-}
+const ToastContainer = ({ children, toasts }) => {
+  return (
+    <div className="toast-notification">
+      {toasts ? toasts.map(({ toast, id }) => <div key={id}>{toast}</div>) : { children }}
+    </div>
+  );
+};
 
 export default ToastContainer;

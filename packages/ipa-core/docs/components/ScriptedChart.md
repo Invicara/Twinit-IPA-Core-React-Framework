@@ -2,6 +2,7 @@
 title: ScriptedChart
 sidebar_position: 2150
 ---
+
 A chart component allowing for chart display based on configuration and scripted data. Can be used on DashboardView, EntityView, and NewNavigatorView. For more detail on the supported charts and configuration specific to chart types see https://nivo.rocks/
 
 ### Properties
@@ -13,12 +14,14 @@ A chart component allowing for chart display based on configuration and scripted
 - `style`: (object) style options that will be applied to the container created to wrap the chart and any extensions
 
 #### Chart Extensions
+
 Two chart extensions are supported.
 
 - `iceTitle`: (string) a title to be displayed above the chart
 - `iceCenterItem`: (string) text to be displayed at the center of the chart - for use with the Donut chart
 
 ### Examples
+
 ```json
 "Asset Performance": {
   "script": "getAssetSensorChartData2",
@@ -78,42 +81,44 @@ When using a TwoAxisLine chart you must provide data and configurations separate
 ##### Data
 
 Data passed to the chart must pass the data for each axis separately. Data passed to the chart must be in this form:
+
 ```js
 let data = {
   line1: [
     {
-      "id": "Line 1 Label",
-      "data": [
+      id: 'Line 1 Label',
+      data: [
         {
-          "x": "2022-08-21",
-          "y": 0
+          x: '2022-08-21',
+          y: 0,
         },
         {
-          "x": "2022-08-22",
-          "y": 2
-        }
-      ]
-    }
+          x: '2022-08-22',
+          y: 2,
+        },
+      ],
+    },
   ],
   line2: [
     {
-      "id": "Line 2 Label",
-      "data": [
+      id: 'Line 2 Label',
+      data: [
         {
-          "x": "2022-08-21",
-          "y": 10
+          x: '2022-08-21',
+          y: 10,
         },
         {
-          "x": "2022-08-22",
-          "y": 11
-        }
-      ]
-    }
-  ]
-}
+          x: '2022-08-22',
+          y: 11,
+        },
+      ],
+    },
+  ],
+};
 ```
 
 You may pass multiple lines per axis. This can be used to display threshold lines for an axis.
+
 ```js
 et data = {
   line1: [

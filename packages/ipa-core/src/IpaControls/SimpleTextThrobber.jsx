@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
-import "./SimpleTextThrobber.scss";
+import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import './SimpleTextThrobber.scss';
 
 const SimpleTextThrobber = ({ throbberText }) => {
-  const [dots, setDots] = useState(".");
+  const [dots, setDots] = useState('.');
   const [timer, setTimer] = useState(null);
   const timerRef = useRef();
 
@@ -19,9 +19,9 @@ const SimpleTextThrobber = ({ throbberText }) => {
 
   useEffect(() => {
     let time = setTimeout(() => {
-      if (dots.length === 5) setDots(".");
+      if (dots.length === 5) setDots('.');
       else {
-        let newDots = dots + ".";
+        let newDots = dots + '.';
         setDots(newDots);
       }
     }, 800);

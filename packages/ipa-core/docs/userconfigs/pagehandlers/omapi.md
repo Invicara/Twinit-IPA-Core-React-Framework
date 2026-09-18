@@ -77,23 +77,23 @@ To each path in your apiConfig, you can add a "docs" property and include these 
     "Response Body": {
       "_requestid": "id of the object model api request",
       "_timetaken": "Time taken for the request to complete",
-      "_result" : "An object with a key for the requested property with a value of an array of all the unique values"
+      "_result": "An object with a key for the requested property with a value of an array of all the unique values"
     },
     "Response Body Example": {
-        "_requestid": "79260f05-d45d-4db8-a6bc-41dacd417b48",
-        "_timetaken": 0.305,
-        "_result": {
-          "dtType": [
-            "10 Gang Light Switch",
-            "24vdc Power supply unit",
-            "24vdc Relay",
-            "3D Printer",
-            "500A Contactor",
-            "AC Room Controller",
-            "ACB Interlock kit",
-            "AOV"
-          ]
-        }
+      "_requestid": "79260f05-d45d-4db8-a6bc-41dacd417b48",
+      "_timetaken": 0.305,
+      "_result": {
+        "dtType": [
+          "10 Gang Light Switch",
+          "24vdc Power supply unit",
+          "24vdc Relay",
+          "3D Printer",
+          "500A Contactor",
+          "AC Room Controller",
+          "ACB Interlock kit",
+          "AOV"
+        ]
+      }
     }
   }
 }

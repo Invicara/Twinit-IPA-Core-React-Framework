@@ -10,18 +10,23 @@ class IfefLoading extends React.Component {
   }
 
   getOptions(props) {
-    if (props.show === false) { return false; }
+    if (props.show === false) {
+      return false;
+    }
     // merge default options with user options
-    var options = Object.assign({
-      duration: null,
-      customTemplate: null,
-      backdrop: false
-    }, props.show);
+    let options = Object.assign(
+      {
+        duration: null,
+        customTemplate: null,
+        backdrop: false,
+      },
+      props.show
+    );
     return options;
   }
 
   setTimeout(f, duration) {
-    this.timeout = setTimeout(f, duration)
+    this.timeout = setTimeout(f, duration);
   }
 
   clearTimeout() {
@@ -67,25 +72,21 @@ class IfefLoading extends React.Component {
 
   componentDidUpdate(prevProps) {
     let options = this.getOptions(prevProps);
-    if(options.duration > 0) {
+    if (options.duration > 0) {
       this.setTimeout(() => this.props.context.ifefShowLoading(false), options.duration);
     }
   }
 
   render() {
-    var loading;
+    let loading;
     if (this.props.show !== false) {
-      var options = this.getOptions(this.props);
-      var template = options.customTemplate || (
-        <IfefSpinner
-            icon="ios-small"
-            customClasses="inloader spinner-light" />
+      let options = this.getOptions(this.props);
+      let template = options.customTemplate || (
+        <IfefSpinner icon="ios-small" customClasses="inloader spinner-light" />
       );
       loading = (
         <div className="loading-container visible active">
-          <div className="loading">
-            {template}
-          </div>
+          <div className="loading">{template}</div>
         </div>
       );
     } else {
@@ -96,15 +97,11 @@ class IfefLoading extends React.Component {
 }
 
 IfefLoading.propTypes = {
-  show: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.object
-  ])
-}
+  show: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+};
 
 IfefLoading.defaultProps = {
-    show: "false"
-}
-
+  show: 'false',
+};
 
 export default IfefLoading;

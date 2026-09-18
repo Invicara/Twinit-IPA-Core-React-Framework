@@ -1,29 +1,29 @@
-import { TextSearch } from "../../IpaControls/TextSearch";
-import { useArgs } from "@storybook/client-api";
+import { TextSearch } from '../../IpaControls/TextSearch';
+import { useArgs } from '@storybook/client-api';
 
 export default {
-  title: "Controls/TextSearch",
+  title: 'Controls/TextSearch',
   component: TextSearch,
   argTypes: {
-    onClick: { action: "onClick" },
-    onFetch: { action: "onFetch" },
+    onClick: { action: 'onClick' },
+    onFetch: { action: 'onFetch' },
   },
 };
 
-const Template = (args) => {
+const Template = args => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     updateArgs({
       ...args,
       currentValue: e.target.value,
     });
   };
 
-  const handleClick = (e) => {
+  const handleClick = e => {
     updateArgs({
       ...args,
-      currentValue: "",
+      currentValue: '',
     });
   };
 
@@ -37,12 +37,10 @@ const Template = (args) => {
 export const Default = Template.bind({});
 
 Default.args = {
-  currentValue: "",
+  currentValue: '',
   touched: false,
-  display: "Search Text:",
-  additionalOptions: (
-    <div className="additional-options">Additional Options</div>
-  ),
+  display: 'Search Text:',
+  additionalOptions: <div className="additional-options">Additional Options</div>,
   isFetching: false,
   onChange: () => {},
 };

@@ -15,19 +15,19 @@
   }
 
   .path-header {
-      cursor: pointer;
+    cursor: pointer;
 
-      h2 {
-        display: inline-flex;
-        margin-left: 10px;
-        min-width: 15%;
-      }
+    h2 {
+      display: inline-flex;
+      margin-left: 10px;
+      min-width: 15%;
+    }
 
-      .missing-options {
-        color: red;
-        display: inline-flex;
-        align-items: center;
-      }
+    .missing-options {
+      color: red;
+      display: inline-flex;
+      align-items: center;
+    }
   }
 
   .root-info {
@@ -39,10 +39,10 @@
     .root-url {
       margin-left: 10px;
       font-size: larger;
-      -webkit-user-select: all;  
-      -moz-user-select: all;     
-      -ms-user-select: all;      
-      user-select: all;           
+      -webkit-user-select: all;
+      -moz-user-select: all;
+      -ms-user-select: all;
+      user-select: all;
     }
   }
 }
