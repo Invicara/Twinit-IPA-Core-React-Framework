@@ -35,7 +35,7 @@
   "dependencies": {
     "@dtplatform/iaf-doc-viewer": "~5.2.0",
     "@dtplatform/iaf-script-engine": "~5.2.0",
-    "@dtplatform/ipa-ui": "1.1.6",
+    "@dtplatform/ipa-ui": "2.0.0-1",
     "@dtplatform/platform-api": "~5.2.0",
     "@dtplatform/platform-ui-components": "~5.2.0",
     "@dtplatform/ui-utils": "~5.2.0",

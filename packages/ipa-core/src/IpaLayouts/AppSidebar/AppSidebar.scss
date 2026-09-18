@@ -1,0 +1,434 @@
+/* Built from the Design System file, "Global Header & Navigation" page:
+   Menu Closed (4345:7512) and Menu Open (4349:11568).
+
+     side-menu   48x900 collapsed, 254x900 expanded, at x=0 y=0 full height
+     header      1392x56 at x=48, so the rail sits beside it, not under it
+
+   Spacing, measured off the side-menu frame, which exports 1:1 (its rail is
+   exactly 48px and its panel exactly 254px):
+
+     toggle      56px tall, matching the header
+     group row   48px, a 24px icon centred in a 48px column, label at x=56
+     sub-item    38px, text at x=56 so it lines up under the group's label
+     chevron     24px, 16px from the right edge
+
+   Colours are sampled from the exported frames (side-menu, menu-cell) and
+   every one of them is an ipa-ui token, so they are read from its theme rather
+   than restated here:
+
+     #1D1D1D  --neutral-9        the rail, the panel, and a row at rest
+     #3E3E3E  --neutral-8        a row on hover, and the selected row
+     #F3F3F3  --neutral-1        labels and icons
+     #DF158C  --digital-twin-8   the selected row's leading bar
+
+   ipa-core's --nav-* names are deliberately not consumed. The deployment sets
+   them for ipa-core's own nav (#333333 ground, #999999 hover, #bfbfbf active
+   group), which is lighter than this design's ground and darker than its
+   hover, so honouring them undoes the thing this component exists to do. A
+   deployment that wants to retheme it redefines the ipa-ui tokens above. */
+
+$rail: 48px;
+$expanded: 254px;
+/* Above ipa-core's popovers (1000) and its page drawers. The header sits one
+   above this so the panel still slides under it. */
+$layer: 1100;
+$ease: cubic-bezier(0.4, 0, 0.2, 1);
+$duration: 220ms;
+/* Shorter than the panel's own movement: a hover that lags the pointer by the
+   full 220ms reads as sluggish. */
+$hover: 120ms;
+
+.ipa-sidebar {
+  /* Reserves the rail's width in ipa-core's flex row. The panel itself is
+     fixed, so expanding overlays the content instead of pushing it. */
+  position: relative;
+  flex: 0 0 $rail;
+  width: $rail;
+  min-width: $rail;
+  align-self: stretch;
+
+  /* ipa-core's react-ifef/styles/newStyles.scss styles the bare `nav` element
+     for its own left nav: position: absolute, z-index: 10, a #666666 ground,
+     an 80px width, height: calc(100% - 80px) and a shadow. Every one of those
+     lands on this element. The z-index is the one that bites: it makes .ipa-sidebar
+     a stacking context, which traps the panel's z-index inside it, so on the
+     Navigator page the rail competed at level 10 with .navigator-drawer-
+     container and lost on DOM order. Raising it lifts the whole context. */
+  z-index: $layer;
+  height: auto;
+  background: none;
+  box-shadow: none;
+}
+
+.ipa-sidebar__panel {
+  /* Fixed rather than absolute: the design runs the rail the full height of
+     the viewport, alongside the header, but ipa-core nests the nav in a
+     container that starts below the header. Fixed escapes that. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  /* Below the header, above everything else: the design keeps the logo and
+     app name visible when the rail expands, so the panel slides under the
+     header rather than over it. 1100 rather than 1000 because ipa-core's
+     popovers (react-ifef/scss/_popover.scss) are at 1000, and an expanded rail
+     was painting behind the Asset page's search and filter panels. */
+  z-index: $layer;
+  display: flex;
+  flex-direction: column;
+  width: $rail;
+  box-sizing: border-box;
+  background: var(--neutral-9, #1d1d1d);
+  color: var(--neutral-1, #f3f3f3);
+  font-family: var(--font-sans, Inter, system-ui, sans-serif);
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: width $duration $ease;
+}
+
+.ipa-sidebar--expanded .ipa-sidebar__panel {
+  width: $expanded;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.25);
+}
+
+.ipa-sidebar__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: $rail;
+  height: 56px; // aligns with the header's height
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--neutral-1, #f3f3f3);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--neutral-1, #f3f3f3);
+    outline-offset: -2px;
+  }
+}
+
+/* Fixed width so rows do not reflow while the panel animates. */
+.ipa-sidebar__inner {
+  width: $expanded;
+  min-width: $expanded;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* ipa-core's global list styles leak in: measured against the real app, rows
+   were inset 15px and spaced 98px apart inside a 48px panel. Scoped so these
+   win without touching anything else on the page. */
+.ipa-sidebar {
+  ul.ipa-sidebar__list,
+  ul.ipa-sidebar__sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    &::before,
+    &::marker {
+      content: none;
+    }
+  }
+}
+
+.ipa-sidebar__row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: $rail;
+  min-height: $rail;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color $hover $ease,
+    color $hover $ease;
+
+  &:hover {
+    background: var(--neutral-8, #3e3e3e);
+    color: var(--neutral-1, #f3f3f3);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--neutral-1, #f3f3f3);
+    outline-offset: -2px;
+  }
+}
+
+/* The design marks the active group with an accent bar on the leading edge
+   and a slightly lifted background, not a filled row. The bar is on every row
+   rather than only the active one, scaled to nothing, so that selecting a row
+   grows it out of the edge instead of snapping it into place. */
+.ipa-sidebar__row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--app-accent-color, var(--digital-twin-8, #df158c));
+  transform: scaleY(0);
+  transition: transform $duration $ease;
+}
+
+.ipa-sidebar__row--active {
+  background: var(--neutral-8, #3e3e3e);
+
+  &::before {
+    transform: scaleY(1);
+  }
+
+  .ipa-sidebar__icon {
+    color: var(--app-accent-color, var(--digital-twin-8, #df158c));
+  }
+}
+
+.ipa-sidebar__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: $rail;
+  min-width: $rail;
+  height: $rail;
+  color: var(--neutral-1, #f3f3f3);
+  transition: color $hover $ease;
+
+  img,
+  svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Pages carry an icon *class*, and userConfig is free to name one from any
+     of the sets the app loads. They do not render the same way, which is why
+     one rule could never square them up:
+
+       .inv-icon-svg   an SVG painted through a CSS mask. Sized by mask-size,
+                       coloured by background-color. font-size does nothing.
+       .fas / .far     a glyph in a ::before. Sized by font-size, coloured by
+                       color. mask-size does nothing.
+
+     So each family gets the knob it actually listens to. The box stays 24px
+     and centred for both; only the ink inside it needs arranging. */
+  i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    /* ipa-core's react-ifef/styles/newStyles.scss carries a bare
+       `i { padding-right: 10px }`, which lands on every icon element in the
+       app. It left a 14px content box inside the 24px element, so a centred
+       glyph sat 5px left of the column. It never showed on the masked icons
+       because mask-origin is border-box, so padding does not move a mask:
+       the SVG icons were centred and the font ones were not. */
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  /* Apps commonly size .inv-icon-svg for a 42px control with an absolute
+     mask-size and offset (ipa-dt does, in app/client/styles/_icons.scss:
+     mask-size: 42px, mask-position: -7px). Dropped into a 24px box that draws
+     the artwork at 175%, clipped and 7px off centre. Those rules tend to set
+     background-color absolutely too, so the selected row's accent never
+     reaches a masked icon while the font ones tint normally. Both are restated
+     here against this box, so the rail does not depend on how a host happens
+     to have sized its icons elsewhere. */
+  i.inv-icon-svg {
+    /* The set draws its artwork at 0.75 of its 800x800 frame (measured across
+       assets, nav, spaces, user, docs and reports), where the icon fonts ink
+       15 to 20px at a 20px font-size. Sizing the frame to 26px lands ~19.5px
+       of ink, so the two families read at the same size. smartBuilding is the
+       one exception, drawn edge to edge at 1.0, and would come out a third
+       larger; that is the same outlier ipa-core carries a per-icon nudge for. */
+    width: 26px;
+    height: 26px;
+    mask-size: contain;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-position: center;
+    background-color: currentColor;
+  }
+}
+
+/* Labels collapse to zero width rather than unmounting, so icons never jump. */
+.ipa-sidebar__label {
+  flex: 0 0 auto;
+  max-width: 0;
+  min-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 121ms $ease;
+}
+
+.ipa-sidebar__chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 0;
+  max-width: 0;
+  margin: 0;
+  opacity: 0;
+  overflow: hidden;
+  color: var(--neutral-1, #f3f3f3);
+  /* The rotation is declared here rather than only on the --open class, so the
+     chevron turns back when the group closes instead of snapping. */
+  transform: rotate(0deg);
+  transition:
+    opacity 121ms $ease,
+    max-width $duration $ease,
+    width $duration $ease,
+    margin $duration $ease,
+    transform $duration $ease;
+}
+
+.ipa-sidebar--expanded {
+  .ipa-sidebar__label {
+    flex: 1;
+    max-width: 100%;
+    /* The design puts the label at x=56: the 48px icon column plus 8px. The
+       gap is added only here, so the collapsed rail keeps its icons centred
+       and nothing shifts sideways on the way out. */
+    padding-left: 8px;
+    opacity: 1;
+    transition-delay: 70ms;
+  }
+
+  .ipa-sidebar__chevron {
+    width: 20px;
+    max-width: 20px;
+    margin-left: auto;
+    margin-right: 16px;
+    opacity: 1;
+    transition-delay: 70ms;
+  }
+}
+
+.ipa-sidebar__chevron--open {
+  transform: rotate(180deg);
+}
+
+/* Sub-items line up with the group label rather than the icon, and sit on a
+   shorter row, matching Navigator / Assets / Spaces in the design. */
+.ipa-sidebar__sublink {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  /* 38px in the design, with the text at x=56 so it lines up under the group
+     label rather than under the icon. */
+  height: 38px;
+  box-sizing: border-box;
+  padding-left: 56px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background-color $hover $ease,
+    color $hover $ease;
+
+  &:hover {
+    background: var(--neutral-8, #3e3e3e);
+    color: var(--neutral-1, #f3f3f3);
+    text-decoration: none;
+  }
+}
+
+.ipa-sidebar__sublink--active {
+  /* !important only because ipa-core's theme.scss has `nav a { color:
+     var(--nav-icon-color) !important }`, which forces every link inside any
+     <nav> to the icon colour. Without matching it the selected page rendered
+     the same white as the rest and the design's accent never showed. */
+  color: var(--app-accent-color, var(--digital-twin-8, #df158c)) !important;
+  font-weight: 500;
+}
+
+/* The design runs the next group straight after the last sub-item, with no
+   trailing space. */
+.ipa-sidebar__sublist {
+  padding-bottom: 0;
+}
+
+/* Opening a group animates its height. A grid whose single row goes from 0fr
+   to 1fr is the one way to do that against content of an unknown height
+   without measuring it in JavaScript; max-height would need a guess, and any
+   guess either clips a long group or makes a short one crawl. */
+.ipa-sidebar__subwrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows $duration $ease;
+}
+
+.ipa-sidebar__subwrap--open {
+  grid-template-rows: 1fr;
+}
+
+.ipa-sidebar__sublist {
+  min-height: 0;
+  overflow: hidden;
+  /* Hidden only once the collapse has finished, so the items stay on screen
+     while it runs, and out of the tab order the rest of the time. */
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity $duration $ease,
+    visibility 0s linear $duration;
+}
+
+.ipa-sidebar__subwrap--open .ipa-sidebar__sublist {
+  visibility: visible;
+  opacity: 1;
+  transition:
+    opacity $duration $ease,
+    visibility 0s;
+}
+
+/* ipa-core reserves room for its own left nav by putting margin-left: 80px on
+   .has-left-nav. Our rail already occupies its own 48px flex slot, so that
+   margin double-counts and leaves an empty strip between the rail and the
+   content (measured live: content started at x=128 rather than x=48). Scoped
+   to the sibling of our nav, so it only applies where we replaced it. */
+.ipa-sidebar + .flex-content.has-left-nav {
+  margin-left: 0;
+}
+
+/* No room for sub-items on the collapsed rail. */
+.ipa-sidebar:not(.ipa-sidebar--expanded) .ipa-sidebar__subwrap {
+  display: none;
+}
+
+/* Anyone who has asked for less movement gets the states, not the journey. */
+@media (prefers-reduced-motion: reduce) {
+  .ipa-sidebar *,
+  .ipa-sidebar *::before {
+    transition: none !important;
+  }
+}

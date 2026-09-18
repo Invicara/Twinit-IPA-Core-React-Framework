@@ -102,7 +102,11 @@ const getPlugins = () => [
     // deprecation without hiding any coming from our own stylesheets.
     use: { sass: { silenceDeprecations: ['legacy-js-api'] } },
   }),
-  image({ include: ['src/IpaIcons/**/*'] }),
+  // src/img carries the logo the AppHeader falls back to. Inlining it as a
+  // data URI keeps the component self-contained: the older Logo.jsx require()s
+  // its asset and leaves resolution to the consumer's bundler, which only works
+  // because every consumer happens to be webpack.
+  image({ include: ['src/IpaIcons/**/*', 'src/img/invicara-logo.svg'] }),
   babel({
     exclude: 'node_modules/**',
     // Explicit rather than inherited: this is the value the plugin already
