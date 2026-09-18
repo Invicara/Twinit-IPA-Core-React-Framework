@@ -12,6 +12,13 @@ import React from 'react';
  *   "headerComponent": "AppHeader"                     the supplied one
  *   "headerComponent": "components/MyHeader"           the application's own
  *
+ * They are imported by this package's own subpath rather than relatively. That
+ * looks redundant but it is what keeps the import() dynamic: rollup preserves
+ * import() only for specifiers it treats as external, and rewrites an internal
+ * one to a static require in the CJS build, which a webpack consumer then loads
+ * eagerly whatever the userConfig says. The subpaths are declared in this
+ * package's exports and built as their own entry points.
+ *
  * The entries are import() thunks rather than imported components on purpose.
  * InternalPages imports its pages at the top of the file, which is fine because
  * they are already part of this bundle, but AppHeader pulls ipa-ui's
@@ -21,8 +28,8 @@ import React from 'react';
  * and nothing is fetched until a userConfig asks for it.
  */
 const INTERNAL_CHROME = {
-  AppHeader: () => import('./AppHeader/AppHeader'),
-  AppSidebar: () => import('./AppSidebar/AppSidebar'),
+  AppHeader: () => import('@invicara/ipa-core/AppHeader'),
+  AppSidebar: () => import('@invicara/ipa-core/AppSidebar'),
 };
 
 /**

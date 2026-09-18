@@ -148,6 +148,10 @@ let pkg = JSON.parse(fs.readFileSync('./package.json')),
   external = [
     ...Object.keys(pkg.dependencies || {}),
     'clsx',
+    // Our own chrome, imported by subpath from InternalChrome. External so the
+    // import() survives into the CJS build; see the inputs above.
+    '@invicara/ipa-core/AppHeader',
+    '@invicara/ipa-core/AppSidebar',
     '@dtplatform/ui-utils',
     'uid',
     'query-string',
@@ -195,6 +199,14 @@ export default {
     IpaPageComponents: 'src/IpaPageComponents/main.js',
     IpaRedux: 'src/redux/main.js',
     IpaLayouts: 'src/IpaLayouts/main.js',
+    // Entry points of their own so that the dynamic imports in InternalChrome
+    // stay dynamic. rollup only preserves import() for specifiers it treats as
+    // external; an internal one becomes Promise.resolve().then(() => require())
+    // in the CJS build, which is a static require that a webpack consumer loads
+    // eagerly. These carry ipa-ui's stylesheet, which sets rules on * and body,
+    // so an application that never renders them must never load them.
+    AppHeader: 'src/IpaLayouts/AppHeader/AppHeader.jsx',
+    AppSidebar: 'src/IpaLayouts/AppSidebar/AppSidebar.jsx',
     IpaMock: 'src/IpaMock/main.js',
     'react-ifef': 'src/react-ifef/main.js',
   },

@@ -22,6 +22,14 @@
       "import": "./esm_modules/index.js",
       "require": "./modules/index.js"
     },
+    "./AppHeader": {
+      "import": "./esm_modules/AppHeader/index.js",
+      "require": "./modules/AppHeader/index.js"
+    },
+    "./AppSidebar": {
+      "import": "./esm_modules/AppSidebar/index.js",
+      "require": "./modules/AppSidebar/index.js"
+    },
     "./*.scss": "./*.scss",
     "./*.svg": "./*.svg",
     "./*.js": "./*.js",

@@ -22,12 +22,16 @@ import './AppSidebar.scss';
  * ── Using it ──────────────────────────────────────────────────────────────
  *
  * An app selects a sidebar through userConfig `settings.sidebarComponent`,
- * which ipa-core resolves as `app/ipaCore/<value>.jsx`. So a host points that
- * setting at one of its own files, and that file either re-exports this
- * component unchanged or wraps it:
+ * which ipa-core resolves as `app/ipaCore/<value>.jsx`, falling back to the
+ * components it ships when no such file exists. So the simplest use is to name
+ * this one and write nothing:
+ *
+ *   "sidebarComponent": "AppSidebar"
+ *
+ * To wrap it, point the setting at a file of your own:
  *
  *   // app/ipaCore/components/AppSidebar.jsx
- *   import { AppSidebar } from '@invicara/ipa-core/modules/IpaLayouts';
+ *   import AppSidebar from '@invicara/ipa-core/AppSidebar';
  *   export default AppSidebar;
  *
  * AppHeader is chosen separately through `settings.headerComponent`, so an app

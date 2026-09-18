@@ -39,28 +39,30 @@ back to the framework's original side navigation and header, and prints the
 reason to the console.
 :::
 
-Because the setting names a file in your application rather than a component in
-the framework, the file is the seam: what you put in it decides whether you get
-the supplied component, an extended one, or your own. The three sections below
-are the three things you can put there.
+A name that matches no file in your application is then looked up among the
+components the framework ships, so the three sections below are the three ways
+to answer the setting: name a supplied component and write nothing, wrap one to
+extend it, or write your own.
 
 ## Using the supplied components
 
-Re-export the component the framework provides and you are done.
+Name them, and write no code at all:
 
 ```jsx
-// app/ipaCore/components/AppHeader.jsx
-import { AppHeader } from '@invicara/ipa-core/modules/IpaLayouts';
-
-export default AppHeader;
+{
+  "settings": {
+    ...,
+    "headerComponent": "AppHeader",
+    "sidebarComponent": "AppSidebar",
+    ...,
+  }
+}
 ```
 
-```jsx
-// app/ipaCore/components/AppSidebar.jsx
-import { AppSidebar } from '@invicara/ipa-core/modules/IpaLayouts';
-
-export default AppSidebar;
-```
+The framework looks for `app/ipaCore/AppHeader.jsx` first, finds nothing, and
+falls back to the component it ships. That is the same order page components
+resolve in, so an application that later wants its own `AppHeader.jsx` can add
+one at that path and it will take precedence with no other change.
 
 `AppHeader` renders the logo, the application name, the current project and the
 account menu. `AppSidebar` renders a collapsed rail that opens on the burger or
@@ -72,13 +74,18 @@ falls back to the platform logo when none is.
 
 ## Extending the header
 
+Wrap it in a file of your own, name that file in the User Config instead, and
+import the component from its own subpath:
+
+    import AppHeader from '@invicara/ipa-core/AppHeader';
+
 `AppHeader` takes a `slots` property for the pieces an application adds. A
 notification tray, for instance, goes in `slots.actions`, and extra account-menu
 entries go in `slots.menuItems`.
 
 ```jsx
 // app/ipaCore/components/AppHeader.jsx
-import { AppHeader } from '@invicara/ipa-core/modules/IpaLayouts';
+import AppHeader from '@invicara/ipa-core/AppHeader';
 import NotificationTray from './NotificationTray';
 
 export default props => (

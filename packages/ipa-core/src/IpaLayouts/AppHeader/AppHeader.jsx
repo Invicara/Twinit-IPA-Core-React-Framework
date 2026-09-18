@@ -26,12 +26,16 @@ import './AppHeader.scss';
  * ── Using it ──────────────────────────────────────────────────────────────
  *
  * An app selects a header through userConfig `settings.headerComponent`, which
- * ipa-core resolves as `app/ipaCore/<value>.jsx`. So a host always points that
- * setting at one of its own files, and that file either re-exports this
- * component unchanged or wraps it to add its own pieces:
+ * ipa-core resolves as `app/ipaCore/<value>.jsx`, falling back to the components
+ * it ships when no such file exists. So the simplest use is to name this one and
+ * write nothing:
+ *
+ *   "headerComponent": "AppHeader"
+ *
+ * To add to it, point the setting at a file of your own and wrap this one:
  *
  *   // app/ipaCore/components/AppHeader.jsx
- *   import { AppHeader } from '@invicara/ipa-core/modules/IpaLayouts';
+ *   import AppHeader from '@invicara/ipa-core/AppHeader';
  *   export default AppHeader;                       // vanilla
  *
  *   // or composed
