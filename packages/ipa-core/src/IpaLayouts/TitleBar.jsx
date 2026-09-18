@@ -37,7 +37,7 @@ export default class TitleBar extends React.Component {
         };
       } catch (error) {
         // Not a file in the application, so try the headers this framework
-        // ships. That is what lets a userConfig name AppHeader without the
+        // ships. That is what lets a userConfig name GlobalHeader without the
         // application declaring a component for it. The application is still
         // tried first, so it can shadow the name with a file of its own.
         const internal = getInternalChrome(userConfigSettings.headerComponent);

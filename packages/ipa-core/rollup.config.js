@@ -102,7 +102,7 @@ const getPlugins = () => [
     // deprecation without hiding any coming from our own stylesheets.
     use: { sass: { silenceDeprecations: ['legacy-js-api'] } },
   }),
-  // src/img carries the logo the AppHeader falls back to. Inlining it as a
+  // src/img carries the logo GlobalHeader falls back to. Inlining it as a
   // data URI keeps the component self-contained: the older Logo.jsx require()s
   // its asset and leaves resolution to the consumer's bundler, which only works
   // because every consumer happens to be webpack.
@@ -150,8 +150,8 @@ let pkg = JSON.parse(fs.readFileSync('./package.json')),
     'clsx',
     // Our own chrome, imported by subpath from InternalChrome. External so the
     // import() survives into the CJS build; see the inputs above.
-    '@invicara/ipa-core/AppHeader',
-    '@invicara/ipa-core/AppSidebar',
+    '@invicara/ipa-core/GlobalHeader',
+    '@invicara/ipa-core/GlobalNav',
     '@dtplatform/ui-utils',
     'uid',
     'query-string',
@@ -205,8 +205,8 @@ export default {
     // in the CJS build, which is a static require that a webpack consumer loads
     // eagerly. These carry ipa-ui's stylesheet, which sets rules on * and body,
     // so an application that never renders them must never load them.
-    AppHeader: 'src/IpaLayouts/AppHeader/AppHeader.jsx',
-    AppSidebar: 'src/IpaLayouts/AppSidebar/AppSidebar.jsx',
+    GlobalHeader: 'src/IpaLayouts/GlobalHeader/GlobalHeader.jsx',
+    GlobalNav: 'src/IpaLayouts/GlobalNav/GlobalNav.jsx',
     IpaMock: 'src/IpaMock/main.js',
     'react-ifef': 'src/react-ifef/main.js',
   },

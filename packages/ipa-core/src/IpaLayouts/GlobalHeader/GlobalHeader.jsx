@@ -15,7 +15,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 // with it twice, which is harmless: it is the same set of custom properties.
 import '@dtplatform/ipa-ui/dist/output.css';
 import darkLogo from '../../img/invicara-logo.svg';
-import './AppHeader.scss';
+import './GlobalHeader.scss';
 
 /**
  * The application header: logo, app name, project, and the account menu.
@@ -30,17 +30,17 @@ import './AppHeader.scss';
  * it ships when no such file exists. So the simplest use is to name this one and
  * write nothing:
  *
- *   "headerComponent": "AppHeader"
+ *   "headerComponent": "GlobalHeader"
  *
  * To add to it, point the setting at a file of your own and wrap this one:
  *
- *   // app/ipaCore/components/AppHeader.jsx
- *   import AppHeader from '@invicara/ipa-core/AppHeader';
- *   export default AppHeader;                       // vanilla
+ *   // app/ipaCore/components/GlobalHeader.jsx
+ *   import GlobalHeader from '@invicara/ipa-core/GlobalHeader';
+ *   export default GlobalHeader;                       // vanilla
  *
  *   // or composed
  *   export default props => (
- *     <AppHeader
+ *     <GlobalHeader
  *       {...props}
  *       slots={{
  *         actions: <NotificationTray />,
@@ -51,7 +51,7 @@ import './AppHeader.scss';
  *     />
  *   );
  *
- * AppSidebar is chosen separately through `settings.sidebarComponent`, so an
+ * GlobalNav is chosen separately through `settings.sidebarComponent`, so an
  * app can take one of them without the other.
  *
  * ── What a host can add ───────────────────────────────────────────────────
@@ -130,7 +130,7 @@ const DangerRow = ({ label, icon }) => (
   </span>
 );
 
-const AppHeader = ({
+const GlobalHeader = ({
   titleInfo,
   switchProj,
   goToUserAccount,
@@ -255,4 +255,4 @@ const AppHeader = ({
   );
 };
 
-export default AppHeader;
+export default GlobalHeader;

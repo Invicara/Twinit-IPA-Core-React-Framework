@@ -494,8 +494,8 @@ settings: {
     },
     noSideBar: true,
     noTitleBar: true,
-    headerComponent: "components/AppHeader",
-    sidebarComponent: "components/AppSidebar"
+    headerComponent: "components/GlobalHeader",
+    sidebarComponent: "components/GlobalNav"
 }
 ```
 

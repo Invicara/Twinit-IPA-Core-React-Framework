@@ -22,15 +22,15 @@ any subfolder of `app/ipaCore`, including one you create.
 {
   "settings": {
     ...,
-    "headerComponent": "components/AppHeader",
-    "sidebarComponent": "components/AppSidebar",
+    "headerComponent": "components/GlobalHeader",
+    "sidebarComponent": "components/GlobalNav",
     ...,
   }
 }
 ```
 
-That example loads `app/ipaCore/components/AppHeader.jsx` and
-`app/ipaCore/components/AppSidebar.jsx`. Each file must export the component as
+That example loads `app/ipaCore/components/GlobalHeader.jsx` and
+`app/ipaCore/components/GlobalNav.jsx`. Each file must export the component as
 its **default export**.
 
 :::note
@@ -52,23 +52,23 @@ Name them, and write no code at all:
 {
   "settings": {
     ...,
-    "headerComponent": "AppHeader",
-    "sidebarComponent": "AppSidebar",
+    "headerComponent": "GlobalHeader",
+    "sidebarComponent": "GlobalNav",
     ...,
   }
 }
 ```
 
-The framework looks for `app/ipaCore/AppHeader.jsx` first, finds nothing, and
+The framework looks for `app/ipaCore/GlobalHeader.jsx` first, finds nothing, and
 falls back to the component it ships. That is the same order page components
-resolve in, so an application that later wants its own `AppHeader.jsx` can add
+resolve in, so an application that later wants its own `GlobalHeader.jsx` can add
 one at that path and it will take precedence with no other change.
 
-`AppHeader` renders the logo, the application name, the current project and the
-account menu. `AppSidebar` renders a collapsed rail that opens on the burger or
+`GlobalHeader` renders the logo, the application name, the current project and the
+account menu. `GlobalNav` renders a collapsed rail that opens on the burger or
 on hovering a section, with sub-items expanding in place.
 
-Neither needs configuring beyond the User Config setting. `AppHeader` picks up
+Neither needs configuring beyond the User Config setting. `GlobalHeader` picks up
 the logo from [`settings.appImage`](../custom.md) when one is configured, and
 falls back to the platform logo when none is.
 
@@ -77,19 +77,19 @@ falls back to the platform logo when none is.
 Wrap it in a file of your own, name that file in the User Config instead, and
 import the component from its own subpath:
 
-    import AppHeader from '@invicara/ipa-core/AppHeader';
+    import GlobalHeader from '@invicara/ipa-core/GlobalHeader';
 
-`AppHeader` takes a `slots` property for the pieces an application adds. A
+`GlobalHeader` takes a `slots` property for the pieces an application adds. A
 notification tray, for instance, goes in `slots.actions`, and extra account-menu
 entries go in `slots.menuItems`.
 
 ```jsx
-// app/ipaCore/components/AppHeader.jsx
-import AppHeader from '@invicara/ipa-core/AppHeader';
+// app/ipaCore/components/GlobalHeader.jsx
+import GlobalHeader from '@invicara/ipa-core/GlobalHeader';
 import NotificationTray from './NotificationTray';
 
 export default props => (
-  <AppHeader
+  <GlobalHeader
     {...props}
     slots={{
       actions: <NotificationTray />,

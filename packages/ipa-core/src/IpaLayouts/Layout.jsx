@@ -130,7 +130,7 @@ class Layout extends React.Component {
       component = require('../../../../app/ipaCore/' + name + '.jsx').default;
     } catch (e) {
       // Not a file in the application, so try what this framework ships. That
-      // is what lets a userConfig name AppSidebar without the application
+      // is what lets a userConfig name GlobalNav without the application
       // declaring a component for it. The application is tried first, so it can
       // shadow the name with a file of its own.
       component = getInternalChrome(name);

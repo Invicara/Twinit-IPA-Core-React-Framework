@@ -10,7 +10,7 @@ import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 // design tokens have to be pulled in explicitly. Component styles do arrive
 // with the JS as injected CSS modules. webpack dedupes this across components.
 import '@dtplatform/ipa-ui/dist/output.css';
-import './AppSidebar.scss';
+import './GlobalNav.scss';
 
 /**
  * The application's left navigation: a dark rail that overlays the layout and
@@ -26,15 +26,15 @@ import './AppSidebar.scss';
  * components it ships when no such file exists. So the simplest use is to name
  * this one and write nothing:
  *
- *   "sidebarComponent": "AppSidebar"
+ *   "sidebarComponent": "GlobalNav"
  *
  * To wrap it, point the setting at a file of your own:
  *
- *   // app/ipaCore/components/AppSidebar.jsx
- *   import AppSidebar from '@invicara/ipa-core/AppSidebar';
- *   export default AppSidebar;
+ *   // app/ipaCore/components/GlobalNav.jsx
+ *   import GlobalNav from '@invicara/ipa-core/GlobalNav';
+ *   export default GlobalNav;
  *
- * AppHeader is chosen separately through `settings.headerComponent`, so an app
+ * GlobalHeader is chosen separately through `settings.headerComponent`, so an app
  * can take one of them without the other. Without this setting ipa-core
  * renders its own FlexLeftNavs and nothing here runs.
  *
@@ -64,7 +64,7 @@ const isPageActive = (page, hash) => {
 
 const HOVER_CLOSE_DELAY_MS = 120;
 
-const AppSidebar = ({ router, userConfig }) => {
+const GlobalNav = ({ router, userConfig }) => {
   // Two ways in, kept apart on purpose. The burger pins the rail open until the
   // cross is clicked; hovering a section opens it only while the pointer stays.
   // The hover is on the section rows themselves rather than on the whole rail,
@@ -255,4 +255,4 @@ const AppSidebar = ({ router, userConfig }) => {
   );
 };
 
-export default AppSidebar;
+export default GlobalNav;

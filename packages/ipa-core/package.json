@@ -22,13 +22,13 @@
       "import": "./esm_modules/index.js",
       "require": "./modules/index.js"
     },
-    "./AppHeader": {
-      "import": "./esm_modules/AppHeader/index.js",
-      "require": "./modules/AppHeader/index.js"
+    "./GlobalHeader": {
+      "import": "./esm_modules/GlobalHeader/index.js",
+      "require": "./modules/GlobalHeader/index.js"
     },
-    "./AppSidebar": {
-      "import": "./esm_modules/AppSidebar/index.js",
-      "require": "./modules/AppSidebar/index.js"
+    "./GlobalNav": {
+      "import": "./esm_modules/GlobalNav/index.js",
+      "require": "./modules/GlobalNav/index.js"
     },
     "./*.scss": "./*.scss",
     "./*.svg": "./*.svg",

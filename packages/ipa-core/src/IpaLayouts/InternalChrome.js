@@ -9,7 +9,7 @@ import React from 'react';
  * An application that wants the supplied chrome names it and writes no code; an
  * application that wants its own puts a file at that path, and its file wins.
  *
- *   "headerComponent": "AppHeader"                     the supplied one
+ *   "headerComponent": "GlobalHeader"                     the supplied one
  *   "headerComponent": "components/MyHeader"           the application's own
  *
  * They are imported by this package's own subpath rather than relatively. That
@@ -21,15 +21,15 @@ import React from 'react';
  *
  * The entries are import() thunks rather than imported components on purpose.
  * InternalPages imports its pages at the top of the file, which is fine because
- * they are already part of this bundle, but AppHeader pulls ipa-ui's
+ * they are already part of this bundle, but GlobalHeader pulls ipa-ui's
  * stylesheet, and that stylesheet sets rules on `*` and `body`. Imported
  * eagerly here it would reach every application through AppProvider, including
  * the ones that never render it. As thunks, webpack keeps each in its own chunk
  * and nothing is fetched until a userConfig asks for it.
  */
 const INTERNAL_CHROME = {
-  AppHeader: () => import('@invicara/ipa-core/AppHeader'),
-  AppSidebar: () => import('@invicara/ipa-core/AppSidebar'),
+  GlobalHeader: () => import('@invicara/ipa-core/GlobalHeader'),
+  GlobalNav: () => import('@invicara/ipa-core/GlobalNav'),
 };
 
 /**
