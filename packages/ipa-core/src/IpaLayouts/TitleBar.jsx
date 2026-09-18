@@ -1,5 +1,6 @@
 import React from 'react';
 import HeaderBar from './HeaderBar';
+import getInternalChrome, { internalChromeNames } from './InternalChrome';
 import Logo from './Logo';
 import { getTitleBarInfoFromProps } from '../IpaUtils/helpers';
 import LinkedIcon from '../IpaControls/LinkedIcon';
@@ -35,9 +36,20 @@ export default class TitleBar extends React.Component {
           ).default,
         };
       } catch (error) {
-        console.error(
-          `Header component not found at path ${userConfigSettings.headerComponent}. Using default header.`
-        );
+        // Not a file in the application, so try the headers this framework
+        // ships. That is what lets a userConfig name GlobalHeader without the
+        // application declaring a component for it. The application is still
+        // tried first, so it can shadow the name with a file of its own.
+        const internal = getInternalChrome(userConfigSettings.headerComponent);
+        if (internal) {
+          customHeader = { component: internal };
+        } else {
+          console.error(
+            `Header component not found at path ${userConfigSettings.headerComponent}, ` +
+              `and it is not one of the components ipa-core ships ` +
+              `(${internalChromeNames.join(', ')}). Using default header.`
+          );
+        }
       }
     }
 
@@ -49,14 +61,21 @@ export default class TitleBar extends React.Component {
     return (
       <>
         {customHeader?.component ? (
-          <customHeader.component
-            {...this.props.contextProps}
-            titleInfo={titleInfo}
-            switchProj={switchProj}
-            goToUserAccount={goToUserAccount}
-            userLogout={this.props.parent?.props?.userLogout}
-            logoComponent={Logo}
-          />
+          /* The framework's own header arrives through React.lazy, so it needs
+             a boundary. One from the application is not lazy and passes
+             straight through. The fallback is null rather than a spinner: this
+             is a 56px bar that resolves in one tick, and anything else would
+             flash. */
+          <React.Suspense fallback={null}>
+            <customHeader.component
+              {...this.props.contextProps}
+              titleInfo={titleInfo}
+              switchProj={switchProj}
+              goToUserAccount={goToUserAccount}
+              userLogout={this.props.parent?.props?.userLogout}
+              logoComponent={Logo}
+            />
+          </React.Suspense>
         ) : (
           <HeaderBar customClasses="always-flex titlebar-header">
             <Logo

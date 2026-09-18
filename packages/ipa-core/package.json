@@ -22,6 +22,14 @@
       "import": "./esm_modules/index.js",
       "require": "./modules/index.js"
     },
+    "./GlobalHeader": {
+      "import": "./esm_modules/GlobalHeader/index.js",
+      "require": "./modules/GlobalHeader/index.js"
+    },
+    "./GlobalNav": {
+      "import": "./esm_modules/GlobalNav/index.js",
+      "require": "./modules/GlobalNav/index.js"
+    },
     "./*.scss": "./*.scss",
     "./*.svg": "./*.svg",
     "./*.js": "./*.js",
@@ -35,7 +43,7 @@
   "dependencies": {
     "@dtplatform/iaf-doc-viewer": "~5.2.0",
     "@dtplatform/iaf-script-engine": "~5.2.0",
-    "@dtplatform/ipa-ui": "1.1.6",
+    "@dtplatform/ipa-ui": "2.0.0-1",
     "@dtplatform/platform-api": "~5.2.0",
     "@dtplatform/platform-ui-components": "~5.2.0",
     "@dtplatform/ui-utils": "~5.2.0",
@@ -181,5 +189,6 @@
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.18.1"
-  }
+  },
+  "gitHead": "14402ff4b39fff5533edd6147a7bf3057feb0018"
 }

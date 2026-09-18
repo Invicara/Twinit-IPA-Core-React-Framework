@@ -1,3 +1,4 @@
+import React from 'react';
 import { TextSearch } from './TextSearch';
 import { TreeSearch } from './TreeSearch';
 import { AdvancedSearch } from './AdvancedSearch';

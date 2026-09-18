@@ -35,7 +35,13 @@ export default [
 
   js.configs.recommended,
   react.configs.flat.recommended,
-  react.configs.flat['jsx-runtime'],
+  // NOT react.configs.flat['jsx-runtime']. That preset is for the automatic JSX
+  // transform, and babel.config.js here is [preset-env, preset-react] with no
+  // runtime option, which in Babel 7 means the CLASSIC transform: the build
+  // emits React.createElement (69 of them in IpaLayouts alone), so every JSX
+  // file genuinely needs React in scope. With the preset on, the linter
+  // reported 'React is defined but never used' in 124 files and invited
+  // deleting an import the build depends on.
 
   // Applies to every file rather than only to the JS/JSX block below, because
   // the react configs above are unscoped: without this, linting a file they
@@ -137,6 +143,17 @@ export default [
     files: ['**/*.test.{js,jsx}', '**/*.stories.{js,jsx}', '**/src/test/**'],
     languageOptions: { globals: { ...globals.jest, ...globals.node } },
     rules: { 'no-console': 'off' },
+  },
+
+  // Storybook compiles with preset-react { runtime: 'automatic' } of its own
+  // (.storybook/main.js), unlike the package build, so stories really do not
+  // need React in scope and the rule above does not apply to them.
+  {
+    files: ['**/*.stories.{js,jsx}', '**/.storybook/**'],
+    rules: {
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-uses-react': 'off',
+    },
   },
 
   // Tooling that runs in node and is written as CommonJS.
