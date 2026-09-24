@@ -118,11 +118,43 @@ class IpaMainLayout extends React.Component {
       //Added authService for rotated refresh token
       clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,
       location: window.location,
-      redirectUri: endPointConfig.baseRoot,
       scopes: ['read write'],
-      tokenEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/token`,
-      authorizeEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/authorize`,
-      authType: endPointConfig.authType, // Tells about which authentication process/type we're using. It can be "implicit" or "pkce".
+
+      /** Background
+       * Since Twinit Platform v5.2 when creating new applications, "implicit" grant type is no longer set by default.
+       * In an application item, it has a property "authorizedGrantTypes" which is an array of grant types.
+       * Pre 5.2 would look like ["implicit", "authorization_code", "refresh_token"]
+       * Post 5.2 would look like ["authorization_code", "refresh_token"]
+       *
+       * authorization_code = pkce
+       */
+
+      /** NOTE: If using V2 endpoints, the redirectUri CANNOT have a trailing slash ("/") or login will error and fail!
+       * So something to consider and whether each individual app needs to be updated. Or can be handled here instead.
+       */
+      redirectUri: endPointConfig.baseRoot,
+
+      /** V2 endpoints
+       * This explicitly sets the v2 tokenEndpoint, authorizeEndpoint endpoints, authType=pkce and pkceVersion=v5
+       */
+      tokenEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v2/oauth/token`,
+      authorizeEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v2/oauth/authorize`,
+      authType: endPointConfig.authType ? endPointConfig.authType : 'pkce', // Sets which authentication process/type we're using. It can be "implicit" or "pkce".
+      pkceVersion: endPointConfig.pkceVersion ? endPointConfig.pkceVersion : 'v5', // Sets which PKCE version we're using. It can be "v5" or "legacy".
+
+      /** V2 endpoint alternative,
+       * setting new "passportServiceBaseUrl" config alone implies v2 tokenEndpoint, authorizeEndpoint endpoints, authType=pkce and pkceVersion=v5
+       * See https://github.com/Invicara/InvicaraAppFramework/blob/dc2e435394270e12d6ba4c7815aaa7e51f6928b2/packages/platform-ui-components/src/Iaf-Auth/AuthService.js#L12
+       */
+      // passportServiceBaseUrl: `${endPointConfig.passportServiceOrigin}/passportsvc/api`,
+
+      /** If staying on v1 endpoints (not recommended as its deprecated)
+       * Although consider if there are older Twinit apps that don't support pkce grant type (doesn't have "authorization_code" in authorizedGrantTypes property on application)
+       */
+      // tokenEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/token`,
+      // authorizeEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/authorize`,
+      // authType: endPointConfig.authType ? endPointConfig.authType : 'pkce',
+      // pkceVersion: endPointConfig.pkceVersion ? endPointConfig.pkceVersion : 'legacy'
     });
     this.authService.initialize();
   }
