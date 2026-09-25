@@ -15,6 +15,7 @@ import LoadingModal from './IpaDialogs/LoadingModal';
 import ScriptHelper from './IpaUtils/ScriptHelper';
 
 import { parseQuery } from './IpaUtils/helpers';
+import { getAuthType } from './IpaUtils/authConfig';
 
 import { addUserConfig } from './redux/slices/user-config';
 import { addUser } from './redux/slices/user';
@@ -39,20 +40,10 @@ export class AppProvider extends React.Component {
 
     IafSession.setConfig(endPointConfig);
 
-    //this is a workaround for a platform issue
-    //platform needs the url to have a forward slash prior to the ? for query params
-    //so if the baseroot does not already have one we add it here
-    let authRoot = endPointConfig
-      ? endPointConfig.baseRoot
-      : this.props.ipaConfig.endPointConfig.baseRoot;
-    if (authRoot.slice(-1) !== '/') authRoot = authRoot + '/';
-
     let appId = endPointConfig?.applicationId
       ? endPointConfig.applicationId
       : this.props.ipaConfig?.applicationId;
     if (!appId) console.error('Application ID missing from endPointConfig or ipaConfig');
-
-    this.authUrl = IafSession.getAuthUrl(authRoot, appId);
 
     this.isSigningOut = false;
     this.defaultBottomPanelHeight = 350;
@@ -270,34 +261,31 @@ export class AppProvider extends React.Component {
     throw error;
   }
 
-  // Updated handleRequestError with a condition if authType is pkce then using refresh token generate a new access token
+  // On a 401, pkce refreshes the access token; anything that can't be refreshed logs in again
   async handleRequestError(error) {
     console.error(error);
-    let requiredAuthenticationErrorMessage =
+    const requiredAuthenticationErrorMessage =
       '401: Full authentication is required to access this resource';
-    if (_.get(error, 'errorResult.status') === 401) {
-      if (!this.isSigningOut) {
-        this.isSigningOut = true;
-        if (endPointConfig.authType === 'implicit') {
-          //If authType is implicit it user will logout
-          this.state.actions.userLogout();
-        } else if (endPointConfig.authType === 'pkce') {
-          //If authType is pkce, fetch auth token
-          if (error.message == requiredAuthenticationErrorMessage) {
-            this.state.actions.userLogout();
-            return;
-          }
-          const tokens = await this.props.authService.getAuthTokens();
-          const refreshToken = tokens && Object.keys(tokens).length > 0 ? tokens.refresh_token : '';
-          if (refreshToken) {
-            let updatedToken = await this.props.authService.fetchToken(refreshToken, true); //Fetch new token using refresh token
-            if (updatedToken) {
-              let user = await IafSession.setAuthToken(updatedToken.access_token, undefined); //Updated token in session storage
-              this.setState({ token: updatedToken.access_token }); //Set updated token
-            }
-          }
-        }
+    if (_.get(error, 'errorResult.status') !== 401 || this.isSigningOut) return;
+
+    this.isSigningOut = true;
+    try {
+      // implicit sessions, and implicit tokens left over from before the switch to pkce,
+      // have no refresh token
+      const refreshToken =
+        getAuthType() === 'pkce' && this.props.authService.getAuthTokens()?.refresh_token;
+      if (!refreshToken || error.message == requiredAuthenticationErrorMessage) {
+        await this.state.actions.userLogout();
+        return;
       }
+      const updatedToken = await this.props.authService.fetchToken(refreshToken, true);
+      await IafSession.setAuthToken(updatedToken.access_token, undefined);
+      this.setState({ token: updatedToken.access_token });
+    } catch (e) {
+      console.error('Token refresh failed', e);
+      await this.state.actions.userLogout();
+    } finally {
+      this.isSigningOut = false;
     }
   }
 

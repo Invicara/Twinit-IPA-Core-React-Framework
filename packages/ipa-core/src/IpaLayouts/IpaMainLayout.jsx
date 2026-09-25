@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import { enableMapSet } from 'immer';
 import IfefBody from '../react-ifef/components/ifefBody';
 import { getPlatform } from '../IpaUtils/helpers';
+import { buildAuthServiceConfig } from '../IpaUtils/authConfig';
 // qs rather than node's querystring: this is a browser bundle, and the
 // builtin forces every consumer to polyfill it. ignoreQueryPrefix strips
 // the leading '?' of location.search, which querystring.parse did not.
@@ -114,16 +115,7 @@ class IpaMainLayout extends React.Component {
     // IafPlugins.BAM_Script.initBAMScriptPlugins();
     // LocalFilePlugins.initScriptPlugins();
     // DataPlugins.initScriptPlugins();
-    this.authService = new AuthService({
-      //Added authService for rotated refresh token
-      clientId: endPointConfig.appId || this.props.ipaConfig?.applicationId,
-      location: window.location,
-      redirectUri: endPointConfig.baseRoot,
-      scopes: ['read write'],
-      tokenEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/token`,
-      authorizeEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/authorize`,
-      authType: endPointConfig.authType, // Tells about which authentication process/type we're using. It can be "implicit" or "pkce".
-    });
+    this.authService = new AuthService(buildAuthServiceConfig(this.props.ipaConfig?.applicationId));
     this.authService.initialize();
   }
 

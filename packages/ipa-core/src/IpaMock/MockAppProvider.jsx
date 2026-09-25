@@ -20,6 +20,7 @@ import { createLegacyContextSupport } from './util/legacyContext';
 import { addDashboardComponents } from '../redux/slices/dashboardUI';
 import { addEntityComponents } from '../redux/slices/entityUI';
 import ScriptHelper from '../IpaUtils/ScriptHelper';
+import { buildAuthServiceConfig } from '../IpaUtils/authConfig';
 import { ThemeProvider } from '@mui/material/styles';
 
 const { AuthService, AuthProvider } = IafAuth;
@@ -33,16 +34,9 @@ class MockAppProvider extends AppProvider {
     this.state.actions.reloadConfig = this.initialize.bind(this, false);
     this.state.actions.restartApp = this.initialize.bind(this);
 
-    this.authService = new AuthService({
-      //Added authService for rotated refresh token
-      clientId: endPointConfig.appId || props.sampleSelectedItems.ipaConfig.applicationId,
-      location: window.location,
-      redirectUri: endPointConfig.baseRoot,
-      scopes: ['read write'],
-      tokenEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/token`,
-      authorizeEndpoint: `${endPointConfig.passportServiceOrigin}/passportsvc/api/v1/oauth/authorize`,
-      authType: endPointConfig.authType, // Tells about which authentication process/type we're using. It can be "implicit" or "pkce".
-    });
+    this.authService = new AuthService(
+      buildAuthServiceConfig(props.sampleSelectedItems.ipaConfig.applicationId)
+    );
     this.authService.initialize();
 
     console.log('MockAppProvider state', this.state);
