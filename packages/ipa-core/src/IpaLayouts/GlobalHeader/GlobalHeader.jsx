@@ -25,12 +25,10 @@ import './GlobalHeader.scss';
  *
  * ── Using it ──────────────────────────────────────────────────────────────
  *
- * An app selects a header through userConfig `settings.headerComponent`, which
- * ipa-core resolves as `app/ipaCore/<value>.jsx`, falling back to the components
- * it ships when no such file exists. So the simplest use is to name this one and
- * write nothing:
- *
- *   "headerComponent": "GlobalHeader"
+ * This is the header ipa-core renders when userConfig names none. An app
+ * selects another through `settings.headerComponent`, which ipa-core resolves
+ * as `app/ipaCore/<value>.jsx`, falling back to the components it ships when no
+ * such file exists. "ClassicHeader" brings back the original title bar.
  *
  * To add to it, point the setting at a file of your own and wrap this one:
  *

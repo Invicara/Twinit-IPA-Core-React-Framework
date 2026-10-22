@@ -21,12 +21,10 @@ import './GlobalNav.scss';
  *
  * ── Using it ──────────────────────────────────────────────────────────────
  *
- * An app selects a sidebar through userConfig `settings.sidebarComponent`,
- * which ipa-core resolves as `app/ipaCore/<value>.jsx`, falling back to the
- * components it ships when no such file exists. So the simplest use is to name
- * this one and write nothing:
- *
- *   "sidebarComponent": "GlobalNav"
+ * This is the sidebar ipa-core renders when userConfig names none. An app
+ * selects another through `settings.sidebarComponent`, which ipa-core resolves
+ * as `app/ipaCore/<value>.jsx`, falling back to the components it ships when no
+ * such file exists. "ClassicNav" brings back the original FlexLeftNavs.
  *
  * To wrap it, point the setting at a file of your own:
  *
@@ -35,8 +33,8 @@ import './GlobalNav.scss';
  *   export default GlobalNav;
  *
  * GlobalHeader is chosen separately through `settings.headerComponent`, so an app
- * can take one of them without the other. Without this setting ipa-core
- * renders its own FlexLeftNavs and nothing here runs.
+ * can take one of them without the other. With `noSideBar` and no
+ * `sidebarComponent`, no navigation renders and nothing here runs.
  *
  * ── What ipa-core passes in ───────────────────────────────────────────────
  *

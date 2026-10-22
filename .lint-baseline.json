@@ -3,7 +3,7 @@
   "packages/ipa-core/docs/docComponents/ImportModulesCodeBlock.jsx": 4,
   "packages/ipa-core/docs/docComponents/InstallCodeBlock.jsx": 2,
   "packages/ipa-core/rollup.config.js": 1,
-  "packages/ipa-core/src/AppProvider.jsx": 9,
+  "packages/ipa-core/src/AppProvider.jsx": 8,
   "packages/ipa-core/src/IpaControls/AdvancedSearch.jsx": 1,
   "packages/ipa-core/src/IpaControls/AlertTable/AlertTable.jsx": 3,
   "packages/ipa-core/src/IpaControls/AlertTable/ScriptedAlertTable.jsx": 1,

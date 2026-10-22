@@ -9,7 +9,9 @@ import React from 'react';
  * An application that wants the supplied chrome names it and writes no code; an
  * application that wants its own puts a file at that path, and its file wins.
  *
+ *   (not set)                                          the supplied one
  *   "headerComponent": "GlobalHeader"                     the supplied one
+ *   "headerComponent": "ClassicHeader"                    the original one
  *   "headerComponent": "components/MyHeader"           the application's own
  *
  * They are imported by this package's own subpath rather than relatively. That
@@ -39,8 +41,22 @@ const INTERNAL_CHROME = {
  */
 const cache = new Map();
 
+/**
+ * What renders when the userConfig names nothing: the supplied chrome. An
+ * application that wants the framework's original header or navigation back
+ * names CLASSIC_HEADER or CLASSIC_SIDEBAR instead.
+ */
+export const DEFAULT_HEADER = 'GlobalHeader';
+export const DEFAULT_SIDEBAR = 'GlobalNav';
+export const CLASSIC_HEADER = 'ClassicHeader';
+export const CLASSIC_SIDEBAR = 'ClassicNav';
+
 /** The names a userConfig can use, for error messages. */
-export const internalChromeNames = Object.keys(INTERNAL_CHROME);
+export const internalChromeNames = [
+  ...Object.keys(INTERNAL_CHROME),
+  CLASSIC_HEADER,
+  CLASSIC_SIDEBAR,
+];
 
 /**
  * The framework component for this name, or null if the name is not one of

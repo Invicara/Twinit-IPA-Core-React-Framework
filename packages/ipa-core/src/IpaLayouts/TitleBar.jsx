@@ -1,6 +1,10 @@
 import React from 'react';
 import HeaderBar from './HeaderBar';
-import getInternalChrome, { internalChromeNames } from './InternalChrome';
+import getInternalChrome, {
+  CLASSIC_HEADER,
+  DEFAULT_HEADER,
+  internalChromeNames,
+} from './InternalChrome';
 import Logo from './Logo';
 import { getTitleBarInfoFromProps } from '../IpaUtils/helpers';
 import LinkedIcon from '../IpaControls/LinkedIcon';
@@ -27,27 +31,28 @@ export default class TitleBar extends React.Component {
     };
 
     let customHeader;
-    const userConfigSettings = this.props.contextProps?.userConfig?.settings;
-    if (userConfigSettings.headerComponent) {
+    // The supplied GlobalHeader unless the userConfig names another, and
+    // ClassicHeader asks for the framework's original bar below.
+    const headerName =
+      this.props.contextProps?.userConfig?.settings?.headerComponent || DEFAULT_HEADER;
+    if (headerName !== CLASSIC_HEADER) {
       try {
         customHeader = {
-          component: require(
-            '../../../../app/ipaCore/' + userConfigSettings.headerComponent + '.jsx'
-          ).default,
+          component: require('../../../../app/ipaCore/' + headerName + '.jsx').default,
         };
       } catch (error) {
         // Not a file in the application, so try the headers this framework
         // ships. That is what lets a userConfig name GlobalHeader without the
         // application declaring a component for it. The application is still
         // tried first, so it can shadow the name with a file of its own.
-        const internal = getInternalChrome(userConfigSettings.headerComponent);
+        const internal = getInternalChrome(headerName);
         if (internal) {
           customHeader = { component: internal };
         } else {
           console.error(
-            `Header component not found at path ${userConfigSettings.headerComponent}, ` +
+            `Header component not found at path ${headerName}, ` +
               `and it is not one of the components ipa-core ships ` +
-              `(${internalChromeNames.join(', ')}). Using default header.`
+              `(${internalChromeNames.join(', ')}). Using the classic header.`
           );
         }
       }

@@ -9,7 +9,11 @@ import BottomPanel from './BottomPanel';
 import Item from '../IpaControls/Item';
 
 import TitleBar from './TitleBar';
-import getInternalChrome, { internalChromeNames } from './InternalChrome';
+import getInternalChrome, {
+  CLASSIC_SIDEBAR,
+  DEFAULT_SIDEBAR,
+  internalChromeNames,
+} from './InternalChrome';
 
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -189,9 +193,13 @@ class Layout extends React.Component {
       showTitle = false;
     }
 
+    // A sidebar the userConfig names renders even with noSideBar, as it always
+    // has. The default GlobalNav does not, so an application that hid the
+    // original navigation does not gain the new one.
     let customSidebar;
-    if (settings.sidebarComponent) {
-      customSidebar = { component: this.getComponent(settings.sidebarComponent) };
+    const sidebarName = settings?.sidebarComponent || (showSidebar ? DEFAULT_SIDEBAR : null);
+    if (sidebarName && sidebarName !== CLASSIC_SIDEBAR) {
+      customSidebar = { component: this.getComponent(sidebarName) };
     }
 
     return (

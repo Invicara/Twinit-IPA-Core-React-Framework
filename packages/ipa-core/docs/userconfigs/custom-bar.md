@@ -5,8 +5,10 @@ sidebar_position: 920
 
 ## Custom side Navigation and Header bars
 
-The framework ships a header bar and a side navigation bar, and an application
-can take them as they are, extend them, or replace them with its own.
+The framework ships a header bar and a side navigation bar, `GlobalHeader` and
+`GlobalNav`, and renders them unless the User Config says otherwise. An
+application can take them as they are, extend them, go back to the framework's
+original ones, or replace them with its own.
 
 Both are chosen the same way and independently of each other, so an application
 can take the supplied header and keep its own navigation, or the other way
@@ -46,7 +48,8 @@ extend it, or write your own.
 
 ## Using the supplied components
 
-Name them, and write no code at all:
+Leave both settings out, and write no code at all. Naming them has the same
+effect:
 
 ```jsx
 {
@@ -59,10 +62,11 @@ Name them, and write no code at all:
 }
 ```
 
-The framework looks for `app/ipaCore/GlobalHeader.jsx` first, finds nothing, and
-falls back to the component it ships. That is the same order page components
-resolve in, so an application that later wants its own `GlobalHeader.jsx` can add
-one at that path and it will take precedence with no other change.
+Either way the framework looks for `app/ipaCore/GlobalHeader.jsx` first, finds
+nothing, and falls back to the component it ships. That is the same order page
+components resolve in, so an application that later wants its own
+`GlobalHeader.jsx` can add one at that path and it will take precedence with no
+other change.
 
 `GlobalHeader` renders the logo, the application name, the current project and the
 account menu. `GlobalNav` renders a collapsed rail that opens on the burger or
@@ -171,6 +175,25 @@ properties, and it is a wide and growing set that includes `actions`, `user`,
 read the properties you need rather than accepting a property of your own with a
 name the context might also use.
 :::
+
+## Using the original header and navigation
+
+Before version 3.0.91 the framework rendered a different header and side
+navigation unless the User Config named others. They are still available under
+their own names:
+
+```jsx
+{
+  "settings": {
+    ...,
+    "headerComponent": "ClassicHeader",
+    "sidebarComponent": "ClassicNav",
+    ...,
+  }
+}
+```
+
+As with the supplied components, the two are chosen independently.
 
 ## Hiding them instead
 
