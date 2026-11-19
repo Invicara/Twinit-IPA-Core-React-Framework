@@ -1,4 +1,5 @@
 import {
+  fetchLevelNodes,
   InvalidNodeName,
   NODE_SEPARATOR,
   NotANodeInfo,
@@ -232,6 +233,47 @@ describe('tree.js', () => {
 
       completeNodeName = '0-1-Welcometo_1-2-Invic_ara';
       expect(() => parseNodeNameWithParent(completeNodeName)).toThrow(InvalidNodeName);
+    });
+  });
+
+  describe('fetchLevelNodes', () => {
+    const treeLevel = { property: 'Reference', script: 'getReferencesWithCount' };
+    let consoleError;
+
+    beforeEach(() => {
+      consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      consoleError.mockRestore();
+    });
+
+    it('returns the script result when it is a list', async () => {
+      const nodes = [{ name: 'W12X79', childCount: 4 }];
+      await expect(fetchLevelNodes(async () => nodes, treeLevel, 2)).resolves.toBe(nodes);
+      expect(consoleError).not.toHaveBeenCalled();
+    });
+
+    it('returns no nodes and names the script when the script is missing', async () => {
+      const notFound = 'executeScript "getReferencesWithCount" not found on loadedScripts!';
+      await expect(fetchLevelNodes(async () => notFound, treeLevel, 2)).resolves.toEqual([]);
+      expect(consoleError).toHaveBeenCalledTimes(1);
+      expect(consoleError.mock.calls[0][0]).toContain('level 2');
+      expect(consoleError.mock.calls[0][0]).toContain('getReferencesWithCount');
+    });
+
+    it('returns no nodes when the script returns nothing', async () => {
+      await expect(fetchLevelNodes(async () => undefined, treeLevel, 2)).resolves.toEqual([]);
+      expect(consoleError).toHaveBeenCalledTimes(1);
+    });
+
+    it('returns no nodes when the script throws', async () => {
+      const failing = async () => {
+        throw new Error('boom');
+      };
+      await expect(fetchLevelNodes(failing, treeLevel, 3)).resolves.toEqual([]);
+      expect(consoleError).toHaveBeenCalledTimes(1);
+      expect(consoleError.mock.calls[0][0]).toContain('threw');
     });
   });
 });
