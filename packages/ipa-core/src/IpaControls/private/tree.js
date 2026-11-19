@@ -101,9 +101,9 @@ export class InvalidNodeName extends Error {
 
 /**
  *
- * @param {string} name The complete name of the node you want to parse following this format : parentNodeBaseName_nodeBaseName
- * @returns {{parentNodeInfo: NodeInfo, childNodeInfo: NodeInfo}} All the information contained in the base name of the parent node and all the information contained in the base name of the child node. If the string input does not contain a _, we assume the string is the child node's base name and parse it accordingly, parentNodeIfno will then be undefined.
- * @throws {InvalidNodeName} if the strings contain more than one NODE_SEPERATOR, it means the display name from one of the nodes contained an NODE_SPERATOR, which is a reserved character.
+ * @param {string} name The complete name of the node you want to parse. It holds the base names of all the node's ancestors, from the root down, then its own: level0BaseName_level1BaseName_..._nodeBaseName
+ * @returns {{parentNodeInfo: NodeInfo, childNodeInfo: NodeInfo}} All the information contained in the base name of the direct parent node and all the information contained in the base name of the node itself. If the string input does not contain a _, we assume the string is the child node's base name and parse it accordingly, parentNodeIfno will then be undefined.
+ * @throws {InvalidNodeName} if a part of the name is not the base name of a node at that level, it means the display name from one of the nodes contained an NODE_SPERATOR, which is a reserved character.
  */
 export const parseNodeNameWithParent = name => {
   let arr = name?.split(NODE_SEPARATOR);
@@ -116,14 +116,54 @@ export const parseNodeNameWithParent = name => {
       parentNodeInfo: parseNodeName(arr[0]),
       childNodeInfo: parseNodeName(arr[1]),
     };
-  } else if (arr.length === 3) {
-    return {
-      parentNodeInfo: parseNodeName(arr[0]),
-      childNodeInfo: parseNodeName(arr[1]),
-      secondChildNodeInfo: parseNodeName(arr[2]),
-    };
   }
-  throw new InvalidNodeName(name);
+
+  // Deeper nodes: one base name per level, so part n must be the base name of a level n node
+  const nodeInfos = arr.map(part => {
+    try {
+      return parseNodeName(part);
+    } catch (e) {
+      if (e instanceof NotANodeInfo) throw new InvalidNodeName(name);
+      throw e;
+    }
+  });
+  if (nodeInfos.some((nodeInfo, level) => nodeInfo.level !== level)) {
+    throw new InvalidNodeName(name);
+  }
+  return {
+    parentNodeInfo: nodeInfos[nodeInfos.length - 2],
+    childNodeInfo: nodeInfos[nodeInfos.length - 1],
+  };
+};
+
+/**
+ * Runs a tree level's script and always returns a list of nodes.
+ * A script that is missing (ScriptHelper then returns an error message instead of a list), returns
+ * anything but an array, or throws, yields no nodes for that branch and a console error naming the
+ * level and the script. Without this, one bad script made every expand of the tree fail silently.
+ *
+ * @param {function(): Promise<*>} runScript Runs the level's script and resolves with its result.
+ * @param {{property: string, script: string}} treeLevel The level's entry in the treeLevels config.
+ * @param {number} level The level's index.
+ * @returns {Promise<Array>} The script's result if it is an array, otherwise an empty array.
+ */
+export const fetchLevelNodes = async (runScript, treeLevel, level) => {
+  const describe = `TreeSearch level ${level} (property "${treeLevel?.property}", script "${treeLevel?.script}")`;
+  let result;
+  try {
+    result = await runScript();
+  } catch (e) {
+    console.error(`${describe}: the script threw, showing no nodes for this branch.`, e);
+    return [];
+  }
+  if (!Array.isArray(result)) {
+    console.error(
+      `${describe}: the script did not return a list, showing no nodes for this branch. Check that the script exists and returns an array. It returned:`,
+      result
+    );
+    return [];
+  }
+  return result;
 };
 
 /**

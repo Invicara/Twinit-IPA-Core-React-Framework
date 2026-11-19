@@ -94,12 +94,7 @@ const getTreeSelectQuery = (selector, filteringNodes) => {
 // We want to include both the parent branch and selected leaf as part of the query. Otherwise
 // risk of returning results where leaf nodes have the same name in multiple separate branches
 const buildLeafQuery = (selector, node) => {
-  let nodeInfo;
-  if (selector.treeLevels.length === 3) {
-    nodeInfo = parseNodeNameWithParent(node.name).secondChildNodeInfo.displayName;
-  } else {
-    nodeInfo = parseNodeNameWithParent(node.name).childNodeInfo.displayName;
-  }
+  const nodeInfo = parseNodeNameWithParent(node.name).childNodeInfo.displayName;
 
   let query = [{ [`properties.${selector.treeLevels[node.level].property}.val`]: nodeInfo }];
 
