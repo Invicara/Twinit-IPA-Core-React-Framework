@@ -201,6 +201,25 @@ describe('tree.js', () => {
       expect(parseNodeNameWithParent(completeNodeName)).toEqual(result);
     });
 
+    it('parses the names of nodes below the second level', () => {
+      expect(parseNodeNameWithParent('0-0-Level1_1-0-Level2_2-3-Level3')).toEqual({
+        parentNodeInfo: { level: 1, position: 0, displayName: 'Level2' },
+        childNodeInfo: { level: 2, position: 3, displayName: 'Level3' },
+      });
+      expect(
+        parseNodeNameWithParent('0-6-Toilet - Accessories_1-1-Bib Tap_2-0-01-First Floor_3-2-T-01')
+      ).toEqual({
+        parentNodeInfo: { level: 2, position: 0, displayName: '01-First Floor' },
+        childNodeInfo: { level: 3, position: 2, displayName: 'T-01' },
+      });
+    });
+
+    it('throws an error if a deeper name part is not the base name of its level', () => {
+      expect(() => parseNodeNameWithParent('0-0-Level1_2-0-Level2_1-0-Level3')).toThrow(
+        InvalidNodeName
+      );
+    });
+
     it('throws an error if child or parent nodeInfo are not proper NodeInfo objects', () => {
       let completeNodeName = '0--1-Welcome-to_1-2-Invicara';
       expect(() => parseNodeNameWithParent(completeNodeName)).toThrow(NotANodeInfo);
