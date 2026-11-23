@@ -43,7 +43,7 @@ import './GlobalNav.scss';
  *
  *   router.pageGroups  [{ groupName, icon, items: [page] }]  when grouped
  *   router.pageList    [page]                                otherwise
- *   page               { path, key, title, icon, dontindex }
+ *   page               { path, key, title, icon, dontindex, newTab, newTabUrl }
  *
  * Icons are whatever class userConfig names, from whichever set the app loads.
  * The stylesheet normalises the two that ship with ipa-core, a CSS-masked SVG
@@ -59,6 +59,16 @@ const isPageActive = (page, hash) => {
   const current = (hash || '').replace(/^#/, '').split('?')[0];
   return new RegExp(`${page.path}(?:/|$)`).test(current);
 };
+
+/**
+ * A handler with `config.openNewTab` and `config.url` opens that URL in a new
+ * tab instead of routing to its page, as ClassicNav's Item does. Routing there
+ * would load the URL inside the app, where an SSO page refuses to be framed.
+ */
+const linkProps = page =>
+  page.newTab && page.newTabUrl
+    ? { href: page.newTabUrl, target: '_blank', rel: 'noopener' }
+    : { href: page.path ? `#${page.path}` : undefined };
 
 const HOVER_CLOSE_DELAY_MS = 120;
 
@@ -126,7 +136,7 @@ const GlobalNav = ({ router, userConfig }) => {
         <li key={page.path || page.key}>
           <a
             className={clsx('ipa-sidebar__row', active && 'ipa-sidebar__row--active')}
-            href={page.path ? `#${page.path}` : undefined}
+            {...linkProps(page)}
             onClick={goToPage(page)}
             onMouseEnter={openOnHover}
             title={page.title}
@@ -151,7 +161,7 @@ const GlobalNav = ({ router, userConfig }) => {
         <li key={page.path || page.key}>
           <a
             className={clsx('ipa-sidebar__sublink', active && 'ipa-sidebar__sublink--active')}
-            href={page.path ? `#${page.path}` : undefined}
+            {...linkProps(page)}
             onClick={goToPage(page)}
             title={page.title}
             aria-current={active ? 'page' : undefined}
