@@ -3,6 +3,7 @@ import ScriptHelper from '../IpaUtils/ScriptHelper';
 import _ from 'lodash';
 import { TreeNodeStatus } from '../IpaUtils/TreeHelpers';
 import {
+  fetchLevelNodes,
   parseNodeNameWithParent,
   parseNodeNameWithParents,
   stringifyNodeWithParent,
@@ -255,9 +256,11 @@ export const TreeSearch = ({
   async function getLevelNodes(level, parentNames = []) {
     let input = getPreviousValues(parentNames);
 
-    let rawNodes = await ScriptHelper.executeScript(
-      treeLevels[level].script,
-      parentNames ? { input } : undefined
+    let rawNodes = await fetchLevelNodes(
+      () =>
+        ScriptHelper.executeScript(treeLevels[level].script, parentNames ? { input } : undefined),
+      treeLevels[level],
+      level
     );
 
     const rawNodesCopy = rawNodes.filter(node => node.name !== '');
